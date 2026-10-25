@@ -1,0 +1,135 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-sans: var(--font-sans);
+  --font-heading: var(--font-heading);
+
+  /* Core Design Tokens */
+  --color-obsidian: #050505;
+  --color-surface: #0A0A0B;
+  --color-elevated: #0F0F10;
+  
+  --color-text-primary: #F5F3EE;
+  --color-text-secondary: #A6A29A;
+  
+  --color-champagne: #D6B77A;
+  --color-platinum: #E8E5DE;
+  
+  --color-success: #2E5A47;
+  --color-warning: #7A5C30;
+  --color-danger: #6C3232;
+
+  --color-glass: rgba(255, 255, 255, 0.025);
+  --color-glass-strong: rgba(255, 255, 255, 0.05);
+  --color-border-subtle: rgba(255, 255, 255, 0.06);
+  --color-border-strong: rgba(255, 255, 255, 0.10);
+
+  /* Shadcn standard mappings */
+  --color-background: var(--color-obsidian);
+  --color-foreground: var(--color-text-primary);
+  --color-primary: var(--color-champagne);
+  --color-primary-foreground: var(--color-obsidian);
+  --color-secondary: var(--color-surface);
+  --color-secondary-foreground: var(--color-text-primary);
+  --color-muted: var(--color-surface);
+  --color-muted-foreground: var(--color-text-secondary);
+  --color-border: var(--color-border-subtle);
+  --color-input: var(--color-border-subtle);
+  --color-ring: var(--color-champagne);
+  
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
+
+:root {
+  --radius: 0.5rem; /* Restrained radius, not massive pills */
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-obsidian);
+  color: var(--color-text-primary);
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-obsidian);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-secondary);
+}
+
+/* Premium Typography Utility */
+.heading-brand {
+  font-family: var(--font-heading);
+  font-weight: 500;
+  letter-spacing: normal;
+}
+
+.heading-ui {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+/* Glassmorphism System */
+.premium-glass {
+  background: var(--color-glass);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--color-border-subtle);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.premium-glass:hover {
+  background: var(--color-glass-strong);
+  border: 1px solid var(--color-border-strong);
+}
+
+/* Soft Ambient Glow System */
+.ambient-glow {
+  box-shadow: 0 0 40px rgba(214, 183, 122, 0.04);
+}
+
+.ambient-glow-hover:hover {
+  box-shadow: 0 0 40px rgba(214, 183, 122, 0.08);
+}
+
+/* Subtle Interactive States */
+.interactive-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.interactive-card:hover {
+  transform: translateY(-1px);
+  border-color: var(--color-border-strong);
+}
+
+/* Hide scrollbar for horizontal scroll sections */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
