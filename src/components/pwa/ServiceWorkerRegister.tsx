@@ -4,8 +4,9 @@ import { useEffect } from 'react';
 
 /**
  * ServiceWorkerRegister Component
- * Safely registers the PWA service worker (/sw.js) in supported browser environments
- * on HTTPS or localhost, with graceful error handling and zero UI overhead.
+ * Safely registers the PWA service worker (/sw.js) only in production HTTPS environments.
+ * In development / localhost, it automatically unregisters all active service workers and
+ * purges stale chunk caches to prevent Turbopack / HMR module resolution breakage.
  */
 export function ServiceWorkerRegister() {
   useEffect(() => {
@@ -14,60 +15,63 @@ export function ServiceWorkerRegister() {
       return;
     }
 
-    // 2. Validate secure context: Service Workers require HTTPS or localhost/loopback
     const hostname = window.location.hostname;
     const isLocalhost = Boolean(
       hostname === 'localhost' ||
         hostname === '[::1]' ||
+        hostname === '127.0.0.1' ||
         /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/.test(hostname)
     );
 
-    const isSecureContext = window.location.protocol === 'https:' || isLocalhost;
+    const isDevelopment = process.env.NODE_ENV !== 'production' || isLocalhost;
 
-    if (!isSecureContext) {
-      if (process.env.NODE_ENV !== 'production') {
-        console.warn(
-          '[PWA] Service Worker registration skipped: insecure context. Service Workers require HTTPS or localhost.'
-        );
+    // 2. In development or on localhost: UNREGISTER any existing service worker and CLEAR caches!
+    if (isDevelopment) {
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        for (const registration of registrations) {
+          registration.unregister().then((unregistered) => {
+            if (unregistered) {
+              console.log(
+                '[PWA] Unregistered development service worker:',
+                registration.scope
+              );
+            }
+          });
+        }
+      });
+
+      if ('caches' in window) {
+        caches.keys().then((keys) => {
+          for (const key of keys) {
+            caches.delete(key);
+          }
+        });
       }
       return;
     }
 
-    // 3. Register the service worker after page load to avoid competing for critical startup bandwidth
+    // 3. In production: Only register if secure HTTPS context
+    if (window.location.protocol !== 'https:') {
+      return;
+    }
+
+    // 4. Register the service worker after page load to avoid competing for critical startup bandwidth
     const register = () => {
       navigator.serviceWorker
         .register('/sw.js', { scope: '/' })
         .then((registration) => {
-          if (process.env.NODE_ENV !== 'production') {
-            console.log(
-              '[PWA] Service Worker successfully registered with scope:',
-              registration.scope
-            );
-          }
-
-          // Optional: Listen for updates to prompt or handle worker replacement
           registration.onupdatefound = () => {
             const installingWorker = registration.installing;
             if (!installingWorker) return;
 
             installingWorker.onstatechange = () => {
-              if (installingWorker.state === 'installed') {
-                if (navigator.serviceWorker.controller) {
-                  // New update available
-                  if (process.env.NODE_ENV !== 'production') {
-                    console.log(
-                      '[PWA] New service worker version installed and awaiting activation.'
-                    );
-                  }
-                } else if (process.env.NODE_ENV !== 'production') {
-                  console.log('[PWA] Service worker installed; assets cached for offline use.');
-                }
+              if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                console.log('[PWA] New service worker version installed and awaiting activation.');
               }
             };
           };
         })
         .catch((error) => {
-          // Gracefully log warning without throwing or interrupting user experience
           console.warn('[PWA] Service Worker registration failed:', error);
         });
     };

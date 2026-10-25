@@ -1,40 +1,45 @@
 'use client';
 
-import { Sparkles, Box } from 'lucide-react';
+import { Sparkles, Box, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 export function ARPromoSection() {
   return (
-    <section className="px-4 py-8">
-      <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] p-8 shadow-2xl">
-        {/* Subtle glass effect background */}
-        <div className="absolute inset-0 bg-white/[0.02] backdrop-blur-3xl" />
-        
-        {/* Decorative elements */}
-        <div className="absolute top-0 right-0 p-6 opacity-30">
-          <Box className="w-24 h-24 text-champagne stroke-[0.5]" />
+    <section className="px-4 sm:px-6 lg:px-8 py-8 max-w-7xl mx-auto w-full">
+      <div className="relative overflow-hidden rounded-3xl border border-[#d4af37]/25 bg-gradient-to-br from-[#0c2014]/90 via-[#07150c]/85 to-[#050e08]/90 p-8 sm:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
+        {/* Subtle Ambient Radial Lighting */}
+        <div className="pointer-events-none absolute top-0 right-0 w-80 h-80 rounded-full bg-[#d4af37]/10 blur-3xl" />
+        <div className="pointer-events-none absolute bottom-0 left-0 w-72 h-72 rounded-full bg-[#1b3e25]/20 blur-3xl" />
+
+        {/* Decorative 3D Cube Outline */}
+        <div className="absolute top-4 right-4 sm:right-8 opacity-15 pointer-events-none">
+          <Box className="w-36 h-36 sm:w-48 sm:h-48 text-[#d4af37] stroke-[0.4]" />
         </div>
-        
-        <div className="relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 mb-4 rounded-full bg-champagne/10 border border-champagne/20">
-            <Sparkles className="w-4 h-4 text-champagne" />
-            <span className="text-xs font-medium text-champagne uppercase tracking-wider">Try Now</span>
+
+        <div className="relative z-10 max-w-2xl">
+          <div className="inline-flex items-center gap-2 px-3 py-1 mb-4 rounded-full bg-[#d4af37]/10 border border-[#d4af37]/30 text-xs font-semibold text-[#d4af37]">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Futuristic Dining Feature</span>
           </div>
-          
-          <h2 className="font-heading text-3xl font-bold text-text-primary mb-3">
-            Dine in <span className="gold-gradient">Augmented Reality</span>
+
+          <h2 className="font-heading text-2xl sm:text-4xl font-extrabold text-white mb-3 tracking-tight">
+            Explore Dishes in{' '}
+            <span className="bg-gradient-to-r from-[#f7e4a8] via-[#d4af37] to-[#b38936] bg-clip-text text-transparent">
+              Interactive 3D
+            </span>
           </h2>
-          
-          <p className="text-sm text-text-primary/70 mb-8 max-w-[80%] leading-relaxed">
-            Preview our masterfully crafted dishes on your table before you order. A new dimension of culinary exploration awaits.
+
+          <p className="text-xs sm:text-sm text-white/70 mb-8 max-w-xl leading-relaxed font-light">
+            Rotate, inspect textures, and preview portion sizes of our signature artisan pizzas and fusion dishes right on your screen before placing your order.
           </p>
-          
-          <Link 
+
+          <Link
             href="/ar"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 border border-border-subtle text-text-primary font-medium hover:bg-white/10 transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-[#d4af37] to-[#b38936] text-black font-bold text-xs sm:text-sm shadow-[0_10px_25px_rgba(212,175,55,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all"
           >
-            <Box className="w-4 h-4 text-champagne" />
-            <span>Discover the Experience</span>
+            <Box className="w-4 h-4 text-black" />
+            <span>Launch 3D Food Lounge</span>
+            <ArrowRight className="w-3.5 h-3.5 text-black" />
           </Link>
         </div>
       </div>

@@ -40,7 +40,7 @@ export function BottomNav() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-obsidian/90 backdrop-blur-lg border-t border-white/5 z-50 pb-safe">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-obsidian/90 backdrop-blur-lg border-t border-white/5 z-50 pb-safe">
       <div className="flex items-center justify-around h-[72px] px-2 relative">
         {navItems.map((item) => {
           const isActive = pathname === item.href;

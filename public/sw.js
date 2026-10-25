@@ -1,9 +1,30 @@
 // The Golden Oak - High-Performance Luxury Restaurant PWA Service Worker
-// Privacy Hardened - Version 2.0.0
+// Privacy Hardened - Version 3.0.0
 // Strict privacy policy: NEVER cache sensitive/protected routes, auth tokens, or user data.
-// ONLY cache immutable static assets (3D models, images, fonts, Next.js static JS/CSS chunks).
+// ONLY cache immutable static assets (3D models, images, fonts). NEVER cache Next.js JS chunks.
 
 const CACHE_NAME = 'golden-oak-v2';
+
+// Check if running on localhost / development
+const isLocalhost = Boolean(
+  self.location.hostname === 'localhost' ||
+    self.location.hostname === '127.0.0.1' ||
+    self.location.hostname === '[::1]'
+);
+
+// If running in development / localhost, self-destruct and clear all caches immediately
+if (isLocalhost) {
+  self.addEventListener('install', () => self.skipWaiting());
+  self.addEventListener('activate', (event) => {
+    event.waitUntil(
+      caches
+        .keys()
+        .then((keys) => Promise.all(keys.map((k) => caches.delete(k))))
+        .then(() => self.registration.unregister())
+        .then(() => self.clients.claim())
+    );
+  });
+}
 
 // Safe, non-sensitive static assets pre-cached during service worker installation
 const STATIC_ASSETS = [
@@ -37,7 +58,8 @@ function isSensitiveRoute(url) {
 
 /**
  * Checks whether a URL represents an immutable static asset
- * Allowed: .glb 3D models, images, web fonts, Next.js static chunks, manifest/favicon
+ * Allowed: .glb 3D models, images, web fonts, manifest/favicon
+ * NOTE: JS chunks are excluded to prevent stale module factory runtime errors in Turbopack/Next.js
  */
 function isStaticAsset(url) {
   const pathname = url.pathname.toLowerCase();
@@ -57,12 +79,7 @@ function isStaticAsset(url) {
     return true;
   }
 
-  // 4. Next.js Static Chunks (immutable JS/CSS bundles with hashes in /_next/static/)
-  if (pathname.startsWith('/_next/static/') && (pathname.endsWith('.js') || pathname.endsWith('.css') || /\.(woff|woff2)$/i.test(pathname))) {
-    return true;
-  }
-
-  // 5. Manifest
+  // 4. Manifest
   if (pathname === '/manifest.json') {
     return true;
   }
@@ -72,6 +89,7 @@ function isStaticAsset(url) {
 
 // Installation: Pre-cache core offline assets
 self.addEventListener('install', (event) => {
+  if (isLocalhost) return;
   event.waitUntil(
     caches
       .open(CACHE_NAME)
@@ -105,6 +123,11 @@ self.addEventListener('activate', (event) => {
 
 // Fetch Interception: Strict Privacy & Caching Rules
 self.addEventListener('fetch', (event) => {
+  // RULE 0: In development / localhost, bypass completely - zero service worker caching
+  if (isLocalhost) {
+    return;
+  }
+
   const request = event.request;
   const url = new URL(request.url);
 
