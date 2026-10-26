@@ -2,7 +2,7 @@
 
 import { Suspense, useRef, useEffect, useMemo, useCallback, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { useGLTF, ContactShadows, useProgress, AdaptiveDpr, Environment } from '@react-three/drei';
+import { useGLTF, ContactShadows, useProgress, AdaptiveDpr } from '@react-three/drei';
 import type { Group, Object3D, Material, Mesh, BufferGeometry } from 'three';
 import { Vector3 } from 'three';
 import type { ModelConfig } from '@/data/model-config';

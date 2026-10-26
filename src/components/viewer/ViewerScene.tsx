@@ -2,7 +2,7 @@
 
 import { Suspense, useRef, useEffect, useMemo, useCallback } from 'react';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
-import { OrbitControls, useGLTF, Environment, ContactShadows, useProgress, AdaptiveDpr } from '@react-three/drei';
+import { OrbitControls, useGLTF, ContactShadows, useProgress, AdaptiveDpr } from '@react-three/drei';
 import type { OrbitControls as OrbitControlsType } from 'three-stdlib';
 import type { Group, Object3D, Material, Mesh, BufferGeometry } from 'three';
 import type { ModelConfig } from '@/data/model-config';
@@ -117,12 +117,13 @@ export function ViewerScene({ config, autoRotate, onControlsRef, onProgress, onL
     >
       <AdaptiveDpr pixelated />
 
-      <ambientLight intensity={0.6} />
-      <directionalLight position={[5, 5, 5]} intensity={0.8} castShadow />
-      <directionalLight position={[-3, 3, -3]} intensity={0.3} />
-      <pointLight position={[0, 4, 0]} intensity={0.4} color="#fff5e0" />
-
-      <Environment preset="studio" />
+      {/* Self-contained luxury studio lighting (100% offline & local, zero CDN dependency) */}
+      <ambientLight intensity={0.7} />
+      <directionalLight position={[5, 8, 5]} intensity={1.0} castShadow />
+      <directionalLight position={[-5, 5, -5]} intensity={0.4} color="#fff5e0" />
+      <directionalLight position={[0, -2, 2]} intensity={0.2} color="#c9a84c" />
+      <pointLight position={[0, 4, 0]} intensity={0.5} color="#fff5e0" />
+      <hemisphereLight args={['#ffffff', '#222222', 0.6]} />
 
       <AutoPresentation active={presentationRef.current} />
 
