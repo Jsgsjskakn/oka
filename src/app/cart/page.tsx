@@ -9,6 +9,7 @@ import {
   ArrowRight,
   Sparkles,
   UtensilsCrossed,
+  Calendar,
   Plus,
   Clock,
   ShieldCheck,
@@ -216,7 +217,7 @@ export default function CartPage() {
                       : 'text-[#9A9286] hover:text-[#FAF5EC]'
                   }`}
                 >
-                  <span>🍽️</span>
+                  <UtensilsCrossed className="w-3.5 h-3.5 text-[#E2A84B]" />
                   <span>Dine-In Table Order</span>
                 </button>
 
@@ -229,7 +230,7 @@ export default function CartPage() {
                       : 'text-[#9A9286] hover:text-[#FAF5EC]'
                   }`}
                 >
-                  <span>📅</span>
+                  <Calendar className="w-3.5 h-3.5 text-[#E2A84B]" />
                   <span>Pre-Order with Reservation</span>
                 </button>
 
@@ -242,7 +243,7 @@ export default function CartPage() {
                       : 'text-[#9A9286] hover:text-[#FAF5EC]'
                   }`}
                 >
-                  <span>🛍️</span>
+                  <ShoppingBag className="w-3.5 h-3.5 text-[#E2A84B]" />
                   <span>Luxury Takeaway</span>
                 </button>
               </div>

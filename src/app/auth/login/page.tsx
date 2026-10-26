@@ -171,13 +171,13 @@ function LoginContent() {
         {/* Bottom 3 Luxury Privilege Badges */}
         <div className="relative z-10 pt-6 border-t border-white/10 flex flex-wrap items-center gap-3 text-[11px] font-mono text-[#E2A84B]">
           <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.04] border border-[#E2A84B]/30">
-            <span className="text-[9px]">✦</span> Instant Table Lock
+            <Sparkles className="w-3 h-3 text-[#E2A84B]" /> Instant Table Lock
           </span>
           <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.04] border border-[#E2A84B]/30">
-            <span className="text-[9px]">✦</span> 1-Click Reordering
+            <Sparkles className="w-3 h-3 text-[#E2A84B]" /> 1-Click Reordering
           </span>
           <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.04] border border-[#E2A84B]/30">
-            <span className="text-[9px]">✦</span> Priority Seating
+            <Sparkles className="w-3 h-3 text-[#E2A84B]" /> Priority Seating
           </span>
         </div>
       </div>

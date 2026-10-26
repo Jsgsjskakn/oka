@@ -196,14 +196,15 @@ export function ProfileDashboardClient({
                   {initials}
                 </span>
                 <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[#22C58B] border-2 border-[#0D0A08] flex items-center justify-center text-[10px] text-black font-extrabold">
-                  ✓
+                  <Check className="w-3 h-3 stroke-[3]" />
                 </span>
               </div>
 
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-[10.5px] font-mono tracking-[0.22em] text-[#E2A84B] uppercase font-bold">
-                    ✦ GOLDEN OAK PRIVÉ MEMBER · TIER I
+                  <span className="inline-flex items-center gap-1.5 text-[10.5px] font-mono tracking-[0.22em] text-[#E2A84B] uppercase font-bold">
+                    <Sparkles className="w-3 h-3 text-[#E2A84B]" />
+                    <span>GOLDEN OAK PRIVÉ MEMBER · TIER I</span>
                   </span>
                 </div>
                 <h1 className="font-serif text-2xl sm:text-4xl font-bold text-[#FAF5EC] tracking-tight">
@@ -527,7 +528,7 @@ export function ProfileDashboardClient({
                             : 'bg-[#0D0A08] border border-white/10 text-[#9A9286] hover:text-[#FAF5EC]'
                         }`}
                       >
-                        {dietaryPref === opt && '✓ '}
+                        {dietaryPref === opt && <Check className="w-3 h-3 inline mr-1 text-[#22C58B]" />}
                         {opt}
                       </button>
                     ))}
@@ -551,7 +552,7 @@ export function ProfileDashboardClient({
                             : 'bg-[#0D0A08] border border-white/10 text-[#9A9286] hover:text-[#FAF5EC]'
                         }`}
                       >
-                        {spicePref === opt && '✓ '}
+                        {spicePref === opt && <Check className="w-3 h-3 inline mr-1 text-[#22C58B]" />}
                         {opt}
                       </button>
                     ))}
@@ -575,7 +576,7 @@ export function ProfileDashboardClient({
                             : 'bg-[#0D0A08] border border-white/10 text-[#9A9286] hover:text-[#FAF5EC]'
                         }`}
                       >
-                        {seatingPref === opt && '✓ '}
+                        {seatingPref === opt && <Check className="w-3 h-3 inline mr-1 text-[#22C58B]" />}
                         {opt}
                       </button>
                     ))}

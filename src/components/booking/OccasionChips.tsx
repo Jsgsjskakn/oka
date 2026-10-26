@@ -1,16 +1,18 @@
 'use client';
 
+import { Wine, Gift, Briefcase, Sparkles, LucideIcon } from 'lucide-react';
+
 interface OccasionChipsProps {
   selected: string;
   onSelect: (occasion: string) => void;
 }
 
-const occasions = [
-  { label: 'None', emoji: '' },
-  { label: 'Anniversary', emoji: '🥂' },
-  { label: 'Birthday', emoji: '🎂' },
-  { label: 'Business Dining', emoji: '💼' },
-  { label: 'Date Night', emoji: '✨' },
+const occasions: Array<{ label: string; icon?: LucideIcon }> = [
+  { label: 'None' },
+  { label: 'Anniversary', icon: Wine },
+  { label: 'Birthday', icon: Gift },
+  { label: 'Business Dining', icon: Briefcase },
+  { label: 'Date Night', icon: Sparkles },
 ];
 
 export function OccasionChips({ selected, onSelect }: OccasionChipsProps) {
@@ -22,6 +24,7 @@ export function OccasionChips({ selected, onSelect }: OccasionChipsProps) {
       <div className="flex flex-wrap gap-2">
         {occasions.map((occ) => {
           const isSelected = selected === occ.label;
+          const Icon = occ.icon;
           return (
             <button
               key={occ.label}
@@ -33,7 +36,7 @@ export function OccasionChips({ selected, onSelect }: OccasionChipsProps) {
                   : 'bg-[#16110E] border-white/[0.07] text-[#9A9286] hover:text-[#FAF5EC] hover:border-white/20'
               }`}
             >
-              {occ.emoji && <span>{occ.emoji}</span>}
+              {Icon && <Icon className="w-3.5 h-3.5 text-[#E2A84B]" />}
               <span>{occ.label}</span>
             </button>
           );

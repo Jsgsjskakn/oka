@@ -21,7 +21,7 @@ export function CategoriesSection({ categories }: CategoriesSectionProps) {
       <div className="flex overflow-x-auto hide-scrollbar gap-3 px-4 pb-4 snap-x">
         <div className="snap-start">
           <CategoryChip 
-            icon="🍽️" 
+            icon="utensils" 
             label="All" 
             isActive={activeCategory === 'all'}
             onClick={() => {
@@ -33,7 +33,7 @@ export function CategoriesSection({ categories }: CategoriesSectionProps) {
         {categories.map((category) => (
           <div key={category.id} className="snap-start">
             <CategoryChip
-              icon={category.icon || '🍽️'}
+              icon={category.slug || 'utensils'}
               label={category.name}
               isActive={activeCategory === category.id}
               onClick={() => {
@@ -45,7 +45,7 @@ export function CategoriesSection({ categories }: CategoriesSectionProps) {
         ))}
         <div className="snap-start">
           <CategoryChip
-            icon="↗️"
+            icon="arrow-up-right"
             label="View All"
             isActive={false}
             onClick={() => router.push('/menu')}

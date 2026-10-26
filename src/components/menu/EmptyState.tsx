@@ -115,7 +115,7 @@ export function EmptyState({ onClearFilters, searchQuery }: EmptyStateProps) {
                 {isAdded ? (
                   <>
                     <Check className="w-3.5 h-3.5 stroke-[3]" />
-                    <span>Added to Order ✓</span>
+                    <span>Added to Order</span>
                   </>
                 ) : (
                   <>

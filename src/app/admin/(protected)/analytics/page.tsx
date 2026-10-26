@@ -70,7 +70,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
           <div className="flex items-center gap-3">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold tracking-widest uppercase bg-emerald-500/10 text-success border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.15)]">
               <Activity className="w-3 h-3 text-success animate-pulse" />
-              AI Business Intelligence & Revenue Engine
+              Executive Business Intelligence & Revenue Analytics
             </span>
           </div>
 

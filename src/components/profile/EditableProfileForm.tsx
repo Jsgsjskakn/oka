@@ -75,7 +75,7 @@ export function EditableProfileForm({ name: initialName, email: initialEmail, ph
 
         <button onClick={handleSave} disabled={loading}
           className="w-full mt-4 bg-primary text-black py-3.5 rounded-full font-semibold text-sm shadow-[0_0_15px_rgba(201,168,76,0.2)] active:scale-[0.98] transition-transform disabled:opacity-70">
-          {loading ? 'Saving...' : saved ? '✓ Profile Updated' : 'Save Changes'}
+          {loading ? 'Saving...' : saved ? 'Profile Updated' : 'Save Changes'}
         </button>
       </div>
     </div>

@@ -291,7 +291,7 @@ export function MenuClient({ categories, initialDishes, initialCategory = 'all' 
                   <span>Non-Veg</span>
                 </button>
 
-                {/* Chef's Picks (Replaced 🔥 Popular) */}
+                {/* Chef's Picks */}
                 <button
                   type="button"
                   onClick={() =>

@@ -15,7 +15,7 @@ export function CategoryPills({ categories, activeCategory, onSelectCategory }: 
       <div className="max-w-7xl mx-auto flex overflow-x-auto hide-scrollbar gap-2.5 sm:gap-3 px-4 sm:px-6 lg:px-8 pb-1 snap-x">
         <div className="snap-start shrink-0">
           <CategoryChip
-            icon="🍽️"
+            icon="utensils"
             label="All Dishes"
             isActive={activeCategory === 'all'}
             onClick={() => onSelectCategory('all')}
@@ -24,7 +24,7 @@ export function CategoryPills({ categories, activeCategory, onSelectCategory }: 
         {categories.map((category) => (
           <div key={category.id} className="snap-start shrink-0">
             <CategoryChip
-              icon={category.icon || '🍽️'}
+              icon={category.slug || 'utensils'}
               label={category.name}
               isActive={activeCategory === category.id}
               onClick={() => onSelectCategory(category.id)}

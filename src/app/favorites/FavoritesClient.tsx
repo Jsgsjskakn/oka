@@ -238,8 +238,9 @@ export function FavoritesClient({ allDishes }: { allDishes: Dish[] }) {
                         START YOUR COLLECTION — MOST LOVED SIGNATURES
                       </h3>
                     </div>
-                    <span className="text-xs text-[#9A9286] italic hidden sm:block">
-                      Tap ♡ to Save Instantly to Vault
+                    <span className="inline-flex items-center gap-1.5 text-xs text-[#9A9286] hidden sm:inline-flex">
+                      <Heart className="w-3.5 h-3.5 text-[#E2A84B]" />
+                      <span>Save signatures to your personal vault</span>
                     </span>
                   </div>
 

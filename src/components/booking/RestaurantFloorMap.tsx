@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Sparkles, Compass, Users, Check } from 'lucide-react';
+import { Sparkles, Compass, Users, Check, Flame, Leaf, Crown } from 'lucide-react';
 
 export interface FloorTable {
   id: number;
@@ -174,10 +174,10 @@ export function RestaurantFloorMap({
   const [hoveredTable, setHoveredTable] = useState<FloorTable | null>(null);
 
   const zones = [
-    { name: "The Hearth", key: "The Hearth Chef's Counter", icon: '🔥' },
-    { name: 'Chandelier Hall', key: 'Main Chandelier Hall', icon: '✨' },
-    { name: 'Botanical Terrace', key: 'Emerald Botanical Terrace', icon: '🌿' },
-    { name: 'Velvet Booths', key: 'The Velvet Private Booths', icon: '👑' },
+    { name: "The Hearth", key: "The Hearth Chef's Counter", icon: Flame },
+    { name: 'Chandelier Hall', key: 'Main Chandelier Hall', icon: Sparkles },
+    { name: 'Botanical Terrace', key: 'Emerald Botanical Terrace', icon: Leaf },
+    { name: 'Velvet Booths', key: 'The Velvet Private Booths', icon: Crown },
   ];
 
   // Selected table object
@@ -225,7 +225,7 @@ export function RestaurantFloorMap({
                   : 'bg-white/[0.03] border border-white/[0.06] text-[#9A9286] hover:text-[#FAF5EC] hover:bg-white/[0.06]'
               }`}
             >
-              <span className="text-xs">{z.icon}</span>
+              <z.icon className="w-3.5 h-3.5 text-[#E2A84B] shrink-0" />
               <span className="truncate">{z.name}</span>
             </button>
           );

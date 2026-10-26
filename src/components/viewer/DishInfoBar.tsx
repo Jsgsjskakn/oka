@@ -54,12 +54,12 @@ export function DishInfoBar({
     const slug = dish.slug.toLowerCase();
     const cat = (dish.category as string || '').toLowerCase();
     if (slug.includes('pizza') || cat.includes('pizza')) {
-      return ['🔥 Wood-Fired', '📏 12" Artisan Crust', '⏱ 15 Mins Prep'];
+      return ['Wood-Fired', '12" Artisan Crust', '15 Mins Prep'];
     }
     if (slug.includes('burger') || cat.includes('burger')) {
-      return ['🔥 Charcoal Grilled', '🍔 Toasted Brioche', '⏱ 12 Mins Prep'];
+      return ['Charcoal Grilled', 'Toasted Brioche', '12 Mins Prep'];
     }
-    return ['🔥 Flame Wok', '🌿 Farm Herbs', '⏱ 10 Mins Prep'];
+    return ['Flame Wok', 'Farm Fresh Herbs', '10 Mins Prep'];
   };
 
   const culinarySpecs = getCulinarySpecs();
@@ -190,7 +190,7 @@ export function DishInfoBar({
           {added ? (
             <div className="rounded-[10px] px-5 sm:px-7 py-3 sm:py-3.5 bg-[#0E1F18] border border-[#22C58B]/50 text-[#22C58B] font-bold text-xs sm:text-sm flex items-center gap-2 shadow-[0_0_20px_rgba(34,197,139,0.3)] animate-in zoom-in-95 duration-200">
               <Check className="w-4 h-4 text-[#22C58B]" />
-              <span>✓ Added to Table Order</span>
+              <span>Added to Table Order</span>
             </div>
           ) : (
             <button

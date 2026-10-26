@@ -148,7 +148,7 @@ export function TimeSlotGrid({ selectedTime, onSelect, slots }: TimeSlotGridProp
                 }`}
               >
                 {slot.status === 'urgent' ? (
-                  <>🔥 Only 1 Left</>
+                  <>● 1 Table Left</>
                 ) : slot.status === 'filling' ? (
                   <>● 2 Tables Left</>
                 ) : (

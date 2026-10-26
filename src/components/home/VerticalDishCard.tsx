@@ -224,7 +224,7 @@ export function VerticalDishCard({ dish, onAdd, rank }: VerticalDishCardProps) {
             {isAdded ? (
               <>
                 <Check className="w-3.5 h-3.5 stroke-[3]" />
-                <span>ADDED ✓</span>
+                <span>ADDED</span>
               </>
             ) : (
               <span>ADD +</span>

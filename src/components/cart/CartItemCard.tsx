@@ -168,7 +168,7 @@ export function CartItemCard({ item, onUpdateQuantity, onRemove }: CartItemCardP
               >
                 <Edit3 className="w-3 h-3 group-hover:scale-110 transition-transform" />
                 <span className="underline decoration-dotted underline-offset-4">
-                  {savedNotes ? `Chef Note: “${savedNotes}” (Edit)` : '✎ Add Chef Instructions (Spice level, Truffle glaze, No onions...)'}
+                  {savedNotes ? `Chef Note: “${savedNotes}” (Edit)` : 'Add Chef Instructions (Spice level, Truffle glaze, No onions...)'}
                 </span>
               </button>
             ) : (

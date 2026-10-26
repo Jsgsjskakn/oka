@@ -216,7 +216,7 @@ export function FavoriteDishCard({ dish }: FavoriteDishCardProps) {
               {isAdded ? (
                 <>
                   <Check className="w-3.5 h-3.5 stroke-[3]" />
-                  <span>Added ✓</span>
+                  <span>Added</span>
                 </>
               ) : (
                 <>

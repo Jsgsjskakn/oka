@@ -301,15 +301,15 @@ export default function AnalyticsCharts({ summary }: { summary: AnalyticsSummary
                     <td className="px-6 py-4 text-center">
                       {index === 0 ? (
                         <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-warning/10 text-warning border border-warning/30 text-xs font-black shadow-lg shadow-amber-500/10">
-                          🥇
+                          01
                         </span>
                       ) : index === 1 ? (
                         <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-300/20 text-slate-200 border border-slate-300/40 text-xs font-black">
-                          🥈
+                          02
                         </span>
                       ) : index === 2 ? (
                         <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-700/20 text-warning border border-amber-700/40 text-xs font-black">
-                          🥉
+                          03
                         </span>
                       ) : (
                         <span className="font-mono text-xs text-text-secondary/70 font-bold">

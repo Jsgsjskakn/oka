@@ -378,10 +378,10 @@ function CategoryCustomDropdown({
 
 function SpiceLevelSelector({ value, onChange }: { value: string, onChange: (val: string) => void }) {
   const levels = [
-    { id: 'mild', label: '🌿 Mild', color: 'text-green-400', bg: 'bg-green-500/10 hover:bg-green-500/20', border: 'border-green-500/30 hover:border-green-400/50', active: 'bg-green-500/20 border-green-400 shadow-[0_0_15px_rgba(74,222,128,0.2)]' },
-    { id: 'medium', label: '🌶️ Medium', color: 'text-warning', bg: 'bg-amber-500/10 hover:bg-warning/10', border: 'border-warning/20 hover:border-amber-400/50', active: 'bg-warning/10 border-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.2)]' },
-    { id: 'hot', label: '🌶️🌶️ Hot', color: 'text-orange-400', bg: 'bg-orange-500/10 hover:bg-orange-500/20', border: 'border-orange-500/30 hover:border-orange-400/50', active: 'bg-orange-500/20 border-orange-400 shadow-[0_0_15px_rgba(251,146,60,0.2)]' },
-    { id: 'extra-hot', label: '🔥 Extra Hot', color: 'text-danger', bg: 'bg-rose-500/10 hover:bg-danger/10', border: 'border-danger/20 hover:border-rose-400/50', active: 'bg-danger/10 border-rose-400 shadow-[0_0_15px_rgba(244,63,94,0.2)]' },
+    { id: 'mild', label: 'Mild', color: 'text-green-400', bg: 'bg-green-500/10 hover:bg-green-500/20', border: 'border-green-500/30 hover:border-green-400/50', active: 'bg-green-500/20 border-green-400 shadow-[0_0_15px_rgba(74,222,128,0.2)]' },
+    { id: 'medium', label: 'Medium', color: 'text-warning', bg: 'bg-amber-500/10 hover:bg-warning/10', border: 'border-warning/20 hover:border-amber-400/50', active: 'bg-warning/10 border-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.2)]' },
+    { id: 'hot', label: 'Hot', color: 'text-orange-400', bg: 'bg-orange-500/10 hover:bg-orange-500/20', border: 'border-orange-500/30 hover:border-orange-400/50', active: 'bg-orange-500/20 border-orange-400 shadow-[0_0_15px_rgba(251,146,60,0.2)]' },
+    { id: 'extra-hot', label: 'Extra Hot', color: 'text-danger', bg: 'bg-rose-500/10 hover:bg-danger/10', border: 'border-danger/20 hover:border-rose-400/50', active: 'bg-danger/10 border-rose-400 shadow-[0_0_15px_rgba(244,63,94,0.2)]' },
   ];
 
   return (
