@@ -1,11 +1,11 @@
-import { Info, Mail, Settings, ChevronRight } from 'lucide-react';
+import { Info, User, Settings, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { CompactFooter } from '@/components/layout/CompactFooter';
 
 export default function MorePage() {
   const items = [
+    { label: 'Customer Portal & Login', href: '/profile', icon: User },
     { label: 'About Us', href: '/about', icon: Info },
-    { label: 'Contact', href: '/contact', icon: Mail },
     { label: 'Settings', href: '/settings', icon: Settings },
   ];
 

@@ -48,7 +48,9 @@ export function TopBar() {
     { label: '3D Gallery', href: '/ar' },
     { label: 'Favorites', href: '/favorites' },
     { label: 'About', href: '/about' },
-    { label: 'Contact', href: '/contact' },
+    currentUser
+      ? { label: 'My Account', href: '/profile' }
+      : { label: 'Customer Login', href: '/auth/login' },
   ];
 
   return (

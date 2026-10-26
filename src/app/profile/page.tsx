@@ -55,7 +55,7 @@ function AuthenticatedProfileView({ user, profile }: { user: any; profile: any }
     { label: 'My Orders', href: '/profile/orders', icon: ShoppingBag, desc: 'View and reorder past meals' },
     { label: 'My Reservations', href: '/profile/reservations', icon: CalendarDays, desc: 'View booking history' },
     { label: 'Favorites', href: '/favorites', icon: Heart, desc: 'Your saved dishes' },
-    { label: 'Contact Us', href: '/contact', icon: Phone, desc: 'Get in touch with support' },
+    { label: 'About The Golden Oak', href: '/about', icon: Phone, desc: 'Our dining story & location' },
   ];
 
   const initials = (profile?.name || user.email || 'GO')
