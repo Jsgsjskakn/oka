@@ -1,145 +1,352 @@
 'use client';
 
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ZoomIn, Maximize2, Layers } from 'lucide-react';
+import { ZoomIn, Maximize2, Layers, Sparkles, Box, RotateCw, ArrowRight } from 'lucide-react';
+
+const PREVIEW_DISHES = [
+  {
+    id: 'tandoori-paneer-pizza',
+    name: 'Tandoori Paneer Pizza',
+    category: 'Wood-Fired Sourdough',
+    image: '/images/dishes/tandoori-paneer-pizza.webp',
+    scale: '32 cm · 8 Artisanal Slices',
+    ingredients: 'San Marzano & Smoked Fior di Latte',
+    meshDetails: '48K Polygons · 4K PBR',
+  },
+  {
+    id: 'classic-smash-burger',
+    name: 'Classic Smash Burger',
+    category: 'Handcrafted Brioche',
+    image: '/images/dishes/classic-smash-burger.webp',
+    scale: '180g Double Patty · 12 cm',
+    ingredients: 'Aged Cheddar & Truffle Aioli',
+    meshDetails: '42K Polygons · 4K PBR',
+  },
+  {
+    id: 'dynamite-chilli-potatoes',
+    name: 'Dynamite Chilli Potatoes',
+    category: 'Crispy Fusion Tapas',
+    image: '/images/dishes/dynamite-chilli-potatoes.webp',
+    scale: 'Signature Bowl · Single Share',
+    ingredients: 'Wok Glazed Birds Eye Chilli',
+    meshDetails: '36K Polygons · 4K PBR',
+  },
+];
 
 export function ARPromoSection() {
+  const [activeDishIndex, setActiveDishIndex] = useState(0);
+  const [rotation, setRotation] = useState(12);
+  const [isDragging, setIsDragging] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
+
+  const startXRef = useRef(0);
+  const currentRotationRef = useRef(12);
+  const animFrameRef = useRef<number | null>(null);
+
+  // Smooth continuous auto-rotation
+  useEffect(() => {
+    let lastTime = performance.now();
+    const autoRotate = (time: number) => {
+      const delta = (time - lastTime) / 1000;
+      lastTime = time;
+      if (!isDragging) {
+        currentRotationRef.current = (currentRotationRef.current + delta * 9) % 360;
+        setRotation(currentRotationRef.current);
+      }
+      animFrameRef.current = requestAnimationFrame(autoRotate);
+    };
+    animFrameRef.current = requestAnimationFrame(autoRotate);
+    return () => {
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    };
+  }, [isDragging]);
+
+  // Pointer drag controls for 360° interactive spinning
+  const handlePointerDown = (e: React.PointerEvent) => {
+    setIsDragging(true);
+    setHasInteracted(true);
+    startXRef.current = e.clientX;
+    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!isDragging) return;
+    const deltaX = e.clientX - startXRef.current;
+    startXRef.current = e.clientX;
+    currentRotationRef.current = (currentRotationRef.current + deltaX * 0.75) % 360;
+    setRotation(currentRotationRef.current);
+  };
+
+  const handlePointerUp = () => {
+    setIsDragging(false);
+  };
+
+  const currentDish = PREVIEW_DISHES[activeDishIndex];
+
   return (
-    <section className="px-6 md:px-12 py-12 max-w-7xl mx-auto w-full">
+    <section className="px-6 md:px-12 py-16 max-w-7xl mx-auto w-full select-none">
       {/* Spatial 3D Showcase Spotlight Container */}
       <div
-        className="relative overflow-hidden rounded-2xl border p-8 sm:p-12 lg:p-16 shadow-2xl"
+        className="relative overflow-hidden rounded-3xl border p-8 sm:p-12 lg:p-16 shadow-[0_25px_60px_rgba(0,0,0,0.85)] group"
         style={{
-          background: '#0E1F18',
-          borderColor: 'rgba(226, 168, 75, 0.22)',
+          background: 'linear-gradient(135deg, #0A1712 0%, #0E1F18 50%, #08110D 100%)',
+          borderColor: 'rgba(226, 168, 75, 0.28)',
         }}
       >
-        {/* Radial Gold Aura */}
+        {/* Animated Radial Gold & Emerald Ambient Auras */}
         <div
-          className="pointer-events-none absolute inset-0 z-0"
+          className="pointer-events-none absolute -top-32 -right-32 w-[550px] h-[550px] rounded-full blur-3xl animate-pulse-glow"
           style={{
             background:
-              'radial-gradient(circle at 80% 50%, rgba(226, 168, 75, 0.16), transparent 65%)',
+              'radial-gradient(circle, rgba(226, 168, 75, 0.18) 0%, rgba(14, 31, 24, 0.05) 70%, transparent 100%)',
+          }}
+        />
+        <div
+          className="pointer-events-none absolute -bottom-32 -left-32 w-[450px] h-[450px] rounded-full blur-3xl"
+          style={{
+            background:
+              'radial-gradient(circle, rgba(34, 197, 139, 0.12) 0%, transparent 70%)',
           }}
         />
 
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
+        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-10 items-center">
           {/* Left Side (55% Width / lg:col-span-7) */}
-          <div className="lg:col-span-7 flex flex-col items-start">
-            {/* Clean Uppercase Overline in Spiced Saffron #E0532B (No pill badge) */}
-            <span className="text-[11px] uppercase tracking-[0.25em] text-[#E0532B] font-bold mb-4">
-              SPATIAL DINING EXPERIENCE
-            </span>
+          <div className="lg:col-span-7 flex flex-col items-start text-left">
+            {/* Overline with Pulsing Radar Dot */}
+            <div className="flex items-center gap-2.5 mb-4">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E0532B] opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#E0532B]" />
+              </span>
+              <span className="text-[11px] uppercase tracking-[0.25em] text-[#E0532B] font-bold">
+                SPATIAL DINING EXPERIENCE · WEBXR READY
+              </span>
+            </div>
 
-            {/* Heading: 42px Serif with "Interactive 3D" in Gold Italic */}
-            <h2 className="font-serif text-3xl sm:text-4xl lg:text-[42px] leading-tight font-bold text-[#FAF5EC] mb-5 tracking-tight">
+            {/* Heading: 42px Serif with "Interactive 3D & AR" in Molten Gold */}
+            <h2 className="font-serif text-3xl sm:text-5xl lg:text-[46px] leading-[1.12] font-bold text-[#FAF5EC] mb-5 tracking-tight">
               Explore Dishes in{' '}
               <span className="italic text-[#E2A84B] font-normal block sm:inline">
-                Interactive 3D
+                Interactive 3D &amp; AR
               </span>
             </h2>
 
             {/* Subtext */}
             <p className="text-sm sm:text-base text-[#B5ADA2] font-light leading-relaxed mb-8 max-w-xl">
-              Rotate, inspect textures, and preview portion sizes of our signature artisan pizzas and fusion dishes right on your screen before placing your order.
+              Rotate, inspect photorealistic textures, and preview exact 1:1 portion sizes of our signature wood-fired pizzas and fusion cuisine right in your physical dining space before ordering.
             </p>
 
-            {/* Crisp Metallic Gold Gradient Button */}
-            <Link
-              href="/ar"
-              className="inline-flex items-center justify-center gap-2 px-7 py-3.5 text-xs sm:text-sm font-bold text-[#0D0A08] transition-all duration-300 hover:brightness-110 active:scale-[0.98] group shadow-md"
-              style={{
-                background: 'linear-gradient(135deg, #F6D386 0%, #D49432 50%, #9E6818 100%)',
-                borderRadius: '6px',
-              }}
-            >
-              <span>Launch 3D Food Lounge</span>
-              <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
-            </Link>
+            {/* Interactive Dish Switcher Pills */}
+            <div className="flex flex-wrap items-center gap-2 mb-8 w-full">
+              <span className="text-[10px] uppercase tracking-wider text-[#9A9286] font-semibold mr-2 block sm:inline">
+                PREVIEW DISH:
+              </span>
+              {PREVIEW_DISHES.map((dish, idx) => {
+                const isActive = activeDishIndex === idx;
+                return (
+                  <button
+                    key={dish.id}
+                    type="button"
+                    onClick={() => setActiveDishIndex(idx)}
+                    className="px-3.5 py-1.5 rounded-full text-xs font-medium transition-all duration-300 flex items-center gap-1.5 active:scale-95 shadow-sm"
+                    style={{
+                      background: isActive
+                        ? 'rgba(226, 168, 75, 0.22)'
+                        : 'rgba(255, 255, 255, 0.04)',
+                      borderColor: isActive
+                        ? '#E2A84B'
+                        : 'rgba(255, 255, 255, 0.1)',
+                      borderWidth: '1px',
+                      color: isActive ? '#FAF5EC' : '#B5ADA2',
+                    }}
+                  >
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full ${
+                        isActive ? 'bg-[#E2A84B]' : 'bg-transparent'
+                      }`}
+                    />
+                    <span>{dish.name}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Spatial Feature Micro-Badges */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8 w-full max-w-xl">
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-black/30 border border-white/[0.06] text-xs text-[#FAF5EC]">
+                <Box className="w-3.5 h-3.5 text-[#E2A84B] shrink-0" />
+                <span className="truncate">1:1 Physical Scale</span>
+              </div>
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-black/30 border border-white/[0.06] text-xs text-[#FAF5EC]">
+                <Sparkles className="w-3.5 h-3.5 text-[#22C58B] shrink-0" />
+                <span className="truncate">Zero App Required</span>
+              </div>
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-black/30 border border-white/[0.06] text-xs text-[#FAF5EC]">
+                <RotateCw className="w-3.5 h-3.5 text-[#E0532B] shrink-0" />
+                <span className="truncate">360° Free Rotation</span>
+              </div>
+            </div>
+
+            {/* Action CTA Pair */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full sm:w-auto">
+              {/* Primary Launch 3D Food Lounge Button */}
+              <Link
+                href="/ar"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 text-xs sm:text-sm font-extrabold text-[#0D0A08] transition-all duration-300 hover:brightness-110 active:scale-[0.98] group shadow-[0_4px_25px_rgba(226,168,75,0.4)]"
+                style={{
+                  background: 'linear-gradient(135deg, #F6D386 0%, #D49432 50%, #9E6818 100%)',
+                  borderRadius: '6px',
+                }}
+              >
+                <span>Launch 3D Food Lounge</span>
+                <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </Link>
+
+              {/* Secondary Instant AR Button */}
+              <Link
+                href="/ar"
+                className="inline-flex items-center justify-center gap-2 px-6 py-4 text-xs sm:text-sm font-semibold text-[#FAF5EC] border transition-all duration-300 hover:bg-[#0E1F18] hover:border-[#E2A84B]/60 active:scale-[0.98]"
+                style={{
+                  borderColor: 'rgba(250, 245, 236, 0.24)',
+                  borderRadius: '6px',
+                }}
+              >
+                <Box className="w-4 h-4 text-[#E2A84B]" />
+                <span>Open in Augmented Reality</span>
+              </Link>
+            </div>
           </div>
 
-          {/* Right Side (45% Width / lg:col-span-5) — Circular Dish Platter with 360° Orbital Gold Ring & 3 Floating Clean Vector Tags */}
-          <div className="lg:col-span-5 relative w-full aspect-square max-w-[420px] mx-auto flex items-center justify-center">
-            {/* 360° Orbital Gold Ring (SVG Ellipse Ring) */}
+          {/* Right Side (45% Width / lg:col-span-5) — Interactive 360° Rotatable Platter with Floating Holographic Tags */}
+          <div className="lg:col-span-5 relative w-full aspect-square max-w-[440px] mx-auto flex items-center justify-center">
+            {/* Concentric Dual Orbital SVG Geometry Rings */}
             <svg
-              className="absolute inset-0 w-full h-full pointer-events-none animate-[spin_50s_linear_infinite]"
+              className="absolute inset-0 w-full h-full pointer-events-none animate-[spin_45s_linear_infinite]"
               viewBox="0 0 400 400"
               fill="none"
             >
               <ellipse
                 cx="200"
                 cy="200"
-                rx="180"
-                ry="130"
-                transform="rotate(-25 200 200)"
+                rx="185"
+                ry="135"
+                transform="rotate(-20 200 200)"
                 stroke="rgba(226, 168, 75, 0.35)"
                 strokeWidth="1.5"
                 strokeDasharray="6 8"
               />
-              <circle cx="60" cy="140" r="4" fill="#E2A84B" />
-              <circle cx="340" cy="260" r="4" fill="#E0532B" />
+              <circle cx="50" cy="145" r="4.5" fill="#E2A84B" />
+              <circle cx="350" cy="255" r="4.5" fill="#E0532B" />
             </svg>
 
-            {/* Central Round Dish Platter (Rounded Platter Frame without awkward square image box) */}
-            <div
-              className="relative w-[230px] h-[230px] sm:w-[270px] sm:h-[270px] rounded-full overflow-hidden border-2 border-[#E2A84B]/35 z-10 transition-transform hover:scale-105 duration-500 shadow-[0_20px_50px_rgba(0,0,0,0.85)]"
+            <svg
+              className="absolute inset-4 w-[calc(100%-32px)] h-[calc(100%-32px)] pointer-events-none animate-[spin_35s_linear_infinite_reverse]"
+              viewBox="0 0 400 400"
+              fill="none"
             >
-              <Image
-                src="/images/dishes/tandoori-paneer-pizza.webp"
-                alt="Wood-Fired Tandoori Paneer Pizza 3D Rendering"
-                fill
-                sizes="(max-width: 640px) 230px, 270px"
-                className="object-cover scale-110"
+              <ellipse
+                cx="200"
+                cy="200"
+                rx="160"
+                ry="115"
+                transform="rotate(30 200 200)"
+                stroke="rgba(34, 197, 139, 0.25)"
+                strokeWidth="1"
+                strokeDasharray="4 6"
               />
+              <circle cx="200" cy="85" r="3.5" fill="#22C58B" />
+            </svg>
+
+            {/* Central Round Dish Platter (Interactive Pointer Drag & Auto-Rotation) */}
+            <div
+              className="relative w-[240px] h-[240px] sm:w-[280px] sm:h-[280px] rounded-full overflow-hidden border-2 border-[#E2A84B]/40 z-10 transition-transform duration-100 shadow-[0_25px_60px_rgba(0,0,0,0.95),0_0_35px_rgba(226,168,75,0.25)] cursor-grab active:cursor-grabbing group/platter"
+              onPointerDown={handlePointerDown}
+              onPointerMove={handlePointerMove}
+              onPointerUp={handlePointerUp}
+              onPointerCancel={handlePointerUp}
+              title="Drag horizontally to rotate 360°"
+            >
+              <div
+                className="relative w-full h-full"
+                style={{
+                  transform: `rotate(${rotation}deg) scale(1.08)`,
+                  transition: isDragging ? 'none' : 'transform 75ms linear',
+                }}
+              >
+                <Image
+                  src={currentDish.image}
+                  alt={`${currentDish.name} Spatial 3D Preview`}
+                  fill
+                  sizes="(max-width: 640px) 240px, 280px"
+                  className="object-cover pointer-events-none"
+                  priority
+                />
+              </div>
+
+              {/* Inner Platter Rim Shadow & Specular Sheen */}
               <div
                 className="absolute inset-0 pointer-events-none rounded-full"
                 style={{
-                  boxShadow: 'inset 0 0 30px rgba(0, 0, 0, 0.6)',
+                  boxShadow:
+                    'inset 0 0 35px rgba(0, 0, 0, 0.75), inset 0 2px 4px rgba(255, 255, 255, 0.15)',
                 }}
               />
+
+              {/* Subtle Drag Hint Overlay (fades once user interacts) */}
+              {!hasInteracted && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[2px] pointer-events-none transition-opacity duration-500 rounded-full">
+                  <div className="px-3 py-1 rounded-full bg-[#0D0A08]/90 border border-[#E2A84B]/50 flex items-center gap-1.5 text-[10px] text-[#FAF5EC] font-semibold tracking-wide shadow-lg">
+                    <RotateCw className="w-3 h-3 text-[#E2A84B] animate-spin" />
+                    <span>Drag to Rotate</span>
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Floating Glass Tag 1: 4K Texture Zoom (Vector Lucide Icon, NO EMOJI) */}
+            {/* Floating Holographic Tag 1: 4K Texture Zoom (Animated Float Gentle) */}
             <div
-              className="absolute -top-1 left-2 sm:left-4 z-20 px-3.5 py-1.5 rounded-full text-[11px] font-medium text-[#FAF5EC] shadow-xl flex items-center gap-2"
+              className="absolute -top-3 left-0 sm:left-2 z-20 px-3.5 py-1.5 rounded-full text-[11px] font-medium text-[#FAF5EC] shadow-2xl flex items-center gap-2 animate-float-gentle border pointer-events-none"
               style={{
-                background: 'rgba(13, 10, 8, 0.85)',
-                backdropFilter: 'blur(10px)',
-                WebkitBackdropFilter: 'blur(10px)',
-                border: '1px solid rgba(226, 168, 75, 0.35)',
+                background: 'rgba(13, 10, 8, 0.88)',
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
+                borderColor: 'rgba(226, 168, 75, 0.4)',
               }}
             >
+              <span className="w-1.5 h-1.5 rounded-full bg-[#E2A84B] animate-pulse" />
               <ZoomIn className="w-3.5 h-3.5 text-[#E2A84B]" />
-              <span>4K Texture Zoom</span>
+              <span className="font-semibold tracking-wide">4K Texture Zoom</span>
             </div>
 
-            {/* Floating Glass Tag 2: True Portion Scale (Vector Lucide Icon, NO EMOJI) */}
+            {/* Floating Holographic Tag 2: True Portion Scale (Animated Float Delayed) */}
             <div
-              className="absolute top-10 -right-2 sm:right-0 z-20 px-3.5 py-1.5 rounded-full text-[11px] font-medium text-[#FAF5EC] shadow-xl flex items-center gap-2"
+              className="absolute top-8 -right-2 sm:-right-4 z-20 px-3.5 py-1.5 rounded-full text-[11px] font-medium text-[#FAF5EC] shadow-2xl flex items-center gap-2 animate-float-delayed border pointer-events-none"
               style={{
-                background: 'rgba(13, 10, 8, 0.85)',
-                backdropFilter: 'blur(10px)',
-                WebkitBackdropFilter: 'blur(10px)',
-                border: '1px solid rgba(226, 168, 75, 0.35)',
+                background: 'rgba(13, 10, 8, 0.88)',
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
+                borderColor: 'rgba(226, 168, 75, 0.4)',
               }}
             >
+              <span className="w-1.5 h-1.5 rounded-full bg-[#22C58B] animate-pulse" />
               <Maximize2 className="w-3.5 h-3.5 text-[#E2A84B]" />
-              <span>True Portion Scale</span>
+              <span className="font-semibold tracking-wide">{currentDish.scale}</span>
             </div>
 
-            {/* Floating Glass Tag 3: Live Ingredient Layering (Vector Lucide Icon, NO EMOJI) */}
+            {/* Floating Holographic Tag 3: Live Ingredient Layering (Animated Float Gentle) */}
             <div
-              className="absolute -bottom-2 sm:bottom-0 left-1/2 -translate-x-1/2 z-20 px-4 py-1.5 rounded-full text-[11px] font-medium text-[#FAF5EC] shadow-xl flex items-center gap-2 whitespace-nowrap"
+              className="absolute -bottom-4 left-1/2 -translate-x-1/2 z-20 px-4 py-2 rounded-full text-[11px] font-medium text-[#FAF5EC] shadow-2xl flex items-center gap-2 whitespace-nowrap animate-float-gentle border pointer-events-none"
               style={{
-                background: 'rgba(13, 10, 8, 0.85)',
-                backdropFilter: 'blur(10px)',
-                WebkitBackdropFilter: 'blur(10px)',
-                border: '1px solid rgba(226, 168, 75, 0.35)',
+                background: 'rgba(13, 10, 8, 0.90)',
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
+                borderColor: 'rgba(226, 168, 75, 0.4)',
               }}
             >
               <Layers className="w-3.5 h-3.5 text-[#E2A84B]" />
-              <span>Live Ingredient Layering</span>
+              <span className="text-[#FAF5EC] font-semibold">{currentDish.ingredients}</span>
             </div>
           </div>
         </div>
