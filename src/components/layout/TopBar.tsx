@@ -119,17 +119,28 @@ export function TopBar() {
               </span>
             </button>
 
-            {/* Favorites Heart Icon (Clean, no circular border box) */}
+            {/* Favorites Heart Icon with Active Molten Gold State & 4px Glow Dot */}
             <Link
               href="/favorites"
               title="Saved Favorites"
-              className="relative text-[#FAF5EC] hover:text-[#E2A84B] transition-colors p-1"
+              className={`relative p-1 transition-all flex flex-col items-center ${
+                pathname === '/favorites'
+                  ? 'text-[#E2A84B]'
+                  : 'text-[#FAF5EC] hover:text-[#E2A84B]'
+              }`}
             >
-              <Heart className="w-4 h-4" />
+              <Heart
+                className={`w-4 h-4 transition-colors ${
+                  pathname === '/favorites' ? 'fill-[#E2A84B]/20 stroke-[#E2A84B]' : ''
+                }`}
+              />
               {isMounted && favoriteCount > 0 && (
-                <span className="absolute -top-1 -right-1.5 min-w-[15px] h-[15px] px-0.5 rounded-full bg-[#E0532B] text-white text-[8.5px] font-bold flex items-center justify-center">
+                <span className="absolute -top-1 -right-1.5 min-w-[15px] h-[15px] px-0.5 rounded-full bg-[#E0532B] text-white text-[8.5px] font-bold flex items-center justify-center shadow-sm">
                   {favoriteCount}
                 </span>
+              )}
+              {pathname === '/favorites' && (
+                <span className="absolute -bottom-1.5 w-1 h-1 rounded-full bg-[#E2A84B] shadow-[0_0_8px_#E2A84B]" />
               )}
             </Link>
 
