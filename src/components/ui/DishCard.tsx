@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Plus, Sparkles, Heart } from 'lucide-react';
+import { Plus, Sparkles, Heart, Box } from 'lucide-react';
 import type { Dish } from '@/types/menu';
 import { useCartStore } from '@/store/cart-store';
 import { useFavoritesStore } from '@/store/favorites-store';
@@ -46,7 +46,7 @@ export function DishCard({ dish, onAdd }: DishCardProps) {
   return (
     <div className="flex-none w-[280px] sm:w-[300px] rounded-2xl bg-[#09150d]/85 border border-white/[0.08] hover:border-white/20 overflow-hidden group transition-all duration-300 hover:-translate-y-1 shadow-[0_12px_32px_rgba(0,0,0,0.5)]">
       <Link
-        href={`/menu/${dish.category || 'all'}/${dish.slug}`}
+        href={`/3d/${dish.slug}`}
         className="relative aspect-[4/3] w-full block bg-black/40 overflow-hidden"
       >
         <Image
@@ -70,21 +70,20 @@ export function DishCard({ dish, onAdd }: DishCardProps) {
           )}
         </div>
 
-        {/* Top-Right: 3D Badge Button */}
-        {show3D && (
-          <button
-            type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              window.location.href = `/3d/${dish.slug}`;
-            }}
-            className="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-[#d4af37] flex items-center justify-center text-black shadow-lg hover:scale-110 active:scale-95 transition-transform z-10"
-            title="View in 3D"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-          </button>
-        )}
+        {/* Top-Right: AR Button */}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            window.location.href = `/ar/${dish.slug}`;
+          }}
+          className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full bg-[#0D0A08]/90 border border-[#d4af37]/40 flex items-center gap-1 text-[10px] font-bold text-[#d4af37] shadow-lg hover:scale-105 active:scale-95 transition-transform z-10"
+          title="View in AR"
+        >
+          <Box className="w-3 h-3 text-[#d4af37]" />
+          <span>AR</span>
+        </button>
 
         {/* Bottom-Right: Heart Button */}
         <button
@@ -101,7 +100,7 @@ export function DishCard({ dish, onAdd }: DishCardProps) {
         <div>
           <div className="flex items-start justify-between gap-2 mb-1.5">
             <Link
-              href={`/menu/${dish.category || 'all'}/${dish.slug}`}
+              href={`/3d/${dish.slug}`}
               className="font-heading text-base font-bold text-white line-clamp-1 hover:text-[#d4af37] transition-colors"
             >
               {dish.name}

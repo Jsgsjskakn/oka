@@ -88,7 +88,7 @@ export function FavoriteDishCard({ dish }: FavoriteDishCardProps) {
       {/* Top Image Frame with Soft Dark Bottom Fade */}
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-black/70">
         <Link
-          href={`/menu/${dish.category || 'all'}/${dish.slug}`}
+          href={`/3d/${dish.slug}`}
           className="relative block w-full h-full"
         >
           <Image
@@ -165,7 +165,7 @@ export function FavoriteDishCard({ dish }: FavoriteDishCardProps) {
 
           {/* Dish Title */}
           <Link
-            href={`/menu/${dish.category || 'all'}/${dish.slug}`}
+            href={`/3d/${dish.slug}`}
             className="block font-serif text-[20px] sm:text-[22px] font-bold text-[#FAF5EC] leading-snug hover:text-[#E2A84B] transition-colors line-clamp-1"
           >
             {dish.name}
@@ -226,23 +226,14 @@ export function FavoriteDishCard({ dish }: FavoriteDishCardProps) {
               )}
             </button>
 
-            {/* View in 3D Button */}
-            {canShow3D ? (
-              <Link
-                href={`/3d/${dish.slug}`}
-                className="py-2 px-3 rounded-[6px] bg-white/[0.05] hover:bg-white/[0.1] border border-[rgba(226,168,75,0.3)] text-xs font-semibold text-[#FAF5EC] hover:text-[#E2A84B] flex items-center justify-center gap-1.5 transition-all active:scale-95 text-center"
-              >
-                <Box className="w-3.5 h-3.5 text-[#E2A84B]" />
-                <span>View in 3D</span>
-              </Link>
-            ) : (
-              <Link
-                href={`/menu/${dish.category || 'all'}/${dish.slug}`}
-                className="py-2 px-3 rounded-[6px] bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-xs font-semibold text-[#FAF5EC] flex items-center justify-center gap-1 transition-all active:scale-95 text-center"
-              >
-                <span>Details →</span>
-              </Link>
-            )}
+            {/* View in AR Button */}
+            <Link
+              href={`/ar/${dish.slug}`}
+              className="py-2 px-3 rounded-[6px] bg-white/[0.05] hover:bg-white/[0.1] border border-[rgba(226,168,75,0.3)] text-xs font-semibold text-[#FAF5EC] hover:text-[#E2A84B] flex items-center justify-center gap-1.5 transition-all active:scale-95 text-center"
+            >
+              <Box className="w-3.5 h-3.5 text-[#E2A84B]" />
+              <span>View in AR</span>
+            </Link>
           </div>
         </div>
       </div>

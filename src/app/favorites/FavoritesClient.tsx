@@ -258,7 +258,7 @@ export function FavoritesClient({ allDishes }: { allDishes: Dish[] }) {
                         >
                           {/* Image Frame */}
                           <div className="relative aspect-[4/3] w-full overflow-hidden bg-black/70">
-                            <Link href={`/menu/${rec.category || 'all'}/${rec.slug}`}>
+                            <Link href={`/3d/${rec.slug}`}>
                               <Image
                                 src={resolveDishImageUrl(rec.slug, rec.image)}
                                 alt={rec.name}
@@ -306,7 +306,7 @@ export function FavoritesClient({ allDishes }: { allDishes: Dish[] }) {
                           <div className="p-4 flex flex-col justify-between flex-1 space-y-2">
                             <div>
                               <Link
-                                href={`/menu/${rec.category || 'all'}/${rec.slug}`}
+                                href={`/3d/${rec.slug}`}
                                 className="font-serif text-base font-bold text-[#FAF5EC] line-clamp-1 hover:text-[#E2A84B] transition-colors"
                               >
                                 {rec.name}

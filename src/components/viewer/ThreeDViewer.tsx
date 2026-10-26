@@ -96,8 +96,8 @@ export function ThreeDViewer({
   }, []);
 
   const handleViewDetails = useCallback(() => {
-    router.push(`/menu/${dish.category}/${dish.slug}`);
-  }, [router, dish]);
+    setShowInfo(true);
+  }, []);
 
   return (
     <div

@@ -80,9 +80,9 @@ export function CartItemCard({ item, onUpdateQuantity, onRemove }: CartItemCardP
         </div>
       )}
 
-      {/* Dish Photo with 3D Studio Trigger Badge */}
+      {/* Dish Photo with AR Trigger Badge */}
       <div className="relative w-20 h-20 sm:w-[88px] sm:h-[88px] rounded-lg overflow-hidden shrink-0 bg-black/60 border border-white/10">
-        <Link href={`/menu/${dish.category || 'all'}/${dish.slug}`}>
+        <Link href={`/3d/${dish.slug}`}>
           <Image
             src={resolvedImage}
             alt={dish.name}
@@ -92,14 +92,14 @@ export function CartItemCard({ item, onUpdateQuantity, onRemove }: CartItemCardP
           />
         </Link>
 
-        {/* 3D Model Quick Trigger */}
+        {/* AR Quick Trigger */}
         <Link
-          href={`/3d/${dish.slug}`}
-          title="Inspect Dish in 3D Studio"
+          href={`/ar/${dish.slug}`}
+          title="Place Dish on Table in AR"
           className="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded bg-black/85 backdrop-blur-md border border-[#E2A84B]/40 text-[9px] font-mono font-bold text-[#E2A84B] flex items-center gap-1 hover:bg-[#E2A84B] hover:text-[#0D0A08] transition-all z-10 shadow-md"
         >
           <Box className="w-2.5 h-2.5" />
-          <span>3D</span>
+          <span>AR</span>
         </Link>
       </div>
 
@@ -109,7 +109,7 @@ export function CartItemCard({ item, onUpdateQuantity, onRemove }: CartItemCardP
           {/* Header Row: Title & Trash Trigger */}
           <div className="flex justify-between items-start gap-2">
             <Link
-              href={`/menu/${dish.category || 'all'}/${dish.slug}`}
+              href={`/3d/${dish.slug}`}
               className="font-serif text-lg sm:text-[21px] font-bold text-[#FAF5EC] hover:text-[#E2A84B] transition-colors leading-tight line-clamp-1"
             >
               {dish.name}

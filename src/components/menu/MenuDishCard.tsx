@@ -103,7 +103,7 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
       {/* Top Image Frame with Soft Dark Bottom Fade */}
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-black/70">
         <Link
-          href={`/menu/${dish.categories?.slug || 'all'}/${dish.slug}`}
+          href={`/3d/${dish.slug}`}
           onClick={handleCardClick}
           className="relative block w-full h-full"
         >
@@ -136,28 +136,22 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
           <span>{badgeText}</span>
         </div>
 
-        {/* Top-Right: 3D View Trigger Button */}
-        {show3D && (
-          <button
-            type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              router.push(`/3d/${dish.slug}`);
-            }}
-            title="Launch Interactive 3D View"
-            className="absolute top-3 right-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10.5px] font-bold text-[#FAF5EC] hover:text-[#E2A84B] hover:border-[#E2A84B] active:scale-95 transition-all shadow-lg group/threed"
-            style={{
-              background: 'rgba(13, 10, 8, 0.85)',
-              backdropFilter: 'blur(8px)',
-              WebkitBackdropFilter: 'blur(8px)',
-              border: '1px solid rgba(226, 168, 75, 0.35)',
-            }}
-          >
-            <Box className="w-3.5 h-3.5 text-[#E2A84B] group-hover/threed:rotate-45 transition-transform duration-300" />
-            <span>3D VIEW</span>
-          </button>
-        )}
+        {/* Top-Right: View in AR Button */}
+        <Link
+          href={`/ar/${dish.slug}`}
+          onClick={(e) => e.stopPropagation()}
+          title="Place on Table (AR)"
+          className="absolute top-3 right-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10.5px] font-bold text-[#FAF5EC] hover:text-[#E2A84B] hover:border-[#E2A84B] active:scale-95 transition-all shadow-lg group/ar"
+          style={{
+            background: 'rgba(13, 10, 8, 0.85)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            border: '1px solid rgba(226, 168, 75, 0.35)',
+          }}
+        >
+          <Box className="w-3.5 h-3.5 text-[#E2A84B] group-hover/ar:rotate-45 transition-transform duration-300" />
+          <span>VIEW IN AR</span>
+        </Link>
 
         {/* Bottom-Right: Heart Favorite Button */}
         <button
@@ -205,7 +199,7 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
 
           {/* Full Dish Title (No Truncation / No Ellipsis) */}
           <Link
-            href={`/menu/${dish.categories?.slug || 'all'}/${dish.slug}`}
+            href={`/3d/${dish.slug}`}
             onClick={handleCardClick}
             className="block font-serif text-[20px] sm:text-[22px] font-bold text-[#FAF5EC] leading-snug hover:text-[#E2A84B] transition-colors line-clamp-2 min-h-[52px]"
           >

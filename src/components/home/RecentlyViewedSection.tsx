@@ -71,7 +71,7 @@ export function RecentlyViewedSection() {
             >
               {/* 52x52px square thumbnail */}
               <Link
-                href={`/menu/${dish.categories?.slug || 'all'}/${dish.slug}`}
+                href={`/3d/${dish.slug}`}
                 className="relative w-[52px] h-[52px] rounded-md overflow-hidden bg-black/50 shrink-0"
               >
                 <Image
@@ -86,7 +86,7 @@ export function RecentlyViewedSection() {
               {/* Title & Price */}
               <div className="flex flex-col min-w-0 pr-2">
                 <Link
-                  href={`/menu/${dish.categories?.slug || 'all'}/${dish.slug}`}
+                  href={`/3d/${dish.slug}`}
                   className="font-serif text-sm font-semibold text-[#FAF5EC] truncate group-hover:text-[#E2A84B] transition-colors"
                 >
                   {dish.name}

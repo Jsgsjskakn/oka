@@ -223,9 +223,9 @@ export default async function MenuAdminPage() {
 
                           <div className="space-y-0.5">
                             <div className="flex items-center gap-2">
-                              <span className="font-semibold text-zinc-100 group-hover:text-platinum transition-colors">
+                              <Link href={`/3d/${item.slug}`} target="_blank" title="Open 3D Studio" className="font-semibold text-zinc-100 hover:text-[#E2A84B] transition-colors">
                                 {item.name}
-                              </span>
+                              </Link>
                               {item.has_3d_model && (
                                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-platinum/5 text-platinum border border-cyan-500/20 shadow-[0_0_10px_rgba(6,182,212,0.15)]">
                                   <Box className="w-2.5 h-2.5" />
@@ -270,13 +270,19 @@ export default async function MenuAdminPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <Link 
-                          href={`/admin/menu/dishes/${item.id}`} 
-                          className="inline-flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-lg border border-border-subtle bg-champagne/10 text-platinum hover:bg-champagne/20 hover:border-champagne/50 hover:shadow-[0_0_12px_rgba(201,168,76,0.2)] transition-all duration-300 shadow-sm"
-                        >
-                          <Edit3 className="w-3.5 h-3.5" />
-                          <span>Edit</span>
-                        </Link>
+                        <div className="flex items-center justify-end gap-2">
+                          <Link href={`/3d/${item.slug}`} target="_blank" title="Open 3D Studio" className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-[rgba(226,168,75,0.3)] bg-champagne/5 text-[#E2A84B] hover:bg-[#E2A84B]/15 hover:border-[#E2A84B] transition-all shadow-sm">
+                            <Box className="w-3.5 h-3.5" />
+                            <span>3D</span>
+                          </Link>
+                          <Link 
+                            href={`/admin/menu/dishes/${item.id}`} 
+                            className="inline-flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-lg border border-border-subtle bg-champagne/10 text-platinum hover:bg-champagne/20 hover:border-champagne/50 hover:shadow-[0_0_12px_rgba(201,168,76,0.2)] transition-all duration-300 shadow-sm"
+                          >
+                            <Edit3 className="w-3.5 h-3.5" />
+                            <span>Edit</span>
+                          </Link>
+                        </div>
                       </td>
                     </tr>
                   );

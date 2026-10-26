@@ -92,7 +92,7 @@ export function ARViewer({ dish, config, isFavorite, onToggleFavorite, onAddToCa
 
   const handleExit = useCallback(() => router.back(), [router]);
   const handleContinue3D = useCallback(() => router.push(`/3d/${dish.id}`), [router, dish.id]);
-  const handleViewDetails = useCallback(() => router.push(`/menu/${dish.category}/${dish.slug}`), [router, dish]);
+  const handleViewDetails = useCallback(() => router.push(`/3d/${dish.slug}`), [router, dish.slug]);
 
   // Capture screenshot
   const handleCapture = useCallback(async () => {

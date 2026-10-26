@@ -20,7 +20,7 @@ export function RecommendationCarousel({ dishes }: RecommendationCarouselProps) 
       <div className="flex overflow-x-auto gap-4 px-4 pb-4 snap-x snap-mandatory scrollbar-hide">
         {dishes.map((dish) => (
           <Link 
-            href={`/menu/${dish.category}/${dish.slug}`} 
+            href={`/3d/${dish.slug}`}
             key={dish.id}
             className="block relative w-40 shrink-0 snap-start rounded-xl overflow-hidden bg-[#1a1a1a] border border-white/5 group active:scale-[0.98] transition-transform"
           >
