@@ -106,13 +106,22 @@ export async function signoutAction(): Promise<{ success: boolean }> {
   return { success: true };
 }
 
+function withTimeout<T>(promise: Promise<T>, ms = 2500): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error(`Timeout after ${ms}ms`)), ms)
+    ),
+  ]);
+}
+
 export async function getCurrentUser(): Promise<any | null> {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get(COOKIE_NAME)?.value;
     if (!token) return null;
 
-    const user = await fetchQuery(api.auth.validateSession, { token });
+    const user = await withTimeout(fetchQuery(api.auth.validateSession, { token }), 2500);
     return user || null;
   } catch {
     return null;

@@ -99,10 +99,19 @@ function mapConvexDish(d: any, category?: Category): DishWithCategory {
   };
 }
 
+function withTimeout<T>(promise: Promise<T>, ms = 3500): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error(`Operation timed out after ${ms}ms`)), ms)
+    ),
+  ]);
+}
+
 export async function getCategories(): Promise<Category[]> {
   // 1. Primary: Try Convex
   try {
-    const data = await fetchQuery(api.menu.getCategories, {});
+    const data = await withTimeout(fetchQuery(api.menu.getCategories, {}), 3500);
     if (data && data.length > 0) {
       return data.map((c: any) => ({
         id: c.id,
@@ -140,7 +149,7 @@ export async function getCategories(): Promise<Category[]> {
 export async function getDishesByCategory(categorySlug: string): Promise<DishWithCategory[]> {
   // 1. Primary: Try Convex
   try {
-    const data = await fetchQuery(api.menu.getDishesByCategory, { categorySlug });
+    const data = await withTimeout(fetchQuery(api.menu.getDishesByCategory, { categorySlug }), 3500);
     if (data && data.length > 0) {
       return data.map((d: any) => mapConvexDish(d));
     }
@@ -210,7 +219,7 @@ export async function getDishBySlug(categorySlug: string, dishSlug: string): Pro
 export async function getDishById(dishId: string): Promise<DishWithCategory | null> {
   // 1. Try matching slug or ID in Convex
   try {
-    const dish = await fetchQuery(api.menu.getDishBySlug, { slug: dishId });
+    const dish = await withTimeout(fetchQuery(api.menu.getDishBySlug, { slug: dishId }), 3500);
     if (dish) return mapConvexDish(dish);
   } catch {
     // continue to Supabase
@@ -242,7 +251,7 @@ export async function getDishById(dishId: string): Promise<DishWithCategory | nu
 export async function getAllDishes(): Promise<DishWithCategory[]> {
   // 1. Primary: Try Convex
   try {
-    const data = await fetchQuery(api.menu.getAllDishes, {});
+    const data = await withTimeout(fetchQuery(api.menu.getAllDishes, {}), 3500);
     if (data && data.length > 0) {
       return data.map((d: any) => mapConvexDish(d));
     }
