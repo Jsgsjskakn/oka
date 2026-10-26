@@ -67,51 +67,52 @@ export function TopBar() {
   return (
     <>
       <header
-        className="sticky top-0 left-0 right-0 h-[80px] z-50 transition-all select-none border-b"
+        className="sticky top-0 left-0 right-0 h-[84px] z-50 transition-all select-none border-b"
         style={{
-          background: 'rgba(13, 10, 8, 0.78)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderBottomColor: 'rgba(226, 168, 75, 0.14)',
+          background: 'rgba(12, 11, 9, 0.82)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          borderBottom: '1px solid rgba(226, 168, 75, 0.16)',
+          boxShadow: '0 4px 30px rgba(0, 0, 0, 0.45)',
         }}
       >
-        <div className="max-w-7xl mx-auto h-full px-6 md:px-12 flex items-center justify-between gap-6">
-          {/* Left Zone: Brand Crest */}
-          <Link href="/" className="flex items-center gap-3 group shrink-0">
+        <div className="max-w-[1440px] mx-auto h-full px-6 sm:px-10 lg:px-14 flex items-center justify-between gap-6">
+          {/* Left Zone: Brand Crest & Monogram */}
+          <Link href="/" className="flex items-center gap-3.5 group shrink-0">
             {/* Minimal Gold Monogram Crest (no yellow background box) */}
             <UtensilsCrossed className="w-5 h-5 text-[#E2A84B] group-hover:scale-105 transition-transform" />
             <div className="flex flex-col">
-              <span className="font-serif text-[22px] font-bold tracking-tight text-[#FAF5EC] group-hover:text-[#E2A84B] transition-colors leading-none">
+              <span className="font-serif text-[23px] font-bold tracking-tight text-[#FAF5EC] group-hover:text-[#E2A84B] transition-colors leading-none">
                 The Golden Oak
               </span>
-              <span className="text-[9px] tracking-[0.28em] uppercase text-[#9A9286] font-medium mt-1 leading-none">
+              <span className="text-[9px] tracking-[0.32em] uppercase text-[#9A9286] font-medium mt-1 leading-none font-mono">
                 ARTISANAL DINING
               </span>
             </div>
           </Link>
 
           {/* Center Zone: 4 Primary Editorial Nav Links */}
-          <nav className="hidden lg:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-9">
             {navLinks.map((link) => {
               const isActive = pathname.startsWith(link.href);
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="relative py-2 text-sm font-medium transition-colors group flex flex-col items-center"
+                  className="relative py-2 text-[13.5px] tracking-[0.08em] transition-colors group flex flex-col items-center"
                 >
                   <span
                     className={`transition-colors ${
-                      isActive ? 'text-[#FAF5EC] font-semibold' : 'text-[#FAF5EC]/75 group-hover:text-[#FAF5EC]'
+                      isActive ? 'text-[#E2A84B] font-semibold' : 'text-[#B5ADA2] group-hover:text-[#FAF5EC] font-medium'
                     }`}
                   >
                     {link.label}
                   </span>
-                  {/* Subtle 2px gold dot or sliding underline for active link (no box) */}
+                  {/* Smooth 2px sliding gold underline for active link (NO circular dot) */}
                   {isActive ? (
-                    <span className="absolute -bottom-1 w-1.5 h-1.5 rounded-full bg-[#E2A84B]" />
+                    <span className="absolute -bottom-2 left-0 right-0 h-[2px] rounded-full bg-gradient-to-r from-[#F6D386] via-[#E2A84B] to-[#D49432] shadow-[0_0_10px_rgba(226,168,75,0.7)]" />
                   ) : (
-                    <span className="absolute -bottom-1 w-0 h-[2px] bg-[#E2A84B]/60 transition-all duration-300 group-hover:w-full rounded-full" />
+                    <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-[1.5px] rounded-full bg-[#E2A84B]/50 transition-all duration-300 group-hover:w-full" />
                   )}
                 </Link>
               );
@@ -119,88 +120,89 @@ export function TopBar() {
           </nav>
 
           {/* Right Zone: Action Cluster */}
-          <div className="flex items-center gap-4 sm:gap-5">
+          <div className="flex items-center gap-4 sm:gap-5 lg:gap-6">
             {/* Search Icon with Spotlight Modal Trigger & ⌘K Badge */}
             <button
               type="button"
               onClick={() => openSpotlight()}
               title="Search Culinary Archive (⌘K)"
-              className="group flex items-center gap-1.5 text-[#FAF5EC] hover:text-[#E2A84B] transition-all p-1 active:scale-85 cursor-pointer"
+              className="group flex items-center gap-1.5 text-[#B5ADA2] hover:text-[#FAF5EC] transition-all p-1.5 active:scale-95 cursor-pointer"
             >
               <Search className="w-4 h-4 transition-colors group-hover:text-[#E2A84B]" />
-              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/[0.06] border border-white/10 text-[#9A9286] opacity-0 group-hover:opacity-100 transition-opacity hidden sm:inline leading-none">
+              <span className="text-[9.5px] font-mono px-1.5 py-0.5 rounded-[4px] bg-white/[0.06] border border-white/10 text-[#9A9286] group-hover:border-[#E2A84B]/40 group-hover:text-[#E2A84B] opacity-0 group-hover:opacity-100 transition-all hidden sm:inline leading-none">
                 ⌘K
               </span>
             </button>
 
-            {/* Favorites Heart Icon with Active Molten Gold State & 4px Glow Dot */}
+            {/* Favorites Heart Icon with Active Molten Gold State */}
             <Link
               href="/favorites"
-              title="Saved Favorites"
-              className={`relative p-1 transition-all flex flex-col items-center ${
+              title="Personal Tasting Vault"
+              className={`relative p-1.5 transition-all flex flex-col items-center group ${
                 pathname === '/favorites'
                   ? 'text-[#E2A84B]'
-                  : 'text-[#FAF5EC] hover:text-[#E2A84B]'
+                  : 'text-[#B5ADA2] hover:text-[#FAF5EC]'
               }`}
             >
               <Heart
-                className={`w-4 h-4 transition-colors ${
-                  pathname === '/favorites' ? 'fill-[#E2A84B]/20 stroke-[#E2A84B]' : ''
+                className={`w-4 h-4 transition-transform group-hover:scale-110 ${
+                  pathname === '/favorites' ? 'fill-[#E2A84B]/25 stroke-[#E2A84B]' : ''
                 }`}
               />
               {isMounted && favoriteCount > 0 && (
-                <span className="absolute -top-1 -right-1.5 min-w-[15px] h-[15px] px-0.5 rounded-full bg-[#E0532B] text-white text-[8.5px] font-bold flex items-center justify-center shadow-sm">
+                <span className="absolute -top-1 -right-1.5 min-w-[15px] h-[15px] px-0.5 rounded-full bg-[#E0532B] text-white text-[8.5px] font-bold flex items-center justify-center shadow-[0_2px_6px_rgba(224,83,43,0.4)]">
                   {favoriteCount}
                 </span>
               )}
               {pathname === '/favorites' && (
-                <span className="absolute -bottom-1.5 w-1 h-1 rounded-full bg-[#E2A84B] shadow-[0_0_8px_#E2A84B]" />
+                <span className="absolute -bottom-1.5 w-1.5 h-1.5 rounded-full bg-[#E2A84B] shadow-[0_0_8px_#E2A84B]" />
               )}
             </Link>
 
-            {/* Cart Bag Icon with Spiced Saffron Badge (Clean, no circular border box) */}
+            {/* Cart Bag Icon with Spiced Saffron Badge */}
             <Link
               href="/cart"
-              title="Your Cart"
-              className="relative text-[#FAF5EC] hover:text-[#E2A84B] transition-colors p-1"
+              title="Your Dining Cart"
+              className="relative text-[#B5ADA2] hover:text-[#FAF5EC] transition-colors p-1.5 group"
             >
-              <ShoppingBag className="w-4 h-4" />
+              <ShoppingBag className="w-4 h-4 transition-transform group-hover:scale-110" />
               {isMounted && totalCartItems > 0 && (
-                <span className="absolute -top-1 -right-1.5 min-w-[16px] h-[16px] px-1 rounded-full bg-[#E0532B] text-white text-[9px] font-bold flex items-center justify-center shadow-md">
+                <span className="absolute -top-1 -right-1.5 min-w-[16px] h-[16px] px-1 rounded-full bg-[#E0532B] text-white text-[9px] font-bold flex items-center justify-center shadow-[0_2px_8px_rgba(224,83,43,0.5)] border border-[#E0532B]/60">
                   {totalCartItems > 99 ? '99+' : totalCartItems}
                 </span>
               )}
             </Link>
 
-            {/* User Profile Pill -> Clean 32px Avatar Circle with PG Initials */}
+            {/* User Profile Pill -> Clean 34px Avatar Circle with PG Initials */}
             {currentUser ? (
               <Link
                 href="/profile"
-                title={`${currentUser.name || 'User'} - Account`}
-                className="w-8 h-8 rounded-full border border-[#E2A84B]/60 bg-gradient-to-br from-[#1A1410] to-[#0D0A08] flex items-center justify-center text-[11px] font-mono font-bold tracking-tight text-[#E2A84B] hover:border-[#E2A84B] hover:scale-105 transition-all shadow-sm"
+                title={`${currentUser.name || 'Member'} - Concierge Dossier`}
+                className="w-[34px] h-[34px] rounded-full border border-[#E2A84B]/50 bg-[#161411] flex items-center justify-center text-[11px] font-mono font-bold tracking-tight text-[#E2A84B] hover:border-[#E2A84B] hover:shadow-[0_0_12px_rgba(226,168,75,0.25)] hover:scale-105 transition-all shadow-sm"
               >
                 {getInitials(currentUser.name, currentUser.email)}
               </Link>
             ) : (
               <Link
                 href="/auth/login"
-                title="Customer Sign In"
-                className="w-8 h-8 rounded-full border border-white/20 bg-white/[0.04] flex items-center justify-center text-[#FAF5EC] hover:text-[#E2A84B] hover:border-[#E2A84B]/50 transition-all"
+                title="Member Sign In"
+                className="w-[34px] h-[34px] rounded-full border border-white/20 bg-white/[0.04] flex items-center justify-center text-[#B5ADA2] hover:text-[#E2A84B] hover:border-[#E2A84B]/50 transition-all"
               >
                 <User className="w-4 h-4" />
               </Link>
             )}
 
-            {/* Book Table CTA: Molten Gold Gradient with Sharp 6px Luxury Edge */}
+            {/* Book Table CTA: Molten Gold Gradient with Shimmer Sweep & 6px Luxury Edge */}
             <Link
               href="/booking"
-              className="hidden sm:inline-flex items-center justify-center px-4 py-2 text-xs font-bold text-[#0D0A08] transition-all duration-300 hover:brightness-110 active:scale-[0.98] shadow-md"
+              className="hidden sm:inline-flex relative items-center justify-center h-[42px] px-[22px] rounded-[6px] text-[11.5px] font-bold tracking-[0.12em] uppercase text-[#0D0A08] transition-all duration-300 shadow-[0_4px_16px_rgba(226,168,75,0.28)] hover:shadow-[0_6px_22px_rgba(226,168,75,0.42)] hover:scale-[1.02] active:scale-[0.98] overflow-hidden group/cta"
               style={{
                 background: 'linear-gradient(135deg, #F6D386 0%, #D49432 50%, #9E6818 100%)',
-                borderRadius: '6px',
               }}
             >
-              <span>Book Table</span>
+              <span className="relative z-10">BOOK TABLE</span>
+              {/* Shimmer sweep animation overlay */}
+              <span className="absolute inset-0 -translate-x-full group-hover/cta:translate-x-full duration-1000 bg-gradient-to-r from-transparent via-white/35 to-transparent transition-transform ease-out pointer-events-none" />
             </Link>
 
             {/* Mobile Hamburger Button */}
