@@ -208,7 +208,7 @@ export const getActiveOrders = query({
 
 // Get order history (completed / cancelled or customer past orders)
 export const getOrderHistory = query({
-  args: { phone: v.optional(v.string()) },
+  args: { phone: v.optional(v.string()), email: v.optional(v.string()) },
   handler: async (ctx, args) => {
     const orders = await ctx.db
       .query("orders")
@@ -216,8 +216,12 @@ export const getOrderHistory = query({
       .order("desc")
       .take(100);
 
-    if (args.phone) {
-      return orders.filter((o) => o.customerPhone === args.phone);
+    if (args.phone || args.email) {
+      return orders.filter(
+        (o) =>
+          (args.phone && o.customerPhone === args.phone) ||
+          (args.email && o.customerEmail && o.customerEmail.toLowerCase() === args.email.toLowerCase())
+      );
     }
     return orders;
   },

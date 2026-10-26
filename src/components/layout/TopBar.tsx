@@ -22,13 +22,24 @@ export function TopBar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [currentUser, setCurrentUser] = useState<{ id: string; name: string; email: string } | null>(null);
 
   const totalCartItems = useCartStore((s) => s.getTotalItems());
   const favoriteCount = useFavoritesStore((s) => s.favoriteIds.length);
 
   useEffect(() => {
     setIsMounted(true);
-  }, []);
+    fetch('/api/auth/me')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data?.authenticated && data?.user) {
+          setCurrentUser(data.user);
+        } else {
+          setCurrentUser(null);
+        }
+      })
+      .catch(() => setCurrentUser(null));
+  }, [pathname]);
 
   const navLinks = [
     { label: 'Home', href: '/' },
@@ -119,13 +130,44 @@ export function TopBar() {
               )}
             </Link>
 
-            {/* Account Link */}
+            {/* Desktop Customer Account / Sign In */}
+            {currentUser ? (
+              <Link
+                href="/profile"
+                title="Customer Account & History"
+                className="hidden sm:inline-flex items-center gap-2 py-1.5 px-3 rounded-xl bg-white/[0.05] hover:bg-white/[0.09] border border-[#d4af37]/40 text-white transition-all group"
+              >
+                <span className="w-5 h-5 rounded-full bg-gradient-to-br from-[#d4af37] to-[#8a6828] text-black font-extrabold text-[10px] flex items-center justify-center">
+                  {(currentUser.name || currentUser.email || 'U').substring(0, 1).toUpperCase()}
+                </span>
+                <span className="text-xs font-semibold text-white/90 group-hover:text-[#d4af37] max-w-[85px] truncate">
+                  {currentUser.name ? currentUser.name.split(' ')[0] : 'Profile'}
+                </span>
+              </Link>
+            ) : (
+              <Link
+                href="/auth/login"
+                title="Customer Sign In"
+                className="hidden sm:inline-flex items-center gap-1.5 py-1.5 px-3 rounded-xl bg-white/[0.05] hover:bg-white/[0.09] border border-white/10 text-white/90 hover:text-white text-xs font-semibold transition-all hover:border-[#d4af37]/40"
+              >
+                <User className="w-3.5 h-3.5 text-[#d4af37]" />
+                <span>Sign In</span>
+              </Link>
+            )}
+
+            {/* Mobile Account Icon */}
             <Link
-              href="/profile"
-              title="Customer Account"
-              className="w-9 h-9 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] hidden sm:flex items-center justify-center text-white/75 hover:text-white transition-all"
+              href={currentUser ? '/profile' : '/auth/login'}
+              title={currentUser ? 'Customer Account' : 'Customer Sign In'}
+              className="sm:hidden w-9 h-9 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-white/75"
             >
-              <User className="w-4 h-4" />
+              {currentUser ? (
+                <span className="w-5 h-5 rounded-full bg-gradient-to-br from-[#d4af37] to-[#8a6828] text-black font-extrabold text-[10px] flex items-center justify-center">
+                  {(currentUser.name || currentUser.email || 'U').substring(0, 1).toUpperCase()}
+                </span>
+              ) : (
+                <User className="w-4 h-4 text-[#d4af37]" />
+              )}
             </Link>
 
             {/* Desktop Book Table CTA Button */}
@@ -176,6 +218,61 @@ export function TopBar() {
                   <X className="w-4 h-4" />
                 </button>
               </div>
+
+              {/* Customer Account Box */}
+              {currentUser ? (
+                <div className="p-3 rounded-2xl bg-white/[0.04] border border-[#d4af37]/25 space-y-2">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#d4af37] to-[#8a6828] text-black font-extrabold text-xs flex items-center justify-center shrink-0">
+                      {(currentUser.name || currentUser.email || 'U').substring(0, 2).toUpperCase()}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-bold text-white truncate">{currentUser.name || 'Valued Guest'}</p>
+                      <p className="text-[10px] text-white/50 truncate">{currentUser.email}</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-1.5 pt-1">
+                    <Link
+                      href="/profile/orders"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="py-1.5 px-2 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-[10.5px] font-medium text-white/80 text-center flex items-center justify-center gap-1"
+                    >
+                      <ShoppingBag className="w-3 h-3 text-[#3EE094]" />
+                      <span>My Orders</span>
+                    </Link>
+                    <Link
+                      href="/profile/reservations"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="py-1.5 px-2 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-[10.5px] font-medium text-white/80 text-center flex items-center justify-center gap-1"
+                    >
+                      <Calendar className="w-3 h-3 text-[#d4af37]" />
+                      <span>Bookings</span>
+                    </Link>
+                  </div>
+                  <Link
+                    href="/profile"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block text-center text-[10.5px] text-[#d4af37] hover:underline pt-0.5"
+                  >
+                    View Full Profile →
+                  </Link>
+                </div>
+              ) : (
+                <div className="p-3 rounded-2xl bg-white/[0.04] border border-white/10 space-y-2">
+                  <div>
+                    <p className="text-xs font-semibold text-white">Welcome to The Golden Oak</p>
+                    <p className="text-[10.5px] text-white/50">Sign in to book tables & view order history</p>
+                  </div>
+                  <Link
+                    href="/auth/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-center gap-2 w-full py-2 px-3 rounded-xl bg-white/[0.08] hover:bg-white/[0.12] border border-[#d4af37]/40 text-[#d4af37] font-semibold text-xs transition-colors"
+                  >
+                    <User className="w-3.5 h-3.5" />
+                    <span>Customer Sign In / Register</span>
+                  </Link>
+                </div>
+              )}
 
               {/* Navigation list */}
               <nav className="space-y-1">

@@ -45,31 +45,23 @@ export default function CheckoutPage() {
       }
     }).catch(() => {});
 
-    // Check user & prefill details from Convex (primary) or Supabase (fallback)
-    import('@/lib/auth/convex-auth-actions').then(({ getCurrentUser }) => {
-      getCurrentUser().then(user => {
-        if (user) {
-          setDetails(prev => ({
-            name: prev.name || user.name || '',
-            email: prev.email || user.email || '',
-            phone: prev.phone || user.phone || '',
+    // Mandatory Customer Authentication for Checkout & Payment
+    fetch('/api/auth/me')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.authenticated && data.user) {
+          setDetails((prev) => ({
+            name: prev.name || data.user.name || '',
+            email: prev.email || data.user.email || '',
+            phone: prev.phone || data.user.phone || '',
           }));
         } else {
-          import('@/lib/supabase/client').then(({ createClient }) => {
-            const supabase = createClient();
-            supabase.auth.getUser().then(({ data: { user: sbUser } }) => {
-              if (sbUser) {
-                setDetails(prev => ({
-                  name: prev.name || sbUser.user_metadata?.name || sbUser.email?.split('@')[0] || '',
-                  email: prev.email || sbUser.email || '',
-                  phone: prev.phone || sbUser.user_metadata?.phone || '',
-                }));
-              }
-            }).catch(() => {});
-          }).catch(() => {});
+          router.replace('/auth/login?redirectTo=/checkout');
         }
-      }).catch(() => {});
-    });
+      })
+      .catch(() => {
+        router.replace('/auth/login?redirectTo=/checkout');
+      });
   }, []);
 
   useEffect(() => {

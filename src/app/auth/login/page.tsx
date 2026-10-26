@@ -104,7 +104,11 @@ function LoginContent() {
           Sign in to continue
         </h2>
         <p className="mt-2 text-center text-sm text-gray-400">
-          Login is required to make a table reservation
+          {redirectTo.includes('checkout')
+            ? 'Sign in to complete your order and payment'
+            : redirectTo.includes('booking')
+            ? 'Sign in to reserve your table and manage bookings'
+            : 'Sign in to manage your bookings, orders, and profile'}
         </p>
       </div>
 

@@ -113,10 +113,13 @@ export async function createBooking(data: CreateBookingInput): Promise<{ booking
   };
 }
 
-export async function getBookingsByPhone(phone: string): Promise<Booking[]> {
+export async function getBookingsByPhone(phone?: string, email?: string): Promise<Booking[]> {
   // 1. Primary: Convex Query
   try {
-    const bookings = await fetchQuery(api.bookings.getBookingsByPhone, { phone });
+    const bookings = await fetchQuery(api.bookings.getBookingsByPhone, {
+      phone: phone || undefined,
+      email: email || undefined,
+    });
     if (bookings && bookings.length > 0) {
       return bookings.map((b: any) => ({
         id: b._id,
@@ -149,7 +152,13 @@ export async function getBookingsByPhone(phone: string): Promise<Booking[]> {
   // 2. Supabase Fallback
   try {
     const db = sb(await createClient());
-    const { data }: QR<Booking[]> = await db.from('bookings').select('*').eq('customer_phone', phone).order('created_at', { ascending: false });
+    let query = db.from('bookings').select('*').order('created_at', { ascending: false });
+    if (phone) {
+      query = query.eq('customer_phone', phone);
+    } else if (email) {
+      query = query.eq('customer_email', email);
+    }
+    const { data }: QR<Booking[]> = await query;
     return data ?? [];
   } catch { return []; }
 }

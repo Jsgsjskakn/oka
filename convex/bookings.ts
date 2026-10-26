@@ -267,15 +267,22 @@ export const getAllBookings = query({
   },
 });
 
-// Get bookings by phone number (Customer lookup)
+// Get bookings by phone number or email (Customer lookup)
 export const getBookingsByPhone = query({
-  args: { phone: v.string() },
+  args: { phone: v.optional(v.string()), email: v.optional(v.string()) },
   handler: async (ctx, args) => {
-    return await ctx.db
-      .query("bookings")
-      .withIndex("by_phone", (q) => q.eq("customerPhone", args.phone))
-      .order("desc")
-      .take(20);
+    if (args.phone) {
+      return await ctx.db
+        .query("bookings")
+        .withIndex("by_phone", (q) => q.eq("customerPhone", args.phone!))
+        .order("desc")
+        .take(20);
+    }
+    if (args.email) {
+      const all = await ctx.db.query("bookings").order("desc").take(50);
+      return all.filter((b) => b.customerEmail?.toLowerCase() === args.email!.toLowerCase());
+    }
+    return [];
   },
 });
 

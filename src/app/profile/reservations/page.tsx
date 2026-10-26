@@ -11,8 +11,8 @@ export default async function ReservationsPage() {
 
   let reservations: BookingDetails[] = [];
 
-  if (user?.phone) {
-    const rawBookings = await getBookingsByPhone(user.phone);
+  if (user?.phone || user?.email) {
+    const rawBookings = await getBookingsByPhone(user.phone, user.email);
     reservations = rawBookings.map((b) => {
       let isoDate = b.booking_date;
       try {

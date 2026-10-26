@@ -228,10 +228,13 @@ export async function createOrder(data: CreateOrderInput): Promise<{ orderId: st
   }
 }
 
-export async function getOrdersByPhone(phone: string): Promise<OrderWithItems[]> {
+export async function getOrdersByPhone(phone?: string, email?: string): Promise<OrderWithItems[]> {
   // 1. Try Convex primary
   try {
-    const orders = await fetchQuery(api.orders.getOrderHistory, { phone });
+    const orders = await fetchQuery(api.orders.getOrderHistory, {
+      phone: phone || undefined,
+      email: email || undefined,
+    });
     if (orders && orders.length > 0) {
       return orders.map((o: any) => mapConvexOrder(o));
     }
@@ -242,9 +245,22 @@ export async function getOrdersByPhone(phone: string): Promise<OrderWithItems[]>
   // 2. Supabase fallback
   try {
     const db = sb(await createClient());
-    const { data }: QR<OrderWithItems[]> = await db.from('orders').select('*, order_items(*, order_item_customizations(*))').eq('customer_phone', phone).eq('restaurant_id', RESTAURANT_ID).order('created_at', { ascending: false }).limit(20);
+    let query = db
+      .from('orders')
+      .select('*, order_items(*, order_item_customizations(*))')
+      .eq('restaurant_id', RESTAURANT_ID)
+      .order('created_at', { ascending: false })
+      .limit(20);
+    if (phone) {
+      query = query.eq('customer_phone', phone);
+    } else if (email) {
+      query = query.eq('customer_email', email);
+    }
+    const { data }: QR<OrderWithItems[]> = await query;
     return data ?? [];
-  } catch { return []; }
+  } catch {
+    return [];
+  }
 }
 
 export async function getOrderById(orderId: string): Promise<OrderWithItems | null> {

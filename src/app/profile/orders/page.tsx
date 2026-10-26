@@ -93,7 +93,7 @@ export default async function OrdersPage() {
     );
   }
 
-  const rawOrders = user.phone ? await getOrdersByPhone(user.phone) : [];
+  const rawOrders = (user.phone || user.email) ? await getOrdersByPhone(user.phone, user.email) : [];
   const orders: OrderDetails[] = rawOrders.map(mapOrderToOrderDetails);
 
   return <OrdersListClient initialOrders={orders} />;
