@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { ZoomIn, Maximize2, Layers } from 'lucide-react';
 
 export function ARPromoSection() {
   return (
@@ -58,7 +59,7 @@ export function ARPromoSection() {
             </Link>
           </div>
 
-          {/* Right Side (45% Width / lg:col-span-5) — Dish Visual with 360° Orbital Gold Ring & 3 Floating Glass Tags */}
+          {/* Right Side (45% Width / lg:col-span-5) — Circular Dish Platter with 360° Orbital Gold Ring & 3 Floating Clean Vector Tags */}
           <div className="lg:col-span-5 relative w-full aspect-square max-w-[420px] mx-auto flex items-center justify-center">
             {/* 360° Orbital Gold Ring (SVG Ellipse Ring) */}
             <svg
@@ -80,59 +81,64 @@ export function ARPromoSection() {
               <circle cx="340" cy="260" r="4" fill="#E0532B" />
             </svg>
 
-            {/* Central Dish Artwork */}
-            <div className="relative w-[240px] h-[240px] sm:w-[280px] sm:h-[280px] z-10 transition-transform hover:scale-105 duration-500">
+            {/* Central Round Dish Platter (Rounded Platter Frame without awkward square image box) */}
+            <div
+              className="relative w-[230px] h-[230px] sm:w-[270px] sm:h-[270px] rounded-full overflow-hidden border-2 border-[#E2A84B]/35 z-10 transition-transform hover:scale-105 duration-500 shadow-[0_20px_50px_rgba(0,0,0,0.85)]"
+            >
               <Image
                 src="/images/dishes/tandoori-paneer-pizza.webp"
                 alt="Wood-Fired Tandoori Paneer Pizza 3D Rendering"
                 fill
-                sizes="(max-width: 640px) 240px, 280px"
-                className="object-contain"
+                sizes="(max-width: 640px) 230px, 270px"
+                className="object-cover scale-110"
+              />
+              <div
+                className="absolute inset-0 pointer-events-none rounded-full"
                 style={{
-                  filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.85)) drop-shadow(0 0 20px rgba(226,168,75,0.2))',
+                  boxShadow: 'inset 0 0 30px rgba(0, 0, 0, 0.6)',
                 }}
               />
             </div>
 
-            {/* Floating Glass Tag 1: 🔍 4K Texture Zoom (Top-Left) */}
+            {/* Floating Glass Tag 1: 4K Texture Zoom (Vector Lucide Icon, NO EMOJI) */}
             <div
-              className="absolute -top-1 left-2 sm:left-4 z-20 px-3.5 py-1.5 rounded-full text-[11px] font-medium text-[#FAF5EC] shadow-xl flex items-center gap-1.5"
+              className="absolute -top-1 left-2 sm:left-4 z-20 px-3.5 py-1.5 rounded-full text-[11px] font-medium text-[#FAF5EC] shadow-xl flex items-center gap-2"
               style={{
-                background: 'rgba(13, 10, 8, 0.78)',
+                background: 'rgba(13, 10, 8, 0.85)',
                 backdropFilter: 'blur(10px)',
                 WebkitBackdropFilter: 'blur(10px)',
                 border: '1px solid rgba(226, 168, 75, 0.35)',
               }}
             >
-              <span>🔍</span>
+              <ZoomIn className="w-3.5 h-3.5 text-[#E2A84B]" />
               <span>4K Texture Zoom</span>
             </div>
 
-            {/* Floating Glass Tag 2: 📐 True Portion Scale (Top-Right) */}
+            {/* Floating Glass Tag 2: True Portion Scale (Vector Lucide Icon, NO EMOJI) */}
             <div
-              className="absolute top-10 -right-2 sm:right-0 z-20 px-3.5 py-1.5 rounded-full text-[11px] font-medium text-[#FAF5EC] shadow-xl flex items-center gap-1.5"
+              className="absolute top-10 -right-2 sm:right-0 z-20 px-3.5 py-1.5 rounded-full text-[11px] font-medium text-[#FAF5EC] shadow-xl flex items-center gap-2"
               style={{
-                background: 'rgba(13, 10, 8, 0.78)',
+                background: 'rgba(13, 10, 8, 0.85)',
                 backdropFilter: 'blur(10px)',
                 WebkitBackdropFilter: 'blur(10px)',
                 border: '1px solid rgba(226, 168, 75, 0.35)',
               }}
             >
-              <span>📐</span>
+              <Maximize2 className="w-3.5 h-3.5 text-[#E2A84B]" />
               <span>True Portion Scale</span>
             </div>
 
-            {/* Floating Glass Tag 3: 🔥 Live Ingredient Layering (Bottom-Center) */}
+            {/* Floating Glass Tag 3: Live Ingredient Layering (Vector Lucide Icon, NO EMOJI) */}
             <div
-              className="absolute -bottom-2 sm:bottom-0 left-1/2 -translate-x-1/2 z-20 px-4 py-1.5 rounded-full text-[11px] font-medium text-[#FAF5EC] shadow-xl flex items-center gap-1.5 whitespace-nowrap"
+              className="absolute -bottom-2 sm:bottom-0 left-1/2 -translate-x-1/2 z-20 px-4 py-1.5 rounded-full text-[11px] font-medium text-[#FAF5EC] shadow-xl flex items-center gap-2 whitespace-nowrap"
               style={{
-                background: 'rgba(13, 10, 8, 0.78)',
+                background: 'rgba(13, 10, 8, 0.85)',
                 backdropFilter: 'blur(10px)',
                 WebkitBackdropFilter: 'blur(10px)',
                 border: '1px solid rgba(226, 168, 75, 0.35)',
               }}
             >
-              <span>🔥</span>
+              <Layers className="w-3.5 h-3.5 text-[#E2A84B]" />
               <span>Live Ingredient Layering</span>
             </div>
           </div>
