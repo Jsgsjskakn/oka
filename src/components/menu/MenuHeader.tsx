@@ -1,24 +1,28 @@
 'use client';
 
-import { Sparkles, UtensilsCrossed } from 'lucide-react';
-
 export function MenuHeader() {
   return (
-    <div className="pt-8 pb-6 px-4 sm:px-6 lg:px-8 text-center max-w-4xl mx-auto">
-      <div className="inline-flex items-center gap-2 px-3 py-1 mb-3 rounded-full bg-[#d4af37]/10 border border-[#d4af37]/30 text-xs font-semibold text-[#d4af37]">
-        <Sparkles className="w-3.5 h-3.5" />
-        <span>Culinary Collection</span>
+    <div className="pt-12 pb-8 px-4 sm:px-6 lg:px-8 text-center max-w-4xl mx-auto relative z-10">
+      {/* Overline — THE CULINARY ARCHIVE — */}
+      <div className="flex items-center justify-center gap-3 mb-3.5">
+        <span className="w-8 h-[1px] bg-[#E2A84B]/40" />
+        <span className="text-[11px] uppercase tracking-[0.3em] text-[#E2A84B] font-bold">
+          THE CULINARY ARCHIVE
+        </span>
+        <span className="w-8 h-[1px] bg-[#E2A84B]/40" />
       </div>
 
-      <h1 className="font-heading text-3xl sm:text-5xl font-extrabold text-white mb-3 tracking-tight">
+      {/* Main Headline: Cormorant Garamond 56px with Molten Gold Italic */}
+      <h1 className="font-serif text-3xl sm:text-5xl lg:text-[56px] font-bold text-[#FAF5EC] mb-4 tracking-tight leading-[1.08]">
         Gourmet Dishes &amp;{' '}
-        <span className="bg-gradient-to-r from-[#f7e4a8] via-[#d4af37] to-[#b38936] bg-clip-text text-transparent">
+        <span className="italic text-[#E2A84B] font-normal block sm:inline">
           Signature Craft
         </span>
       </h1>
 
-      <p className="text-xs sm:text-sm text-white/65 max-w-xl mx-auto leading-relaxed font-light">
-        Browse hand-stretched wood-fired sourdough pizzas, handcrafted smash burgers, aromatic tandoor sizzlers, and street fusion specialties.
+      {/* Subtitle */}
+      <p className="text-sm sm:text-base text-[#B5ADA2] max-w-xl mx-auto leading-relaxed font-light">
+        Browse hand-stretched wood-fired sourdough pizzas, handcrafted smash burgers, aromatic charcoal tandoor delicacies, and street fusion specialties.
       </p>
     </div>
   );
