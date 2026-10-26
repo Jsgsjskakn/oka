@@ -1,22 +1,35 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { Hero3DPedestal } from './Hero3DPedestal';
 
 export function HeroSection() {
   return (
-    <section className="relative w-full overflow-hidden bg-[#0D0A08] text-[#FAF5EC] flex flex-col justify-between">
-      {/* Warm Smoky Vignette Overlay */}
-      <div
-        className="pointer-events-none absolute inset-0 z-0"
-        style={{
-          background:
-            'radial-gradient(circle at 70% 50%, rgba(226, 168, 75, 0.14), rgba(13, 10, 8, 0.94) 75%)',
-        }}
-      />
+    <section className="relative w-full overflow-hidden bg-[#0D0A08] text-[#FAF5EC] flex flex-col justify-center min-h-[calc(90vh-80px)]">
+      {/* Background Restaurant Photography */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <Image
+          src="/images/hero.jpg"
+          alt="The Golden Oak Fine Dining Restaurant Ambience"
+          fill
+          priority
+          className="object-cover object-center filter brightness-[0.38] saturate-[1.1] scale-105"
+        />
+        {/* Layered Deep Velvet Espresso & Warm Gold Atmospheric Gradients */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0D0A08] via-[#0D0A08]/85 to-[#0D0A08]/60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0D0A08] via-transparent to-[#0D0A08]/80" />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'radial-gradient(circle at 70% 50%, rgba(226, 168, 75, 0.16), rgba(13, 10, 8, 0.94) 75%)',
+          }}
+        />
+      </div>
 
       {/* Main 12-Column Asymmetric Split Editorial Hero Container */}
-      <div className="relative z-10 max-w-7xl mx-auto w-full px-6 md:px-12 min-h-[calc(90vh-80px)] flex items-center py-12 lg:py-16">
+      <div className="relative z-10 max-w-7xl mx-auto w-full px-6 md:px-12 py-12 lg:py-20 flex items-center">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center w-full">
           {/* Left 7 Columns: Editorial Typography & CTAs (Left-Aligned) */}
           <div className="lg:col-span-7 flex flex-col items-start text-left">
@@ -73,31 +86,6 @@ export function HeroSection() {
           {/* Right 5 Columns: Live Interactive 3D Dish Pedestal */}
           <div className="lg:col-span-5 flex items-center justify-center">
             <Hero3DPedestal />
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom Trust Strip (Architectural Divider Bar - Full Width, 64px Height) */}
-      <div
-        className="relative z-10 w-full min-h-[64px] py-4 px-6 md:px-12 flex items-center border-t border-b"
-        style={{
-          background: '#120E0B',
-          borderTopColor: 'rgba(226, 168, 75, 0.12)',
-          borderBottomColor: 'rgba(226, 168, 75, 0.12)',
-        }}
-      >
-        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 text-center md:text-left">
-          <div className="flex items-center justify-center md:justify-start gap-2 text-xs uppercase tracking-[0.2em] text-[#B5ADA2]">
-            <span className="font-serif font-bold text-[#E2A84B]">01 /</span>
-            <span>48-HR FERMENTED SOURDOUGH</span>
-          </div>
-          <div className="flex items-center justify-center gap-2 text-xs uppercase tracking-[0.2em] text-[#B5ADA2]">
-            <span className="font-serif font-bold text-[#E2A84B]">02 /</span>
-            <span>INTERACTIVE 3D DISH PREVIEW</span>
-          </div>
-          <div className="flex items-center justify-center md:justify-end gap-2 text-xs uppercase tracking-[0.2em] text-[#B5ADA2]">
-            <span className="font-serif font-bold text-[#E2A84B]">03 /</span>
-            <span>15 SMART LIVE-BOOKING TABLES</span>
           </div>
         </div>
       </div>

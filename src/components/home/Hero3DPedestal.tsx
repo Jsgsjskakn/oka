@@ -76,10 +76,9 @@ export function Hero3DPedestal() {
 
         {/* 3D Rotating Platter & Dish */}
         <div
-          className="relative w-[250px] h-[250px] sm:w-[290px] sm:h-[290px] transition-transform duration-75"
+          className="relative w-[250px] h-[250px] sm:w-[290px] sm:h-[290px] rounded-full overflow-hidden border-2 border-[#E2A84B]/40 transition-transform duration-75 shadow-[0_20px_50px_rgba(0,0,0,0.9),0_0_30px_rgba(226,168,75,0.25)]"
           style={{
             transform: `rotate(${rotation}deg) scale(1)`,
-            filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.85)) drop-shadow(0 4px 15px rgba(226,168,75,0.25))',
           }}
         >
           <Image
@@ -88,7 +87,7 @@ export function Hero3DPedestal() {
             fill
             priority
             sizes="(max-width: 640px) 260px, 300px"
-            className="object-contain pointer-events-none"
+            className="object-cover pointer-events-none scale-105"
           />
         </div>
       </div>
