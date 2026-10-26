@@ -82,8 +82,8 @@ export function Hero3DPedestal() {
           }}
         >
           <Image
-            src="/images/dishes/tandoori-paneer-pizza.webp"
-            alt="Artisanal Wood-Fired Tandoori Paneer Pizza 3D Preview"
+            src="/images/dishes/mushroom-truffle-pizza.webp"
+            alt="Artisanal Wood-Fired Wild Truffle Mushroom Pizza 3D Preview"
             fill
             priority
             sizes="(max-width: 640px) 260px, 300px"
