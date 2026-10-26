@@ -1,9 +1,22 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import { ZoomIn, Maximize2, Layers, Sparkles, Box, RotateCw, ArrowRight } from 'lucide-react';
+
+const PromoWarriorCanvas = dynamic(
+  () => import('./PromoWarriorCanvas').then((mod) => ({ default: mod.PromoWarriorCanvas })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-full flex flex-col items-center justify-center bg-[#0D0A08] text-[#E2A84B]">
+        <div className="w-10 h-10 rounded-full border-2 border-[#E2A84B]/20 border-t-[#E2A84B] animate-spin mb-2" />
+        <span className="text-[10px] font-mono tracking-widest uppercase">Loading 3D Mesh...</span>
+      </div>
+    ),
+  }
+);
 
 const PREVIEW_DISHES = [
   {
@@ -37,52 +50,6 @@ const PREVIEW_DISHES = [
 
 export function ARPromoSection() {
   const [activeDishIndex, setActiveDishIndex] = useState(0);
-  const [rotation, setRotation] = useState(12);
-  const [isDragging, setIsDragging] = useState(false);
-  const [hasInteracted, setHasInteracted] = useState(false);
-
-  const startXRef = useRef(0);
-  const currentRotationRef = useRef(12);
-  const animFrameRef = useRef<number | null>(null);
-
-  // Smooth continuous auto-rotation
-  useEffect(() => {
-    let lastTime = performance.now();
-    const autoRotate = (time: number) => {
-      const delta = (time - lastTime) / 1000;
-      lastTime = time;
-      if (!isDragging) {
-        currentRotationRef.current = (currentRotationRef.current + delta * 9) % 360;
-        setRotation(currentRotationRef.current);
-      }
-      animFrameRef.current = requestAnimationFrame(autoRotate);
-    };
-    animFrameRef.current = requestAnimationFrame(autoRotate);
-    return () => {
-      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
-    };
-  }, [isDragging]);
-
-  // Pointer drag controls for 360° interactive spinning
-  const handlePointerDown = (e: React.PointerEvent) => {
-    setIsDragging(true);
-    setHasInteracted(true);
-    startXRef.current = e.clientX;
-    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
-  };
-
-  const handlePointerMove = (e: React.PointerEvent) => {
-    if (!isDragging) return;
-    const deltaX = e.clientX - startXRef.current;
-    startXRef.current = e.clientX;
-    currentRotationRef.current = (currentRotationRef.current + deltaX * 0.75) % 360;
-    setRotation(currentRotationRef.current);
-  };
-
-  const handlePointerUp = () => {
-    setIsDragging(false);
-  };
-
   const currentDish = PREVIEW_DISHES[activeDishIndex];
 
   return (
@@ -259,50 +226,21 @@ export function ARPromoSection() {
               <circle cx="200" cy="85" r="3.5" fill="#22C58B" />
             </svg>
 
-            {/* Central Round Dish Platter (Interactive Pointer Drag & Auto-Rotation) */}
+            {/* Central Round 3D Model Stage (Real-Time Three.js Spatial Warrior) */}
             <div
-              className="relative w-[240px] h-[240px] sm:w-[280px] sm:h-[280px] rounded-full overflow-hidden border-2 border-[#E2A84B]/40 z-10 transition-transform duration-100 shadow-[0_25px_60px_rgba(0,0,0,0.95),0_0_35px_rgba(226,168,75,0.25)] cursor-grab active:cursor-grabbing group/platter"
-              onPointerDown={handlePointerDown}
-              onPointerMove={handlePointerMove}
-              onPointerUp={handlePointerUp}
-              onPointerCancel={handlePointerUp}
+              className="relative w-[270px] h-[270px] sm:w-[320px] sm:h-[320px] rounded-full overflow-hidden border-2 border-[#E2A84B]/50 z-10 shadow-[0_25px_60px_rgba(0,0,0,0.95),0_0_35px_rgba(226,168,75,0.3)] bg-gradient-to-b from-[#18130F] via-[#0E0B09] to-[#070504] group/platter"
               title="Drag horizontally to rotate 360°"
             >
-              <div
-                className="relative w-full h-full"
-                style={{
-                  transform: `rotate(${rotation}deg) scale(1.08)`,
-                  transition: isDragging ? 'none' : 'transform 75ms linear',
-                }}
-              >
-                <Image
-                  src={currentDish.image}
-                  alt={`${currentDish.name} Spatial 3D Preview`}
-                  fill
-                  sizes="(max-width: 640px) 240px, 280px"
-                  className="object-cover pointer-events-none"
-                  priority
-                />
-              </div>
+              <PromoWarriorCanvas />
 
               {/* Inner Platter Rim Shadow & Specular Sheen */}
               <div
                 className="absolute inset-0 pointer-events-none rounded-full"
                 style={{
                   boxShadow:
-                    'inset 0 0 35px rgba(0, 0, 0, 0.75), inset 0 2px 4px rgba(255, 255, 255, 0.15)',
+                    'inset 0 0 40px rgba(0, 0, 0, 0.8), inset 0 2px 4px rgba(255, 255, 255, 0.15)',
                 }}
               />
-
-              {/* Subtle Drag Hint Overlay (fades once user interacts) */}
-              {!hasInteracted && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[2px] pointer-events-none transition-opacity duration-500 rounded-full">
-                  <div className="px-3 py-1 rounded-full bg-[#0D0A08]/90 border border-[#E2A84B]/50 flex items-center gap-1.5 text-[10px] text-[#FAF5EC] font-semibold tracking-wide shadow-lg">
-                    <RotateCw className="w-3 h-3 text-[#E2A84B] animate-spin" />
-                    <span>Drag to Rotate</span>
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Floating Holographic Tag 1: 4K Texture Zoom (Animated Float Gentle) */}
