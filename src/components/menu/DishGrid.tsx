@@ -7,15 +7,16 @@ import { DishWithCategory } from '@/lib/db/types';
 
 interface DishGridProps {
   dishes: DishWithCategory[];
+  searchHighlight?: string;
 }
 
-export function DishGrid({ dishes }: DishGridProps) {
+export function DishGrid({ dishes, searchHighlight }: DishGridProps) {
   const showConciergeCard = dishes.length === 10;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-4 sm:px-6 lg:px-8 pb-20 max-w-[1360px] mx-auto w-full items-stretch">
       {dishes.map((dish) => (
-        <MenuDishCard key={dish.id} dish={dish} />
+        <MenuDishCard key={dish.id} dish={dish} searchHighlight={searchHighlight} />
       ))}
 
       {/* Concierge VIP Degustation & Private Dining Card (Fills Grid Hole seamlessly on full menu view) */}

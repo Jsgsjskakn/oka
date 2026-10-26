@@ -17,6 +17,7 @@ interface MenuClientProps {
 
 export function MenuClient({ categories, initialDishes, initialCategory = 'all' }: MenuClientProps) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [activeCategory, setActiveCategory] = useState(initialCategory);
 
   const handleSearchChange = (val: string) => {
@@ -159,8 +160,16 @@ export function MenuClient({ categories, initialDishes, initialCategory = 'all' 
       {/* Layer 4: Architectural Margin Lines (Subtle Gold Hairlines Container) */}
       <div className="max-w-[1360px] mx-auto border-l border-r border-[#E2A84B]/[0.07] min-h-screen relative z-10 flex flex-col justify-between">
         <div>
-          {/* Step 1: Compact Editorial Header */}
-          <MenuHeader />
+          {/* Step 1: Compact Editorial Header with smooth collapse on search focus */}
+          <div
+            className={`transition-all duration-300 ease-in-out overflow-hidden ${
+              isSearchFocused || searchQuery.trim()
+                ? 'max-h-0 opacity-0 pointer-events-none'
+                : 'max-h-[350px] opacity-100'
+            }`}
+          >
+            <MenuHeader />
+          </div>
 
           {/* Step 2: Unified Sticky Glass Command Bar (Navbar top: 80px sticky) */}
           <div className="sticky top-20 z-40 bg-[#0D0A08]/90 backdrop-blur-2xl border-t border-b border-[#E2A84B]/15 py-3 px-4 sm:px-6 lg:px-8 transition-all shadow-2xl">
@@ -205,20 +214,28 @@ export function MenuClient({ categories, initialDishes, initialCategory = 'all' 
 
               {/* Right Side: Expandable Search + Dietary Toggles + Sort */}
               <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 w-full lg:w-auto justify-between lg:justify-end">
-                {/* Sleek Expandable Glass Search Input */}
-                <div className="relative flex items-center h-9 w-full sm:w-64 focus-within:sm:w-80 transition-all duration-300 rounded-[6px] bg-[#16120E] border border-[#E2A84B]/25 focus-within:border-[#E2A84B] focus-within:ring-1 focus-within:ring-[#E2A84B]/30 shadow-inner">
+                {/* Sleek Expandable Glass Search Input with Gold Aura Focus */}
+                <div
+                  className={`relative flex items-center h-9 w-full sm:w-64 focus-within:sm:w-80 transition-all duration-300 rounded-[6px] bg-[#17120E] border shadow-inner ${
+                    isSearchFocused
+                      ? 'border-[#E2A84B] shadow-[0_0_24px_rgba(226,168,75,0.22)]'
+                      : 'border-[#E2A84B]/25 hover:border-[#E2A84B]/50'
+                  }`}
+                >
                   <div className="pl-3 pr-2 text-[#E2A84B]">
                     <Search className="w-3.5 h-3.5" />
                   </div>
                   <input
                     type="text"
                     value={searchQuery}
+                    onFocus={() => setIsSearchFocused(true)}
+                    onBlur={() => setIsSearchFocused(false)}
                     onChange={(e) => handleSearchChange(e.target.value)}
-                    placeholder="Search dishes or ingredients..."
+                    placeholder="Search dishes, ingredients, spice..."
                     aria-label="Search dishes"
                     className="flex-1 h-full bg-transparent text-xs text-[#FAF5EC] placeholder:text-[#9A9286]/60 outline-none pr-2 font-light"
                   />
-                  {searchQuery && (
+                  {searchQuery ? (
                     <button
                       type="button"
                       onClick={() => handleSearchChange('')}
@@ -227,6 +244,10 @@ export function MenuClient({ categories, initialDishes, initialCategory = 'all' 
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
+                  ) : (
+                    <kbd className="hidden sm:inline mr-2 px-1 py-0.5 rounded bg-white/[0.06] border border-white/10 text-[9px] font-mono text-[#9A9286] pointer-events-none">
+                      ⌘K
+                    </kbd>
                   )}
                 </div>
 
@@ -336,9 +357,9 @@ export function MenuClient({ categories, initialDishes, initialCategory = 'all' 
           {/* Dish Grid Showcase */}
           <div className="pt-8">
             {filteredAndSortedDishes.length > 0 ? (
-              <DishGrid dishes={filteredAndSortedDishes} />
+              <DishGrid dishes={filteredAndSortedDishes} searchHighlight={searchQuery} />
             ) : (
-              <EmptyState onClearFilters={clearFilters} />
+              <EmptyState onClearFilters={clearFilters} searchQuery={searchQuery} />
             )}
           </div>
         </div>

@@ -4,6 +4,7 @@ import './globals.css';
 import { MobileShell } from '@/components/layout/MobileShell';
 import ConvexClientProvider from './ConvexClientProvider';
 import { ServiceWorkerRegister } from '@/components/pwa/ServiceWorkerRegister';
+import { CulinarySpotlightModal } from '@/components/search/CulinarySpotlightModal';
 
 const playfair = Playfair_Display({
   variable: '--font-heading',
@@ -87,6 +88,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen bg-obsidian text-text-primary font-sans antialiased">
         <ConvexClientProvider>
           <MobileShell>{children}</MobileShell>
+          <CulinarySpotlightModal />
         </ConvexClientProvider>
         <ServiceWorkerRegister />
       </body>

@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { useCartStore } from '@/store/cart-store';
 import { useFavoritesStore } from '@/store/favorites-store';
+import { useSpotlightStore } from '@/store/spotlight-store';
 
 export function TopBar() {
   const pathname = usePathname();
@@ -25,6 +26,7 @@ export function TopBar() {
 
   const totalCartItems = useCartStore((s) => s.getTotalItems());
   const favoriteCount = useFavoritesStore((s) => s.favoriteIds.length);
+  const openSpotlight = useSpotlightStore((s) => s.openSpotlight);
 
   useEffect(() => {
     setIsMounted(true);
@@ -104,14 +106,18 @@ export function TopBar() {
 
           {/* Right Zone: Action Cluster */}
           <div className="flex items-center gap-4 sm:gap-5">
-            {/* Search Icon (Clean, no circular border box) */}
-            <Link
-              href="/menu"
-              title="Search Menu"
-              className="text-[#FAF5EC] hover:text-[#E2A84B] transition-colors p-1"
+            {/* Search Icon with Spotlight Modal Trigger & ⌘K Badge */}
+            <button
+              type="button"
+              onClick={() => openSpotlight()}
+              title="Search Culinary Archive (⌘K)"
+              className="group flex items-center gap-1.5 text-[#FAF5EC] hover:text-[#E2A84B] transition-all p-1 active:scale-85 cursor-pointer"
             >
-              <Search className="w-4 h-4" />
-            </Link>
+              <Search className="w-4 h-4 transition-colors group-hover:text-[#E2A84B]" />
+              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/[0.06] border border-white/10 text-[#9A9286] opacity-0 group-hover:opacity-100 transition-opacity hidden sm:inline leading-none">
+                ⌘K
+              </span>
+            </button>
 
             {/* Favorites Heart Icon (Clean, no circular border box) */}
             <Link
@@ -296,6 +302,19 @@ export function TopBar() {
 
               {/* Mobile Quick Action Buttons */}
               <div className="pt-2 space-y-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    openSpotlight();
+                  }}
+                  className="flex items-center gap-2.5 w-full px-3.5 py-2.5 rounded-[6px] bg-[#17120E] border border-[#E2A84B]/25 text-xs font-medium text-[#FAF5EC] active:scale-95 transition-all text-left"
+                >
+                  <Search className="w-3.5 h-3.5 text-[#E2A84B]" />
+                  <span>Search Dishes (Spotlight)</span>
+                  <span className="ml-auto text-[10px] font-mono text-[#9A9286] bg-white/[0.06] px-1.5 py-0.5 rounded">⌘K</span>
+                </button>
+
                 <Link
                   href="/booking"
                   onClick={() => setMobileMenuOpen(false)}

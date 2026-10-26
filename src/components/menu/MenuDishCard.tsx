@@ -15,9 +15,10 @@ import { hasModel } from '@/data/model-config';
 
 interface MenuDishCardProps {
   dish: DishWithCategory;
+  searchHighlight?: string;
 }
 
-export function MenuDishCard({ dish }: MenuDishCardProps) {
+export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
   const router = useRouter();
   const isFav = useFavoritesStore((s) => s.isFavorite(dish.id));
   const toggleFav = useFavoritesStore((s) => s.toggleFavorite);
@@ -208,7 +209,19 @@ export function MenuDishCard({ dish }: MenuDishCardProps) {
             onClick={handleCardClick}
             className="block font-serif text-[20px] sm:text-[22px] font-bold text-[#FAF5EC] leading-snug hover:text-[#E2A84B] transition-colors line-clamp-2 min-h-[52px]"
           >
-            {dish.name}
+            {searchHighlight && searchHighlight.trim() ? (
+              dish.name.split(new RegExp(`(${searchHighlight.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi')).map((part, i) =>
+                part.toLowerCase() === searchHighlight.trim().toLowerCase() ? (
+                  <mark key={i} className="bg-[rgba(226,168,75,0.32)] text-[#FAF5EC] rounded-sm px-0.5">
+                    {part}
+                  </mark>
+                ) : (
+                  part
+                )
+              )
+            ) : (
+              dish.name
+            )}
           </Link>
 
           {/* Description (2 lines balanced without horizontal clipping) */}
