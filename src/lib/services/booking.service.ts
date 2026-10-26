@@ -23,6 +23,7 @@ export interface CreateBookingInput {
   occasion?: string;
   tablePreference?: string;
   specialRequests?: string;
+  tableNumber?: number;
 }
 
 export interface BookingFilters {
@@ -89,6 +90,7 @@ export async function createBooking(data: CreateBookingInput): Promise<{ booking
       occasion: data.occasion,
       tablePreference: data.tablePreference,
       specialRequests: data.specialRequests,
+      tableNumber: data.tableNumber,
     });
 
     if (result && 'bookingId' in result && result.bookingId) {

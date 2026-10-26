@@ -18,6 +18,7 @@ export async function createBookingAction(formData: {
   occasion?: string;
   tablePreference?: string;
   specialRequests?: string;
+  tableNumber?: number;
 }): Promise<{ bookingId?: string; error?: string }> {
   try {
     const { createBooking } = await import('@/lib/services/booking.service');

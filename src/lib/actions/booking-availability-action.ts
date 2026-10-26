@@ -9,11 +9,29 @@ export async function checkAvailabilityAction(
   startTime: string,
   endTime: string,
   guests: number
-): Promise<{ available: boolean; tableCount: number; error?: string }> {
+): Promise<{
+  available: boolean;
+  tableCount: number;
+  availableTables?: Array<{ tableNumber: number; capacity: number }>;
+  error?: string;
+}> {
   try {
     const result = await checkTableAvailability(RESTAURANT_ID, date, startTime, endTime, guests);
-    return { available: result.available, tableCount: result.tables.length, error: result.error };
+    return {
+      available: result.available,
+      tableCount: result.tables.length,
+      availableTables: result.tables.map((t) => ({
+        tableNumber: t.table_number,
+        capacity: t.capacity,
+      })),
+      error: result.error,
+    };
   } catch (err: unknown) {
-    return { available: false, tableCount: 0, error: err instanceof Error ? err.message : 'Failed to check availability' };
+    return {
+      available: false,
+      tableCount: 0,
+      availableTables: [],
+      error: err instanceof Error ? err.message : 'Failed to check availability',
+    };
   }
 }
