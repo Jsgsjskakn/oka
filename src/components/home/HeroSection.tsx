@@ -7,25 +7,18 @@ import { Hero3DPedestal } from './Hero3DPedestal';
 export function HeroSection() {
   return (
     <section className="relative w-full overflow-hidden bg-[#0D0A08] text-[#FAF5EC] flex flex-col justify-center min-h-[calc(90vh-80px)]">
-      {/* Background Restaurant Photography */}
+      {/* Background Restaurant Photography - Restored Authentic Ambience from Original Hero */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <Image
           src="/images/hero.jpg"
           alt="The Golden Oak Fine Dining Restaurant Ambience"
           fill
           priority
-          className="object-cover object-center filter brightness-[0.38] saturate-[1.1] scale-105"
+          className="object-cover object-top sm:object-[center_25%] filter brightness-[0.75] contrast-[1.05] saturate-[1.15]"
         />
-        {/* Layered Deep Velvet Espresso & Warm Gold Atmospheric Gradients */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0D0A08] via-[#0D0A08]/85 to-[#0D0A08]/60" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0D0A08] via-transparent to-[#0D0A08]/80" />
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              'radial-gradient(circle at 70% 50%, rgba(226, 168, 75, 0.16), rgba(13, 10, 8, 0.94) 75%)',
-          }}
-        />
+        {/* Layered Deep Velvet Scrim for High-Contrast Text Legibility while keeping warm restaurant glow */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0D0A08]/92 via-[#0D0A08]/65 lg:via-[#0D0A08]/45 to-[#0D0A08]/25" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0D0A08] via-transparent to-[#0D0A08]/40" />
       </div>
 
       {/* Main 12-Column Asymmetric Split Editorial Hero Container */}
