@@ -97,6 +97,7 @@ export function ThreeDViewer({
         <ViewerScene
           key={`${config.dishSlug}-${retryKey}`}
           config={config}
+          category={dish.category}
           autoRotate={autoRotate}
           onControlsRef={(ref) => { controlsRef.current = ref; }}
           onProgress={handleProgress}

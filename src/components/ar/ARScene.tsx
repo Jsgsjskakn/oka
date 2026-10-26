@@ -5,8 +5,9 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useGLTF, ContactShadows, useProgress, AdaptiveDpr } from '@react-three/drei';
 import type { Group, Object3D, Material, Mesh, BufferGeometry } from 'three';
 import { Vector3 } from 'three';
-import type { ModelConfig } from '@/data/model-config';
+import { type ModelConfig, SHARED_DEFAULT_MODEL_PATH } from '@/data/model-config';
 import type { IngredientHotspot } from '@/data/ar-config';
+import { enhanceWarriorMaterials } from '@/components/viewer/warrior-materials';
 
 // Dispose helper
 function disposeObject(obj: Object3D) {
@@ -69,22 +70,29 @@ function ARReticle({ visible }: { visible: boolean }) {
 // AR Food Model with placement animation
 interface ARFoodModelProps {
   config: ModelConfig;
+  category?: string;
   placed: boolean;
   scale: number;
   rotation: number;
   onLoaded?: () => void;
+  onProgress?: (progress: number) => void;
 }
 
-function ARFoodModel({ config, placed, scale, rotation, onLoaded }: ARFoodModelProps) {
+function ARFoodModel({ config, placed, scale, rotation, onLoaded, onProgress }: ARFoodModelProps) {
   const { scene } = useGLTF(config.modelPath);
   const groupRef = useRef<Group>(null);
-  const clonedScene = useMemo(() => scene.clone(true), [scene]);
+  const clonedScene = useMemo(() => {
+    const clone = scene.clone(true);
+    enhanceWarriorMaterials(clone);
+    return clone;
+  }, [scene]);
   const animRef = useRef(0);
 
   useEffect(() => {
+    onProgress?.(100);
     onLoaded?.();
     return () => { disposeObject(clonedScene); };
-  }, [clonedScene, onLoaded]);
+  }, [clonedScene, onLoaded, onProgress]);
 
   useFrame((_, delta) => {
     if (placed && animRef.current < 1) {
@@ -204,6 +212,7 @@ function HotspotProjector({ hotspots, dishScale, onProjected }: {
 
 interface ARSceneProps {
   config: ModelConfig;
+  category?: string;
   placed: boolean;
   modelScale: number;
   modelRotation: number;
@@ -215,7 +224,7 @@ interface ARSceneProps {
 }
 
 export function ARScene({
-  config, placed, modelScale, modelRotation,
+  config, category, placed, modelScale, modelRotation,
   hotspots, showHotspots,
   onProgress, onModelLoaded, onHotspotsProjected,
 }: ARSceneProps) {
@@ -241,10 +250,12 @@ export function ARScene({
         <LoadingTracker onProgress={onProgress} />
         <ARFoodModel
           config={config}
+          category={category}
           placed={placed}
           scale={modelScale}
           rotation={modelRotation}
           onLoaded={onModelLoaded}
+          onProgress={onProgress}
         />
         {placed && showHotspots && (
           <HotspotMarkers

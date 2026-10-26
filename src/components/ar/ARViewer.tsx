@@ -200,6 +200,7 @@ export function ARViewer({ dish, config, isFavorite, onToggleFavorite, onAddToCa
         <div className="absolute inset-0 z-10" id="ar-canvas" onClick={handleSingleTouch}>
           <ARScene
             config={config}
+            category={dish.category}
             placed={placed}
             modelScale={modelScale}
             modelRotation={modelRotation}

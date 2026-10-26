@@ -5,11 +5,14 @@ import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { OrbitControls, useGLTF, ContactShadows, useProgress, AdaptiveDpr } from '@react-three/drei';
 import type { OrbitControls as OrbitControlsType } from 'three-stdlib';
 import type { Group, Object3D, Material, Mesh, BufferGeometry } from 'three';
-import type { ModelConfig } from '@/data/model-config';
+import { type ModelConfig, SHARED_DEFAULT_MODEL_PATH } from '@/data/model-config';
+import { enhanceWarriorMaterials } from './warrior-materials';
 
 interface FoodModelProps {
   config: ModelConfig;
+  category?: string;
   onLoaded?: () => void;
+  onProgress?: (progress: number) => void;
 }
 
 function disposeObject(obj: Object3D) {
@@ -25,21 +28,31 @@ function disposeObject(obj: Object3D) {
   });
 }
 
-function FoodModel({ config, onLoaded }: FoodModelProps) {
+/**
+ * 3D Model Loader with vibrant, authentic material colors.
+ * Loads the warrior GLB and applies full rich colors to all materials
+ * (warm Indian skin tone, ruby crimson cape, gleaming gold trim, steel armor, brass hilt).
+ */
+function FoodModel({ config, onLoaded, onProgress }: FoodModelProps) {
   const { scene } = useGLTF(config.modelPath);
   const groupRef = useRef<Group>(null);
 
-  const clonedScene = useMemo(() => scene.clone(true), [scene]);
+  const clonedScene = useMemo(() => {
+    const clone = scene.clone(true);
+    enhanceWarriorMaterials(clone);
+    return clone;
+  }, [scene]);
 
   useEffect(() => {
     if (groupRef.current) {
       groupRef.current.rotation.set(...config.initialRotation);
     }
+    onProgress?.(100);
     onLoaded?.();
     return () => {
       disposeObject(clonedScene);
     };
-  }, [config.initialRotation, clonedScene, onLoaded]);
+  }, [config.initialRotation, clonedScene, onLoaded, onProgress]);
 
   return (
     <group ref={groupRef}>
@@ -77,6 +90,7 @@ function AutoPresentation({ active }: { active: boolean }) {
 
 interface ViewerSceneProps {
   config: ModelConfig;
+  category?: string;
   autoRotate: boolean;
   onControlsRef: (controls: OrbitControlsType | null) => void;
   onProgress: (progress: number) => void;
@@ -85,7 +99,7 @@ interface ViewerSceneProps {
   onDoubleTap: () => void;
 }
 
-export function ViewerScene({ config, autoRotate, onControlsRef, onProgress, onLoaded, onError, onDoubleTap }: ViewerSceneProps) {
+export function ViewerScene({ config, category, autoRotate, onControlsRef, onProgress, onLoaded, onError, onDoubleTap }: ViewerSceneProps) {
   const lastTapRef = useRef(0);
   const presentationRef = useRef(true);
 
@@ -129,9 +143,9 @@ export function ViewerScene({ config, autoRotate, onControlsRef, onProgress, onL
 
       <Suspense fallback={null}>
         <LoadingTracker onProgress={onProgress} />
-        <FoodModel config={config} onLoaded={onLoaded} />
+        <FoodModel config={config} category={category} onLoaded={onLoaded} onProgress={onProgress} />
         <ContactShadows
-          position={[0, -0.2, 0]}
+          position={[0, -0.05, 0]}
           opacity={0.4}
           scale={10}
           blur={2.5}
