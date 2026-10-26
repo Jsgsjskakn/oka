@@ -12,7 +12,6 @@ import {
   Menu as MenuIcon,
   X,
   Search,
-  Sparkles,
   Phone,
 } from 'lucide-react';
 import { useCartStore } from '@/store/cart-store';
@@ -41,143 +40,135 @@ export function TopBar() {
       .catch(() => setCurrentUser(null));
   }, [pathname]);
 
+  // Primary 4 editorial links only (Home, Favorites, My Account moved out of center bar)
   const navLinks = [
-    { label: 'Home', href: '/' },
     { label: 'Menu', href: '/menu' },
+    { label: '3D Food Lounge', href: '/ar' },
+    { label: 'Our Story', href: '/about' },
     { label: 'Reservations', href: '/booking' },
-    { label: '3D Gallery', href: '/ar' },
-    { label: 'Favorites', href: '/favorites' },
-    { label: 'About', href: '/about' },
-    currentUser
-      ? { label: 'My Account', href: '/profile' }
-      : { label: 'Customer Login', href: '/auth/login' },
   ];
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 h-16 bg-[#061209]/85 backdrop-blur-xl border-b border-white/[0.08] z-50 transition-all select-none">
-        <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 flex items-center justify-between gap-4">
-          {/* Brand Logo */}
-          <Link href="/" className="flex items-center gap-2.5 group shrink-0">
-            <span className="flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-br from-[#d4af37] via-[#c5a059] to-[#8a6828] text-black shadow-md shadow-[#d4af37]/20 group-hover:scale-105 transition-transform">
-              <UtensilsCrossed className="w-4 h-4 text-black" />
-            </span>
-            <div className="leading-tight">
-              <span className="font-heading text-base sm:text-lg font-bold tracking-tight text-white group-hover:text-[#d4af37] transition-colors">
+      <header
+        className="sticky top-0 left-0 right-0 h-[80px] z-50 transition-all select-none border-b"
+        style={{
+          background: 'rgba(13, 10, 8, 0.78)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          borderBottomColor: 'rgba(226, 168, 75, 0.14)',
+        }}
+      >
+        <div className="max-w-7xl mx-auto h-full px-6 md:px-12 flex items-center justify-between gap-6">
+          {/* Left Zone: Brand Crest */}
+          <Link href="/" className="flex items-center gap-3 group shrink-0">
+            {/* Minimal Gold Monogram Crest (no yellow background box) */}
+            <UtensilsCrossed className="w-5 h-5 text-[#E2A84B] group-hover:scale-105 transition-transform" />
+            <div className="flex flex-col">
+              <span className="font-serif text-[22px] font-bold tracking-tight text-[#FAF5EC] group-hover:text-[#E2A84B] transition-colors leading-none">
                 The Golden Oak
               </span>
-              <span className="text-[9.5px] tracking-widest uppercase text-[#d4af37] font-medium block">
-                Artisanal Dining
+              <span className="text-[9px] tracking-[0.28em] uppercase text-[#9A9286] font-medium mt-1 leading-none">
+                ARTISANAL DINING
               </span>
             </div>
           </Link>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
+          {/* Center Zone: 4 Primary Editorial Nav Links */}
+          <nav className="hidden lg:flex items-center gap-8">
             {navLinks.map((link) => {
-              const isActive =
-                link.href === '/' ? pathname === '/' : pathname.startsWith(link.href);
+              const isActive = pathname.startsWith(link.href);
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${
-                    isActive
-                      ? 'bg-white/[0.08] text-[#d4af37] border border-[#d4af37]/30 shadow-sm'
-                      : 'text-white/70 hover:text-white hover:bg-white/[0.04]'
-                  }`}
+                  className="relative py-2 text-sm font-medium transition-colors group flex flex-col items-center"
                 >
-                  {link.label}
+                  <span
+                    className={`transition-colors ${
+                      isActive ? 'text-[#FAF5EC] font-semibold' : 'text-[#FAF5EC]/75 group-hover:text-[#FAF5EC]'
+                    }`}
+                  >
+                    {link.label}
+                  </span>
+                  {/* Subtle 2px gold dot or sliding underline for active link (no box) */}
+                  {isActive ? (
+                    <span className="absolute -bottom-1 w-1.5 h-1.5 rounded-full bg-[#E2A84B]" />
+                  ) : (
+                    <span className="absolute -bottom-1 w-0 h-[2px] bg-[#E2A84B]/60 transition-all duration-300 group-hover:w-full rounded-full" />
+                  )}
                 </Link>
               );
             })}
           </nav>
 
-          {/* Right Action Icons & Book CTA */}
-          <div className="flex items-center gap-2 sm:gap-2.5">
-            {/* Search Link */}
+          {/* Right Zone: Action Cluster */}
+          <div className="flex items-center gap-4 sm:gap-5">
+            {/* Search Icon (Clean, no circular border box) */}
             <Link
               href="/menu"
-              title="Search Dishes"
-              className="w-9 h-9 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] flex items-center justify-center text-white/75 hover:text-white transition-all"
+              title="Search Menu"
+              className="text-[#FAF5EC] hover:text-[#E2A84B] transition-colors p-1"
             >
               <Search className="w-4 h-4" />
             </Link>
 
-            {/* Favorites Icon with Badge */}
+            {/* Favorites Heart Icon (Clean, no circular border box) */}
             <Link
               href="/favorites"
               title="Saved Favorites"
-              className="relative w-9 h-9 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] flex items-center justify-center text-white/75 hover:text-white transition-all"
+              className="relative text-[#FAF5EC] hover:text-[#E2A84B] transition-colors p-1"
             >
-              <Heart className="w-4 h-4 text-rose-400" />
+              <Heart className="w-4 h-4" />
               {isMounted && favoriteCount > 0 && (
-                <span className="absolute -top-1 -right-1 min-w-[17px] h-[17px] px-1 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center shadow-md">
+                <span className="absolute -top-1 -right-1.5 min-w-[15px] h-[15px] px-0.5 rounded-full bg-[#E0532B] text-white text-[8.5px] font-bold flex items-center justify-center">
                   {favoriteCount}
                 </span>
               )}
             </Link>
 
-            {/* Cart Icon with Live Badge */}
+            {/* Cart Bag Icon with Spiced Saffron Badge (Clean, no circular border box) */}
             <Link
               href="/cart"
-              title="Your Dining Cart"
-              className="relative w-9 h-9 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] flex items-center justify-center text-white/75 hover:text-white transition-all"
+              title="Your Cart"
+              className="relative text-[#FAF5EC] hover:text-[#E2A84B] transition-colors p-1"
             >
-              <ShoppingBag className="w-4 h-4 text-[#3EE094]" />
+              <ShoppingBag className="w-4 h-4" />
               {isMounted && totalCartItems > 0 && (
-                <span className="absolute -top-1 -right-1 min-w-[17px] h-[17px] px-1 rounded-full bg-[#3EE094] text-[#06180e] text-[9.5px] font-extrabold flex items-center justify-center shadow-md">
+                <span className="absolute -top-1 -right-1.5 min-w-[16px] h-[16px] px-1 rounded-full bg-[#E0532B] text-white text-[9px] font-bold flex items-center justify-center shadow-md">
                   {totalCartItems > 99 ? '99+' : totalCartItems}
                 </span>
               )}
             </Link>
 
-            {/* Desktop Customer Account / Sign In */}
+            {/* User Profile Pill -> Clean 32px Avatar Circle */}
             {currentUser ? (
               <Link
                 href="/profile"
-                title="Customer Account & History"
-                className="hidden sm:inline-flex items-center gap-2 py-1.5 px-3 rounded-xl bg-white/[0.05] hover:bg-white/[0.09] border border-[#d4af37]/40 text-white transition-all group"
+                title={`${currentUser.name || 'User'} - Account`}
+                className="w-8 h-8 rounded-full border border-[#E2A84B]/40 bg-gradient-to-br from-[#E2A84B]/20 to-[#9E6818]/30 flex items-center justify-center text-xs font-bold text-[#FAF5EC] hover:border-[#E2A84B] hover:scale-105 transition-all shadow-sm"
               >
-                <span className="w-5 h-5 rounded-full bg-gradient-to-br from-[#d4af37] to-[#8a6828] text-black font-extrabold text-[10px] flex items-center justify-center">
-                  {(currentUser.name || currentUser.email || 'U').substring(0, 1).toUpperCase()}
-                </span>
-                <span className="text-xs font-semibold text-white/90 group-hover:text-[#d4af37] max-w-[85px] truncate">
-                  {currentUser.name ? currentUser.name.split(' ')[0] : 'Profile'}
-                </span>
+                {(currentUser.name || currentUser.email || 'U').substring(0, 1).toUpperCase()}
               </Link>
             ) : (
               <Link
                 href="/auth/login"
                 title="Customer Sign In"
-                className="hidden sm:inline-flex items-center gap-1.5 py-1.5 px-3 rounded-xl bg-white/[0.05] hover:bg-white/[0.09] border border-white/10 text-white/90 hover:text-white text-xs font-semibold transition-all hover:border-[#d4af37]/40"
+                className="w-8 h-8 rounded-full border border-white/20 bg-white/[0.04] flex items-center justify-center text-[#FAF5EC] hover:text-[#E2A84B] hover:border-[#E2A84B]/50 transition-all"
               >
-                <User className="w-3.5 h-3.5 text-[#d4af37]" />
-                <span>Sign In</span>
+                <User className="w-4 h-4" />
               </Link>
             )}
 
-            {/* Mobile Account Icon */}
-            <Link
-              href={currentUser ? '/profile' : '/auth/login'}
-              title={currentUser ? 'Customer Account' : 'Customer Sign In'}
-              className="sm:hidden w-9 h-9 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-white/75"
-            >
-              {currentUser ? (
-                <span className="w-5 h-5 rounded-full bg-gradient-to-br from-[#d4af37] to-[#8a6828] text-black font-extrabold text-[10px] flex items-center justify-center">
-                  {(currentUser.name || currentUser.email || 'U').substring(0, 1).toUpperCase()}
-                </span>
-              ) : (
-                <User className="w-4 h-4 text-[#d4af37]" />
-              )}
-            </Link>
-
-            {/* Desktop Book Table CTA Button */}
+            {/* Book Table CTA: Molten Gold Gradient with Sharp 6px Luxury Edge */}
             <Link
               href="/booking"
-              className="hidden sm:inline-flex items-center gap-1.5 py-1.5 px-3.5 rounded-xl bg-gradient-to-r from-[#d4af37] via-[#c5a059] to-[#b38936] text-black font-semibold text-xs shadow-md shadow-[#d4af37]/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+              className="hidden sm:inline-flex items-center justify-center px-4 py-2 text-xs font-bold text-[#0D0A08] transition-all duration-300 hover:brightness-110 active:scale-[0.98] shadow-md"
+              style={{
+                background: 'linear-gradient(135deg, #F6D386 0%, #D49432 50%, #9E6818 100%)',
+                borderRadius: '6px',
+              }}
             >
-              <Calendar className="w-3.5 h-3.5" />
               <span>Book Table</span>
             </Link>
 
@@ -186,9 +177,9 @@ export function TopBar() {
               type="button"
               onClick={() => setMobileMenuOpen(true)}
               aria-label="Open navigation drawer"
-              className="lg:hidden w-9 h-9 rounded-xl bg-white/[0.05] border border-white/[0.08] flex items-center justify-center text-white/80 hover:text-white transition-all"
+              className="lg:hidden text-[#FAF5EC] hover:text-[#E2A84B] transition-colors p-1"
             >
-              <MenuIcon className="w-4 h-4" />
+              <MenuIcon className="w-5 h-5" />
             </button>
           </div>
         </div>
@@ -201,21 +192,22 @@ export function TopBar() {
             className="fixed inset-0 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
             onClick={() => setMobileMenuOpen(false)}
           />
-          <div className="relative ml-auto w-[280px] sm:w-[320px] h-full bg-[#07130a] border-l border-white/10 p-5 flex flex-col justify-between shadow-2xl animate-in slide-in-from-right duration-200">
+          <div className="relative ml-auto w-[280px] sm:w-[320px] h-full bg-[#0D0A08] border-l border-[#E2A84B]/20 p-6 flex flex-col justify-between shadow-2xl animate-in slide-in-from-right duration-200">
             <div className="space-y-6">
               {/* Header inside drawer */}
               <div className="flex items-center justify-between pb-4 border-b border-white/[0.08]">
-                <div className="flex items-center gap-2">
-                  <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#d4af37] to-[#8a6828] flex items-center justify-center text-black">
-                    <UtensilsCrossed className="w-3.5 h-3.5 text-black" />
-                  </span>
-                  <span className="font-heading font-bold text-sm text-white">The Golden Oak</span>
+                <div className="flex items-center gap-2.5">
+                  <UtensilsCrossed className="w-4 h-4 text-[#E2A84B]" />
+                  <div>
+                    <span className="font-serif font-bold text-base text-[#FAF5EC] block">The Golden Oak</span>
+                    <span className="text-[8px] tracking-[0.25em] text-[#9A9286] uppercase block">Artisanal Dining</span>
+                  </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setMobileMenuOpen(false)}
                   aria-label="Close navigation drawer"
-                  className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-white/80 hover:text-white"
+                  className="w-7 h-7 rounded-md bg-white/5 flex items-center justify-center text-white/80 hover:text-white"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -223,52 +215,52 @@ export function TopBar() {
 
               {/* Customer Account Box */}
               {currentUser ? (
-                <div className="p-3 rounded-2xl bg-white/[0.04] border border-[#d4af37]/25 space-y-2">
+                <div className="p-3.5 rounded-lg bg-white/[0.03] border border-[#E2A84B]/25 space-y-2.5">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#d4af37] to-[#8a6828] text-black font-extrabold text-xs flex items-center justify-center shrink-0">
-                      {(currentUser.name || currentUser.email || 'U').substring(0, 2).toUpperCase()}
+                    <div className="w-8 h-8 rounded-full border border-[#E2A84B]/40 bg-gradient-to-br from-[#E2A84B]/20 to-[#9E6818]/30 text-[#FAF5EC] font-bold text-xs flex items-center justify-center shrink-0">
+                      {(currentUser.name || currentUser.email || 'U').substring(0, 1).toUpperCase()}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs font-bold text-white truncate">{currentUser.name || 'Valued Guest'}</p>
+                      <p className="text-xs font-bold text-[#FAF5EC] truncate">{currentUser.name || 'Valued Guest'}</p>
                       <p className="text-[10px] text-white/50 truncate">{currentUser.email}</p>
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-1.5 pt-1">
+                  <div className="grid grid-cols-2 gap-2 pt-1">
                     <Link
                       href="/profile/orders"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="py-1.5 px-2 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-[10.5px] font-medium text-white/80 text-center flex items-center justify-center gap-1"
+                      className="py-1.5 px-2 rounded-md bg-white/[0.05] hover:bg-white/[0.1] text-[11px] font-medium text-white/80 text-center flex items-center justify-center gap-1.5"
                     >
-                      <ShoppingBag className="w-3 h-3 text-[#3EE094]" />
+                      <ShoppingBag className="w-3 h-3 text-[#E2A84B]" />
                       <span>My Orders</span>
                     </Link>
                     <Link
-                      href="/profile/reservations"
+                      href="/booking"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="py-1.5 px-2 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-[10.5px] font-medium text-white/80 text-center flex items-center justify-center gap-1"
+                      className="py-1.5 px-2 rounded-md bg-white/[0.05] hover:bg-white/[0.1] text-[11px] font-medium text-white/80 text-center flex items-center justify-center gap-1.5"
                     >
-                      <Calendar className="w-3 h-3 text-[#d4af37]" />
+                      <Calendar className="w-3 h-3 text-[#E2A84B]" />
                       <span>Bookings</span>
                     </Link>
                   </div>
                   <Link
                     href="/profile"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="block text-center text-[10.5px] text-[#d4af37] hover:underline pt-0.5"
+                    className="block text-center text-[10.5px] text-[#E2A84B] hover:underline pt-0.5"
                   >
-                    View Full Profile →
+                    View Account &amp; History →
                   </Link>
                 </div>
               ) : (
-                <div className="p-3 rounded-2xl bg-white/[0.04] border border-white/10 space-y-2">
+                <div className="p-3.5 rounded-lg bg-white/[0.03] border border-white/10 space-y-2.5">
                   <div>
-                    <p className="text-xs font-semibold text-white">Welcome to The Golden Oak</p>
-                    <p className="text-[10.5px] text-white/50">Sign in to book tables & view order history</p>
+                    <p className="text-xs font-semibold text-[#FAF5EC]">Welcome to The Golden Oak</p>
+                    <p className="text-[10.5px] text-white/50">Sign in to book tables &amp; track orders</p>
                   </div>
                   <Link
                     href="/auth/login"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-center gap-2 w-full py-2 px-3 rounded-xl bg-white/[0.08] hover:bg-white/[0.12] border border-[#d4af37]/40 text-[#d4af37] font-semibold text-xs transition-colors"
+                    className="flex items-center justify-center gap-2 w-full py-2 px-3 rounded-[6px] bg-[#E2A84B]/15 hover:bg-[#E2A84B]/25 border border-[#E2A84B]/40 text-[#E2A84B] font-semibold text-xs transition-colors"
                   >
                     <User className="w-3.5 h-3.5" />
                     <span>Customer Sign In / Register</span>
@@ -279,22 +271,21 @@ export function TopBar() {
               {/* Navigation list */}
               <nav className="space-y-1">
                 {navLinks.map((link) => {
-                  const isActive =
-                    link.href === '/' ? pathname === '/' : pathname.startsWith(link.href);
+                  const isActive = pathname.startsWith(link.href);
                   return (
                     <Link
                       key={link.href}
                       href={link.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium transition-colors ${
+                      className={`flex items-center justify-between px-3 py-2.5 rounded-md text-xs font-medium transition-colors ${
                         isActive
-                          ? 'bg-[#d4af37]/15 text-[#d4af37] border border-[#d4af37]/30'
+                          ? 'bg-[#E2A84B]/10 text-[#E2A84B] border-l-2 border-[#E2A84B]'
                           : 'text-white/75 hover:text-white hover:bg-white/[0.04]'
                       }`}
                     >
                       <span>{link.label}</span>
                       {link.href === '/ar' && (
-                        <span className="px-1.5 py-0.5 rounded-full bg-[#3EE094]/15 text-[#3EE094] text-[9px] font-bold">
+                        <span className="px-1.5 py-0.2 rounded-full bg-[#E2A84B]/20 text-[#E2A84B] text-[9px] font-bold">
                           3D
                         </span>
                       )}
@@ -308,7 +299,11 @@ export function TopBar() {
                 <Link
                   href="/booking"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-gradient-to-r from-[#d4af37] to-[#b38936] text-black font-semibold text-xs shadow-md"
+                  className="flex items-center justify-center gap-2 w-full py-2.5 text-[#0D0A08] font-bold text-xs shadow-md"
+                  style={{
+                    background: 'linear-gradient(135deg, #F6D386 0%, #D49432 50%, #9E6818 100%)',
+                    borderRadius: '6px',
+                  }}
                 >
                   <Calendar className="w-3.5 h-3.5" />
                   <span>Reserve a Table</span>
@@ -317,13 +312,13 @@ export function TopBar() {
                 <Link
                   href="/cart"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-between px-4 py-2.5 rounded-xl bg-white/[0.05] border border-white/[0.08] text-xs font-medium text-white/90"
+                  className="flex items-center justify-between px-4 py-2.5 rounded-[6px] bg-white/[0.05] border border-white/[0.08] text-xs font-medium text-white/90"
                 >
                   <div className="flex items-center gap-2">
-                    <ShoppingBag className="w-3.5 h-3.5 text-[#3EE094]" />
+                    <ShoppingBag className="w-3.5 h-3.5 text-[#E0532B]" />
                     <span>View Cart</span>
                   </div>
-                  <span className="px-2 py-0.5 rounded-full bg-[#3EE094] text-[#06180e] font-bold text-[10px]">
+                  <span className="px-2 py-0.5 rounded-full bg-[#E0532B] text-white font-bold text-[10px]">
                     {totalCartItems}
                   </span>
                 </Link>
@@ -333,13 +328,13 @@ export function TopBar() {
             {/* Bottom info inside drawer */}
             <div className="pt-4 border-t border-white/[0.08] space-y-2 text-[11px] text-white/50">
               <div className="flex items-center gap-2">
-                <Phone className="w-3 h-3 text-[#d4af37]" />
+                <Phone className="w-3 h-3 text-[#E2A84B]" />
                 <span>+91 99907 74565</span>
               </div>
               <Link
                 href="/employee/login"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block text-[#d4af37] hover:underline pt-1 font-medium"
+                className="block text-[#E2A84B] hover:underline pt-1 font-medium"
               >
                 Staff Portal Sign In →
               </Link>

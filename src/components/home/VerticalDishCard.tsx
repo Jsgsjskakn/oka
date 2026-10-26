@@ -2,7 +2,8 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Plus, Heart } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Heart, Box } from 'lucide-react';
 import type { Dish } from '@/types/menu';
 import { useCartStore } from '@/store/cart-store';
 import { useFavoritesStore } from '@/store/favorites-store';
@@ -15,6 +16,7 @@ interface VerticalDishCardProps {
 }
 
 export function VerticalDishCard({ dish, onAdd, rank }: VerticalDishCardProps) {
+  const router = useRouter();
   const addItem = useCartStore((s) => s.addItem);
   const isFav = useFavoritesStore((s) => s.isFavorite(dish.id));
   const toggleFav = useFavoritesStore((s) => s.toggleFavorite);
@@ -36,68 +38,156 @@ export function VerticalDishCard({ dish, onAdd, rank }: VerticalDishCardProps) {
     toggleFav(dish.id);
   };
 
+  const rankTag = rank ? `#0${rank} SIGNATURE` : '#01 SIGNATURE';
+
   return (
-    <div className="flex-none w-[190px] sm:w-[210px] rounded-2xl bg-[#09150d]/85 border border-white/[0.08] hover:border-white/20 overflow-hidden group transition-all duration-300 hover:-translate-y-1 relative shadow-[0_10px_28px_rgba(0,0,0,0.5)]">
-      {rank && (
-        <div className="absolute top-2.5 left-2.5 w-6 h-6 rounded-full bg-gradient-to-br from-[#d4af37] to-[#8a6828] flex items-center justify-center text-black font-extrabold z-10 text-xs shadow-md">
-          {rank}
+    <div
+      className="group relative flex flex-col justify-between overflow-hidden transition-all duration-300 hover:-translate-y-1 w-full"
+      style={{
+        background: '#15110E',
+        borderRadius: '10px',
+        borderTop: '1px solid rgba(246, 211, 134, 0.28)',
+        borderLeft: '1px solid rgba(255, 255, 255, 0.05)',
+        borderRight: '1px solid rgba(255, 255, 255, 0.05)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+        boxShadow: '0 12px 32px rgba(0, 0, 0, 0.6)',
+      }}
+    >
+      {/* Top Image Frame with Soft Dark Bottom Fade */}
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-black/60">
+        <Link
+          href={`/menu/${dish.category || 'all'}/${dish.slug}`}
+          className="relative block w-full h-full"
+        >
+          <Image
+            src={dish.image || '/images/dishes/placeholder.jpg'}
+            alt={dish.name}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            className="object-cover group-hover:scale-105 transition-transform duration-700"
+          />
+
+          {/* Soft dark fade melting photo into card surface */}
+          <div
+            className="pointer-events-none absolute inset-0 z-10"
+            style={{
+              background: 'linear-gradient(to top, #15110E 4%, transparent 35%)',
+            }}
+          />
+        </Link>
+
+        {/* Top-Left Sleek Dark Glass Tag (#01 SIGNATURE) */}
+        <div
+          className="absolute top-3 left-3 z-20 px-2.5 py-1 rounded-md text-[10px] font-serif font-bold tracking-wider text-[#E2A84B] flex items-center gap-1 shadow-md"
+          style={{
+            background: 'rgba(13, 10, 8, 0.75)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            border: '1px solid rgba(226, 168, 75, 0.3)',
+          }}
+        >
+          {rankTag}
         </div>
-      )}
 
-      <Link
-        href={`/menu/${dish.category || 'all'}/${dish.slug}`}
-        className="relative aspect-square w-full block bg-black/40 overflow-hidden"
-      >
-        <Image
-          src={dish.image || '/images/dishes/placeholder.jpg'}
-          alt={dish.name}
-          fill
-          className="object-cover group-hover:scale-105 transition-transform duration-500"
-        />
+        {/* Top-Right 3D Trigger Button: Sleek glass pill 3D VIEW */}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            router.push(`/3d/${dish.slug}`);
+          }}
+          title="Interactive 3D View"
+          className="absolute top-3 right-3 z-20 flex items-center gap-1 px-2.5 py-1 rounded-full text-[10.5px] font-semibold text-[#FAF5EC] hover:text-[#E0532B] hover:border-[#E0532B]/50 transition-all shadow-md group/threed"
+          style={{
+            background: 'rgba(13, 10, 8, 0.75)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            border: '1px solid rgba(226, 168, 75, 0.3)',
+          }}
+        >
+          <Box className="w-3 h-3 text-[#E2A84B] group-hover/threed:text-[#E0532B] transition-colors" />
+          <span>3D VIEW</span>
+        </button>
 
+        {/* Bottom-Right Heart Button */}
         <button
           type="button"
           onClick={handleToggleFav}
-          className="absolute bottom-2 right-2 w-6 h-6 rounded-full bg-[#061209]/80 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/80 hover:text-white transition-transform"
-          aria-label={isFav ? 'Remove favorite' : 'Add favorite'}
+          aria-label={isFav ? 'Remove from favorites' : 'Add to favorites'}
+          className="absolute bottom-3 right-3 z-20 w-7 h-7 rounded-full flex items-center justify-center text-white/80 hover:text-white transition-all shadow-md"
+          style={{
+            background: 'rgba(13, 10, 8, 0.75)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            border: '1px solid rgba(255, 255, 255, 0.15)',
+          }}
         >
-          <Heart className={`w-3 h-3 ${isFav ? 'text-rose-400 fill-rose-400' : ''}`} />
+          <Heart
+            className={`w-3.5 h-3.5 transition-colors ${
+              isFav ? 'text-rose-500 fill-rose-500' : 'text-[#FAF5EC]'
+            }`}
+          />
         </button>
-      </Link>
+      </div>
 
-      <div className="p-3 flex flex-col justify-between h-[115px]">
-        <div>
-          <div className="flex items-start justify-between gap-1 mb-1">
+      {/* Card Body Typography */}
+      <div className="p-5 flex flex-col justify-between flex-1">
+        <div className="space-y-2">
+          {/* Dish Title + Subtle 12px Veg/Non-Veg indicator */}
+          <div className="flex items-baseline gap-2">
+            <span
+              className={`inline-block w-3 h-3 border p-[2px] rounded-[2px] shrink-0 translate-y-0.5 ${
+                dish.isVeg ? 'border-emerald-600' : 'border-rose-600'
+              }`}
+            >
+              <span
+                className={`block w-full h-full rounded-full ${
+                  dish.isVeg ? 'bg-emerald-600' : 'bg-rose-600'
+                }`}
+              />
+            </span>
             <Link
               href={`/menu/${dish.category || 'all'}/${dish.slug}`}
-              className="font-heading text-xs sm:text-sm font-bold text-white line-clamp-1 leading-tight flex-1 hover:text-[#d4af37] transition-colors"
+              className="font-serif text-[21px] font-semibold text-[#FAF5EC] leading-snug hover:text-[#E2A84B] transition-colors line-clamp-1"
             >
               {dish.name}
             </Link>
-            <div className="flex items-center justify-center w-3 h-3 rounded-[2px] bg-white p-[2px] mt-0.5 shrink-0">
-              <div
-                className={`w-1.5 h-1.5 rounded-full ${
-                  dish.isVeg ? 'bg-green-600' : 'bg-red-600'
-                }`}
-              />
-            </div>
           </div>
-          <p className="text-[11px] text-white/50 line-clamp-1">
+
+          {/* Description (2 lines full, line-clamp-2) */}
+          <p className="text-[13px] text-[#9A9286] leading-relaxed line-clamp-2 min-h-[38px]">
             {dish.description}
           </p>
         </div>
 
-        <div className="mt-auto pt-2 flex items-center justify-between border-t border-white/[0.06]">
-          <span className="text-xs sm:text-sm font-bold text-[#d4af37]">
+        {/* Card Footer: Price (Ivory White Monospace) + ADD + Button */}
+        <div className="pt-4 mt-3 flex items-center justify-between border-t border-white/[0.06]">
+          <span className="font-mono text-[17px] font-bold text-[#FAF5EC]">
             ₹{dish.price}
           </span>
+
           <button
             type="button"
             onClick={handleAddToCart}
-            aria-label={`Add ${dish.name} to cart`}
-            className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#d4af37] to-[#b38936] text-black flex items-center justify-center hover:scale-110 active:scale-95 transition-transform shadow-sm"
+            aria-label={`Add ${dish.name} to dining order`}
+            className="px-4 py-2 text-xs font-bold transition-all duration-200 active:scale-95 shadow-sm"
+            style={{
+              borderRadius: '6px',
+              background: 'rgba(226, 168, 75, 0.12)',
+              border: '1px solid rgba(226, 168, 75, 0.35)',
+              color: '#E2A84B',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#E2A84B';
+              e.currentTarget.style.color = '#0D0A08';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'rgba(226, 168, 75, 0.12)';
+              e.currentTarget.style.color = '#E2A84B';
+            }}
           >
-            <Plus className="w-4 h-4 text-black" />
+            ADD +
           </button>
         </div>
       </div>

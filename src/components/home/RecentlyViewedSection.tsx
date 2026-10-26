@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { History, Plus, ChevronRight } from 'lucide-react';
+import { Plus, History, ArrowRight } from 'lucide-react';
 import { useRecentlyViewedStore } from '@/store/recently-viewed-store';
 import { useCartStore } from '@/store/cart-store';
 import { toast } from '@/store/toast-store';
@@ -45,70 +45,78 @@ export function RecentlyViewedSection() {
   };
 
   return (
-    <section className="py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <History className="w-4 h-4 text-[#d4af37]" />
-          <h2 className="font-heading text-lg sm:text-xl font-bold text-white tracking-tight">
-            Recently Viewed
-          </h2>
+    <section className="px-6 md:px-12 max-w-7xl mx-auto w-full pt-6">
+      {/* Continue Exploring Bar: Horizontal Compact Strip (height: 72px, #17120F surface) */}
+      <div
+        className="w-full min-h-[72px] px-5 py-3 rounded-xl flex flex-wrap md:flex-nowrap items-center justify-between gap-4 border"
+        style={{
+          background: '#17120F',
+          borderColor: 'rgba(226, 168, 75, 0.2)',
+        }}
+      >
+        {/* Left Label */}
+        <div className="flex items-center gap-2.5 shrink-0">
+          <History className="w-4 h-4 text-[#E2A84B]" />
+          <span className="text-xs uppercase tracking-[0.2em] text-[#9A9286] font-medium">
+            CONTINUE EXPLORING
+          </span>
         </div>
-        <Link
-          href="/menu"
-          className="text-xs font-medium text-[#d4af37] hover:text-white flex items-center gap-1 transition-colors"
-        >
-          <span>Explore All</span>
-          <ChevronRight className="w-3.5 h-3.5" />
-        </Link>
-      </div>
 
-      <div className="flex overflow-x-auto hide-scrollbar gap-3 sm:gap-4 pb-2">
-        {recentDishes.map((dish) => (
-          <div
-            key={dish.id}
-            className="flex-none w-[200px] sm:w-[220px] rounded-2xl bg-[#09150d]/80 border border-white/[0.08] hover:border-white/20 transition-all p-2.5 flex flex-col group"
-          >
-            <Link
-              href={`/menu/${dish.categories?.slug || 'all'}/${dish.slug}`}
-              className="relative aspect-[4/3] rounded-xl overflow-hidden bg-black/40 mb-2.5 block"
+        {/* Horizontal Row of Recent Dishes */}
+        <div className="flex items-center gap-4 overflow-x-auto hide-scrollbar py-1 flex-1">
+          {recentDishes.slice(0, 3).map((dish) => (
+            <div
+              key={dish.id}
+              className="flex items-center gap-3 p-1.5 pr-3 rounded-lg bg-white/[0.03] border border-white/[0.06] shrink-0 group hover:border-[#E2A84B]/40 transition-colors"
             >
-              <Image
-                src={dish.image_url || '/images/dishes/placeholder.jpg'}
-                alt={dish.name}
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute top-2 left-2 flex items-center justify-center w-3 h-3 rounded-sm bg-white p-[2px]">
-                <div
-                  className={`w-1.5 h-1.5 rounded-full ${
-                    dish.is_veg ? 'bg-green-500' : 'bg-red-500'
-                  }`}
+              {/* 52x52px square thumbnail */}
+              <Link
+                href={`/menu/${dish.categories?.slug || 'all'}/${dish.slug}`}
+                className="relative w-[52px] h-[52px] rounded-md overflow-hidden bg-black/50 shrink-0"
+              >
+                <Image
+                  src={dish.image_url || '/images/dishes/placeholder.jpg'}
+                  alt={dish.name}
+                  fill
+                  sizes="52px"
+                  className="object-cover group-hover:scale-105 transition-transform"
                 />
+              </Link>
+
+              {/* Title & Price */}
+              <div className="flex flex-col min-w-0 pr-2">
+                <Link
+                  href={`/menu/${dish.categories?.slug || 'all'}/${dish.slug}`}
+                  className="font-serif text-sm font-semibold text-[#FAF5EC] truncate group-hover:text-[#E2A84B] transition-colors"
+                >
+                  {dish.name}
+                </Link>
+                <span className="font-mono text-xs font-bold text-[#E2A84B] mt-0.5">
+                  {formatMoney(dish.price_paise)}
+                </span>
               </div>
-            </Link>
 
-            <Link
-              href={`/menu/${dish.categories?.slug || 'all'}/${dish.slug}`}
-              className="font-heading text-xs sm:text-sm font-semibold text-white truncate hover:text-[#d4af37] transition-colors"
-            >
-              {dish.name}
-            </Link>
-
-            <div className="mt-auto pt-2 flex items-center justify-between">
-              <span className="text-xs font-bold text-[#d4af37]">
-                {formatMoney(dish.price_paise)}
-              </span>
+              {/* Quick Add + Button */}
               <button
                 type="button"
                 onClick={() => handleQuickAdd(dish)}
-                aria-label={`Add ${dish.name} to cart`}
-                className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#d4af37] to-[#b38936] text-black flex items-center justify-center hover:scale-110 active:scale-95 transition-transform shadow-sm"
+                aria-label={`Quick add ${dish.name} to cart`}
+                className="w-7 h-7 rounded-[6px] bg-[#E2A84B]/15 hover:bg-[#E2A84B] border border-[#E2A84B]/40 text-[#E2A84B] hover:text-[#0D0A08] flex items-center justify-center transition-all shrink-0 ml-auto"
               >
-                <Plus className="w-4 h-4 text-black" />
+                <Plus className="w-3.5 h-3.5" />
               </button>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
+
+        {/* View Full Menu Link */}
+        <Link
+          href="/menu"
+          className="text-xs text-[#E2A84B] hover:text-[#FAF5EC] flex items-center gap-1 shrink-0 font-medium transition-colors"
+        >
+          <span>Full Menu</span>
+          <ArrowRight className="w-3.5 h-3.5" />
+        </Link>
       </div>
     </section>
   );

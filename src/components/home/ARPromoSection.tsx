@@ -1,46 +1,141 @@
 'use client';
 
-import { Sparkles, Box, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export function ARPromoSection() {
   return (
-    <section className="px-4 sm:px-6 lg:px-8 py-8 max-w-7xl mx-auto w-full">
-      <div className="relative overflow-hidden rounded-3xl border border-[#d4af37]/25 bg-gradient-to-br from-[#0c2014]/90 via-[#07150c]/85 to-[#050e08]/90 p-8 sm:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
-        {/* Subtle Ambient Radial Lighting */}
-        <div className="pointer-events-none absolute top-0 right-0 w-80 h-80 rounded-full bg-[#d4af37]/10 blur-3xl" />
-        <div className="pointer-events-none absolute bottom-0 left-0 w-72 h-72 rounded-full bg-[#1b3e25]/20 blur-3xl" />
+    <section className="px-6 md:px-12 py-12 max-w-7xl mx-auto w-full">
+      {/* Spatial 3D Showcase Spotlight Container */}
+      <div
+        className="relative overflow-hidden rounded-2xl border p-8 sm:p-12 lg:p-16 shadow-2xl"
+        style={{
+          background: '#0E1F18',
+          borderColor: 'rgba(226, 168, 75, 0.22)',
+        }}
+      >
+        {/* Radial Gold Aura */}
+        <div
+          className="pointer-events-none absolute inset-0 z-0"
+          style={{
+            background:
+              'radial-gradient(circle at 80% 50%, rgba(226, 168, 75, 0.16), transparent 65%)',
+          }}
+        />
 
-        {/* Decorative 3D Cube Outline */}
-        <div className="absolute top-4 right-4 sm:right-8 opacity-15 pointer-events-none">
-          <Box className="w-36 h-36 sm:w-48 sm:h-48 text-[#d4af37] stroke-[0.4]" />
-        </div>
+        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
+          {/* Left Side (55% Width / lg:col-span-7) */}
+          <div className="lg:col-span-7 flex flex-col items-start">
+            {/* Clean Uppercase Overline in Spiced Saffron #E0532B (No pill badge) */}
+            <span className="text-[11px] uppercase tracking-[0.25em] text-[#E0532B] font-bold mb-4">
+              SPATIAL DINING EXPERIENCE
+            </span>
 
-        <div className="relative z-10 max-w-2xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 mb-4 rounded-full bg-[#d4af37]/10 border border-[#d4af37]/30 text-xs font-semibold text-[#d4af37]">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Futuristic Dining Feature</span>
+            {/* Heading: 42px Serif with "Interactive 3D" in Gold Italic */}
+            <h2 className="font-serif text-3xl sm:text-4xl lg:text-[42px] leading-tight font-bold text-[#FAF5EC] mb-5 tracking-tight">
+              Explore Dishes in{' '}
+              <span className="italic text-[#E2A84B] font-normal block sm:inline">
+                Interactive 3D
+              </span>
+            </h2>
+
+            {/* Subtext */}
+            <p className="text-sm sm:text-base text-[#B5ADA2] font-light leading-relaxed mb-8 max-w-xl">
+              Rotate, inspect textures, and preview portion sizes of our signature artisan pizzas and fusion dishes right on your screen before placing your order.
+            </p>
+
+            {/* Crisp Metallic Gold Gradient Button */}
+            <Link
+              href="/ar"
+              className="inline-flex items-center justify-center gap-2 px-7 py-3.5 text-xs sm:text-sm font-bold text-[#0D0A08] transition-all duration-300 hover:brightness-110 active:scale-[0.98] group shadow-md"
+              style={{
+                background: 'linear-gradient(135deg, #F6D386 0%, #D49432 50%, #9E6818 100%)',
+                borderRadius: '6px',
+              }}
+            >
+              <span>Launch 3D Food Lounge</span>
+              <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+            </Link>
           </div>
 
-          <h2 className="font-heading text-2xl sm:text-4xl font-extrabold text-white mb-3 tracking-tight">
-            Explore Dishes in{' '}
-            <span className="bg-gradient-to-r from-[#f7e4a8] via-[#d4af37] to-[#b38936] bg-clip-text text-transparent">
-              Interactive 3D
-            </span>
-          </h2>
+          {/* Right Side (45% Width / lg:col-span-5) — Dish Visual with 360° Orbital Gold Ring & 3 Floating Glass Tags */}
+          <div className="lg:col-span-5 relative w-full aspect-square max-w-[420px] mx-auto flex items-center justify-center">
+            {/* 360° Orbital Gold Ring (SVG Ellipse Ring) */}
+            <svg
+              className="absolute inset-0 w-full h-full pointer-events-none animate-[spin_50s_linear_infinite]"
+              viewBox="0 0 400 400"
+              fill="none"
+            >
+              <ellipse
+                cx="200"
+                cy="200"
+                rx="180"
+                ry="130"
+                transform="rotate(-25 200 200)"
+                stroke="rgba(226, 168, 75, 0.35)"
+                strokeWidth="1.5"
+                strokeDasharray="6 8"
+              />
+              <circle cx="60" cy="140" r="4" fill="#E2A84B" />
+              <circle cx="340" cy="260" r="4" fill="#E0532B" />
+            </svg>
 
-          <p className="text-xs sm:text-sm text-white/70 mb-8 max-w-xl leading-relaxed font-light">
-            Rotate, inspect textures, and preview portion sizes of our signature artisan pizzas and fusion dishes right on your screen before placing your order.
-          </p>
+            {/* Central Dish Artwork */}
+            <div className="relative w-[240px] h-[240px] sm:w-[280px] sm:h-[280px] z-10 transition-transform hover:scale-105 duration-500">
+              <Image
+                src="/images/dishes/tandoori-paneer-pizza.webp"
+                alt="Wood-Fired Tandoori Paneer Pizza 3D Rendering"
+                fill
+                sizes="(max-width: 640px) 240px, 280px"
+                className="object-contain"
+                style={{
+                  filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.85)) drop-shadow(0 0 20px rgba(226,168,75,0.2))',
+                }}
+              />
+            </div>
 
-          <Link
-            href="/ar"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-[#d4af37] to-[#b38936] text-black font-bold text-xs sm:text-sm shadow-[0_10px_25px_rgba(212,175,55,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all"
-          >
-            <Box className="w-4 h-4 text-black" />
-            <span>Launch 3D Food Lounge</span>
-            <ArrowRight className="w-3.5 h-3.5 text-black" />
-          </Link>
+            {/* Floating Glass Tag 1: 🔍 4K Texture Zoom (Top-Left) */}
+            <div
+              className="absolute -top-1 left-2 sm:left-4 z-20 px-3.5 py-1.5 rounded-full text-[11px] font-medium text-[#FAF5EC] shadow-xl flex items-center gap-1.5"
+              style={{
+                background: 'rgba(13, 10, 8, 0.78)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                border: '1px solid rgba(226, 168, 75, 0.35)',
+              }}
+            >
+              <span>🔍</span>
+              <span>4K Texture Zoom</span>
+            </div>
+
+            {/* Floating Glass Tag 2: 📐 True Portion Scale (Top-Right) */}
+            <div
+              className="absolute top-10 -right-2 sm:right-0 z-20 px-3.5 py-1.5 rounded-full text-[11px] font-medium text-[#FAF5EC] shadow-xl flex items-center gap-1.5"
+              style={{
+                background: 'rgba(13, 10, 8, 0.78)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                border: '1px solid rgba(226, 168, 75, 0.35)',
+              }}
+            >
+              <span>📐</span>
+              <span>True Portion Scale</span>
+            </div>
+
+            {/* Floating Glass Tag 3: 🔥 Live Ingredient Layering (Bottom-Center) */}
+            <div
+              className="absolute -bottom-2 sm:bottom-0 left-1/2 -translate-x-1/2 z-20 px-4 py-1.5 rounded-full text-[11px] font-medium text-[#FAF5EC] shadow-xl flex items-center gap-1.5 whitespace-nowrap"
+              style={{
+                background: 'rgba(13, 10, 8, 0.78)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                border: '1px solid rgba(226, 168, 75, 0.35)',
+              }}
+            >
+              <span>🔥</span>
+              <span>Live Ingredient Layering</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>

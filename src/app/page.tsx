@@ -1,41 +1,43 @@
 import { Metadata } from 'next';
 import { HeroSection } from '@/components/home/HeroSection';
-import { QuickActions } from '@/components/home/QuickActions';
-import { CategoriesSection } from '@/components/home/CategoriesSection';
-import { FeaturedSection } from '@/components/home/FeaturedSection';
+import { CuratedSignaturesSection } from '@/components/home/CuratedSignaturesSection';
 import { RecentlyViewedSection } from '@/components/home/RecentlyViewedSection';
 import { ARPromoSection } from '@/components/home/ARPromoSection';
-import { BestSellersSection } from '@/components/home/BestSellersSection';
 import { StorySection } from '@/components/home/StorySection';
 import { BookingCTASection } from '@/components/home/BookingCTASection';
 import { RestaurantInfo } from '@/components/home/RestaurantInfo';
-import { getCategories, getAllDishes, getFeaturedDishes } from '@/lib/services/menu.service';
+import { getAllDishes } from '@/lib/services/menu.service';
 
 export const metadata: Metadata = {
-  title: 'The Golden Oak | Gourmet Indian Fusion & Artisanal Dining',
+  title: 'The Golden Oak | Artisanal Dining & 3D Gastronomy',
   description:
-    'Experience luxury dining with The Golden Oak. Hand-stretched sourdough pizzas, charcoal tandoori fusion, and interactive 3D culinary previews in Indiranagar, Bengaluru.',
+    'Experience artisanal luxury dining with The Golden Oak. Hand-stretched sourdough pizzas, charcoal tandoori fusion, and interactive 3D culinary previews in Indiranagar, Bengaluru.',
 };
 
 export default async function Home() {
-  const [categories, featuredDishes, allDishes] = await Promise.all([
-    getCategories(),
-    getFeaturedDishes(),
-    getAllDishes(),
-  ]);
-  const bestSellers = allDishes.filter((d) => d.is_best_seller);
+  const allDishes = await getAllDishes();
 
   return (
-    <div className="flex flex-col gap-8 pb-12">
+    <div className="flex flex-col w-full overflow-x-hidden">
+      {/* 1. Asymmetric Split Editorial Hero & Trust Strip */}
       <HeroSection />
-      <QuickActions />
+
+      {/* 2. Sleek Horizontal Continue Exploring Bar (when user has recent views) */}
       <RecentlyViewedSection />
-      <FeaturedSection dishes={featuredDishes} />
-      <CategoriesSection categories={categories} />
-      <BestSellersSection dishes={bestSellers} />
+
+      {/* 3. Chef's Curated Signatures: Merged 4-Card Luxury Grid with Architectural Tabs */}
+      <CuratedSignaturesSection dishes={allDishes} />
+
+      {/* 4. Spatial 3D Showcase Spotlight */}
       <ARPromoSection />
+
+      {/* 5. Editorial Heritage Split Section (Ivory Contrast Flip) */}
       <StorySection />
+
+      {/* 6. Interactive Concierge Booking Bar */}
       <BookingCTASection />
+
+      {/* 7. Split Architectural Concierge & Dark Map Card */}
       <RestaurantInfo />
     </div>
   );
