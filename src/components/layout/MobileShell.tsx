@@ -28,9 +28,9 @@ export function MobileShell({ children }: MobileShellProps) {
     pathname?.startsWith('/3d') || pathname?.startsWith('/ar');
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#060e08] text-[#FBF9F5] antialiased selection:bg-[#d4af37]/30 selection:text-white">
+    <div className="flex flex-col min-h-screen bg-[#0D0A08] text-[#FAF5EC] antialiased selection:bg-[#E2A84B]/30 selection:text-white">
       <TopBar />
-      <main className="flex-1 pt-16">
+      <main className="flex-1">
         {children}
       </main>
       {!isImmersiveViewer && <CustomerFooter />}
