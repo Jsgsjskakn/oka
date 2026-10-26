@@ -8,6 +8,7 @@ import type { Dish } from '@/types/menu';
 import { useCartStore } from '@/store/cart-store';
 import { useFavoritesStore } from '@/store/favorites-store';
 import { toast } from '@/store/toast-store';
+import { resolveDishImageUrl } from '@/lib/utils/dish-images';
 
 interface VerticalDishCardProps {
   dish: Dish;
@@ -39,6 +40,7 @@ export function VerticalDishCard({ dish, onAdd, rank }: VerticalDishCardProps) {
   };
 
   const rankTag = rank ? `#0${rank} SIGNATURE` : '#01 SIGNATURE';
+  const resolvedImage = resolveDishImageUrl(dish.slug, dish.image);
 
   return (
     <div
@@ -60,7 +62,7 @@ export function VerticalDishCard({ dish, onAdd, rank }: VerticalDishCardProps) {
           className="relative block w-full h-full"
         >
           <Image
-            src={dish.image || '/images/dishes/placeholder.jpg'}
+            src={resolvedImage}
             alt={dish.name}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"

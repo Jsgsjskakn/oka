@@ -4,6 +4,9 @@ import { api } from '@/../convex/_generated/api';
 import { createClient } from '@/lib/supabase/server';
 import type { Category, DishWithCategory, DishSize, DishAddon, DishModel, DishHotspot } from '@/lib/db/types';
 import { categories as mockCategories, dishes as mockDishes } from '@/data/mock-menu';
+import { resolveDishImageUrl, DISH_IMAGE_MAP } from '@/lib/utils/dish-images';
+
+export { resolveDishImageUrl, DISH_IMAGE_MAP };
 
 const RESTAURANT_ID = 'a1b2c3d4-0000-0000-0000-000000000001';
 
@@ -36,8 +39,8 @@ function getFallbackDishes(): DishWithCategory[] {
       description: d.description || null,
       price_paise: Math.round(d.price * 100),
       original_price_paise: d.originalPrice ? Math.round(d.originalPrice * 100) : null,
-      image_url: d.image || null,
-      thumbnail_url: d.image || null,
+      image_url: resolveDishImageUrl(d.slug, d.image),
+      thumbnail_url: resolveDishImageUrl(d.slug, d.image),
       is_veg: d.isVeg ?? true,
       is_available: d.isAvailable ?? true,
       is_featured: d.isFeatured ?? false,
@@ -78,8 +81,8 @@ function mapConvexDish(d: any, category?: Category): DishWithCategory {
     description: d.description || null,
     price_paise: d.pricePaise || (d.price ? Math.round(d.price * 100) : 0),
     original_price_paise: d.originalPrice ? Math.round(d.originalPrice * 100) : null,
-    image_url: d.image || d.imageUrl || null,
-    thumbnail_url: d.thumbnailUrl || d.image || null,
+    image_url: resolveDishImageUrl(d.slug, d.image || d.imageUrl),
+    thumbnail_url: resolveDishImageUrl(d.slug, d.thumbnailUrl || d.image),
     is_veg: d.isVeg ?? true,
     is_available: d.isAvailable ?? true,
     is_featured: d.isFeatured ?? false,
@@ -153,7 +156,13 @@ export async function getDishesByCategory(categorySlug: string): Promise<DishWit
       .select('*, categories(*)')
       .eq('categories.slug', categorySlug)
       .eq('is_available', true);
-    if (!error && data && data.length > 0) return (data as unknown as DishWithCategory[]);
+    if (!error && data && data.length > 0) {
+      return (data as any[]).map((d) => ({
+        ...d,
+        image_url: resolveDishImageUrl(d.slug, d.image_url),
+        thumbnail_url: resolveDishImageUrl(d.slug, d.thumbnail_url || d.image_url),
+      })) as DishWithCategory[];
+    }
   } catch (supabaseError) {
     console.warn('[menu.service] Supabase dishes query failed:', supabaseError);
   }
@@ -183,7 +192,14 @@ export async function getDishBySlug(categorySlug: string, dishSlug: string): Pro
       .eq('slug', dishSlug)
       .eq('is_available', true)
       .single();
-    if (!error && data) return (data as unknown as DishWithCategory);
+    if (!error && data) {
+      const d = data as any;
+      return {
+        ...d,
+        image_url: resolveDishImageUrl(d.slug, d.image_url),
+        thumbnail_url: resolveDishImageUrl(d.slug, d.thumbnail_url || d.image_url),
+      } as DishWithCategory;
+    }
   } catch (supabaseError) {
     // continue to fallback
   }
@@ -208,7 +224,14 @@ export async function getDishById(dishId: string): Promise<DishWithCategory | nu
       .select('*, categories(*)')
       .eq('id', dishId)
       .single();
-    if (!error && data) return (data as unknown as DishWithCategory);
+    if (!error && data) {
+      const d = data as any;
+      return {
+        ...d,
+        image_url: resolveDishImageUrl(d.slug, d.image_url),
+        thumbnail_url: resolveDishImageUrl(d.slug, d.thumbnail_url || d.image_url),
+      } as DishWithCategory;
+    }
   } catch {
     // fallback to mock
   }
@@ -234,7 +257,13 @@ export async function getAllDishes(): Promise<DishWithCategory[]> {
       .from('dishes')
       .select('*, categories(*)')
       .eq('is_available', true);
-    if (!error && data && data.length > 0) return (data as unknown as DishWithCategory[]);
+    if (!error && data && data.length > 0) {
+      return (data as any[]).map((d) => ({
+        ...d,
+        image_url: resolveDishImageUrl(d.slug, d.image_url),
+        thumbnail_url: resolveDishImageUrl(d.slug, d.thumbnail_url || d.image_url),
+      })) as DishWithCategory[];
+    }
   } catch {
     // fallback to mock
   }

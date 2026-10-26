@@ -7,6 +7,7 @@ import { VerticalDishCard } from './VerticalDishCard';
 import type { DishWithCategory } from '@/lib/db/types';
 import { toRupees } from '@/lib/db/types';
 import type { Dish, DishCategory, SpiceLevel } from '@/types/menu';
+import { resolveDishImageUrl } from '@/lib/utils/dish-images';
 
 interface CuratedSignaturesSectionProps {
   dishes: DishWithCategory[];
@@ -19,7 +20,7 @@ function adaptDish(d: DishWithCategory): Dish {
     name: d.name,
     description: d.description || '',
     price: toRupees(d.price_paise),
-    image: d.image_url || '',
+    image: resolveDishImageUrl(d.slug, d.image_url),
     category: (d.categories?.slug as DishCategory) || 'pizza',
     isVeg: d.is_veg,
     isAvailable: d.is_available,
@@ -31,7 +32,7 @@ function adaptDish(d: DishWithCategory): Dish {
 }
 
 export function CuratedSignaturesSection({ dishes }: CuratedSignaturesSectionProps) {
-  // Category tabs requested: All Signatures (24) · Wood-Fired Pizzas · Artisanal Burgers · Wok & Oriental · Small Plates
+  // Category tabs: All Signatures · Wood-Fired Pizzas · Artisanal Burgers · Wok & Oriental · Small Plates
   const tabs = [
     { id: 'all', label: `All Signatures (${dishes.length > 0 ? dishes.length : 24})`, filterSlug: 'all' },
     { id: 'pizzas', label: 'Wood-Fired Pizzas', filterSlug: 'pizza' },
@@ -42,16 +43,32 @@ export function CuratedSignaturesSection({ dishes }: CuratedSignaturesSectionPro
 
   const [activeTab, setActiveTab] = useState('all');
 
-  const filteredDishes = activeTab === 'all'
-    ? dishes
-    : dishes.filter((d) => {
-        const catSlug = d.categories?.slug?.toLowerCase() || '';
-        const target = tabs.find((t) => t.id === activeTab)?.filterSlug || '';
-        return catSlug.includes(target) || (target === 'starters' && (catSlug.includes('appetizer') || catSlug.includes('starter')));
-      });
+  const getFilteredDishes = (): DishWithCategory[] => {
+    if (activeTab === 'all') {
+      // Pick a diverse culinary showcase across categories
+      const pizza = dishes.find((d) => d.slug === 'tandoori-paneer-pizza') || dishes.find((d) => d.categories?.slug === 'pizza');
+      const burger = dishes.find((d) => d.slug === 'golden-oak-signature-burger' || d.slug === 'classic-smash-burger') || dishes.find((d) => d.categories?.slug === 'burger');
+      const chickenPizza = dishes.find((d) => d.slug === 'chicken-tikka-pizza');
+      const orientalOrStarter = dishes.find((d) => d.slug === 'golden-chilli-potato' || d.slug === 'dynamite-chilli-potatoes' || d.slug === 'hakka-street-chow-mein' || d.slug === 'wok-tossed-chow-mein');
 
-  // Display top 4 in the signature grid
-  const displayDishes = (filteredDishes.length > 0 ? filteredDishes : dishes).slice(0, 4);
+      const curated = [pizza, burger, chickenPizza, orientalOrStarter].filter(Boolean) as DishWithCategory[];
+      if (curated.length === 4) return curated;
+      return dishes.slice(0, 4);
+    }
+
+    const filtered = dishes.filter((d) => {
+      const catSlug = d.categories?.slug?.toLowerCase() || '';
+      const target = tabs.find((t) => t.id === activeTab)?.filterSlug || '';
+      return (
+        catSlug.includes(target) ||
+        (target === 'starters' && (catSlug.includes('appetizer') || catSlug.includes('starter')))
+      );
+    });
+
+    return filtered.length > 0 ? filtered : dishes;
+  };
+
+  const displayDishes = getFilteredDishes().slice(0, 4);
 
   return (
     <section className="py-12 px-6 md:px-12 max-w-7xl mx-auto w-full">
@@ -77,7 +94,7 @@ export function CuratedSignaturesSection({ dishes }: CuratedSignaturesSectionPro
         </Link>
       </div>
 
-      {/* Step 2: Category Filter Tabs (Architectural Tab Bar without emojis or pill shapes) */}
+      {/* Architectural Tab Bar without emojis or pill shapes */}
       <div className="flex items-center gap-6 sm:gap-8 overflow-x-auto hide-scrollbar mb-8 pb-3 border-b border-white/[0.06]">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
@@ -107,7 +124,7 @@ export function CuratedSignaturesSection({ dishes }: CuratedSignaturesSectionPro
         })}
       </div>
 
-      {/* Step 3: 4-Card Signature Culinary Card Grid */}
+      {/* 4-Card Signature Culinary Card Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {displayDishes.map((dish, index) => (
           <VerticalDishCard
