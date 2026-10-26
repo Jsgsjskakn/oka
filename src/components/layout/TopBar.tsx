@@ -18,6 +18,20 @@ import { useCartStore } from '@/store/cart-store';
 import { useFavoritesStore } from '@/store/favorites-store';
 import { useSpotlightStore } from '@/store/spotlight-store';
 
+function getInitials(name?: string, email?: string): string {
+  if (name && name.trim()) {
+    const parts = name.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return parts[0].substring(0, 2).toUpperCase();
+  }
+  if (email && email.trim()) {
+    return email.substring(0, 2).toUpperCase();
+  }
+  return 'PG';
+}
+
 export function TopBar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -158,14 +172,14 @@ export function TopBar() {
               )}
             </Link>
 
-            {/* User Profile Pill -> Clean 32px Avatar Circle */}
+            {/* User Profile Pill -> Clean 32px Avatar Circle with PG Initials */}
             {currentUser ? (
               <Link
                 href="/profile"
                 title={`${currentUser.name || 'User'} - Account`}
-                className="w-8 h-8 rounded-full border border-[#E2A84B]/40 bg-gradient-to-br from-[#E2A84B]/20 to-[#9E6818]/30 flex items-center justify-center text-xs font-bold text-[#FAF5EC] hover:border-[#E2A84B] hover:scale-105 transition-all shadow-sm"
+                className="w-8 h-8 rounded-full border border-[#E2A84B]/60 bg-gradient-to-br from-[#1A1410] to-[#0D0A08] flex items-center justify-center text-[11px] font-mono font-bold tracking-tight text-[#E2A84B] hover:border-[#E2A84B] hover:scale-105 transition-all shadow-sm"
               >
-                {(currentUser.name || currentUser.email || 'U').substring(0, 1).toUpperCase()}
+                {getInitials(currentUser.name, currentUser.email)}
               </Link>
             ) : (
               <Link
@@ -234,8 +248,8 @@ export function TopBar() {
               {currentUser ? (
                 <div className="p-3.5 rounded-lg bg-white/[0.03] border border-[#E2A84B]/25 space-y-2.5">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-full border border-[#E2A84B]/40 bg-gradient-to-br from-[#E2A84B]/20 to-[#9E6818]/30 text-[#FAF5EC] font-bold text-xs flex items-center justify-center shrink-0">
-                      {(currentUser.name || currentUser.email || 'U').substring(0, 1).toUpperCase()}
+                    <div className="w-8 h-8 rounded-full border border-[#E2A84B]/60 bg-gradient-to-br from-[#1A1410] to-[#0D0A08] text-[#E2A84B] font-mono font-bold text-[11px] flex items-center justify-center shrink-0 shadow-sm">
+                      {getInitials(currentUser.name, currentUser.email)}
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="text-xs font-bold text-[#FAF5EC] truncate">{currentUser.name || 'Valued Guest'}</p>
