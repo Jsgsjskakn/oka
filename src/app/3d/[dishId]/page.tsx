@@ -19,6 +19,9 @@ export default async function ThreeDViewerPage({ params }: { params: Promise<{ d
     id: d.slug,
     name: d.name,
     image: d.image_url || '/images/dishes/placeholder.jpg',
+    price: d.price_paise ? d.price_paise / 100 : 0,
+    category: d.categories?.slug || 'menu',
+    isVeg: d.is_veg,
   }));
   
   return (

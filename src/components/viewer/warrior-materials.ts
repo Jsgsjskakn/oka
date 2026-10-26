@@ -18,7 +18,7 @@ export const WARRIOR_MATERIAL_PALETTE: Record<
   Dark_Iron_Mat: { color: [0.28, 0.29, 0.32], roughness: 0.45, metalness: 0.4 },
   Leather_Mat: { color: [0.45, 0.28, 0.15], roughness: 0.6, metalness: 0.05 },
   Hair_Beard_Mat: { color: [0.12, 0.08, 0.05], roughness: 0.6, metalness: 0.0 },
-  Floor_Stone_Mat: { color: [0.38, 0.36, 0.34], roughness: 0.8, metalness: 0.0 },
+  Floor_Stone_Mat: { color: [0.078, 0.063, 0.051], roughness: 0.45, metalness: 0.25 },
   Cornea_Mat: { color: [1.0, 1.0, 1.0], roughness: 0.1, metalness: 0.0 },
   Sclera_Mat: { color: [0.95, 0.95, 0.95], roughness: 0.2, metalness: 0.0 },
   Iris_Mat: { color: [0.25, 0.15, 0.08], roughness: 0.1, metalness: 0.0 },

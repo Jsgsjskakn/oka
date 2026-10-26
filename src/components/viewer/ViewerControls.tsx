@@ -1,107 +1,125 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { Maximize2, RotateCw, Info, Maximize } from 'lucide-react';
+import React from 'react';
+import { RotateCw, Layers, Eye, RotateCcw } from 'lucide-react';
 
 interface ViewerControlsProps {
   onReset: () => void;
   autoRotate: boolean;
   onToggleAutoRotate: () => void;
-  onToggleInfo: () => void;
-  showInfo: boolean;
+  showHotspots: boolean;
+  onToggleHotspots: () => void;
+  cameraPreset: 'side' | 'top';
+  onToggleCameraAngle: () => void;
 }
 
 export function ViewerControls({
   onReset,
   autoRotate,
   onToggleAutoRotate,
-  onToggleInfo,
-  showInfo,
+  showHotspots,
+  onToggleHotspots,
+  cameraPreset,
+  onToggleCameraAngle,
 }: ViewerControlsProps) {
-  const [visible, setVisible] = useState(true);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // Auto-hide controls after 4 seconds of inactivity
-  const showControls = () => {
-    setVisible(true);
-    if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => setVisible(false), 4000);
-  };
-
-  useEffect(() => {
-    showControls();
-    const handleInteraction = () => showControls();
-    window.addEventListener('touchstart', handleInteraction, { passive: true });
-    window.addEventListener('mousemove', handleInteraction, { passive: true });
-    return () => {
-      window.removeEventListener('touchstart', handleInteraction);
-      window.removeEventListener('mousemove', handleInteraction);
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-  }, []);
-
-  const handleFullscreen = () => {
-    if (document.fullscreenElement) {
-      document.exitFullscreen();
-    } else {
-      document.documentElement.requestFullscreen?.();
-    }
-  };
-
-  // Haptic feedback helper
   const haptic = () => {
-    if ('vibrate' in navigator) {
-      navigator.vibrate(10);
+    if (typeof window !== 'undefined' && 'vibrate' in navigator) {
+      navigator.vibrate(12);
     }
   };
 
-  const buttons = [
+  const controls = [
     {
-      icon: <Maximize2 className="w-[18px] h-[18px]" />,
-      onClick: () => { haptic(); onReset(); },
-      label: 'Reset',
-      active: false,
-    },
-    {
-      icon: <RotateCw className={`w-[18px] h-[18px] ${autoRotate ? 'animate-spin' : ''}`} style={autoRotate ? { animationDuration: '3s' } : {}} />,
-      onClick: () => { haptic(); onToggleAutoRotate(); },
-      label: 'Rotate',
+      id: 'rotate',
+      label: autoRotate ? 'Stop Rotation' : 'Auto-Rotate',
       active: autoRotate,
+      onClick: () => {
+        haptic();
+        onToggleAutoRotate();
+      },
+      icon: (
+        <RotateCw
+          className={`w-[18px] h-[18px] transition-transform ${
+            autoRotate ? 'animate-spin text-[#E2A84B]' : 'text-[#9A9286]'
+          }`}
+          style={autoRotate ? { animationDuration: '4s' } : undefined}
+        />
+      ),
     },
     {
-      icon: <Maximize className="w-[18px] h-[18px]" />,
-      onClick: () => { haptic(); handleFullscreen(); },
-      label: 'Full',
+      id: 'hotspots',
+      label: showHotspots ? 'Hide Pins' : 'Ingredient Pins',
+      active: showHotspots,
+      onClick: () => {
+        haptic();
+        onToggleHotspots();
+      },
+      icon: (
+        <Layers
+          className={`w-[18px] h-[18px] ${
+            showHotspots ? 'text-[#E2A84B]' : 'text-[#9A9286]'
+          }`}
+        />
+      ),
+    },
+    {
+      id: 'angle',
+      label: cameraPreset === 'top' ? 'Side 45° View' : 'Top 90° View',
+      active: cameraPreset === 'top',
+      onClick: () => {
+        haptic();
+        onToggleCameraAngle();
+      },
+      icon: (
+        <Eye
+          className={`w-[18px] h-[18px] ${
+            cameraPreset === 'top' ? 'text-[#E2A84B]' : 'text-[#9A9286]'
+          }`}
+        />
+      ),
+    },
+    {
+      id: 'reset',
+      label: 'Reset Camera',
       active: false,
-    },
-    {
-      icon: <Info className="w-[18px] h-[18px]" />,
-      onClick: () => { haptic(); onToggleInfo(); },
-      label: 'Info',
-      active: showInfo,
+      onClick: () => {
+        haptic();
+        onReset();
+      },
+      icon: <RotateCcw className="w-[18px] h-[18px] text-[#9A9286] group-hover:text-[#FAF5EC]" />,
     },
   ];
 
   return (
-    <div
-      className={`absolute right-3 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-2 transition-opacity duration-300 ${
-        visible ? 'opacity-100' : 'opacity-0 pointer-events-none'
-      }`}
+    <aside
+      className="fixed right-4 sm:right-8 top-1/2 -translate-y-1/2 z-40 flex flex-col items-center pointer-events-auto"
+      aria-label="3D Camera & Presentation Controls"
     >
-      {buttons.map((btn) => (
-        <button
-          key={btn.label}
-          onClick={btn.onClick}
-          className={`w-10 h-10 rounded-full backdrop-blur-md border flex items-center justify-center active:scale-90 transition-all shadow-lg ${
-            btn.active
-              ? 'bg-primary/20 border-primary/40 text-primary'
-              : 'bg-obsidian/50 border-border-subtle text-text-primary/50 hover:text-text-primary'
-          }`}
-          aria-label={btn.label}
-        >
-          {btn.icon}
-        </button>
-      ))}
-    </div>
+      <div className="flex flex-col gap-1.5 p-2 rounded-[14px] bg-[rgba(21,17,14,0.82)] backdrop-blur-xl border border-[rgba(226,168,75,0.22)] shadow-[0_12px_40px_rgba(0,0,0,0.6)]">
+        {controls.map((ctrl, index) => (
+          <React.Fragment key={ctrl.id}>
+            {index > 0 && <div className="w-5 h-[1px] bg-white/[0.06] my-0.5 mx-auto" />}
+            <div className="relative group flex items-center justify-center">
+              <button
+                onClick={ctrl.onClick}
+                className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-90 ${
+                  ctrl.active
+                    ? 'bg-[#E2A84B]/15 border border-[#E2A84B]/40 shadow-[0_0_12px_rgba(226,168,75,0.25)]'
+                    : 'bg-white/[0.02] border border-transparent hover:bg-white/[0.06] hover:border-white/10'
+                }`}
+                aria-label={ctrl.label}
+              >
+                {ctrl.icon}
+              </button>
+
+              {/* Left-Sliding Frosted Gold Tooltip */}
+              <div className="absolute right-full mr-3 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-200 group-hover:-translate-x-1.5 whitespace-nowrap bg-[rgba(21,17,14,0.92)] backdrop-blur-md border border-[#E2A84B]/35 rounded-md px-2.5 py-1 text-[11px] font-medium text-[#FAF5EC] shadow-[0_4px_16px_rgba(0,0,0,0.6)] z-50">
+                {ctrl.label}
+              </div>
+            </div>
+          </React.Fragment>
+        ))}
+      </div>
+    </aside>
   );
 }

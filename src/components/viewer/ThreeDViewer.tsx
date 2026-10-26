@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef, useMemo } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import type { OrbitControls as OrbitControlsType } from 'three-stdlib';
@@ -24,11 +24,18 @@ const ViewerScene = dynamic(
 interface ThreeDViewerProps {
   dish: Dish;
   config: ModelConfig;
-  allModelDishes: Array<{ id: string; name: string; image: string }>;
+  allModelDishes: Array<{
+    id: string;
+    name: string;
+    image: string;
+    price?: number;
+    category?: string;
+    isVeg?: boolean;
+  }>;
   onSwitchDish: (dishId: string) => void;
   isFavorite: boolean;
   onToggleFavorite: () => void;
-  onAddToCart: () => void;
+  onAddToCart: (quantity?: number) => void;
 }
 
 export function ThreeDViewer({
@@ -42,6 +49,8 @@ export function ThreeDViewer({
 }: ThreeDViewerProps) {
   const router = useRouter();
   const [autoRotate, setAutoRotate] = useState(false);
+  const [showHotspots, setShowHotspots] = useState(false);
+  const [cameraPreset, setCameraPreset] = useState<'side' | 'top'>('side');
   const [progress, setProgress] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -67,6 +76,7 @@ export function ThreeDViewer({
   const handleReset = useCallback(() => {
     if (controlsRef.current) {
       controlsRef.current.reset();
+      setCameraPreset('side');
     }
   }, []);
 
@@ -81,14 +91,45 @@ export function ThreeDViewer({
     handleReset();
   }, [handleReset]);
 
+  const handleToggleCameraAngle = useCallback(() => {
+    setCameraPreset((prev) => (prev === 'side' ? 'top' : 'side'));
+  }, []);
+
   const handleViewDetails = useCallback(() => {
     router.push(`/menu/${dish.category}/${dish.slug}`);
   }, [router, dish]);
 
   return (
-    <div className="fixed inset-0 bg-obsidian z-50 flex flex-col">
-      <ViewerHeader dishName={dish.name} />
+    <div
+      className="fixed inset-0 z-50 flex flex-col overflow-hidden select-none"
+      style={{ backgroundColor: '#0D0A08' }}
+    >
+      {/* Layer 2: Center Spotlight (Radial Chandelier Glow) */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(circle at 50% 45%, rgba(226, 168, 75, 0.16) 0%, rgba(224, 83, 43, 0.05) 35%, rgba(13, 10, 8, 0.98) 70%)',
+        }}
+      />
 
+      {/* Layer 3: Floor Reflection Vignette */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            'linear-gradient(to top, rgba(13, 10, 8, 0.98) 0%, rgba(13, 10, 8, 0.45) 22%, transparent 55%)',
+        }}
+      />
+
+      {/* Floating Spatial HUD Bar */}
+      <ViewerHeader
+        dishName={dish.name}
+        dishSlug={dish.slug}
+        dishCategory={dish.category}
+      />
+
+      {/* Main 3D Canvas Stage */}
       <div className="flex-1 relative">
         {!isLoaded && !error && <ViewerLoadingState progress={progress} />}
         {error && <ViewerErrorState message={error} onRetry={handleRetry} />}
@@ -99,25 +140,32 @@ export function ThreeDViewer({
           config={config}
           category={dish.category}
           autoRotate={autoRotate}
-          onControlsRef={(ref) => { controlsRef.current = ref; }}
+          showHotspots={showHotspots}
+          cameraPreset={cameraPreset}
+          onControlsRef={(ref) => {
+            controlsRef.current = ref;
+          }}
           onProgress={handleProgress}
           onLoaded={handleLoaded}
           onError={handleError}
           onDoubleTap={handleDoubleTap}
         />
 
+        {/* Vertical Glass Camera Dock */}
         {isLoaded && (
           <ViewerControls
             onReset={handleReset}
             autoRotate={autoRotate}
             onToggleAutoRotate={() => setAutoRotate(!autoRotate)}
-            onToggleInfo={() => setShowInfo(!showInfo)}
-            showInfo={showInfo}
+            showHotspots={showHotspots}
+            onToggleHotspots={() => setShowHotspots(!showHotspots)}
+            cameraPreset={cameraPreset}
+            onToggleCameraAngle={handleToggleCameraAngle}
           />
         )}
       </div>
 
-      {/* Dish Switcher */}
+      {/* Floating Glass Dish Carousel */}
       {isLoaded && allModelDishes.length > 1 && (
         <DishSwitcher
           dishes={allModelDishes}
@@ -126,7 +174,7 @@ export function ThreeDViewer({
         />
       )}
 
-      {/* Dish Info Bar */}
+      {/* Floating Architectural Order Console */}
       {isLoaded && (
         <DishInfoBar
           dish={dish}
@@ -137,7 +185,7 @@ export function ThreeDViewer({
         />
       )}
 
-      {/* Ingredient Panel */}
+      {/* Ingredient Panel Drawer */}
       <IngredientPanel
         ingredients={dish.ingredients || []}
         isOpen={showInfo}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { ThreeDViewer } from '@/components/viewer/ThreeDViewer';
 import { useFavoritesStore } from '@/store/favorites-store';
 import { useCartStore } from '@/store/cart-store';
@@ -17,12 +17,19 @@ interface Props {
   dishIsVeg: boolean;
   dishIngredients: string[];
   config: ModelConfig;
-  allModelDishes: Array<{ id: string; name: string; image: string }>;
+  allModelDishes: Array<{
+    id: string;
+    name: string;
+    image: string;
+    price?: number;
+    category?: string;
+    isVeg?: boolean;
+  }>;
 }
 
 export default function ThreeDViewerClient(props: Props) {
   const currentSlug = props.dishSlug;
-  
+
   const isFavorite = useFavoritesStore((s) => s.isFavorite(currentSlug));
   const toggleFavorite = useFavoritesStore((s) => s.toggleFavorite);
   const addItem = useCartStore((s) => s.addItem);
@@ -45,10 +52,13 @@ export default function ThreeDViewerClient(props: Props) {
     has3DModel: true,
   };
 
-  const handleAddToCart = useCallback(() => {
-    addItem(dish, 1, {});
-    if ('vibrate' in navigator) navigator.vibrate(15);
-  }, [dish, addItem]);
+  const handleAddToCart = useCallback(
+    (quantity: number = 1) => {
+      addItem(dish, quantity, {});
+      if ('vibrate' in navigator) navigator.vibrate(15);
+    },
+    [dish, addItem]
+  );
 
   const handleToggleFavorite = useCallback(() => {
     toggleFavorite(currentSlug);
