@@ -17,6 +17,11 @@ import {
   Utensils,
   RotateCcw,
   ShieldCheck,
+  Plus,
+  Minus,
+  Lock,
+  Unlock,
+  Hand,
 } from 'lucide-react';
 
 export function RestaurantInfo() {
@@ -32,6 +37,8 @@ export function RestaurantInfo() {
   const [isLocating, setIsLocating] = useState(false);
   const [mapViewMode, setMapViewMode] = useState<'dark' | 'standard' | 'satellite'>('dark');
   const [mapReloadKey, setMapReloadKey] = useState(0);
+  const [zoomLevel, setZoomLevel] = useState(16);
+  const [isMapInteractive, setIsMapInteractive] = useState(false);
   const [bengaluruTime, setBengaluruTime] = useState<string>('');
   const [isOpenNow, setIsOpenNow] = useState<boolean>(true);
 
@@ -116,15 +123,16 @@ export function RestaurantInfo() {
   }, []);
 
   const handleRecenterMap = () => {
+    setZoomLevel(16);
     setMapReloadKey((prev) => prev + 1);
   };
 
   // Google Maps embed URL with fixed coordinates pinned to 100 Feet Road, Indiranagar
   const getMapIframeSrc = () => {
     if (mapViewMode === 'satellite') {
-      return `https://maps.google.com/maps?q=12.971598,77.641617&t=k&z=16&ie=UTF8&iwloc=&output=embed`;
+      return `https://maps.google.com/maps?q=12.971598,77.641617&t=k&z=${zoomLevel}&ie=UTF8&iwloc=&output=embed`;
     }
-    return `https://maps.google.com/maps?q=100+Feet+Road,+Indiranagar,+Bengaluru&t=m&z=16&ie=UTF8&iwloc=&output=embed`;
+    return `https://maps.google.com/maps?q=100+Feet+Road,+Indiranagar,+Bengaluru&t=m&z=${zoomLevel}&ie=UTF8&iwloc=&output=embed`;
   };
 
   return (
@@ -261,6 +269,7 @@ export function RestaurantInfo() {
             background: '#0D0A08',
             borderColor: 'rgba(226, 168, 75, 0.25)',
           }}
+          onMouseLeave={() => setIsMapInteractive(false)}
         >
           {/* Top Architectural Header Bar Pinned Over Map (Stationary, Non-Drifting) */}
           <div className="relative z-30 p-4 sm:p-5 flex items-center justify-between gap-3 pointer-events-none">
@@ -285,7 +294,36 @@ export function RestaurantInfo() {
             </div>
 
             {/* Map Style & Recenter Action Cluster */}
-            <div className="flex items-center gap-2 pointer-events-auto">
+            <div className="flex items-center gap-1.5 pointer-events-auto">
+              {/* Zoom Out Button */}
+              <button
+                type="button"
+                onClick={() => setZoomLevel((z) => Math.max(12, z - 1))}
+                title="Zoom Out Map"
+                className="p-1.5 rounded-md text-[#FAF5EC] hover:text-[#E2A84B] border border-white/20 transition-all shadow-md active:scale-95"
+                style={{
+                  background: 'rgba(13, 10, 8, 0.88)',
+                  backdropFilter: 'blur(8px)',
+                }}
+              >
+                <Minus className="w-3.5 h-3.5" />
+              </button>
+
+              {/* Zoom In Button */}
+              <button
+                type="button"
+                onClick={() => setZoomLevel((z) => Math.min(19, z + 1))}
+                title="Zoom In Map"
+                className="p-1.5 rounded-md text-[#FAF5EC] hover:text-[#E2A84B] border border-white/20 transition-all shadow-md active:scale-95"
+                style={{
+                  background: 'rgba(13, 10, 8, 0.88)',
+                  backdropFilter: 'blur(8px)',
+                }}
+              >
+                <Plus className="w-3.5 h-3.5" />
+              </button>
+
+              {/* Recenter Button */}
               <button
                 type="button"
                 onClick={handleRecenterMap}
@@ -299,6 +337,7 @@ export function RestaurantInfo() {
                 <RotateCcw className="w-3.5 h-3.5" />
               </button>
 
+              {/* Map View Mode Toggle */}
               <button
                 type="button"
                 onClick={() =>
@@ -306,7 +345,7 @@ export function RestaurantInfo() {
                     mapViewMode === 'dark' ? 'standard' : mapViewMode === 'standard' ? 'satellite' : 'dark'
                   )
                 }
-                className="px-3 py-1.5 rounded-md text-[11px] font-semibold text-[#FAF5EC] hover:text-[#E2A84B] border border-white/20 transition-all shadow-md active:scale-95 flex items-center gap-1.5"
+                className="px-2.5 py-1.5 rounded-md text-[11px] font-semibold text-[#FAF5EC] hover:text-[#E2A84B] border border-white/20 transition-all shadow-md active:scale-95 flex items-center gap-1.5"
                 style={{
                   background: 'rgba(13, 10, 8, 0.88)',
                   backdropFilter: 'blur(8px)',
@@ -320,16 +359,44 @@ export function RestaurantInfo() {
                     : 'Satellite'}
                 </span>
               </button>
+
+              {/* Pan / Drag Mode Indicator Toggle */}
+              <button
+                type="button"
+                onClick={() => setIsMapInteractive((prev) => !prev)}
+                title={isMapInteractive ? 'Lock map to resume smooth page scroll' : 'Unlock map to drag/pan'}
+                className="px-2.5 py-1.5 rounded-md text-[11px] font-semibold transition-all shadow-md active:scale-95 flex items-center gap-1.5"
+                style={{
+                  background: isMapInteractive ? 'rgba(226, 168, 75, 0.2)' : 'rgba(13, 10, 8, 0.88)',
+                  color: isMapInteractive ? '#E2A84B' : '#FAF5EC',
+                  border: isMapInteractive ? '1px solid rgba(226, 168, 75, 0.5)' : '1px solid rgba(255, 255, 255, 0.2)',
+                  backdropFilter: 'blur(8px)',
+                }}
+              >
+                {isMapInteractive ? (
+                  <>
+                    <Unlock className="w-3.5 h-3.5 text-[#E2A84B]" />
+                    <span className="hidden sm:inline">Drag Active</span>
+                  </>
+                ) : (
+                  <>
+                    <Lock className="w-3.5 h-3.5 opacity-70" />
+                    <span className="hidden sm:inline">Scroll Safe</span>
+                  </>
+                )}
+              </button>
             </div>
           </div>
 
-          {/* Interactive Native Google Map (Pin is Rendered Inside Map, Anchored to Real Geo-Coordinates) */}
+          {/* Interactive Native Google Map Container */}
           <div className="absolute inset-0 z-10 w-full h-full overflow-hidden">
             <iframe
-              key={mapReloadKey}
+              key={`${mapReloadKey}-${zoomLevel}-${mapViewMode}`}
               title="The Golden Oak Bengaluru Indiranagar Google Map"
               src={getMapIframeSrc()}
-              className="w-full h-full border-0 transition-all duration-500"
+              className={`absolute -top-[52px] -left-[12px] w-[calc(100%+24px)] h-[calc(100%+70px)] border-0 transition-all duration-500 ${
+                isMapInteractive ? 'pointer-events-auto' : 'pointer-events-none'
+              }`}
               style={{
                 filter:
                   mapViewMode === 'dark'
@@ -339,6 +406,43 @@ export function RestaurantInfo() {
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
             />
+
+            {/* Custom Luxury Restaurant Beacon (Stationary Gold Pin Over 100ft Rd Coordinates) */}
+            <div className="absolute top-[48%] left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-20 flex flex-col items-center">
+              <div className="relative flex items-center justify-center">
+                <span className="animate-ping absolute inline-flex h-9 w-9 rounded-full bg-[#E2A84B] opacity-35" />
+                <span className="animate-pulse absolute inline-flex h-6 w-6 rounded-full bg-[#E2A84B]/25" />
+                <div className="relative w-4 h-4 rounded-full bg-gradient-to-br from-[#F6D386] via-[#E2A84B] to-[#9E6818] shadow-[0_0_18px_rgba(226,168,75,0.9)] border-2 border-[#0D0A08] flex items-center justify-center">
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#0D0A08]" />
+                </div>
+              </div>
+              <div
+                className="mt-1.5 px-2.5 py-1 rounded-md shadow-2xl flex items-center gap-1.5 border"
+                style={{
+                  background: 'rgba(13, 10, 8, 0.92)',
+                  backdropFilter: 'blur(8px)',
+                  borderColor: 'rgba(226, 168, 75, 0.45)',
+                }}
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-[#E2A84B]" />
+                <span className="font-serif text-[10.5px] font-bold text-[#FAF5EC] tracking-wider uppercase whitespace-nowrap">
+                  The Golden Oak Flagship
+                </span>
+              </div>
+            </div>
+
+            {/* Interactive Mode Prompt Pill (Shown when hovering over locked map) */}
+            {!isMapInteractive && (
+              <div
+                onClick={() => setIsMapInteractive(true)}
+                className="absolute inset-0 z-20 cursor-pointer flex items-center justify-center group/overlay bg-transparent"
+              >
+                <div className="opacity-0 group-hover/overlay:opacity-100 transition-opacity duration-300 px-4 py-2 rounded-full bg-[#0D0A08]/92 border border-[#E2A84B]/50 shadow-[0_4px_24px_rgba(0,0,0,0.8)] backdrop-blur-md flex items-center gap-2 text-xs font-semibold text-[#FAF5EC]">
+                  <Hand className="w-3.5 h-3.5 text-[#E2A84B]" />
+                  <span>Click to Drag &amp; Pan Map</span>
+                </div>
+              </div>
+            )}
 
             {/* Subtle atmospheric gold vignette around the map edges */}
             <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_60px_rgba(13,10,8,0.7)]" />
