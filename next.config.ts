@@ -4,11 +4,12 @@ const cspHeader = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' blob: data: https://*.supabase.co https://jimdmvzpmawbgzodzxhv.supabase.co https://*.convex.cloud https://*.convex.site",
+  "img-src 'self' blob: data: https://*.supabase.co https://jimdmvzpmawbgzodzxhv.supabase.co https://*.convex.cloud https://*.convex.site https://*.google.com https://*.googleapis.com https://*.gstatic.com https://*.openstreetmap.org",
   "font-src 'self' data:",
   "connect-src 'self' https://*.convex.cloud wss://*.convex.cloud https://*.convex.site https://*.supabase.co wss://*.supabase.co blob: data:",
   "media-src 'self' blob: data:",
   "worker-src 'self' blob:",
+  "frame-src 'self' https://www.google.com https://maps.google.com https://*.google.com https://*.openstreetmap.org",
   "object-src 'none'",
   "frame-ancestors 'none'",
   "base-uri 'self'",
@@ -59,7 +60,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Permissions-Policy',
-            value: 'camera=(self), microphone=(), geolocation=()',
+            value: 'camera=(self), microphone=(), geolocation=(self)',
           },
           {
             key: 'Content-Security-Policy',
