@@ -1,9 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Heart, Box } from 'lucide-react';
+import { Heart, Box, Check } from 'lucide-react';
 import type { Dish } from '@/types/menu';
 import { useCartStore } from '@/store/cart-store';
 import { useFavoritesStore } from '@/store/favorites-store';
@@ -21,6 +22,7 @@ export function VerticalDishCard({ dish, onAdd, rank }: VerticalDishCardProps) {
   const addItem = useCartStore((s) => s.addItem);
   const isFav = useFavoritesStore((s) => s.isFavorite(dish.id));
   const toggleFav = useFavoritesStore((s) => s.toggleFavorite);
+  const [isAdded, setIsAdded] = useState(false);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -30,6 +32,8 @@ export function VerticalDishCard({ dish, onAdd, rank }: VerticalDishCardProps) {
     } else {
       addItem(dish, 1);
     }
+    setIsAdded(true);
+    setTimeout(() => setIsAdded(false), 1600);
     toast.success('Added to Cart', `${dish.name} (₹${dish.price})`);
   };
 
@@ -44,19 +48,18 @@ export function VerticalDishCard({ dish, onAdd, rank }: VerticalDishCardProps) {
 
   return (
     <div
-      className="group relative flex flex-col justify-between overflow-hidden transition-all duration-300 hover:-translate-y-1 w-full"
+      className="group relative flex flex-col justify-between overflow-hidden transition-all duration-300 hover:-translate-y-2 w-full rounded-2xl border"
       style={{
-        background: '#15110E',
-        borderRadius: '10px',
-        borderTop: '1px solid rgba(246, 211, 134, 0.28)',
-        borderLeft: '1px solid rgba(255, 255, 255, 0.05)',
-        borderRight: '1px solid rgba(255, 255, 255, 0.05)',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
-        boxShadow: '0 12px 32px rgba(0, 0, 0, 0.6)',
+        background: 'linear-gradient(180deg, #181310 0%, #120E0B 100%)',
+        borderTop: '1px solid rgba(246, 211, 134, 0.35)',
+        borderLeft: '1px solid rgba(226, 168, 75, 0.15)',
+        borderRight: '1px solid rgba(226, 168, 75, 0.15)',
+        borderBottom: '1px solid rgba(226, 168, 75, 0.15)',
+        boxShadow: '0 16px 40px rgba(0, 0, 0, 0.75)',
       }}
     >
       {/* Top Image Frame with Soft Dark Bottom Fade */}
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-black/60">
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-black/70">
         <Link
           href={`/menu/${dish.category || 'all'}/${dish.slug}`}
           className="relative block w-full h-full"
@@ -66,32 +69,32 @@ export function VerticalDishCard({ dish, onAdd, rank }: VerticalDishCardProps) {
             alt={dish.name}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-            className="object-cover group-hover:scale-105 transition-transform duration-700"
+            className="object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
           />
 
-          {/* Soft dark fade melting photo into card surface */}
+          {/* Soft dark fade melting photo seamlessly into card surface */}
           <div
             className="pointer-events-none absolute inset-0 z-10"
             style={{
-              background: 'linear-gradient(to top, #15110E 4%, transparent 35%)',
+              background: 'linear-gradient(to top, #181310 6%, rgba(24, 19, 16, 0.4) 30%, transparent 60%)',
             }}
           />
         </Link>
 
         {/* Top-Left Sleek Dark Glass Tag (#01 SIGNATURE) */}
         <div
-          className="absolute top-3 left-3 z-20 px-2.5 py-1 rounded-md text-[10px] font-serif font-bold tracking-wider text-[#E2A84B] flex items-center gap-1 shadow-md"
+          className="absolute top-3 left-3 z-20 px-2.5 py-1 rounded-md text-[10px] font-serif font-bold tracking-wider text-[#E2A84B] flex items-center gap-1 shadow-lg pointer-events-none"
           style={{
-            background: 'rgba(13, 10, 8, 0.75)',
+            background: 'rgba(13, 10, 8, 0.85)',
             backdropFilter: 'blur(8px)',
             WebkitBackdropFilter: 'blur(8px)',
-            border: '1px solid rgba(226, 168, 75, 0.3)',
+            border: '1px solid rgba(226, 168, 75, 0.35)',
           }}
         >
           {rankTag}
         </div>
 
-        {/* Top-Right 3D Trigger Button: Sleek glass pill 3D VIEW */}
+        {/* Top-Right 3D Trigger Button: Sleek Glass Pill 3D VIEW */}
         <button
           type="button"
           onClick={(e) => {
@@ -99,35 +102,35 @@ export function VerticalDishCard({ dish, onAdd, rank }: VerticalDishCardProps) {
             e.stopPropagation();
             router.push(`/3d/${dish.slug}`);
           }}
-          title="Interactive 3D View"
-          className="absolute top-3 right-3 z-20 flex items-center gap-1 px-2.5 py-1 rounded-full text-[10.5px] font-semibold text-[#FAF5EC] hover:text-[#E0532B] hover:border-[#E0532B]/50 transition-all shadow-md group/threed"
+          title="Launch Interactive 3D View"
+          className="absolute top-3 right-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10.5px] font-bold text-[#FAF5EC] hover:text-[#E2A84B] hover:border-[#E2A84B] active:scale-95 transition-all shadow-lg group/threed"
           style={{
-            background: 'rgba(13, 10, 8, 0.75)',
+            background: 'rgba(13, 10, 8, 0.85)',
             backdropFilter: 'blur(8px)',
             WebkitBackdropFilter: 'blur(8px)',
-            border: '1px solid rgba(226, 168, 75, 0.3)',
+            border: '1px solid rgba(226, 168, 75, 0.35)',
           }}
         >
-          <Box className="w-3 h-3 text-[#E2A84B] group-hover/threed:text-[#E0532B] transition-colors" />
+          <Box className="w-3.5 h-3.5 text-[#E2A84B] group-hover/threed:rotate-45 transition-transform duration-300" />
           <span>3D VIEW</span>
         </button>
 
-        {/* Bottom-Right Heart Button */}
+        {/* Bottom-Right Heart Favorite Button */}
         <button
           type="button"
           onClick={handleToggleFav}
           aria-label={isFav ? 'Remove from favorites' : 'Add to favorites'}
-          className="absolute bottom-3 right-3 z-20 w-7 h-7 rounded-full flex items-center justify-center text-white/80 hover:text-white transition-all shadow-md"
+          className="absolute bottom-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center text-white/80 hover:text-white active:scale-90 transition-all shadow-xl"
           style={{
-            background: 'rgba(13, 10, 8, 0.75)',
+            background: 'rgba(13, 10, 8, 0.82)',
             backdropFilter: 'blur(8px)',
             WebkitBackdropFilter: 'blur(8px)',
-            border: '1px solid rgba(255, 255, 255, 0.15)',
+            border: '1px solid rgba(255, 255, 255, 0.18)',
           }}
         >
           <Heart
-            className={`w-3.5 h-3.5 transition-colors ${
-              isFav ? 'text-rose-500 fill-rose-500' : 'text-[#FAF5EC]'
+            className={`w-4 h-4 transition-colors ${
+              isFav ? 'text-rose-500 fill-rose-500 scale-110' : 'text-[#FAF5EC]'
             }`}
           />
         </button>
@@ -135,13 +138,25 @@ export function VerticalDishCard({ dish, onAdd, rank }: VerticalDishCardProps) {
 
       {/* Card Body Typography */}
       <div className="p-5 flex flex-col justify-between flex-1">
-        <div className="space-y-2">
-          {/* Dish Title + Subtle 12px Veg/Non-Veg indicator */}
-          <div className="flex items-baseline gap-2">
+        <div className="space-y-2.5">
+          {/* Dish Category Micro-Overline */}
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] uppercase tracking-wider text-[#E2A84B]/80 font-bold">
+              {dish.category === 'pizza'
+                ? 'Wood-Fired Sourdough'
+                : dish.category === 'burger'
+                ? 'Artisanal Brioche'
+                : dish.category === 'chinese'
+                ? 'Wok & Oriental'
+                : 'Signature Small Plate'}
+            </span>
+
+            {/* Subtle Veg / Non-Veg Indicator */}
             <span
-              className={`inline-block w-3 h-3 border p-[2px] rounded-[2px] shrink-0 translate-y-0.5 ${
+              className={`inline-block w-3.5 h-3.5 border p-[2px] rounded-[3px] shrink-0 ${
                 dish.isVeg ? 'border-emerald-600' : 'border-rose-600'
               }`}
+              title={dish.isVeg ? 'Pure Vegetarian' : 'Non-Vegetarian'}
             >
               <span
                 className={`block w-full h-full rounded-full ${
@@ -149,47 +164,75 @@ export function VerticalDishCard({ dish, onAdd, rank }: VerticalDishCardProps) {
                 }`}
               />
             </span>
-            <Link
-              href={`/menu/${dish.category || 'all'}/${dish.slug}`}
-              className="font-serif text-[21px] font-semibold text-[#FAF5EC] leading-snug hover:text-[#E2A84B] transition-colors line-clamp-1"
-            >
-              {dish.name}
-            </Link>
           </div>
 
-          {/* Description (2 lines full, line-clamp-2) */}
-          <p className="text-[13px] text-[#9A9286] leading-relaxed line-clamp-2 min-h-[38px]">
+          {/* Full Dish Title (No Truncation / No Ellipsis) */}
+          <Link
+            href={`/menu/${dish.category || 'all'}/${dish.slug}`}
+            className="block font-serif text-[20px] sm:text-[22px] font-bold text-[#FAF5EC] leading-snug hover:text-[#E2A84B] transition-colors line-clamp-2 min-h-[54px]"
+          >
+            {dish.name}
+          </Link>
+
+          {/* Description (2 lines balanced) */}
+          <p className="text-[13px] text-[#A6A095] font-light leading-relaxed line-clamp-2 min-h-[40px]">
             {dish.description}
           </p>
         </div>
 
-        {/* Card Footer: Price (Ivory White Monospace) + ADD + Button */}
-        <div className="pt-4 mt-3 flex items-center justify-between border-t border-white/[0.06]">
-          <span className="font-mono text-[17px] font-bold text-[#FAF5EC]">
-            ₹{dish.price}
-          </span>
+        {/* Card Footer: Price (Monospace Bold) + Tactile ADD + Button */}
+        <div className="pt-4 mt-3 flex items-center justify-between border-t border-white/[0.08]">
+          <div className="flex flex-col">
+            <span className="text-[10px] uppercase tracking-wider text-[#9A9286] font-medium">
+              PRICE
+            </span>
+            <span className="font-mono text-lg sm:text-[19px] font-bold text-[#FAF5EC]">
+              ₹{dish.price}
+            </span>
+          </div>
 
           <button
             type="button"
             onClick={handleAddToCart}
-            aria-label={`Add ${dish.name} to dining order`}
-            className="px-4 py-2 text-xs font-bold transition-all duration-200 active:scale-95 shadow-sm"
+            aria-label={`Add ${dish.name} to order`}
+            className={`px-5 py-2.5 text-xs font-extrabold transition-all duration-300 active:scale-95 shadow-md flex items-center gap-1.5 rounded-[6px] ${
+              isAdded
+                ? 'bg-[#22C58B] text-[#0D0A08] shadow-[0_0_15px_rgba(34,197,139,0.5)]'
+                : 'text-[#E2A84B] hover:text-[#0D0A08]'
+            }`}
             style={{
-              borderRadius: '6px',
-              background: 'rgba(226, 168, 75, 0.12)',
-              border: '1px solid rgba(226, 168, 75, 0.35)',
-              color: '#E2A84B',
+              background: isAdded
+                ? '#22C58B'
+                : 'linear-gradient(135deg, rgba(226, 168, 75, 0.14) 0%, rgba(226, 168, 75, 0.06) 100%)',
+              border: isAdded
+                ? '1px solid #22C58B'
+                : '1px solid rgba(226, 168, 75, 0.45)',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = '#E2A84B';
-              e.currentTarget.style.color = '#0D0A08';
+              if (!isAdded) {
+                e.currentTarget.style.background =
+                  'linear-gradient(135deg, #F6D386 0%, #D49432 50%, #9E6818 100%)';
+                e.currentTarget.style.color = '#0D0A08';
+                e.currentTarget.style.borderColor = 'transparent';
+              }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(226, 168, 75, 0.12)';
-              e.currentTarget.style.color = '#E2A84B';
+              if (!isAdded) {
+                e.currentTarget.style.background =
+                  'linear-gradient(135deg, rgba(226, 168, 75, 0.14) 0%, rgba(226, 168, 75, 0.06) 100%)';
+                e.currentTarget.style.color = '#E2A84B';
+                e.currentTarget.style.borderColor = 'rgba(226, 168, 75, 0.45)';
+              }
             }}
           >
-            ADD +
+            {isAdded ? (
+              <>
+                <Check className="w-3.5 h-3.5 stroke-[3]" />
+                <span>ADDED ✓</span>
+              </>
+            ) : (
+              <span>ADD +</span>
+            )}
           </button>
         </div>
       </div>
