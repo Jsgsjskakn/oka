@@ -55,19 +55,13 @@ function GoldCompassRing({ scale = 1 }: { scale?: number }) {
       const isMajor = deg % 90 === 0;
       const isSemiMajor = !isMajor && deg % 45 === 0;
 
-      let label: string | undefined;
-      if (deg === 0) label = '0°';
-      else if (deg === 90) label = '90°';
-      else if (deg === 180) label = '180°';
-      else if (deg === 270) label = '270°';
-
       const length = isMajor ? 0.12 * scale : isSemiMajor ? 0.08 * scale : 0.045 * scale;
       const width = isMajor ? 0.02 * scale : isSemiMajor ? 0.015 * scale : 0.01 * scale;
 
       const x = Math.sin(angle) * (radius - length / 2);
       const z = Math.cos(angle) * (radius - length / 2);
 
-      items.push({ angle, isMajor, isSemiMajor, label, x, z, length, width });
+      items.push({ angle, isMajor, isSemiMajor, x, z, length, width });
     }
     return items;
   }, [scale]);
@@ -114,24 +108,6 @@ function GoldCompassRing({ scale = 1 }: { scale?: number }) {
           </mesh>
         </group>
       ))}
-
-      {/* Cardinal 3D Degree Markers (0°, 90°, 180°, 270°) */}
-      {ticks
-        .filter((t) => t.label)
-        .map((t, idx) => {
-          const markerRadius = radius + 0.12 * scale;
-          const mx = Math.sin(t.angle) * markerRadius;
-          const mz = Math.cos(t.angle) * markerRadius;
-          return (
-            <group key={`label-${idx}`} position={[mx, 0.03, mz]}>
-              <Html center distanceFactor={7} style={{ pointerEvents: 'none' }}>
-                <span className="font-mono text-[9px] font-bold text-[#E2A84B] tracking-wider select-none bg-[#0D0A08]/80 px-1 py-0.5 rounded border border-[#E2A84B]/30 shadow-sm">
-                  {t.label}
-                </span>
-              </Html>
-            </group>
-          );
-        })}
     </group>
   );
 }

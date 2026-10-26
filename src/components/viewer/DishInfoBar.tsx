@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Heart, Minus, Plus, Check } from 'lucide-react';
+import Link from 'next/link';
+import { Heart, Minus, Plus, Check, Box } from 'lucide-react';
 import type { Dish } from '@/types/menu';
 
 interface DishInfoBarProps {
@@ -122,7 +123,17 @@ export function DishInfoBar({
         </div>
 
         {/* Right Zone: Conversion & Action Cluster (45% width, Right-Aligned) */}
-        <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-4 shrink-0 pt-2 lg:pt-0 border-t border-white/[0.06] lg:border-t-0">
+        <div className="flex items-center justify-between sm:justify-end gap-2.5 sm:gap-3.5 shrink-0 pt-2 lg:pt-0 border-t border-white/[0.06] lg:border-t-0 flex-wrap sm:flex-nowrap">
+          {/* View in AR Button */}
+          <Link
+            href={`/ar/${dish.slug}`}
+            className="inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-[10px] bg-[#16120E] border border-[rgba(226,168,75,0.35)] hover:border-[#E2A84B] hover:bg-[#E2A84B]/10 text-[#FAF5EC] hover:text-[#E2A84B] text-xs sm:text-[13px] font-semibold transition-all active:scale-95 shadow-sm group whitespace-nowrap"
+            title="View this dish in Augmented Reality (AR)"
+          >
+            <Box className="w-4 h-4 text-[#E2A84B] group-hover:scale-110 transition-transform" />
+            <span>View in AR</span>
+          </Link>
+
           {/* 1. Total Price Display (Positioned right next to Add to Cart) */}
           <div className="flex flex-col items-start sm:items-end">
             <span className="text-[9px] uppercase tracking-widest text-[#9A9286] font-semibold">

@@ -47,7 +47,7 @@ export function ViewerHeader({ dishName, dishSlug }: ViewerHeaderProps) {
 
         {/* Inactive: Place on My Table (AR) */}
         <Link
-          href={dishSlug ? `/ar` : `/ar`}
+          href={dishSlug ? `/ar/${dishSlug}` : `/ar`}
           className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-medium text-[#9A9286] hover:text-[#FAF5EC] hover:bg-white/[0.04] transition-all"
         >
           <Box className="w-3.5 h-3.5 text-[#9A9286]" />
