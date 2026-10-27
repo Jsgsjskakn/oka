@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, Suspense, useCallback, useMemo, Component, ErrorInfo, ReactNode } from 'react';
 import { Canvas, useThree, ThreeEvent } from '@react-three/fiber';
-import { OrbitControls, useGLTF, Html } from '@react-three/drei';
+import { OrbitControls, useGLTF, Html, Environment } from '@react-three/drei';
 import * as THREE from 'three';
 import {
   Sparkles,
@@ -98,6 +98,78 @@ function RestaurantModel({
   guests: number;
 }) {
   const { scene } = useGLTF('/models/the_golden_oak_interior.glb');
+
+  // Master Architectural PBR Tuning: matches Blender LookDev visual ground truth
+  useMemo(() => {
+    scene.traverse((child: any) => {
+      if (child.isMesh && child.material) {
+        const mat = child.material;
+        child.castShadow = true;
+        child.receiveShadow = true;
+
+        const name = (mat.name || '').toLowerCase();
+        const objName = (child.name || '').toLowerCase();
+
+        // 1. Crystal Clear Glassware (Prevents solid black transmission silhouette)
+        if (name.includes('glass') || name.includes('crystalline') || objName.includes('glass')) {
+          mat.transparent = true;
+          mat.opacity = 0.35;
+          mat.roughness = 0.05;
+          mat.metalness = 0.05;
+          mat.transmission = 0.65;
+          mat.ior = 1.5;
+          mat.depthWrite = false;
+        }
+
+        // 2. Ruby Red Wine & Spirits (Deep glowing jewel red)
+        if (name.includes('wine') || name.includes('ruby') || name.includes('liquid') || objName.includes('liquid')) {
+          mat.color = new THREE.Color('#780616');
+          mat.transparent = true;
+          mat.opacity = 0.88;
+          mat.roughness = 0.08;
+          mat.transmission = 0.25;
+        }
+
+        // 3. Polished Champagne Brass & Gold (Chandelier, Rotunda Fountain, Cutlery)
+        if (name.includes('brass') || name.includes('gold') || name.includes('bronze') || objName.includes('chandelier') || objName.includes('fountain')) {
+          mat.color = new THREE.Color('#E8BF65');
+          mat.metalness = 0.88;
+          mat.roughness = 0.22;
+        }
+
+        // 4. Italian Cognac Leather Dining Chairs (Warm Caramel Saddle Brown)
+        if (name.includes('leather') || objName.includes('ch_')) {
+          mat.color = new THREE.Color('#582B14');
+          mat.roughness = 0.42;
+          mat.metalness = 0.05;
+        }
+
+        // 5. Imperial Brown Hardwood Floor
+        if (name.includes('imperial_brown') || name.includes('wood_tiles') || objName.includes('floor')) {
+          mat.color = new THREE.Color('#3A2417');
+          mat.roughness = 0.35;
+        }
+
+        // 6. Smoked Walnut Partitions & Timber Slats
+        if (name.includes('walnut') || name.includes('timber') || name.includes('slats')) {
+          mat.color = new THREE.Color('#25160E');
+          mat.roughness = 0.32;
+        }
+
+        // 7. Calacatta Gold Marble Tables & Plates
+        if (name.includes('calacatta') || name.includes('marble') || objName.includes('plate') || objName.includes('top')) {
+          mat.color = new THREE.Color('#F7F5F0');
+          mat.roughness = 0.15;
+        }
+
+        // 8. Warm Ambient Lamps, Cove LED & Honey Onyx
+        if (name.includes('warm_2700k') || name.includes('cove_led') || name.includes('onyx') || name.includes('lampshade')) {
+          mat.emissive = new THREE.Color('#FF9E2C');
+          mat.emissiveIntensity = 2.5;
+        }
+      }
+    });
+  }, [scene]);
 
   // Handle pointer over / click
   const handlePointerOver = useCallback(
@@ -314,8 +386,8 @@ export function Restaurant3DFloorplan({
   // Eye-Level Dining View: Direct match for the user's high-detail foreground table perspective
   const handleEyeLevelView = useCallback(() => {
     if (controlsRef.current) {
-      controlsRef.current.target.set(0.0, 1.1, -1.0);
-      controlsRef.current.object.position.set(0.0, 1.35, 4.8);
+      controlsRef.current.target.set(0.0, 1.15, 0.0);
+      controlsRef.current.object.position.set(1.8, 1.25, 6.2);
       controlsRef.current.update();
       setViewMode('eyelevel');
     }
@@ -432,7 +504,7 @@ export function Restaurant3DFloorplan({
         <ThreeDErrorBoundary onSwitchTo2D={onSwitchTo2D}>
           <Canvas
             camera={{
-              position: [0.0, 1.35, 4.8], // Eye-level foreground dining table setup
+              position: [1.8, 1.25, 6.2], // Eye-level dining view directly matching Blender Camera_EyeLevel_Verification
               fov: 46,
               near: 0.05,
               far: 150,
@@ -442,13 +514,13 @@ export function Restaurant3DFloorplan({
               alpha: false,
               powerPreference: 'high-performance',
               toneMapping: THREE.ACESFilmicToneMapping,
-              toneMappingExposure: 1.05,
+              toneMappingExposure: 1.15,
             }}
           >
             {/* Deep Architectural Background matching Blender void */}
             <color attach="background" args={['#080605']} />
 
-            {/* Authentic Warm Cinematic Architectural Lighting (100% Local, zero external CDN fetch) */}
+            {/* Authentic Warm Cinematic Architectural Lighting */}
             <ambientLight color="#FFE8C8" intensity={0.65} />
             
             {/* Sky/Floor Hemisphere Warm Fill */}
@@ -472,15 +544,18 @@ export function Restaurant3DFloorplan({
             />
             
             {/* Central Rotunda Chandelier & Water Feature Glow */}
-            <pointLight position={[0, 4.5, 0]} intensity={3.2} distance={25} color="#FFA834" />
+            <pointLight position={[0, 4.5, 0]} intensity={3.5} distance={25} color="#FFA834" />
             
             {/* Sommelier Showcase Wine Wall Warm Accent */}
-            <pointLight position={[10, 4.0, -11]} intensity={2.2} distance={18} color="#FFD180" />
+            <pointLight position={[10, 4.0, -11]} intensity={2.5} distance={18} color="#FFD180" />
             
             {/* Cocktail Bar Warm Accent */}
-            <pointLight position={[-12, 4.0, 0]} intensity={1.8} distance={18} color="#FFB84D" />
+            <pointLight position={[-12, 4.0, 0]} intensity={2.0} distance={18} color="#FFB84D" />
 
             <Suspense fallback={<CanvasLoadingScreen />}>
+              {/* Local LookDev Environment Reflections (from local public/textures, zero external CDN fetch!) */}
+              <Environment files="/textures/forest_env.hdr" environmentIntensity={0.85} />
+
               <RestaurantModel
                 selectedTableNumber={selectedTableNumber}
                 hoveredTable={hoveredTable}
@@ -507,7 +582,7 @@ export function Restaurant3DFloorplan({
                 maxDistance={65}
                 maxPolarAngle={Math.PI / 2.02} // Keep camera strictly above floor
                 minPolarAngle={0.05}
-                target={[0, 1.1, -1.0]}
+                target={[0.0, 1.15, 0.0]}
               />
             </Suspense>
           </Canvas>
