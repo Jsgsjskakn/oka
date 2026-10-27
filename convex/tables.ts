@@ -111,3 +111,56 @@ export const deleteTable = mutation({
     return { success: true };
   },
 });
+
+export const seedAllArchitecturalTables = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const existing = await ctx.db.query("tables").collect();
+    const existingNumbers = new Set(existing.map((t) => t.tableNumber));
+
+    const tableConfigs = [
+      { num: 1, cap: 6 },
+      { num: 2, cap: 6 },
+      { num: 3, cap: 4 },
+      { num: 4, cap: 4 },
+      { num: 5, cap: 2 },
+      { num: 6, cap: 2 },
+      { num: 7, cap: 2 },
+      { num: 8, cap: 2 },
+      { num: 9, cap: 4 },
+      { num: 10, cap: 4 },
+      { num: 11, cap: 4 },
+      { num: 12, cap: 4 },
+      { num: 13, cap: 4 },
+      { num: 14, cap: 6 },
+      { num: 15, cap: 6 },
+      { num: 16, cap: 6 },
+      { num: 17, cap: 4 },
+      { num: 18, cap: 6 },
+      { num: 19, cap: 6 },
+      { num: 20, cap: 6 },
+      { num: 21, cap: 8 },
+      { num: 22, cap: 8 },
+      { num: 23, cap: 8 },
+      { num: 24, cap: 8 },
+      { num: 25, cap: 8 },
+      { num: 26, cap: 8 },
+      { num: 27, cap: 10 },
+      { num: 28, cap: 8 },
+    ];
+
+    let inserted = 0;
+    for (const config of tableConfigs) {
+      if (!existingNumbers.has(config.num)) {
+        await ctx.db.insert("tables", {
+          tableNumber: config.num,
+          capacity: config.cap,
+          status: "available",
+          createdAt: Date.now(),
+        });
+        inserted++;
+      }
+    }
+    return { success: true, inserted, total: existing.length + inserted };
+  },
+});
