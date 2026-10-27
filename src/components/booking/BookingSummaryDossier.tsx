@@ -57,36 +57,39 @@ export function BookingSummaryDossier({
   const durationLabel = `${hours}h${m > 0 ? ` ${m}m` : ''}`;
 
   return (
-    <div className="flex flex-col gap-4 p-5 rounded-2xl bg-[rgba(21,17,14,0.9)] backdrop-blur-xl border border-[rgba(226,168,75,0.22)] shadow-[0_16px_40px_rgba(0,0,0,0.6)]">
+    <div
+      className="flex flex-col gap-4 p-5 sm:p-6 rounded-3xl border border-[#F0C36B]/40 shadow-[inset_0_1px_1px_rgba(255,255,255,0.22),0_24px_60px_rgba(0,0,0,0.7)]"
+      style={{
+        background: 'rgba(16, 12, 9, 0.38)',
+        backdropFilter: 'blur(24px) saturate(160%)',
+        WebkitBackdropFilter: 'blur(24px) saturate(160%)',
+      }}
+    >
       {/* Dossier Header */}
       <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
-        <div>
-          <span className="text-[10px] font-mono tracking-widest uppercase text-[#E2A84B]">
-            CONFIRMATION DOSSIER
-          </span>
-          <h3 className="font-serif text-lg font-bold text-[#FAF5EC] leading-tight mt-0.5">
-            Reservation Summary
-          </h3>
-        </div>
-        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#0E1F18] border border-[#22C58B]/30 text-[#22C58B]">
+        <h3 className="font-serif text-lg font-bold text-[#F8F2E8] leading-tight">
+          Reservation Summary
+        </h3>
+        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#0E1F18] border border-[#36D6A0]/40 text-[#36D6A0] flex items-center gap-1 font-mono">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#36D6A0] shadow-[0_0_6px_#36D6A0]" />
           Live Sync
         </span>
       </div>
 
-      {/* 5-Minute Live Hold Timer Banner (Feature 3) */}
+      {/* 5-Minute Live Hold Timer Banner (when time is locked) */}
       {time && (
-        <div className="p-3 rounded-xl bg-[#0A261C] border border-[#22C58B]/60 shadow-[0_0_15px_rgba(34,197,139,0.15)] flex items-start gap-2.5 animate-in fade-in duration-300">
-          <Lock className="w-4 h-4 text-[#22C58B] shrink-0 mt-0.5" />
+        <div className="p-3 rounded-xl bg-[#0A261C]/80 border border-[#36D6A0]/60 shadow-[0_0_15px_rgba(54,214,160,0.15)] flex items-start gap-2.5 animate-in fade-in duration-300">
+          <Lock className="w-4 h-4 text-[#36D6A0] shrink-0 mt-0.5" />
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-[#FAF5EC]">
-                {tableNumber ? `Table #${tableNumber} Temporarily Held` : 'Table Slot Locked'}
+              <span className="text-xs font-bold text-[#F8F2E8]">
+                {tableNumber ? `Table T${tableNumber} Temporarily Held` : 'Table Slot Locked'}
               </span>
-              <span className="font-mono text-xs font-bold text-[#22C58B] bg-black/40 px-1.5 py-0.5 rounded border border-[#22C58B]/30">
+              <span className="font-mono text-xs font-bold text-[#36D6A0] bg-black/40 px-1.5 py-0.5 rounded border border-[#36D6A0]/30">
                 {timeFormatted}
               </span>
             </div>
-            <p className="text-[10.5px] text-[#A6E8C8] font-light leading-relaxed mt-0.5">
+            <p className="text-[10.5px] text-[#36D6A0]/90 font-light leading-relaxed mt-0.5">
               Your table is reserved for 5 minutes while you finalize your details.
             </p>
           </div>
@@ -95,12 +98,12 @@ export function BookingSummaryDossier({
 
       {/* Detail Rows */}
       <div className="space-y-2.5 text-xs">
-        {/* Date & Time */}
+        {/* Date */}
         <div className="flex items-center justify-between py-1.5 border-b border-white/[0.04]">
-          <span className="text-[#9A9286] flex items-center gap-1.5">
-            <Calendar className="w-3.5 h-3.5 text-[#E2A84B]" /> Date
+          <span className="text-[#A99A88] flex items-center gap-1.5">
+            <Calendar className="w-3.5 h-3.5 text-[#F0C36B]" /> Date
           </span>
-          <span className="font-semibold text-[#FAF5EC]">
+          <span className="font-semibold text-[#F8F2E8]">
             {date.toLocaleDateString('en-US', {
               weekday: 'short',
               day: 'numeric',
@@ -110,43 +113,43 @@ export function BookingSummaryDossier({
           </span>
         </div>
 
-        {/* Time Slot */}
+        {/* Time & Duration */}
         <div className="flex items-center justify-between py-1.5 border-b border-white/[0.04]">
-          <span className="text-[#9A9286] flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5 text-[#E2A84B]" /> Time &amp; Duration
+          <span className="text-[#A99A88] flex items-center gap-1.5">
+            <Clock className="w-3.5 h-3.5 text-[#F0C36B]" /> Time &amp; Duration
           </span>
-          <span className="font-semibold text-[#FAF5EC]">
-            {time ? `${time} (${durationLabel})` : 'Select time'}
+          <span className="font-semibold text-[#F8F2E8]">
+            {time ? `${time} · ${durationLabel}` : 'Select time'}
           </span>
         </div>
 
-        {/* Guests */}
+        {/* Party Size */}
         <div className="flex items-center justify-between py-1.5 border-b border-white/[0.04]">
-          <span className="text-[#9A9286] flex items-center gap-1.5">
-            <Users className="w-3.5 h-3.5 text-[#E2A84B]" /> Party Size
+          <span className="text-[#A99A88] flex items-center gap-1.5">
+            <Users className="w-3.5 h-3.5 text-[#F0C36B]" /> Party Size
           </span>
-          <span className="font-semibold text-[#FAF5EC]">
+          <span className="font-semibold text-[#F8F2E8]">
             {guests} {guests === 1 ? 'Guest' : 'Guests'}
           </span>
         </div>
 
-        {/* Seating Table & Zone */}
+        {/* Seating Allocation */}
         <div className="flex items-center justify-between py-1.5 border-b border-white/[0.04]">
-          <span className="text-[#9A9286] flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-[#E2A84B]" /> Seating Allocation
+          <span className="text-[#A99A88] flex items-center gap-1.5">
+            <Sparkles className="w-3.5 h-3.5 text-[#F0C36B]" /> Seating Allocation
           </span>
-          <span className="font-semibold text-[#E2A84B] text-right truncate max-w-[180px]">
-            {tableName || (tableNumber ? `Table #${tableNumber}` : 'Best Fit Table')}
+          <span className="font-semibold text-[#F0C36B] text-right truncate max-w-[200px]">
+            {tableNumber ? `T${tableNumber} · ${zone || tableName || 'Fireplace Lounge'}` : (tableName || 'Best Fit Table')}
           </span>
         </div>
 
         {/* Pre-order dishes from 3D Menu */}
         {preOrderCartItemsCount > 0 && (
           <div className="flex items-center justify-between py-1.5 border-b border-white/[0.04]">
-            <span className="text-[#9A9286] flex items-center gap-1.5">
+            <span className="text-[#A99A88] flex items-center gap-1.5">
               <ShoppingBag className="w-3.5 h-3.5 text-[#E0532B]" /> 3D Menu Pre-Order
             </span>
-            <span className="font-semibold text-[#22C58B]">
+            <span className="font-semibold text-[#36D6A0]">
               {preOrderCartItemsCount} dishes linked
             </span>
           </div>
@@ -154,23 +157,23 @@ export function BookingSummaryDossier({
       </div>
 
       {/* Advance Guarantee Amount */}
-      <div className="p-3.5 rounded-xl bg-gradient-to-br from-[#120D0A] to-[#1A130E] border border-[rgba(226,168,75,0.25)] flex items-center justify-between">
+      <div className="p-3.5 rounded-xl bg-black/40 backdrop-blur-md border border-[#F0C36B]/25 flex items-center justify-between">
         <div>
-          <span className="text-[10px] uppercase tracking-wider text-[#9A9286] font-semibold block">
-            Table Hold Deposit
+          <span className="text-[10px] uppercase tracking-wider text-[#A99A88] font-bold block font-mono">
+            TABLE HOLD DEPOSIT
           </span>
-          <span className="text-[10px] text-[#B5ADA2] font-light">
-            100% credited against your dining bill
+          <span className="text-[10px] text-[#D4C7B6] font-light">
+            100% against your dining bill
           </span>
         </div>
-        <span className="font-mono text-lg font-bold text-[#22C58B]">
+        <span className="font-mono text-xl font-bold text-[#36D6A0]">
           {formatMoney(advanceAmountPaise)}
         </span>
       </div>
 
       {/* Trust & Policy Micro-Badge */}
-      <div className="flex items-center gap-2 text-[10px] text-[#9A9286] pt-1">
-        <ShieldCheck className="w-3.5 h-3.5 text-[#22C58B] shrink-0" />
+      <div className="flex items-center gap-2 text-[10.5px] text-[#A99A88] pt-1">
+        <ShieldCheck className="w-4 h-4 text-[#36D6A0] shrink-0" />
         <span>Instant seating guarantee · Free cancellation up to 2 hours before</span>
       </div>
     </div>

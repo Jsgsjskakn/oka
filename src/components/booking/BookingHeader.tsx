@@ -31,7 +31,7 @@ export function BookingHeader({ step, onStepChange, showBack = true }: BookingHe
                 router.back();
               }
             }}
-            className="absolute left-0 group inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[rgba(21,17,14,0.7)] backdrop-blur-md border border-[rgba(226,168,75,0.22)] hover:border-[#E2A84B] text-[#FAF5EC] text-xs font-medium transition-all active:scale-95"
+            className="absolute left-0 group inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[rgba(16,12,9,0.35)] backdrop-blur-xl border border-[#F0C36B]/35 hover:border-[#F0C36B] hover:shadow-[0_0_18px_rgba(240,195,107,0.35)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] text-[#FAF5EC] text-xs font-medium transition-all active:scale-95"
             aria-label="Back"
           >
             <ChevronLeft className="w-4 h-4 text-[#E2A84B] transition-transform duration-200 group-hover:-translate-x-0.5" />

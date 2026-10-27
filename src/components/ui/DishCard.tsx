@@ -119,19 +119,29 @@ export function DishCard({ dish, onAdd }: DishCardProps) {
           </p>
         </div>
 
-        <div className="flex items-center justify-between pt-2 border-t border-white/[0.06]">
-          <span className="text-base font-extrabold text-[#d4af37]">
+        <div className="flex items-center justify-between pt-2 border-t border-white/[0.06] gap-2">
+          <span className="text-base font-extrabold text-[#d4af37] shrink-0">
             ₹{dish.price}
           </span>
-          <button
-            type="button"
-            onClick={handleAddToCart}
-            aria-label={`Add ${dish.name} to cart`}
-            className="flex items-center gap-1 py-1.5 px-3 rounded-xl bg-gradient-to-r from-[#d4af37] to-[#b38936] text-black font-semibold text-xs hover:scale-105 active:scale-95 transition-transform shadow-md"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            <span>Add</span>
-          </button>
+          <div className="flex items-center gap-1.5">
+            <Link
+              href={`/ar/${dish.slug}`}
+              className="px-2.5 py-1.5 text-xs font-semibold text-[#d4af37] hover:text-black hover:bg-[#d4af37] rounded-xl border border-[#d4af37]/40 transition-all flex items-center gap-1 bg-black/40"
+              title={`View ${dish.name} in AR`}
+            >
+              <Box className="w-3 h-3 text-[#d4af37]" />
+              <span>View in AR</span>
+            </Link>
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              aria-label={`Add ${dish.name} to cart`}
+              className="flex items-center gap-1 py-1.5 px-3 rounded-xl bg-gradient-to-r from-[#d4af37] to-[#b38936] text-black font-semibold text-xs hover:scale-105 active:scale-95 transition-transform shadow-md"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>Add</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>

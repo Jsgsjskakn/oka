@@ -31,7 +31,7 @@ export function ViewerControls({
   const controls = [
     {
       id: 'rotate',
-      label: autoRotate ? 'Stop Rotation' : 'Auto-Rotate',
+      label: 'Rotate',
       active: autoRotate,
       onClick: () => {
         haptic();
@@ -39,16 +39,16 @@ export function ViewerControls({
       },
       icon: (
         <RotateCw
-          className={`w-[18px] h-[18px] transition-transform ${
-            autoRotate ? 'animate-spin text-[#E2A84B]' : 'text-[#9A9286]'
+          className={`w-5 h-5 transition-transform ${
+            autoRotate ? 'animate-spin text-[#F0C36B]' : 'text-[#D2C3AD] group-hover:text-[#F8F2E8]'
           }`}
           style={autoRotate ? { animationDuration: '4s' } : undefined}
         />
       ),
     },
     {
-      id: 'hotspots',
-      label: showHotspots ? 'Hide Pins' : 'Ingredient Pins',
+      id: 'layers',
+      label: 'Layers',
       active: showHotspots,
       onClick: () => {
         haptic();
@@ -56,15 +56,15 @@ export function ViewerControls({
       },
       icon: (
         <Layers
-          className={`w-[18px] h-[18px] ${
-            showHotspots ? 'text-[#E2A84B]' : 'text-[#9A9286]'
+          className={`w-5 h-5 ${
+            showHotspots ? 'text-[#F0C36B]' : 'text-[#D2C3AD] group-hover:text-[#F8F2E8]'
           }`}
         />
       ),
     },
     {
-      id: 'angle',
-      label: cameraPreset === 'top' ? 'Side 45° View' : 'Top 90° View',
+      id: 'view',
+      label: 'View',
       active: cameraPreset === 'top',
       onClick: () => {
         haptic();
@@ -72,51 +72,56 @@ export function ViewerControls({
       },
       icon: (
         <Eye
-          className={`w-[18px] h-[18px] ${
-            cameraPreset === 'top' ? 'text-[#E2A84B]' : 'text-[#9A9286]'
+          className={`w-5 h-5 ${
+            cameraPreset === 'top' ? 'text-[#F0C36B]' : 'text-[#D2C3AD] group-hover:text-[#F8F2E8]'
           }`}
         />
       ),
     },
     {
       id: 'reset',
-      label: 'Reset Camera',
+      label: 'Reset',
       active: false,
       onClick: () => {
         haptic();
         onReset();
       },
-      icon: <RotateCcw className="w-[18px] h-[18px] text-[#9A9286] group-hover:text-[#FAF5EC]" />,
+      icon: <RotateCcw className="w-5 h-5 text-[#D2C3AD] group-hover:text-[#F8F2E8]" />,
     },
   ];
 
   return (
     <aside
-      className="fixed right-4 sm:right-8 top-1/2 -translate-y-1/2 z-40 flex flex-col items-center pointer-events-auto"
+      className="fixed left-4 sm:left-6 lg:left-8 top-1/2 -translate-y-1/2 z-40 flex flex-col items-center pointer-events-auto select-none animate-in fade-in slide-in-from-left-4 duration-300"
       aria-label="3D Camera & Presentation Controls"
     >
-      <div className="flex flex-col gap-1.5 p-2 rounded-[14px] bg-[rgba(21,17,14,0.82)] backdrop-blur-xl border border-[rgba(226,168,75,0.22)] shadow-[0_12px_40px_rgba(0,0,0,0.6)]">
+      <div className="flex flex-col gap-2 px-2 py-3 rounded-full bg-[rgba(20,15,11,0.85)] backdrop-blur-2xl border border-[rgba(240,195,107,0.3)] shadow-[0_16px_40px_rgba(0,0,0,0.85)]">
         {controls.map((ctrl, index) => (
           <React.Fragment key={ctrl.id}>
-            {index > 0 && <div className="w-5 h-[1px] bg-white/[0.06] my-0.5 mx-auto" />}
-            <div className="relative group flex items-center justify-center">
-              <button
-                onClick={ctrl.onClick}
-                className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-90 ${
+            {index > 0 && <div className="w-6 h-[1px] bg-white/[0.06] my-0.5 mx-auto" />}
+            <button
+              onClick={ctrl.onClick}
+              className="flex flex-col items-center justify-center gap-1.5 py-1 transition-all active:scale-90 group cursor-pointer"
+              title={ctrl.label}
+              aria-label={ctrl.label}
+            >
+              <div
+                className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
                   ctrl.active
-                    ? 'bg-[#E2A84B]/15 border border-[#E2A84B]/40 shadow-[0_0_12px_rgba(226,168,75,0.25)]'
-                    : 'bg-white/[0.02] border border-transparent hover:bg-white/[0.06] hover:border-white/10'
+                    ? 'bg-[#F0C36B]/25 border border-[#F0C36B] shadow-[0_0_14px_rgba(240,195,107,0.4)]'
+                    : 'bg-black/40 border border-white/10 group-hover:border-[#F0C36B]/40 group-hover:bg-[#F0C36B]/10'
                 }`}
-                aria-label={ctrl.label}
               >
                 {ctrl.icon}
-              </button>
-
-              {/* Left-Sliding Frosted Gold Tooltip */}
-              <div className="absolute right-full mr-3 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-200 group-hover:-translate-x-1.5 whitespace-nowrap bg-[rgba(21,17,14,0.92)] backdrop-blur-md border border-[#E2A84B]/35 rounded-md px-2.5 py-1 text-[11px] font-medium text-[#FAF5EC] shadow-[0_4px_16px_rgba(0,0,0,0.6)] z-50">
-                {ctrl.label}
               </div>
-            </div>
+              <span
+                className={`text-[10px] font-medium leading-none tracking-tight ${
+                  ctrl.active ? 'text-[#FFE1A0] font-semibold' : 'text-[#A99B8B] group-hover:text-[#F8F2E8]'
+                }`}
+              >
+                {ctrl.label}
+              </span>
+            </button>
           </React.Fragment>
         ))}
       </div>

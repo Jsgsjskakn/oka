@@ -1,11 +1,11 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { ThreeDViewer } from '@/components/viewer/ThreeDViewer';
 import { useFavoritesStore } from '@/store/favorites-store';
 import { useCartStore } from '@/store/cart-store';
 import type { ModelConfig } from '@/data/model-config';
-import type { Dish } from '@/types/menu';
+import type { Dish, AddOn } from '@/types/menu';
 
 interface Props {
   dishSlug: string;
@@ -19,16 +19,33 @@ interface Props {
   config: ModelConfig;
   allModelDishes: Array<{
     id: string;
+    slug?: string;
     name: string;
+    description?: string;
     image: string;
     price?: number;
+    price_paise?: number;
     category?: string;
     isVeg?: boolean;
+    ingredients?: string[];
   }>;
 }
 
 export default function ThreeDViewerClient(props: Props) {
-  const currentSlug = props.dishSlug;
+  const [currentSlug, setCurrentSlug] = useState(props.dishSlug);
+
+  const activeDishData =
+    props.allModelDishes.find((d) => d.id === currentSlug || d.slug === currentSlug) || {
+      id: props.dishSlug,
+      slug: props.dishSlug,
+      name: props.dishName,
+      description: props.dishDescription,
+      price: props.dishPrice / 100,
+      image: props.dishImage,
+      category: props.dishCategory,
+      isVeg: props.dishIsVeg,
+      ingredients: props.dishIngredients,
+    };
 
   const isFavorite = useFavoritesStore((s) => s.isFavorite(currentSlug));
   const toggleFavorite = useFavoritesStore((s) => s.toggleFavorite);
@@ -36,25 +53,28 @@ export default function ThreeDViewerClient(props: Props) {
 
   // Adapt DB dish to legacy Dish type for ThreeDViewer
   const dish: Dish = {
-    id: props.dishSlug,
-    slug: props.dishSlug,
-    name: props.dishName,
-    description: props.dishDescription,
-    price: props.dishPrice / 100, // Convert paise to rupees for legacy type
-    image: props.dishImage,
-    category: props.dishCategory as any,
-    isVeg: props.dishIsVeg,
+    id: activeDishData.id || currentSlug,
+    slug: activeDishData.slug || currentSlug,
+    name: activeDishData.name,
+    description: activeDishData.description || props.dishDescription,
+    price:
+      activeDishData.price !== undefined
+        ? activeDishData.price
+        : props.dishPrice / 100,
+    image: activeDishData.image || props.dishImage,
+    category: (activeDishData.category || props.dishCategory) as any,
+    isVeg: activeDishData.isVeg ?? props.dishIsVeg,
     isAvailable: true,
     isFeatured: false,
     isBestSeller: false,
     spiceLevel: 'medium',
-    ingredients: props.dishIngredients,
+    ingredients: activeDishData.ingredients || props.dishIngredients,
     has3DModel: true,
   };
 
   const handleAddToCart = useCallback(
-    (quantity: number = 1) => {
-      addItem(dish, quantity, {});
+    (quantity: number = 1, selectedAddOns?: AddOn[]) => {
+      addItem(dish, quantity, { selectedAddOns });
       if ('vibrate' in navigator) navigator.vibrate(15);
     },
     [dish, addItem]
@@ -66,12 +86,14 @@ export default function ThreeDViewerClient(props: Props) {
   }, [currentSlug, toggleFavorite]);
 
   const handleSwitchDish = useCallback((dishId: string) => {
-    window.location.href = `/3d/${dishId}`;
+    setCurrentSlug(dishId);
+    if (typeof window !== 'undefined') {
+      window.history.replaceState(null, '', `/3d/${dishId}`);
+    }
   }, []);
 
   return (
     <ThreeDViewer
-      key={currentSlug}
       dish={dish}
       config={props.config}
       allModelDishes={props.allModelDishes}

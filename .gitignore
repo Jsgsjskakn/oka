@@ -40,4 +40,45 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-.vercel
+# safety backups & archive directories
+*.bak
+*.zip
+/the-golden-oak-export/
+/the-golden-oak-source/
+
+# temporary database diagnostic scripts
+/check-db.js
+/check-rls.js
+/check_db.js
+/fix-profiles.ts
+
+# migration & audit markdown reports
+/AUDIT_REPORT.html
+/AUDIT_REPORT.md
+/COMPLETE_MIGRATION_AND_AUDIT_REPORT.md
+/FINAL_MASTER_REPAIR_REPORT.md
+/FINAL_MIGRATION_3D_AR_AUDIT.md
+/FULL_AUDIT_REPORT.md
+/INDEPENDENT_POST_REPAIR_VERIFICATION_REPORT.md
+/P0_SECURITY_DATA_INTEGRITY_REPAIR_REPORT.md
+/READ_ONLY_AUDIT_REPORT.md
+
+# agent workspace files & caches
+/AGENTS.md
+/AI_WORKSPACE_GUIDE.md
+/CLAUDE.md
+/.agents/
+/.claude/
+/skills-lock.json
+
+# temporary image test slices in public/images
+/public/images/*-test.png
+/public/images/*-crop*.png
+/public/images/pill-*.png
+/public/images/left-marble-test.png
+/public/images/lower-left-test.png
+/public/images/3d-lounge-right-area.png
+/public/images/bg-right-wall.png
+/public/images/right-wall-sample.png
+/public/images/right-dock-raw.png
+/public/images/hero-left-raw.png

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Users, Minus, Plus } from 'lucide-react';
+import { Users } from 'lucide-react';
 
 interface GuestStepperProps {
   guests: number;
@@ -9,7 +9,16 @@ interface GuestStepperProps {
 }
 
 export function GuestStepper({ guests, onChange }: GuestStepperProps) {
-  const partySizes = [1, 2, 3, 4, 5, 6, 7, 8];
+  const partySizes = [
+    { size: 1, label: 'Solo' },
+    { size: 2, label: 'People' },
+    { size: 3, label: 'People' },
+    { size: 4, label: 'People' },
+    { size: 5, label: 'People' },
+    { size: 6, label: 'People' },
+    { size: 7, label: 'People' },
+    { size: 8, label: 'Group', display: '8+' },
+  ];
 
   const handleSelect = (num: number) => {
     onChange(num);
@@ -23,51 +32,50 @@ export function GuestStepper({ guests, onChange }: GuestStepperProps) {
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <Users className="w-4 h-4 text-[#E2A84B]" />
-          <h3 className="text-xs font-semibold text-[#E2A84B] tracking-[0.2em] uppercase">
-            Number of Guests
+          <Users className="w-3.5 h-3.5 text-[#F0C36B]" />
+          <h3 className="text-xs font-semibold text-[#F0C36B] tracking-[0.2em] uppercase font-mono">
+            NUMBER OF GUESTS
           </h3>
         </div>
-        <span className="text-[11px] font-mono font-semibold text-[#FAF5EC]/70">
-          {guests} {guests === 1 ? 'Guest' : guests >= 8 ? 'Guests (VIP Booth)' : 'Guests'}
-        </span>
+        <div className="flex items-center gap-1.5 text-xs text-[#F8F2E8]/80 font-medium">
+          <Users className="w-3.5 h-3.5 text-[#F0C36B]" />
+          <span>{guests} {guests === 1 ? 'Guest' : 'Guests'}</span>
+        </div>
       </div>
 
-      {/* 8 Quick-Select Tactile Pills */}
+      {/* 8 Quick-Select Tactile Glass Pills */}
       <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
-        {partySizes.map((size) => {
-          const isSelected = guests === size;
-          const isVip = size === 8;
+        {partySizes.map((item) => {
+          const isSelected = guests === item.size;
 
           return (
             <button
-              key={size}
+              key={item.size}
               type="button"
-              onClick={() => handleSelect(size)}
-              className={`py-3 px-1 rounded-xl border text-center transition-all active:scale-95 cursor-pointer flex flex-col items-center justify-center ${
+              onClick={() => handleSelect(item.size)}
+              className={`py-3 px-1 rounded-xl border text-center transition-all duration-200 active:scale-95 cursor-pointer flex flex-col items-center justify-center ${
                 isSelected
-                  ? 'text-[#0D0A08] font-bold shadow-[0_4px_16px_rgba(226,168,75,0.45)] scale-105 border-white/60'
-                  : 'bg-[#16110E] border-white/[0.07] text-[#FAF5EC] hover:border-[#E2A84B]/40 hover:bg-[#1E1612]'
+                  ? 'text-[#17100C] font-bold shadow-[0_4px_18px_rgba(240,195,107,0.45)] scale-[1.03] border-[#FFE3A5]'
+                  : 'bg-white/[0.04] backdrop-blur-md border-white/[0.08] text-[#F8F2E8] hover:border-[#F0C36B]/40 hover:bg-white/[0.07]'
               }`}
               style={
                 isSelected
                   ? {
-                      background:
-                        'linear-gradient(135deg, #F6D386 0%, #D49432 100%)',
+                      background: 'linear-gradient(135deg, #F0C36B 0%, #DDA33E 100%)',
                     }
                   : undefined
               }
-              aria-label={`${size} guests`}
+              aria-label={`${item.display || item.size} guests`}
             >
               <span className="font-mono text-base font-bold leading-none">
-                {isVip ? '8+' : size}
+                {item.display || item.size}
               </span>
               <span
-                className={`text-[9px] font-medium mt-1 leading-none ${
-                  isSelected ? 'text-[#0D0A08]/80 font-semibold' : 'text-[#9A9286]'
+                className={`text-[9.5px] font-medium mt-1 leading-none ${
+                  isSelected ? 'text-[#17100C]/85 font-semibold' : 'text-[#A99A88]'
                 }`}
               >
-                {isVip ? 'VIP' : size === 1 ? 'Solo' : size === 2 ? 'Pair' : 'Table'}
+                {item.label}
               </span>
             </button>
           );

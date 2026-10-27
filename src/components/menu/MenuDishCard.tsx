@@ -90,18 +90,31 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
 
   return (
     <div
-      className="group relative flex flex-col justify-between overflow-hidden transition-all duration-300 hover:-translate-y-1.5 w-full rounded-2xl border"
+      className="group relative flex flex-col justify-between overflow-hidden transition-all duration-500 hover:-translate-y-2.5 w-full rounded-3xl border cursor-pointer"
       style={{
-        background: 'linear-gradient(180deg, #181310 0%, #120E0B 100%)',
-        borderTop: '1px solid rgba(246, 211, 134, 0.32)',
-        borderLeft: '1px solid rgba(226, 168, 75, 0.15)',
-        borderRight: '1px solid rgba(226, 168, 75, 0.15)',
-        borderBottom: '1px solid rgba(226, 168, 75, 0.15)',
-        boxShadow: '0 16px 40px rgba(0, 0, 0, 0.75)',
+        background: 'rgba(20, 15, 11, 0.45)',
+        backdropFilter: 'blur(24px) saturate(160%)',
+        WebkitBackdropFilter: 'blur(24px) saturate(160%)',
+        border: '1px solid rgba(240, 195, 107, 0.35)',
+        borderTop: '1px solid rgba(255, 235, 185, 0.50)',
+        boxShadow:
+          'inset 0 1px 1px rgba(255, 255, 255, 0.22), 0 20px 45px rgba(0, 0, 0, 0.70)',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = 'rgba(240, 195, 107, 0.70)';
+        e.currentTarget.style.borderTopColor = 'rgba(255, 240, 200, 0.85)';
+        e.currentTarget.style.boxShadow =
+          'inset 0 1px 2px rgba(255, 255, 255, 0.35), 0 30px 65px rgba(0, 0, 0, 0.85), 0 0 28px rgba(240, 195, 107, 0.25)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = 'rgba(240, 195, 107, 0.35)';
+        e.currentTarget.style.borderTopColor = 'rgba(255, 235, 185, 0.50)';
+        e.currentTarget.style.boxShadow =
+          'inset 0 1px 1px rgba(255, 255, 255, 0.22), 0 20px 45px rgba(0, 0, 0, 0.70)';
       }}
     >
       {/* Top Image Frame with Soft Dark Bottom Fade */}
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-black/70">
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-black/40">
         <Link
           href={`/3d/${dish.slug}`}
           onClick={handleCardClick}
@@ -115,22 +128,24 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
             className="object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
           />
 
-          {/* Soft dark fade melting photo seamlessly into card surface */}
+          {/* Soft dark fade melting photo seamlessly into translucent glass surface */}
           <div
             className="pointer-events-none absolute inset-0 z-10"
             style={{
-              background: 'linear-gradient(to top, #181310 6%, rgba(24, 19, 16, 0.35) 30%, transparent 60%)',
+              background:
+                'linear-gradient(to top, rgba(20, 15, 11, 0.85) 5%, rgba(20, 15, 11, 0.25) 35%, transparent 65%)',
             }}
           />
         </Link>
 
         {/* Top-Left: Single Clean Frosted Glass Badge */}
         <div
-          className={`absolute top-3 left-3 z-20 px-2.5 py-1 rounded-md text-[10px] font-serif font-bold tracking-wider flex items-center gap-1 shadow-lg pointer-events-none border ${badgeColor}`}
+          className={`absolute top-3 left-3 z-20 px-3 py-1 rounded-full text-[10px] font-serif font-bold tracking-wider flex items-center gap-1 pointer-events-none border ${badgeColor}`}
           style={{
-            background: 'rgba(13, 10, 8, 0.85)',
-            backdropFilter: 'blur(8px)',
-            WebkitBackdropFilter: 'blur(8px)',
+            background: 'rgba(16, 12, 9, 0.55)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            boxShadow: 'inset 0 1px 1px rgba(255, 255, 255, 0.18), 0 4px 14px rgba(0, 0, 0, 0.4)',
           }}
         >
           <span>{badgeText}</span>
@@ -141,15 +156,16 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
           href={`/ar/${dish.slug}`}
           onClick={(e) => e.stopPropagation()}
           title="Place on Table (AR)"
-          className="absolute top-3 right-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10.5px] font-bold text-[#FAF5EC] hover:text-[#E2A84B] hover:border-[#E2A84B] active:scale-95 transition-all shadow-lg group/ar"
+          className="absolute top-3 right-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10.5px] font-bold text-[#FAF5EC] hover:text-[#FFE1A0] active:scale-95 transition-all group/ar"
           style={{
-            background: 'rgba(13, 10, 8, 0.85)',
-            backdropFilter: 'blur(8px)',
-            WebkitBackdropFilter: 'blur(8px)',
-            border: '1px solid rgba(226, 168, 75, 0.35)',
+            background: 'rgba(16, 12, 9, 0.55)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            border: '1px solid rgba(240, 195, 107, 0.45)',
+            boxShadow: 'inset 0 1px 1px rgba(255, 255, 255, 0.20), 0 4px 14px rgba(0, 0, 0, 0.4)',
           }}
         >
-          <Box className="w-3.5 h-3.5 text-[#E2A84B] group-hover/ar:rotate-45 transition-transform duration-300" />
+          <Box className="w-3.5 h-3.5 text-[#F0C36B] group-hover/ar:rotate-45 transition-transform duration-300" />
           <span>VIEW IN AR</span>
         </Link>
 
@@ -158,12 +174,13 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
           type="button"
           onClick={handleToggleFav}
           aria-label={isFav ? 'Remove favorite' : 'Add favorite'}
-          className="absolute bottom-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center text-white/80 hover:text-white active:scale-90 transition-all shadow-xl"
+          className="absolute bottom-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center text-white/80 hover:text-white active:scale-90 transition-all"
           style={{
-            background: 'rgba(13, 10, 8, 0.82)',
-            backdropFilter: 'blur(8px)',
-            WebkitBackdropFilter: 'blur(8px)',
-            border: '1px solid rgba(255, 255, 255, 0.18)',
+            background: 'rgba(16, 12, 9, 0.55)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            border: '1px solid rgba(255, 255, 255, 0.22)',
+            boxShadow: 'inset 0 1px 1px rgba(255, 255, 255, 0.20), 0 4px 14px rgba(0, 0, 0, 0.4)',
           }}
         >
           <Heart
@@ -224,9 +241,9 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
           </p>
         </div>
 
-        {/* Card Footer: Price (Monospace Bold) + Tactile ADD + Button */}
-        <div className="pt-4 mt-3 flex items-center justify-between border-t border-white/[0.08]">
-          <div className="flex flex-col">
+        {/* Card Footer: Price (Monospace Bold) + View in AR + Tactile ADD + Button */}
+        <div className="pt-4 mt-3 flex items-center justify-between border-t border-white/[0.08] gap-2">
+          <div className="flex flex-col shrink-0">
             <span className="text-[10px] uppercase tracking-wider text-[#9A9286] font-medium">
               PRICE
             </span>
@@ -235,49 +252,43 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
             </span>
           </div>
 
-          <button
-            type="button"
-            onClick={handleAddToCart}
-            aria-label={`Add ${dish.name} to dining order`}
-            className={`px-5 py-2.5 text-xs font-extrabold transition-all duration-300 active:scale-95 shadow-md flex items-center gap-1.5 rounded-[6px] ${
-              isAdded
-                ? 'bg-[#22C58B] text-[#0D0A08] shadow-[0_0_15px_rgba(34,197,139,0.5)]'
-                : 'text-[#E2A84B] hover:text-[#0D0A08]'
-            }`}
-            style={{
-              background: isAdded
-                ? '#22C58B'
-                : 'linear-gradient(135deg, rgba(226, 168, 75, 0.14) 0%, rgba(226, 168, 75, 0.06) 100%)',
-              border: isAdded
-                ? '1px solid #22C58B'
-                : '1px solid rgba(226, 168, 75, 0.45)',
-            }}
-            onMouseEnter={(e) => {
-              if (!isAdded) {
-                e.currentTarget.style.background =
-                  'linear-gradient(135deg, #F6D386 0%, #D49432 50%, #9E6818 100%)';
-                e.currentTarget.style.color = '#0D0A08';
-                e.currentTarget.style.borderColor = 'transparent';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!isAdded) {
-                e.currentTarget.style.background =
-                  'linear-gradient(135deg, rgba(226, 168, 75, 0.14) 0%, rgba(226, 168, 75, 0.06) 100%)';
-                e.currentTarget.style.color = '#E2A84B';
-                e.currentTarget.style.borderColor = 'rgba(226, 168, 75, 0.45)';
-              }
-            }}
-          >
-            {isAdded ? (
-              <>
-                <Check className="w-3.5 h-3.5 stroke-[3]" />
-                <span>ADDED</span>
-              </>
-            ) : (
-              <span>ADD +</span>
-            )}
-          </button>
+          <div className="flex items-center gap-2">
+            {/* View in AR Button */}
+            <Link
+              href={`/ar/${dish.slug}`}
+              onClick={(e) => e.stopPropagation()}
+              title={`View ${dish.name} in AR`}
+              className="px-3 py-2 text-xs font-semibold text-[#FFE1A0] hover:text-[#0D0A08] hover:bg-[#F0C36B] rounded-xl border border-[#F0C36B]/40 hover:border-[#F0C36B] transition-all active:scale-95 shadow-sm flex items-center gap-1.5 bg-white/[0.05] backdrop-blur-md group/arbtn cursor-pointer"
+            >
+              <Box className="w-3.5 h-3.5 text-[#F0C36B] group-hover/arbtn:text-[#0D0A08] transition-colors" />
+              <span className="whitespace-nowrap">View in AR</span>
+            </Link>
+
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              aria-label={`Add ${dish.name} to dining order`}
+              className={`px-4 sm:px-5 py-2 text-xs font-extrabold transition-all duration-300 active:scale-95 shadow-md flex items-center gap-1.5 rounded-xl cursor-pointer ${
+                isAdded
+                  ? 'bg-[#22C58B] text-[#0D0A08] shadow-[0_0_15px_rgba(34,197,139,0.5)]'
+                  : 'text-[#17100C] hover:brightness-110 shadow-lg'
+              }`}
+              style={{
+                background: isAdded
+                  ? '#22C58B'
+                  : 'linear-gradient(135deg, #F0C36B 0%, #DDA33E 50%, #A8792A 100%)',
+              }}
+            >
+              {isAdded ? (
+                <>
+                  <Check className="w-3.5 h-3.5 stroke-[3]" />
+                  <span>ADDED</span>
+                </>
+              ) : (
+                <span>ADD +</span>
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </div>

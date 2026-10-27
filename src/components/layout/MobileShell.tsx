@@ -23,14 +23,18 @@ export function MobileShell({ children }: MobileShellProps) {
     );
   }
 
-  // 3D / AR viewports don't need the footer
+  // 3D / AR viewports manage their own immersive spatial HUD
   const isImmersiveViewer =
     pathname?.startsWith('/3d') || pathname?.startsWith('/ar');
 
   return (
     <div className="flex flex-col min-h-screen bg-[#0D0A08] text-[#FAF5EC] antialiased selection:bg-[#E2A84B]/30 selection:text-white">
-      <TopBar />
-      <main className="flex-1">
+      {!isImmersiveViewer && <TopBar />}
+      <main
+        className={`flex-1 ${
+          !isImmersiveViewer && pathname !== '/' ? 'pt-[76px] sm:pt-[84px]' : ''
+        }`}
+      >
         {children}
       </main>
       {!isImmersiveViewer && <CustomerFooter />}

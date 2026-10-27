@@ -10,48 +10,48 @@ export function BookingCTASection() {
 
   return (
     // Interactive Concierge Booking Bar
-    <section className="px-6 md:px-12 py-12 max-w-7xl mx-auto w-full">
+    <section className="px-4 sm:px-8 lg:px-10 py-10 max-w-[1180px] mx-auto w-full select-none">
       <div
-        className="rounded-2xl border p-8 sm:p-12 shadow-2xl relative overflow-hidden"
+        className="rounded-2xl border p-6 sm:p-8 lg:p-9 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(243,229,171,0.22)] relative overflow-hidden"
         style={{
-          background: 'linear-gradient(135deg, #0E1F18 0%, #15110E 100%)',
-          borderColor: 'rgba(226, 168, 75, 0.22)',
+          background: 'linear-gradient(145deg, rgba(16, 26, 21, 0.96) 0%, rgba(18, 14, 11, 0.98) 55%, rgba(10, 8, 6, 1) 100%)',
+          borderColor: 'rgba(212, 175, 55, 0.28)',
         }}
       >
-        {/* Subtle Radial Glow */}
+        {/* Subtle Radial Glow & Top Highlight */}
         <div
-          className="pointer-events-none absolute top-0 right-0 w-96 h-96 rounded-full blur-3xl"
-          style={{ background: 'rgba(226, 168, 75, 0.08)' }}
+          className="pointer-events-none absolute -top-24 -right-24 w-80 h-80 rounded-full blur-3xl"
+          style={{ background: 'rgba(212, 175, 55, 0.12)' }}
         />
+        <div className="pointer-events-none absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#F3E5AB]/30 to-transparent" />
 
         {/* Top Half: Left Heading + Right Architectural Stats with Clean Dividers */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 border-b border-white/[0.08]">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-6 border-b border-white/[0.07]">
           <div>
-            <span className="text-[11px] uppercase tracking-[0.25em] text-[#E2A84B] font-bold block mb-2">
-              RESERVE YOUR TABLE
+            <span className="text-[10px] uppercase tracking-[0.28em] text-[#D4AF37] font-semibold block mb-2">
+              RESERVE YOUR TABLE · SANCTUARY
             </span>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#FAF5EC] tracking-tight">
+            <h2 className="font-serif text-2xl sm:text-3xl lg:text-[32px] font-bold text-[#FAF5EC] tracking-tight">
               An Unforgettable Evening Awaits
             </h2>
           </div>
 
           {/* Clean Dividers Stats */}
-          <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.15em] text-[#B5ADA2]">
+          <div className="flex flex-wrap items-center gap-3 text-[11px] uppercase tracking-[0.18em] text-[#B5ADA2]">
             <span>Instant Confirmation</span>
-            <span className="text-[#E2A84B]/40">·</span>
+            <span className="text-[#D4AF37]/40">·</span>
             <span>Parties 1–20</span>
-            <span className="text-[#E2A84B]/40">·</span>
+            <span className="text-[#D4AF37]/40">·</span>
             <span>15 Smart Tables</span>
           </div>
         </div>
 
-        {/* Bottom Half: 4-Column Luxury Selector Strip (background: #0D0A08, border: 1px solid rgba(226, 168, 75, 0.3), border-radius: 8px) */}
+        {/* Bottom Half: 4-Column Luxury Selector Strip */}
         <div
-          className="mt-8 p-3 sm:p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 items-center"
+          className="mt-6 p-2.5 sm:p-3.5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 items-center rounded-xl border"
           style={{
-            background: '#0D0A08',
-            border: '1px solid rgba(226, 168, 75, 0.3)',
-            borderRadius: '8px',
+            background: 'rgba(10, 8, 6, 0.85)',
+            borderColor: 'rgba(212, 175, 55, 0.25)',
           }}
         >
           {/* Selector 1: Guests */}

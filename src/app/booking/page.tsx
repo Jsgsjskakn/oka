@@ -41,9 +41,7 @@ export default async function BookingPage() {
     }
   }
 
-  if (!userId) {
-    redirect('/auth/login?redirectTo=/booking');
-  }
+  // Note: Guest booking is fully supported. If logged in, details are pre-filled; otherwise guest enters their details directly.
 
   const advanceAmountRaw = await getSetting(RESTAURANT_ID, 'advance_booking_amount_paise');
   const advanceAmount = typeof advanceAmountRaw === 'number' ? advanceAmountRaw : 50000;

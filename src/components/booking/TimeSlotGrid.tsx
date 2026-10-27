@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Sun, Coffee, Moon } from 'lucide-react';
+import { Sun, Coffee, Moon, Clock } from 'lucide-react';
 
 interface TimeSlotGridProps {
   selectedTime: string | null;
@@ -77,16 +77,19 @@ export function TimeSlotGrid({ selectedTime, onSelect, slots }: TimeSlotGridProp
     <div className="w-full">
       {/* Section Header */}
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-xs font-semibold text-[#E2A84B] tracking-[0.2em] uppercase">
-          Select Dining Time
-        </h3>
-        <span className="text-[11px] text-[#9A9286]">
+        <div className="flex items-center gap-2">
+          <Clock className="w-3.5 h-3.5 text-[#F0C36B]" />
+          <h3 className="text-xs font-semibold text-[#F0C36B] tracking-[0.2em] uppercase font-mono">
+            SELECT DINING TIME
+          </h3>
+        </div>
+        <span className="text-[11px] text-[#A99A88]">
           {periods.find((p) => p.id === activePeriod)?.timeRange}
         </span>
       </div>
 
       {/* Service Period Segmented Tabs */}
-      <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-[#120E0B] border border-white/[0.06] mb-4">
+      <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-black/40 backdrop-blur-md border border-white/[0.08] mb-4">
         {periods.map((p) => {
           const isActive = activePeriod === p.id;
           const Icon = p.icon;
@@ -97,13 +100,13 @@ export function TimeSlotGrid({ selectedTime, onSelect, slots }: TimeSlotGridProp
               onClick={() => setActivePeriod(p.id)}
               className={`py-2 px-2 rounded-lg text-xs font-semibold transition-all flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 ${
                 isActive
-                  ? 'bg-[#1B140F] border border-[#E2A84B]/40 text-[#FAF5EC] shadow-[0_2px_10px_rgba(0,0,0,0.5)]'
-                  : 'text-[#9A9286] hover:text-[#FAF5EC] hover:bg-white/[0.03]'
+                  ? 'bg-[#F0C36B]/20 border border-[#F0C36B] text-[#FFE3A5] shadow-[0_2px_12px_rgba(240,195,107,0.25)]'
+                  : 'text-[#A99A88] hover:text-[#F8F2E8] hover:bg-white/[0.04]'
               }`}
             >
               <Icon
                 className={`w-3.5 h-3.5 shrink-0 ${
-                  isActive ? 'text-[#E2A84B]' : 'text-[#9A9286]'
+                  isActive ? 'text-[#F0C36B]' : 'text-[#A99A88]'
                 }`}
               />
               <span className="truncate">{p.name}</span>
@@ -127,10 +130,10 @@ export function TimeSlotGrid({ selectedTime, onSelect, slots }: TimeSlotGridProp
                   navigator.vibrate(10);
                 }
               }}
-              className={`p-2.5 rounded-xl border text-center transition-all active:scale-95 cursor-pointer flex flex-col items-center justify-center gap-1 ${
+              className={`p-2.5 rounded-xl border text-center transition-all duration-200 active:scale-95 cursor-pointer flex flex-col items-center justify-center gap-1 ${
                 isSelected
-                  ? 'bg-[#0E1F18] border-[1.5px] border-[#E2A84B] text-[#F6D386] shadow-[0_0_15px_rgba(226,168,75,0.25)] -translate-y-0.5'
-                  : 'bg-[#1B1612] border-white/[0.07] text-[#FAF5EC] hover:border-[#E2A84B]/30 hover:bg-[#221B16]'
+                  ? 'bg-[#F0C36B]/25 border-[1.5px] border-[#F0C36B] text-[#FFE3A5] shadow-[0_0_16px_rgba(240,195,107,0.35)] -translate-y-0.5'
+                  : 'bg-white/[0.04] backdrop-blur-md border-white/[0.08] text-[#F8F2E8] hover:border-[#F0C36B]/40 hover:bg-white/[0.07]'
               }`}
             >
               <span className="font-mono text-sm sm:text-[14.5px] font-bold tracking-tight">
@@ -141,18 +144,27 @@ export function TimeSlotGrid({ selectedTime, onSelect, slots }: TimeSlotGridProp
               <span
                 className={`text-[10px] font-medium leading-none flex items-center gap-1 ${
                   slot.status === 'urgent'
-                    ? 'text-[#E0532B]'
+                    ? 'text-[#F0786D]'
                     : slot.status === 'filling'
-                    ? 'text-[#F59E0B]'
-                    : 'text-[#22C58B]'
+                    ? 'text-[#F1B94E]'
+                    : 'text-[#36D6A0]'
                 }`}
               >
+                <span
+                  className={`w-1.5 h-1.5 rounded-full ${
+                    slot.status === 'urgent'
+                      ? 'bg-[#F0786D]'
+                      : slot.status === 'filling'
+                      ? 'bg-[#F1B94E]'
+                      : 'bg-[#36D6A0]'
+                  }`}
+                />
                 {slot.status === 'urgent' ? (
-                  <>● 1 Table Left</>
+                  <>1 Table Left</>
                 ) : slot.status === 'filling' ? (
-                  <>● 2 Tables Left</>
+                  <>2 Tables Left</>
                 ) : (
-                  <>● {slot.count} Tables Left</>
+                  <>{slot.count} Tables Left</>
                 )}
               </span>
             </button>

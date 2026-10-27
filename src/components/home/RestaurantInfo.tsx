@@ -136,70 +136,71 @@ export function RestaurantInfo() {
   };
 
   return (
-    <section className="relative py-20 px-6 md:px-12 max-w-7xl mx-auto w-full overflow-hidden">
+    <section className="relative py-14 sm:py-16 px-4 sm:px-8 lg:px-10 max-w-[1180px] mx-auto w-full overflow-hidden select-none">
       {/* Background Subtle Warm Ambient Glow */}
-      <div className="pointer-events-none absolute top-1/2 left-1/4 -translate-y-1/2 w-[500px] h-[400px] bg-[#E2A84B]/05 rounded-full blur-3xl -z-10" />
+      <div className="pointer-events-none absolute top-1/2 left-1/4 -translate-y-1/2 w-[460px] h-[360px] bg-[#D4AF37]/06 rounded-full blur-3xl -z-10" />
 
       {/* Main 12-Column Split Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch w-full">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-7 items-stretch w-full">
         {/* Left 5 Columns: Hospitality Dossier & Concierge Card */}
         <div
-          className="lg:col-span-5 p-8 sm:p-10 rounded-2xl flex flex-col justify-between shadow-[0_20px_50px_rgba(0,0,0,0.85)] border transition-all duration-300 hover:border-[#E2A84B]/35 relative overflow-hidden group"
+          className="lg:col-span-5 p-6 sm:p-7 lg:p-8 rounded-2xl flex flex-col justify-between shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(243,229,171,0.22),inset_0_0_24px_rgba(212,175,55,0.03)] border transition-all duration-300 hover:border-[#D4AF37]/45 relative overflow-hidden group"
           style={{
-            background: 'linear-gradient(165deg, #181310 0%, #120E0B 100%)',
-            borderColor: 'rgba(226, 168, 75, 0.22)',
+            background: 'linear-gradient(160deg, rgba(22, 17, 13, 0.96) 0%, rgba(14, 11, 9, 0.98) 55%, rgba(9, 7, 5, 1) 100%)',
+            borderColor: 'rgba(212, 175, 55, 0.28)',
           }}
         >
-          {/* Subtle Corner Sheen Accent */}
-          <div className="pointer-events-none absolute -top-24 -right-24 w-48 h-48 bg-[#E2A84B]/10 rounded-full blur-2xl group-hover:bg-[#E2A84B]/15 transition-all duration-700" />
+          {/* Subtle Corner Sheen Accent & Gold Filigree Aura */}
+          <div className="pointer-events-none absolute -top-20 -right-20 w-44 h-44 bg-[radial-gradient(circle,rgba(212,175,55,0.16)_0%,transparent_70%)] rounded-full blur-xl group-hover:opacity-100 transition-opacity duration-700" />
+          <div className="pointer-events-none absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#F3E5AB]/30 to-transparent" />
 
-          <div className="space-y-6 relative z-10">
+          <div className="space-y-5 relative z-10">
             {/* Header: Overline + Star Rating */}
             <div>
-              <div className="flex items-center gap-2 mb-2.5">
-                <span className="w-2 h-2 rounded-full bg-[#E0532B] animate-pulse" />
-                <span className="text-[11px] uppercase tracking-[0.25em] text-[#E0532B] font-bold">
-                  FLAGSHIP LOCATION · BENGALURU
+              <div className="flex items-center gap-2 mb-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] shadow-[0_0_8px_rgba(212,175,55,0.85)] animate-pulse" />
+                <span className="text-[10px] uppercase tracking-[0.26em] text-[#D4AF37] font-semibold">
+                  FLAGSHIP SANCTUARY · BENGALURU
                 </span>
               </div>
 
-              <h2 className="font-serif text-2xl sm:text-3xl lg:text-[32px] font-bold text-[#FAF5EC] tracking-tight leading-snug">
+              <h2 className="font-serif text-2xl sm:text-[28px] lg:text-[29px] font-bold text-[#FAF5EC] tracking-tight leading-snug">
                 The Golden Oak — Indiranagar Flagship
               </h2>
 
-              <div className="inline-flex items-center gap-2 mt-3.5 px-3 py-1.5 rounded-full bg-[#E2A84B]/10 border border-[#E2A84B]/30 text-xs font-semibold text-[#E2A84B] shadow-sm">
-                <Star className="w-3.5 h-3.5 fill-[#E2A84B] text-[#E2A84B]" />
+              <div className="inline-flex items-center gap-2 mt-3 px-3 py-1 rounded-full bg-gradient-to-r from-[#D4AF37]/15 to-[#9E6818]/10 border border-[#D4AF37]/35 text-xs font-semibold text-[#F3E5AB] shadow-sm">
+                <Star className="w-3 h-3 fill-[#D4AF37] text-[#D4AF37]" />
                 <span className="font-bold">4.8</span>
                 <span className="text-[#B5ADA2] font-normal">· 1,240+ Verified Diners</span>
               </div>
             </div>
 
             {/* Address */}
-            <div className="pt-3 border-t border-white/[0.08] space-y-1.5">
-              <span className="text-[10px] uppercase tracking-wider text-[#9A9286] font-semibold block">
+            <div className="pt-3 border-t border-white/[0.07] space-y-1">
+              <span className="text-[9.5px] uppercase tracking-wider text-[#9A9286] font-semibold block">
                 ADDRESS &amp; VALET ENTRANCE
               </span>
-              <p className="text-sm text-[#FAF5EC] font-light leading-relaxed">
+              <p className="text-xs sm:text-[13px] text-[#FAF5EC]/95 font-light leading-relaxed">
                 {address}
               </p>
             </div>
 
-            {/* Live Hours, Bengalur Clock & Active Kitchen Status */}
-            <div className="pt-3 border-t border-white/[0.08] space-y-2.5">
-              <div className="flex items-center justify-between text-[10px] uppercase tracking-wider text-[#9A9286] font-semibold">
+            {/* Live Hours, Bengaluru Clock & Active Kitchen Status */}
+            <div className="pt-3 border-t border-white/[0.07] space-y-2">
+              <div className="flex items-center justify-between text-[9.5px] uppercase tracking-wider text-[#9A9286] font-semibold">
                 <span>OPERATING HOURS</span>
-                <span className="text-[#E2A84B] flex items-center gap-1 font-mono">
-                  <Clock className="w-3 h-3" />
+                <span className="text-[#D4AF37] flex items-center gap-1 font-mono text-[10.5px]">
+                  <Clock className="w-3 h-3 text-[#D4AF37]" />
                   {bengaluruTime || 'IST (Bengaluru)'}
                 </span>
               </div>
 
-              <p className="text-sm text-[#FAF5EC] font-light">
+              <p className="text-xs sm:text-[13px] text-[#FAF5EC]/90 font-light">
                 12:00 PM – 11:30 PM (Monday – Sunday)
               </p>
 
               {isOpenNow ? (
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#22C58B]/15 border border-[#22C58B]/35 text-xs font-bold text-[#22C58B] shadow-sm">
+                <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#22C58B]/12 border border-[#22C58B]/35 text-[11px] font-bold text-[#22C58B] shadow-sm">
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#22C58B] opacity-75" />
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-[#22C58B]" />
@@ -207,28 +208,28 @@ export function RestaurantInfo() {
                   <span>OPEN NOW · Dining &amp; Bar Active · Closes at 11:30 PM</span>
                 </div>
               ) : (
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#E2A84B]/15 border border-[#E2A84B]/35 text-xs font-bold text-[#E2A84B]">
-                  <span className="w-2 h-2 rounded-full bg-[#E2A84B]" />
+                <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#D4AF37]/12 border border-[#D4AF37]/35 text-[11px] font-bold text-[#D4AF37]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]" />
                   <span>OPENS AT 12:00 PM · Online Bookings Open</span>
                 </div>
               )}
             </div>
 
             {/* Curated Michelin-Tier Amenities Highlights */}
-            <div className="pt-3 border-t border-white/[0.08] grid grid-cols-2 gap-2.5">
-              <div className="flex items-center gap-2 px-2.5 py-2 rounded-lg bg-white/[0.03] border border-white/[0.05] text-[11px] text-[#FAF5EC]/85">
-                <Car className="w-3.5 h-3.5 text-[#E2A84B] shrink-0" />
+            <div className="pt-3 border-t border-white/[0.07] grid grid-cols-2 gap-2">
+              <div className="flex items-center gap-2 px-2.5 py-2 rounded-lg bg-white/[0.025] border border-[#D4AF37]/15 hover:border-[#D4AF37]/35 hover:bg-[#D4AF37]/[0.04] transition-all text-[11px] text-[#FAF5EC]/90">
+                <Car className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
                 <span>Complimentary Valet</span>
               </div>
-              <div className="flex items-center gap-2 px-2.5 py-2 rounded-lg bg-white/[0.03] border border-white/[0.05] text-[11px] text-[#FAF5EC]/85">
-                <Utensils className="w-3.5 h-3.5 text-[#E2A84B] shrink-0" />
+              <div className="flex items-center gap-2 px-2.5 py-2 rounded-lg bg-white/[0.025] border border-[#D4AF37]/15 hover:border-[#D4AF37]/35 hover:bg-[#D4AF37]/[0.04] transition-all text-[11px] text-[#FAF5EC]/90">
+                <Utensils className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
                 <span>Wood-Fired Hearth</span>
               </div>
-              <div className="flex items-center gap-2 px-2.5 py-2 rounded-lg bg-white/[0.03] border border-white/[0.05] text-[11px] text-[#FAF5EC]/85">
-                <Wine className="w-3.5 h-3.5 text-[#E2A84B] shrink-0" />
+              <div className="flex items-center gap-2 px-2.5 py-2 rounded-lg bg-white/[0.025] border border-[#D4AF37]/15 hover:border-[#D4AF37]/35 hover:bg-[#D4AF37]/[0.04] transition-all text-[11px] text-[#FAF5EC]/90">
+                <Wine className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
                 <span>Sommelier Wine Cellar</span>
               </div>
-              <div className="flex items-center gap-2 px-2.5 py-2 rounded-lg bg-white/[0.03] border border-white/[0.05] text-[11px] text-[#FAF5EC]/85">
+              <div className="flex items-center gap-2 px-2.5 py-2 rounded-lg bg-white/[0.025] border border-[#D4AF37]/15 hover:border-[#D4AF37]/35 hover:bg-[#D4AF37]/[0.04] transition-all text-[11px] text-[#FAF5EC]/90">
                 <ShieldCheck className="w-3.5 h-3.5 text-[#22C58B] shrink-0" />
                 <span>Private Dining Suites</span>
               </div>
@@ -236,24 +237,24 @@ export function RestaurantInfo() {
           </div>
 
           {/* Action Row: Call Concierge, Directions & Table Reservation */}
-          <div className="grid grid-cols-2 gap-3 pt-6 mt-6 border-t border-white/[0.08] relative z-10">
+          <div className="grid grid-cols-2 gap-2.5 pt-5 mt-5 border-t border-white/[0.07] relative z-10">
             <a
               href={`tel:${phone.replace(/\s+/g, '')}`}
-              className="flex items-center justify-center gap-2 py-3 px-4 rounded-[6px] text-xs font-bold text-[#FAF5EC] transition-all duration-300 hover:text-[#0D0A08] hover:bg-[#E2A84B] active:scale-95 group shadow-md"
+              className="flex items-center justify-center gap-2 py-2.5 px-3.5 rounded-lg text-xs font-semibold text-[#FAF5EC] transition-all duration-300 hover:text-[#0D0A08] hover:bg-[#D4AF37] active:scale-95 group shadow-md"
               style={{
-                border: '1px solid rgba(226, 168, 75, 0.4)',
-                background: 'rgba(226, 168, 75, 0.08)',
+                border: '1px solid rgba(212, 175, 55, 0.35)',
+                background: 'rgba(212, 175, 55, 0.08)',
               }}
             >
-              <Phone className="w-3.5 h-3.5 text-[#E2A84B] group-hover:text-[#0D0A08] transition-colors" />
+              <Phone className="w-3.5 h-3.5 text-[#D4AF37] group-hover:text-[#0D0A08] transition-colors" />
               <span>Call Concierge</span>
             </a>
 
             <Link
               href="/booking"
-              className="flex items-center justify-center gap-2 py-3 px-4 rounded-[6px] text-xs font-bold text-[#0D0A08] transition-all duration-300 hover:brightness-110 active:scale-95 shadow-lg group"
+              className="flex items-center justify-center gap-2 py-2.5 px-3.5 rounded-lg text-xs font-bold text-[#0D0A08] transition-all duration-300 hover:brightness-110 active:scale-95 shadow-[0_6px_20px_rgba(212,175,55,0.3)] group"
               style={{
-                background: 'linear-gradient(135deg, #F6D386 0%, #D49432 50%, #9E6818 100%)',
+                background: 'linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #AA771C 100%)',
               }}
             >
               <Sparkles className="w-3.5 h-3.5 text-[#0D0A08]" />
@@ -264,31 +265,31 @@ export function RestaurantInfo() {
 
         {/* Right 7 Columns: Bengaluru Dark Map Container with Native Pinned Map */}
         <div
-          className="lg:col-span-7 relative min-h-[480px] lg:min-h-[540px] rounded-2xl overflow-hidden border shadow-[0_20px_50px_rgba(0,0,0,0.85)] flex flex-col justify-between group"
+          className="lg:col-span-7 relative min-h-[440px] lg:min-h-[490px] rounded-2xl overflow-hidden border shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(243,229,171,0.18)] flex flex-col justify-between group"
           style={{
             background: '#0D0A08',
-            borderColor: 'rgba(226, 168, 75, 0.25)',
+            borderColor: 'rgba(212, 175, 55, 0.28)',
           }}
           onMouseLeave={() => setIsMapInteractive(false)}
         >
           {/* Top Architectural Header Bar Pinned Over Map (Stationary, Non-Drifting) */}
-          <div className="relative z-30 p-4 sm:p-5 flex items-center justify-between gap-3 pointer-events-none">
+          <div className="relative z-30 p-3.5 sm:p-4 flex items-center justify-between gap-2.5 pointer-events-none">
             {/* Pinned Radar Status Capsule */}
             <div
-              className="px-3.5 py-1.5 rounded-full shadow-2xl flex items-center gap-2 border pointer-events-auto"
+              className="px-3 py-1.5 rounded-full shadow-2xl flex items-center gap-2 border pointer-events-auto"
               style={{
-                background: 'rgba(13, 10, 8, 0.90)',
-                backdropFilter: 'blur(12px)',
-                WebkitBackdropFilter: 'blur(12px)',
-                borderColor: 'rgba(226, 168, 75, 0.4)',
+                background: 'rgba(14, 11, 9, 0.94)',
+                backdropFilter: 'blur(16px)',
+                WebkitBackdropFilter: 'blur(16px)',
+                borderColor: 'rgba(212, 175, 55, 0.38)',
               }}
             >
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E2A84B] opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#E2A84B]" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#D4AF37] opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#D4AF37]" />
               </span>
-              <MapPin className="w-3.5 h-3.5 text-[#E2A84B]" />
-              <span className="font-serif text-xs font-bold text-[#FAF5EC] tracking-wide">
+              <MapPin className="w-3.5 h-3.5 text-[#D4AF37]" />
+              <span className="font-serif text-[11.5px] font-bold text-[#FAF5EC] tracking-wide">
                 Bengaluru · Indiranagar 100ft Rd Flagship
               </span>
             </div>
@@ -300,13 +301,13 @@ export function RestaurantInfo() {
                 type="button"
                 onClick={() => setZoomLevel((z) => Math.max(12, z - 1))}
                 title="Zoom Out Map"
-                className="p-1.5 rounded-md text-[#FAF5EC] hover:text-[#E2A84B] border border-white/20 transition-all shadow-md active:scale-95"
+                className="p-1.5 rounded-md text-[#FAF5EC] hover:text-[#D4AF37] border border-white/20 transition-all shadow-md active:scale-95"
                 style={{
-                  background: 'rgba(13, 10, 8, 0.88)',
+                  background: 'rgba(14, 11, 9, 0.90)',
                   backdropFilter: 'blur(8px)',
                 }}
               >
-                <Minus className="w-3.5 h-3.5" />
+                <Minus className="w-3 h-3" />
               </button>
 
               {/* Zoom In Button */}
@@ -314,13 +315,13 @@ export function RestaurantInfo() {
                 type="button"
                 onClick={() => setZoomLevel((z) => Math.min(19, z + 1))}
                 title="Zoom In Map"
-                className="p-1.5 rounded-md text-[#FAF5EC] hover:text-[#E2A84B] border border-white/20 transition-all shadow-md active:scale-95"
+                className="p-1.5 rounded-md text-[#FAF5EC] hover:text-[#D4AF37] border border-white/20 transition-all shadow-md active:scale-95"
                 style={{
-                  background: 'rgba(13, 10, 8, 0.88)',
+                  background: 'rgba(14, 11, 9, 0.90)',
                   backdropFilter: 'blur(8px)',
                 }}
               >
-                <Plus className="w-3.5 h-3.5" />
+                <Plus className="w-3 h-3" />
               </button>
 
               {/* Recenter Button */}
@@ -328,13 +329,13 @@ export function RestaurantInfo() {
                 type="button"
                 onClick={handleRecenterMap}
                 title="Recenter Map on The Golden Oak Flagship"
-                className="p-1.5 rounded-md text-[#FAF5EC] hover:text-[#E2A84B] border border-white/20 transition-all shadow-md active:scale-95"
+                className="p-1.5 rounded-md text-[#FAF5EC] hover:text-[#D4AF37] border border-white/20 transition-all shadow-md active:scale-95"
                 style={{
-                  background: 'rgba(13, 10, 8, 0.88)',
+                  background: 'rgba(14, 11, 9, 0.90)',
                   backdropFilter: 'blur(8px)',
                 }}
               >
-                <RotateCcw className="w-3.5 h-3.5" />
+                <RotateCcw className="w-3 h-3" />
               </button>
 
               {/* Map View Mode Toggle */}
@@ -345,9 +346,9 @@ export function RestaurantInfo() {
                     mapViewMode === 'dark' ? 'standard' : mapViewMode === 'standard' ? 'satellite' : 'dark'
                   )
                 }
-                className="px-2.5 py-1.5 rounded-md text-[11px] font-semibold text-[#FAF5EC] hover:text-[#E2A84B] border border-white/20 transition-all shadow-md active:scale-95 flex items-center gap-1.5"
+                className="px-2.5 py-1.5 rounded-md text-[10.5px] font-semibold text-[#FAF5EC] hover:text-[#D4AF37] border border-white/20 transition-all shadow-md active:scale-95 flex items-center gap-1.5"
                 style={{
-                  background: 'rgba(13, 10, 8, 0.88)',
+                  background: 'rgba(14, 11, 9, 0.90)',
                   backdropFilter: 'blur(8px)',
                 }}
               >
@@ -365,22 +366,22 @@ export function RestaurantInfo() {
                 type="button"
                 onClick={() => setIsMapInteractive((prev) => !prev)}
                 title={isMapInteractive ? 'Lock map to resume smooth page scroll' : 'Unlock map to drag/pan'}
-                className="px-2.5 py-1.5 rounded-md text-[11px] font-semibold transition-all shadow-md active:scale-95 flex items-center gap-1.5"
+                className="px-2.5 py-1.5 rounded-md text-[10.5px] font-semibold transition-all shadow-md active:scale-95 flex items-center gap-1.5"
                 style={{
-                  background: isMapInteractive ? 'rgba(226, 168, 75, 0.2)' : 'rgba(13, 10, 8, 0.88)',
-                  color: isMapInteractive ? '#E2A84B' : '#FAF5EC',
-                  border: isMapInteractive ? '1px solid rgba(226, 168, 75, 0.5)' : '1px solid rgba(255, 255, 255, 0.2)',
+                  background: isMapInteractive ? 'rgba(212, 175, 55, 0.22)' : 'rgba(14, 11, 9, 0.90)',
+                  color: isMapInteractive ? '#F3E5AB' : '#FAF5EC',
+                  border: isMapInteractive ? '1px solid rgba(212, 175, 55, 0.55)' : '1px solid rgba(255, 255, 255, 0.2)',
                   backdropFilter: 'blur(8px)',
                 }}
               >
                 {isMapInteractive ? (
                   <>
-                    <Unlock className="w-3.5 h-3.5 text-[#E2A84B]" />
+                    <Unlock className="w-3 h-3 text-[#D4AF37]" />
                     <span className="hidden sm:inline">Drag Active</span>
                   </>
                 ) : (
                   <>
-                    <Lock className="w-3.5 h-3.5 opacity-70" />
+                    <Lock className="w-3 h-3 opacity-70" />
                     <span className="hidden sm:inline">Scroll Safe</span>
                   </>
                 )}
@@ -410,21 +411,21 @@ export function RestaurantInfo() {
             {/* Custom Luxury Restaurant Beacon (Stationary Gold Pin Over 100ft Rd Coordinates) */}
             <div className="absolute top-[48%] left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-20 flex flex-col items-center">
               <div className="relative flex items-center justify-center">
-                <span className="animate-ping absolute inline-flex h-9 w-9 rounded-full bg-[#E2A84B] opacity-35" />
-                <span className="animate-pulse absolute inline-flex h-6 w-6 rounded-full bg-[#E2A84B]/25" />
-                <div className="relative w-4 h-4 rounded-full bg-gradient-to-br from-[#F6D386] via-[#E2A84B] to-[#9E6818] shadow-[0_0_18px_rgba(226,168,75,0.9)] border-2 border-[#0D0A08] flex items-center justify-center">
+                <span className="animate-ping absolute inline-flex h-9 w-9 rounded-full bg-[#D4AF37] opacity-40" />
+                <span className="animate-pulse absolute inline-flex h-6 w-6 rounded-full bg-[#D4AF37]/30" />
+                <div className="relative w-4 h-4 rounded-full bg-gradient-to-br from-[#F3E5AB] via-[#D4AF37] to-[#8C5D14] shadow-[0_0_20px_rgba(212,175,55,0.95)] border-2 border-[#0D0A08] flex items-center justify-center">
                   <div className="w-1.5 h-1.5 rounded-full bg-[#0D0A08]" />
                 </div>
               </div>
               <div
                 className="mt-1.5 px-2.5 py-1 rounded-md shadow-2xl flex items-center gap-1.5 border"
                 style={{
-                  background: 'rgba(13, 10, 8, 0.92)',
-                  backdropFilter: 'blur(8px)',
-                  borderColor: 'rgba(226, 168, 75, 0.45)',
+                  background: 'rgba(14, 11, 9, 0.94)',
+                  backdropFilter: 'blur(10px)',
+                  borderColor: 'rgba(212, 175, 55, 0.45)',
                 }}
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-[#E2A84B]" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]" />
                 <span className="font-serif text-[10.5px] font-bold text-[#FAF5EC] tracking-wider uppercase whitespace-nowrap">
                   The Golden Oak Flagship
                 </span>
@@ -437,8 +438,8 @@ export function RestaurantInfo() {
                 onClick={() => setIsMapInteractive(true)}
                 className="absolute inset-0 z-20 cursor-pointer flex items-center justify-center group/overlay bg-transparent"
               >
-                <div className="opacity-0 group-hover/overlay:opacity-100 transition-opacity duration-300 px-4 py-2 rounded-full bg-[#0D0A08]/92 border border-[#E2A84B]/50 shadow-[0_4px_24px_rgba(0,0,0,0.8)] backdrop-blur-md flex items-center gap-2 text-xs font-semibold text-[#FAF5EC]">
-                  <Hand className="w-3.5 h-3.5 text-[#E2A84B]" />
+                <div className="opacity-0 group-hover/overlay:opacity-100 transition-opacity duration-300 px-4 py-2 rounded-full bg-[#0D0A08]/92 border border-[#D4AF37]/50 shadow-[0_4px_24px_rgba(0,0,0,0.8)] backdrop-blur-md flex items-center gap-2 text-xs font-semibold text-[#FAF5EC]">
+                  <Hand className="w-3.5 h-3.5 text-[#D4AF37]" />
                   <span>Click to Drag &amp; Pan Map</span>
                 </div>
               </div>
@@ -450,22 +451,22 @@ export function RestaurantInfo() {
 
           {/* Bottom Interactive Navigation & START Button Card (Stationary Control Center) */}
           <div
-            className="relative z-30 p-4 sm:p-5 m-3 sm:m-4 rounded-xl border shadow-2xl flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4"
+            className="relative z-30 p-3.5 sm:p-4 m-2.5 sm:m-3 rounded-xl border shadow-2xl flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3.5"
             style={{
-              background: 'rgba(13, 10, 8, 0.94)',
-              backdropFilter: 'blur(16px)',
-              WebkitBackdropFilter: 'blur(16px)',
-              borderColor: 'rgba(226, 168, 75, 0.35)',
+              background: 'rgba(14, 11, 9, 0.95)',
+              backdropFilter: 'blur(18px)',
+              WebkitBackdropFilter: 'blur(18px)',
+              borderColor: 'rgba(212, 175, 55, 0.35)',
             }}
           >
             {/* Left: Distance & Animated Radar Compass */}
-            <div className="flex items-center gap-3.5 min-w-0">
-              <div className="w-10 h-10 rounded-lg bg-[#E2A84B]/15 border border-[#E2A84B]/35 flex items-center justify-center shrink-0 shadow-inner">
-                <Compass className="w-5 h-5 text-[#E2A84B] animate-[spin_10s_linear_infinite]" />
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-lg bg-[#D4AF37]/15 border border-[#D4AF37]/35 flex items-center justify-center shrink-0 shadow-inner">
+                <Compass className="w-4.5 h-4.5 text-[#D4AF37] animate-[spin_10s_linear_infinite]" />
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] uppercase tracking-wider text-[#E2A84B] font-bold">
+                  <span className="text-[9.5px] uppercase tracking-wider text-[#D4AF37] font-bold">
                     LIVE GPS ROUTE &amp; DISTANCE
                   </span>
                   <button
@@ -477,7 +478,7 @@ export function RestaurantInfo() {
                     <LocateFixed className="w-3 h-3 hover:rotate-45 transition-transform" />
                   </button>
                 </div>
-                <p className="text-xs sm:text-sm font-semibold text-[#FAF5EC] truncate mt-0.5">
+                <p className="text-xs sm:text-[13px] font-semibold text-[#FAF5EC] truncate mt-0.5">
                   {isLocating
                     ? 'Calculating live distance...'
                     : userDistance || 'Indiranagar 100ft Rd · Flagship Sanctuary'}
@@ -486,15 +487,15 @@ export function RestaurantInfo() {
             </div>
 
             {/* Right: Direct Google Map View & START NAVIGATION Buttons */}
-            <div className="flex items-center gap-2.5 shrink-0">
+            <div className="flex items-center gap-2 shrink-0">
               <a
                 href={viewMapUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-3.5 py-2.5 rounded-[6px] border border-white/20 text-[#FAF5EC] hover:text-[#E2A84B] hover:border-[#E2A84B]/40 text-xs font-medium transition-all flex items-center gap-1.5 shadow-sm active:scale-95"
+                className="px-3 py-2 rounded-lg border border-white/20 text-[#FAF5EC] hover:text-[#D4AF37] hover:border-[#D4AF37]/45 text-xs font-medium transition-all flex items-center gap-1.5 shadow-sm active:scale-95"
               >
                 <span>Full Map</span>
-                <ArrowUpRight className="w-3.5 h-3.5" />
+                <ArrowUpRight className="w-3 h-3" />
               </a>
 
               {/* High-Impact Molten Gold Navigation Button */}
@@ -502,9 +503,9 @@ export function RestaurantInfo() {
                 href={directionsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-5 py-2.5 rounded-[6px] text-xs font-extrabold text-[#0D0A08] transition-all duration-300 hover:brightness-110 active:scale-95 shadow-[0_4px_20px_rgba(226,168,75,0.4)] flex items-center gap-2 group"
+                className="px-4 py-2 rounded-lg text-xs font-extrabold text-[#0D0A08] transition-all duration-300 hover:brightness-110 active:scale-95 shadow-[0_4px_20px_rgba(212,175,55,0.4)] flex items-center gap-1.5 group"
                 style={{
-                  background: 'linear-gradient(135deg, #F6D386 0%, #D49432 50%, #9E6818 100%)',
+                  background: 'linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #AA771C 100%)',
                 }}
               >
                 <Navigation className="w-3.5 h-3.5 fill-[#0D0A08] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />

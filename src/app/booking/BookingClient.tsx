@@ -27,6 +27,8 @@ import {
   QrCode,
   ShieldCheck,
   UtensilsCrossed,
+  MapPin,
+  Heart,
 } from 'lucide-react';
 import { formatMoney } from '@/lib/db/types';
 import { toast } from '@/store/toast-store';
@@ -61,16 +63,21 @@ export default function BookingClient({
   // Step 1: Configurator State
   const [guests, setGuests] = useState<number>(2);
   const [date, setDate] = useState<Date>(new Date());
-  const [time, setTime] = useState<string | null>(null);
+  const [time, setTime] = useState<string | null>('08:00 PM');
   const [durationMinutes, setDurationMinutes] = useState<number>(120); // default 2 hours
-  const [selectedZone, setSelectedZone] = useState<string>('');
-  const [selectedTable, setSelectedTable] = useState<FloorTable | null>(null);
+  const [selectedTable, setSelectedTable] = useState<FloorTable | null>(
+    RESTAURANT_TABLES.find((t) => t.tableNumber === 7) || RESTAURANT_TABLES[0]
+  );
+  const [selectedZone, setSelectedZone] = useState<string>("The Hearth Chef's Counter");
   const [availableTableNumbers, setAvailableTableNumbers] = useState<number[] | undefined>(undefined);
   const [holdExpiresAt, setHoldExpiresAt] = useState<number | null>(null);
   const [availabilityMsg, setAvailabilityMsg] = useState<{
     text: string;
     type: 'success' | 'error';
-  } | null>(null);
+  } | null>({
+    text: 'Table T7 available for 2 guests.',
+    type: 'success',
+  });
 
   // Step 2: Guest Dossier & Preferences
   const [details, setDetails] = useState({
@@ -308,15 +315,50 @@ export default function BookingClient({
   };
 
   return (
-    <div className="min-h-screen text-[#FAF5EC] pb-24 relative overflow-x-hidden" style={{ backgroundColor: '#0D0A08' }}>
-      {/* Emerald & Molten Gold Atmospheric Radial Spotlight */}
+    <div className="min-h-screen text-[#FAF5EC] pb-24 relative overflow-x-hidden selection:bg-[#F0C36B]/30" style={{ backgroundColor: '#0B0907' }}>
+      {/* 1. Full-Page Photorealistic Luxury Restaurant Background Image */}
       <div
-        className="absolute top-0 left-0 right-0 h-[640px] pointer-events-none"
+        className="fixed inset-0 pointer-events-none z-0"
         style={{
-          background:
-            'radial-gradient(ellipse at 50% 0%, rgba(14, 31, 24, 0.85) 0%, rgba(226, 168, 75, 0.10) 40%, transparent 75%)',
+          backgroundImage: "url('/images/reservation-bg.jpg')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center 35%',
+          backgroundRepeat: 'no-repeat',
+          filter: 'brightness(1.15) contrast(1.08) saturate(1.2)',
         }}
       />
+
+      {/* 2. Soft Luminous Vignette (Translucent, keeping 8K background vivid and glowing) */}
+      <div
+        className="fixed inset-0 pointer-events-none z-0"
+        style={{
+          background:
+            'radial-gradient(ellipse at 50% 25%, rgba(18, 14, 11, 0.22) 0%, rgba(14, 11, 8, 0.48) 60%, rgba(8, 6, 4, 0.76) 100%)',
+        }}
+      />
+
+      {/* 3. Warm Pendant & Chandelier Ambient Radiant Glow */}
+      <div
+        className="fixed top-0 left-1/2 -translate-x-1/2 w-[1100px] h-[450px] pointer-events-none z-0 opacity-70"
+        style={{
+          background:
+            'radial-gradient(circle, rgba(240, 195, 107, 0.28) 0%, rgba(221, 163, 62, 0.10) 50%, transparent 75%)',
+          filter: 'blur(60px)',
+        }}
+      />
+
+      {/* 4. Decorative "Good Food Better Mood" script in upper right */}
+      <div className="hidden xl:block absolute right-8 sm:right-14 top-28 pointer-events-none select-none z-10 opacity-80">
+        <div className="flex flex-col items-center rotate-[-6deg]">
+          <span className="text-[#F0C36B] font-serif text-2xl tracking-wide italic font-medium drop-shadow-[0_2px_14px_rgba(240,195,107,0.45)]">
+            Good Food
+          </span>
+          <span className="text-[#FFE3A5] font-serif text-3xl tracking-wider italic font-semibold drop-shadow-[0_2px_18px_rgba(240,195,107,0.55)] -mt-1">
+            Better Mood
+          </span>
+          <div className="w-14 h-[1.5px] bg-gradient-to-r from-transparent via-[#F0C36B]/60 to-transparent mt-1" />
+        </div>
+      </div>
 
       {/* Top Header & Architectural Stepper */}
       <BookingHeader step={step} onStepChange={setStep} />
@@ -330,196 +372,226 @@ export default function BookingClient({
           <div className="lg:col-span-7 flex flex-col gap-6">
             {/* Step 1: Time, Seating & Dining Preferences */}
             {step === 1 && (
-              <div
-                className="rounded-2xl p-6 sm:p-8 border border-[rgba(226,168,75,0.18)] border-t-[rgba(246,211,134,0.30)] shadow-[0_20px_50px_rgba(0,0,0,0.7)] flex flex-col gap-6 animate-in fade-in duration-300"
-                style={{
-                  background:
-                    'linear-gradient(180deg, rgba(21, 17, 14, 0.96) 0%, rgba(16, 12, 10, 0.98) 100%)',
-                }}
-              >
-                {/* Section 1: Party Size Selector (at the VERY TOP!) */}
-                <section>
-                  <GuestStepper guests={guests} onChange={setGuests} />
-                </section>
+              <div className="flex flex-col gap-3">
+                <div
+                  className="rounded-3xl p-6 sm:p-8 border border-[#F0C36B]/40 shadow-[inset_0_1px_1px_rgba(255,255,255,0.22),0_24px_60px_rgba(0,0,0,0.7)] flex flex-col gap-6 animate-in fade-in duration-300"
+                  style={{
+                    background: 'rgba(16, 12, 9, 0.38)',
+                    backdropFilter: 'blur(24px) saturate(160%)',
+                    WebkitBackdropFilter: 'blur(24px) saturate(160%)',
+                  }}
+                >
+                  {/* Section 1: Party Size Selector (at the VERY TOP!) */}
+                  <section>
+                    <GuestStepper guests={guests} onChange={setGuests} />
+                  </section>
 
-                <div className="h-[1px] bg-white/[0.06]" />
+                  <div className="h-[1px] bg-white/[0.08]" />
 
-                {/* Section 2: Horizon Date Ribbon */}
-                <section>
-                  <DateChipSelector selectedDate={date} onSelect={setDate} />
-                </section>
+                  {/* Section 2: Horizon Date Ribbon */}
+                  <section>
+                    <DateChipSelector selectedDate={date} onSelect={setDate} />
+                  </section>
 
-                <div className="h-[1px] bg-white/[0.06]" />
+                  <div className="h-[1px] bg-white/[0.08]" />
 
-                {/* Section 3: Time Slot Grid (3 Meal Tabs) */}
-                <section>
-                  <TimeSlotGrid selectedTime={time} onSelect={setTime} />
-                </section>
+                  {/* Section 3: Time Slot Grid (3 Meal Tabs) */}
+                  <section>
+                    <TimeSlotGrid selectedTime={time} onSelect={setTime} />
+                  </section>
 
-                <div className="h-[1px] bg-white/[0.06]" />
+                  <div className="h-[1px] bg-white/[0.08]" />
 
-                {/* Section 4: Dining Duration (4 Inline Chips) */}
-                <section className="w-full">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-xs font-semibold text-[#E2A84B] tracking-[0.2em] uppercase">
-                      Dining Duration
-                    </h3>
-                    <span className="text-[11px] text-[#9A9286]">
-                      {durationChips.find((d) => d.value === durationMinutes)?.desc}
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    {durationChips.map((chip) => {
-                      const isSelected = durationMinutes === chip.value;
-                      return (
-                        <button
-                          key={chip.value}
-                          type="button"
-                          onClick={() => {
-                            setDurationMinutes(chip.value);
-                            if (typeof window !== 'undefined' && 'vibrate' in navigator) {
-                              navigator.vibrate(8);
-                            }
-                          }}
-                          className={`py-2.5 px-2 rounded-xl border text-xs font-medium text-center transition-all active:scale-95 ${
-                            isSelected
-                              ? 'bg-[#0E1F18] border-[1.5px] border-[#E2A84B] text-[#F6D386] shadow-[0_0_12px_rgba(226,168,75,0.25)] font-semibold'
-                              : 'bg-[#16110E] border-white/[0.07] text-[#9A9286] hover:text-[#FAF5EC] hover:border-white/20'
-                          }`}
-                        >
-                          {chip.label}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </section>
-
-                <div className="h-[1px] bg-white/[0.06]" />
-
-                {/* Section 5: Occasion & 3D Pre-Order Concierge Toggle */}
-                <section className="flex flex-col gap-4">
-                  <OccasionChips selected={occasion} onSelect={setOccasion} />
-
-                  {/* Luxury 3D Pre-Order Toggle */}
-                  <div className="p-4 rounded-xl bg-gradient-to-r from-[#17120E] to-[#1F1711] border border-[rgba(226,168,75,0.2)] flex items-start justify-between gap-4">
-                    <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-[#E0532B]/15 border border-[#E0532B]/30 flex items-center justify-center text-[#E0532B] shrink-0 mt-0.5">
-                        <ShoppingBag className="w-4 h-4" />
+                  {/* Section 4: Dining Duration (4 Inline Chips) */}
+                  <section className="w-full">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-3.5 h-3.5 text-[#F0C36B]" />
+                        <h3 className="text-xs font-semibold text-[#F0C36B] tracking-[0.2em] uppercase font-mono">
+                          DINING DURATION
+                        </h3>
                       </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold text-[#FAF5EC]">
-                            Pre-Select Dishes from 3D Menu
-                          </span>
-                          {totalCartItems > 0 && (
-                            <span className="px-1.5 py-0.2 rounded-full bg-[#E0532B] text-[10px] font-bold text-white">
-                              {totalCartItems} in cart
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-[11px] text-[#B5ADA2] font-light leading-relaxed mt-0.5">
-                          Want your wood-fired pizzas ready within 10 minutes of arrival? Attach
-                          your cart items directly to this table reservation!
-                        </p>
-                      </div>
+                      <span className="text-[11px] text-[#A99A88]">
+                        {durationChips.find((d) => d.value === durationMinutes)?.desc}
+                      </span>
                     </div>
 
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {durationChips.map((chip) => {
+                        const isSelected = durationMinutes === chip.value;
+                        return (
+                          <button
+                            key={chip.value}
+                            type="button"
+                            onClick={() => {
+                              setDurationMinutes(chip.value);
+                              if (typeof window !== 'undefined' && 'vibrate' in navigator) {
+                                navigator.vibrate(8);
+                              }
+                            }}
+                            className={`py-2.5 px-2 rounded-xl border text-xs font-medium text-center transition-all duration-200 active:scale-95 ${
+                              isSelected
+                                ? 'bg-[#F0C36B]/25 border-[1.5px] border-[#F0C36B] text-[#FFE3A5] shadow-[0_0_12px_rgba(240,195,107,0.3)] font-semibold -translate-y-0.5'
+                                : 'bg-white/[0.04] backdrop-blur-md border-white/[0.08] text-[#A99A88] hover:text-[#F8F2E8] hover:border-[#F0C36B]/40 hover:bg-white/[0.07]'
+                            }`}
+                          >
+                            {chip.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </section>
+
+                  <div className="h-[1px] bg-white/[0.08]" />
+
+                  {/* Section 5: Occasion & 3D Pre-Order Concierge Toggle */}
+                  <section className="flex flex-col gap-4">
+                    <OccasionChips selected={occasion} onSelect={setOccasion} />
+
+                    {/* Luxury 3D Pre-Order Toggle */}
+                    <div className="p-4 rounded-2xl bg-white/[0.04] backdrop-blur-xl border border-[#F0C36B]/30 shadow-[inset_0_1px_1px_rgba(255,255,255,0.12)] flex items-start justify-between gap-4">
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-[#E0532B]/20 border border-[#E0532B]/40 flex items-center justify-center text-[#E0532B] shrink-0 mt-0.5">
+                          <ShoppingBag className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold text-[#F8F2E8]">
+                              Pre-Select Dishes from 3D Menu
+                            </span>
+                            <span className="px-1.5 py-0.2 rounded-full bg-[#E0532B] text-[9.5px] font-bold text-white uppercase tracking-wider font-mono">
+                              New
+                            </span>
+                            {totalCartItems > 0 && (
+                              <span className="px-1.5 py-0.2 rounded-full bg-[#36D6A0]/20 text-[10px] font-bold text-[#36D6A0] border border-[#36D6A0]/30 font-mono">
+                                {totalCartItems} in cart
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-[11px] text-[#D4C7B6] font-light leading-relaxed mt-0.5">
+                            Want your wood-fired pizzas ready within 10 minutes of arrival? Attach
+                            your cart items directly to this table reservation!
+                          </p>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setAttachCart(!attachCart)}
+                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                          attachCart ? 'bg-[#36D6A0]' : 'bg-white/15'
+                        }`}
+                        role="switch"
+                        aria-checked={attachCart}
+                      >
+                        <span
+                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-[#17100C] shadow-lg ring-0 transition duration-200 ease-in-out ${
+                            attachCart ? 'translate-x-5' : 'translate-x-0'
+                          }`}
+                        />
+                      </button>
+                    </div>
+                  </section>
+
+                  <div className="h-[1px] bg-white/[0.08]" />
+
+                  {/* Section 6: Live Status Feedback & Single Primary CTA Button */}
+                  <section className="flex flex-col gap-3 pt-1">
+                    {/* Real-time Loading or Status Banner */}
+                    {isChecking && (
+                      <div className="p-3.5 rounded-xl bg-[#0A261C]/80 border border-[#36D6A0]/40 flex items-center gap-2.5 text-xs text-[#36D6A0] animate-pulse">
+                        <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+                        <span>Checking real-time table concurrency &amp; seating availability...</span>
+                      </div>
+                    )}
+
+                    {!isChecking && availabilityMsg && (
+                      <div
+                        className={`p-3.5 rounded-xl border text-xs leading-relaxed flex items-center gap-2.5 ${
+                          availabilityMsg.type === 'success'
+                            ? 'bg-[#0A261C]/80 border-[#36D6A0]/50 text-[#86EFAC]'
+                            : 'bg-[#2A0B12]/80 border-[#F43F5E]/40 text-[#FCA5A5]'
+                        }`}
+                      >
+                        {availabilityMsg.type === 'success' ? (
+                          <CheckCircle2 className="w-4 h-4 text-[#36D6A0] shrink-0" />
+                        ) : (
+                          <AlertCircle className="w-4 h-4 text-[#F43F5E] shrink-0" />
+                        )}
+                        <span className="font-medium">{availabilityMsg.text}</span>
+                      </div>
+                    )}
+
+                    {/* Single Primary Action CTA Button */}
                     <button
                       type="button"
-                      onClick={() => setAttachCart(!attachCart)}
-                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                        attachCart ? 'bg-[#22C58B]' : 'bg-white/10'
+                      onClick={handleProceedToDetails}
+                      disabled={!time || availabilityMsg?.type !== 'success' || isChecking}
+                      className={`relative overflow-hidden w-full h-[54px] rounded-xl font-bold text-sm tracking-wide transition-all duration-300 flex items-center justify-center gap-2 ${
+                        !time || availabilityMsg?.type !== 'success'
+                          ? 'bg-white/[0.05] text-white/30 border border-white/10 cursor-not-allowed'
+                          : 'text-[#17100C] shadow-[0_8px_25px_rgba(240,195,107,0.45)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] cursor-pointer'
                       }`}
-                      role="switch"
-                      aria-checked={attachCart}
+                      style={
+                        time && availabilityMsg?.type === 'success'
+                          ? {
+                              background:
+                                'linear-gradient(135deg, #F0C36B 0%, #DDA33E 50%, #A8792A 100%)',
+                            }
+                          : undefined
+                      }
                     >
-                      <span
-                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-[#0D0A08] shadow-lg ring-0 transition duration-200 ease-in-out ${
-                          attachCart ? 'translate-x-5' : 'translate-x-0'
-                        }`}
-                      />
-                    </button>
-                  </div>
-                </section>
-
-                <div className="h-[1px] bg-white/[0.06]" />
-
-                {/* Section 6: Live Status Feedback & Single Primary CTA Button */}
-                <section className="flex flex-col gap-3 pt-1">
-                  {/* Real-time Loading or Status Banner */}
-                  {isChecking && (
-                    <div className="p-3.5 rounded-xl bg-[#0E1F18]/50 border border-[#22C58B]/30 flex items-center gap-2.5 text-xs text-[#22C58B] animate-pulse">
-                      <Loader2 className="w-4 h-4 animate-spin shrink-0" />
-                      <span>Checking real-time table concurrency &amp; seating availability...</span>
-                    </div>
-                  )}
-
-                  {!isChecking && availabilityMsg && (
-                    <div
-                      className={`p-3.5 rounded-xl border text-xs leading-relaxed flex items-center gap-2.5 ${
-                        availabilityMsg.type === 'success'
-                          ? 'bg-[#0A261C] border-[#22C58B]/50 text-[#86EFAC]'
-                          : 'bg-[#2A0B12] border-[#F43F5E]/40 text-[#FCA5A5]'
-                      }`}
-                    >
-                      {availabilityMsg.type === 'success' ? (
-                        <CheckCircle2 className="w-4 h-4 text-[#22C58B] shrink-0" />
-                      ) : (
-                        <AlertCircle className="w-4 h-4 text-[#F43F5E] shrink-0" />
+                      {/* Subtle liquid shimmer sweep on hover */}
+                      {time && availabilityMsg?.type === 'success' && (
+                        <span className="absolute inset-0 -translate-x-full hover:translate-x-full duration-1000 bg-gradient-to-r from-transparent via-white/35 to-transparent transition-transform pointer-events-none" />
                       )}
-                      <span className="font-medium">{availabilityMsg.text}</span>
-                    </div>
-                  )}
+                      <span>Confirm Seat &amp; Continue to Guest Details →</span>
+                    </button>
+                  </section>
+                </div>
 
-                  {/* Single Primary Action CTA Button */}
-                  <button
-                    type="button"
-                    onClick={handleProceedToDetails}
-                    disabled={!time || availabilityMsg?.type !== 'success' || isChecking}
-                    className={`relative overflow-hidden w-full h-[54px] rounded-lg font-bold text-sm tracking-wide transition-all duration-300 flex items-center justify-center gap-2 ${
-                      !time || availabilityMsg?.type !== 'success'
-                        ? 'bg-[#1C1713] text-white/30 border border-white/5 cursor-not-allowed'
-                        : 'text-[#0D0A08] shadow-[0_8px_25px_rgba(226,168,75,0.45)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] cursor-pointer'
-                    }`}
-                    style={
-                      time && availabilityMsg?.type === 'success'
-                        ? {
-                            background:
-                              'linear-gradient(135deg, #F6D386 0%, #D49432 50%, #9E6818 100%)',
-                          }
-                        : undefined
-                    }
-                  >
-                    {/* Subtle liquid shimmer sweep on hover */}
-                    {time && availabilityMsg?.type === 'success' && (
-                      <span className="absolute inset-0 -translate-x-full hover:translate-x-full duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform pointer-events-none" />
-                    )}
-                    <span>Confirm Seat &amp; Continue to Guest Details →</span>
-                  </button>
-                </section>
+                {/* 4 Feature Badges under Configurator Card */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 text-[11px] text-[#A99A88]">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-3.5 h-3.5 text-[#F0C36B] shrink-0" />
+                    <span>Premium Ambience &amp; Lighting</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <UtensilsCrossed className="w-3.5 h-3.5 text-[#F0C36B] shrink-0" />
+                    <span>Live Kitchen Experience</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-3.5 h-3.5 text-[#F0C36B] shrink-0" />
+                    <span>Curated Seating Zones</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Heart className="w-3.5 h-3.5 text-[#F0C36B] shrink-0" />
+                    <span>Special Occasion Settings</span>
+                  </div>
+                </div>
               </div>
             )}
 
             {/* Step 2: Guest Dossier Form */}
             {step === 2 && (
               <div
-                className="rounded-2xl p-6 sm:p-8 border border-[rgba(226,168,75,0.18)] border-t-[rgba(246,211,134,0.30)] shadow-[0_20px_50px_rgba(0,0,0,0.7)] flex flex-col gap-6 animate-in fade-in duration-300"
+                className="rounded-3xl p-6 sm:p-8 border border-[#F0C36B]/40 shadow-[inset_0_1px_1px_rgba(255,255,255,0.22),0_24px_60px_rgba(0,0,0,0.7)] flex flex-col gap-6 animate-in fade-in duration-300"
                 style={{
-                  background:
-                    'linear-gradient(180deg, rgba(21, 17, 14, 0.96) 0%, rgba(16, 12, 10, 0.98) 100%)',
+                  background: 'rgba(16, 12, 9, 0.38)',
+                  backdropFilter: 'blur(24px) saturate(160%)',
+                  WebkitBackdropFilter: 'blur(24px) saturate(160%)',
                 }}
               >
                 <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
                   <button
                     type="button"
                     onClick={() => setStep(1)}
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#E2A84B] hover:underline"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#F0C36B] hover:underline"
                   >
                     <ArrowLeft className="w-3.5 h-3.5" />
                     <span>Back to Seating &amp; Time</span>
                   </button>
-                  <span className="text-[11px] font-mono text-[#9A9286]">
+                  <span className="text-[11px] font-mono text-[#A99A88]">
                     STEP 02 OF 03
                   </span>
                 </div>
@@ -538,16 +610,16 @@ export default function BookingClient({
                   type="button"
                   onClick={handleCreateBooking}
                   disabled={isSubmitting}
-                  className="w-full h-[54px] rounded-lg text-[#0D0A08] font-bold text-sm tracking-wide shadow-[0_8px_25px_rgba(226,168,75,0.45)] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                  className="w-full h-[54px] rounded-xl text-[#17100C] font-bold text-sm tracking-wide shadow-[0_8px_25px_rgba(240,195,107,0.45)] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                   style={{
                     background:
-                      'linear-gradient(135deg, #F6D386 0%, #D49432 50%, #9E6818 100%)',
+                      'linear-gradient(135deg, #F0C36B 0%, #DDA33E 50%, #A8792A 100%)',
                   }}
                 >
                   {isSubmitting ? (
-                    <Loader2 className="w-4 h-4 animate-spin text-[#0D0A08]" />
+                    <Loader2 className="w-4 h-4 animate-spin text-[#17100C]" />
                   ) : (
-                    <Calendar className="w-4 h-4 text-[#0D0A08]" />
+                    <Calendar className="w-4 h-4 text-[#17100C]" />
                   )}
                   <span>Reserve Table &amp; Proceed to Hold →</span>
                 </button>
@@ -557,42 +629,43 @@ export default function BookingClient({
             {/* Step 3: Instant Confirmation & Hold Deposit */}
             {step === 3 && (
               <div
-                className="rounded-2xl p-6 sm:p-8 border border-[rgba(226,168,75,0.18)] border-t-[rgba(246,211,134,0.30)] shadow-[0_20px_50px_rgba(0,0,0,0.7)] flex flex-col gap-6 animate-in fade-in duration-300"
+                className="rounded-3xl p-6 sm:p-8 border border-[#F0C36B]/40 shadow-[inset_0_1px_1px_rgba(255,255,255,0.22),0_24px_60px_rgba(0,0,0,0.7)] flex flex-col gap-6 animate-in fade-in duration-300"
                 style={{
-                  background:
-                    'linear-gradient(180deg, rgba(21, 17, 14, 0.96) 0%, rgba(16, 12, 10, 0.98) 100%)',
+                  background: 'rgba(16, 12, 9, 0.38)',
+                  backdropFilter: 'blur(24px) saturate(160%)',
+                  WebkitBackdropFilter: 'blur(24px) saturate(160%)',
                 }}
               >
                 <div className="text-center pb-2">
-                  <span className="inline-block px-3 py-1 rounded-full bg-[#0E1F18] border border-[#22C58B]/40 text-xs font-semibold text-[#22C58B] mb-2.5">
+                  <span className="inline-block px-3 py-1 rounded-full bg-[#0A261C] border border-[#36D6A0]/40 text-xs font-semibold text-[#36D6A0] mb-2.5">
                     Physical Table Hold Active
                   </span>
-                  <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#FAF5EC] mb-1">
+                  <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#F8F2E8] mb-1">
                     Advance Hold Confirmation
                   </h2>
-                  <p className="text-xs text-[#9A9286] max-w-md mx-auto font-light">
+                  <p className="text-xs text-[#A99A88] max-w-md mx-auto font-light">
                     To guarantee your physical table reservation, confirm the table hold fee via
                     instant UPI transfer.
                   </p>
                 </div>
 
-                <div className="bg-[#120D0A] p-5 rounded-2xl border border-[rgba(226,168,75,0.2)] text-center flex flex-col items-center">
+                <div className="bg-black/40 backdrop-blur-md p-5 rounded-2xl border border-[#F0C36B]/25 text-center flex flex-col items-center">
                   <div className="w-32 h-32 bg-white rounded-xl flex items-center justify-center mb-3 p-2 shadow-lg">
                     <QrCode className="w-24 h-24 text-black" />
                   </div>
-                  <p className="text-xs font-mono font-bold text-[#FAF5EC] tracking-wider">
+                  <p className="text-xs font-mono font-bold text-[#F8F2E8] tracking-wider">
                     UPI ID: goldenoak@upi
                   </p>
-                  <p className="text-[11px] text-[#9A9286] mt-0.5">
+                  <p className="text-[11px] text-[#A99A88] mt-0.5">
                     Accepts GPay, PhonePe, Paytm, or BHIM
                   </p>
-                  <div className="mt-3 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-xs font-mono font-bold text-[#22C58B]">
+                  <div className="mt-3 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-xs font-mono font-bold text-[#36D6A0]">
                     Amount: {formatMoney(advanceAmountPaise)}
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-[#FAF5EC]/80 block">
+                  <label className="text-xs font-semibold text-[#F8F2E8]/80 block">
                     UTR / UPI Transaction Reference Number *
                   </label>
                   <input
@@ -600,7 +673,7 @@ export default function BookingClient({
                     value={utr}
                     onChange={(e) => setUtr(e.target.value)}
                     placeholder="Enter 12-digit UTR reference ID"
-                    className="w-full bg-[#120D0A] p-3.5 rounded-xl border border-white/10 focus:border-[#E2A84B] outline-none text-white text-xs sm:text-sm font-mono tracking-wider"
+                    className="w-full bg-black/50 p-3.5 rounded-xl border border-white/10 focus:border-[#F0C36B] outline-none text-white text-xs sm:text-sm font-mono tracking-wider"
                   />
                   {paymentError && (
                     <p className="text-xs text-rose-400 mt-1">{paymentError}</p>
@@ -611,16 +684,16 @@ export default function BookingClient({
                   type="button"
                   onClick={handleConfirmPayment}
                   disabled={isSubmitting || !utr.trim()}
-                  className="w-full h-[54px] rounded-lg text-[#0D0A08] font-bold text-sm tracking-wide shadow-[0_8px_25px_rgba(226,168,75,0.45)] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-40"
+                  className="w-full h-[54px] rounded-xl text-[#17100C] font-bold text-sm tracking-wide shadow-[0_8px_25px_rgba(240,195,107,0.45)] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-40"
                   style={{
                     background:
-                      'linear-gradient(135deg, #F6D386 0%, #D49432 50%, #9E6818 100%)',
+                      'linear-gradient(135deg, #F0C36B 0%, #DDA33E 50%, #A8792A 100%)',
                   }}
                 >
                   {isSubmitting ? (
-                    <Loader2 className="w-4 h-4 animate-spin text-[#0D0A08]" />
+                    <Loader2 className="w-4 h-4 animate-spin text-[#17100C]" />
                   ) : (
-                    <CheckCircle2 className="w-4 h-4 text-[#0D0A08]" />
+                    <CheckCircle2 className="w-4 h-4 text-[#17100C]" />
                   )}
                   <span>Verify &amp; Confirm Table Reservation →</span>
                 </button>
@@ -634,10 +707,11 @@ export default function BookingClient({
           <aside className="lg:col-span-5 sticky top-6 flex flex-col gap-6">
             {/* 1. Interactive Architectural Floor Map & Seating Vibe Selector */}
             <div
-              className="rounded-2xl p-5 sm:p-6 border border-[rgba(226,168,75,0.18)] border-t-[rgba(246,211,134,0.30)] shadow-[0_16px_40px_rgba(0,0,0,0.6)]"
+              className="rounded-3xl p-5 sm:p-6 border border-[#F0C36B]/40 shadow-[inset_0_1px_1px_rgba(255,255,255,0.22),0_24px_60px_rgba(0,0,0,0.7)]"
               style={{
-                background:
-                  'linear-gradient(180deg, rgba(21, 17, 14, 0.95) 0%, rgba(16, 12, 10, 0.98) 100%)',
+                background: 'rgba(16, 12, 9, 0.38)',
+                backdropFilter: 'blur(24px) saturate(160%)',
+                WebkitBackdropFilter: 'blur(24px) saturate(160%)',
               }}
             >
               <RestaurantFloorMap

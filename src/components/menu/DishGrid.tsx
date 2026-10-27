@@ -22,10 +22,15 @@ export function DishGrid({ dishes, searchHighlight }: DishGridProps) {
       {/* Concierge VIP Degustation & Private Dining Card (Fills Grid Hole seamlessly on full menu view) */}
       {showConciergeCard && (
         <div
-          className="col-span-1 sm:col-span-2 rounded-2xl p-6 sm:p-8 flex flex-col justify-between border relative overflow-hidden group shadow-2xl transition-all duration-300 hover:border-[#E2A84B]/40"
+          className="col-span-1 sm:col-span-2 rounded-3xl p-6 sm:p-8 flex flex-col justify-between border relative overflow-hidden group shadow-2xl transition-all duration-500 hover:border-[#F0C36B]/60 hover:-translate-y-2 cursor-pointer"
           style={{
-            background: 'linear-gradient(135deg, #181310 0%, #120E0B 100%)',
-            borderColor: 'rgba(226, 168, 75, 0.28)',
+            background: 'rgba(20, 15, 11, 0.45)',
+            backdropFilter: 'blur(24px) saturate(160%)',
+            WebkitBackdropFilter: 'blur(24px) saturate(160%)',
+            border: '1px solid rgba(240, 195, 107, 0.35)',
+            borderTop: '1px solid rgba(255, 235, 185, 0.50)',
+            boxShadow:
+              'inset 0 1px 1px rgba(255, 255, 255, 0.22), 0 20px 45px rgba(0, 0, 0, 0.70)',
           }}
         >
           {/* Subtle gold ambient glow */}

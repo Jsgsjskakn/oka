@@ -16,6 +16,35 @@ const cspHeader = [
   "form-action 'self'",
 ].join('; ');
 
+// Narrow, secure Server Actions allowed origins:
+// Next.js automatically permits same-origin requests (Origin === Host) by default.
+// Cross-origin Server Action invocations are restricted to local development ports
+// and the explicit production host if defined via environment variables.
+// Wildcards (such as *.vercel.app) are intentionally avoided to prevent cross-origin CSRF.
+const serverActionOrigins: string[] = [
+  'localhost:3000',
+  'localhost:3001',
+  'localhost:1111',
+];
+
+if (process.env.NEXT_PUBLIC_APP_URL) {
+  try {
+    const url = new URL(process.env.NEXT_PUBLIC_APP_URL);
+    if (url.host && !serverActionOrigins.includes(url.host)) {
+      serverActionOrigins.push(url.host);
+    }
+  } catch {
+    // Ignore invalid URL
+  }
+}
+
+if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+  const host = process.env.VERCEL_PROJECT_PRODUCTION_URL.replace(/^https?:\/\//, '').replace(/\/.*$/, '');
+  if (host && !serverActionOrigins.includes(host)) {
+    serverActionOrigins.push(host);
+  }
+}
+
 const nextConfig: NextConfig = {
   devIndicators: false,
   images: {
@@ -38,7 +67,7 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     serverActions: {
-      allowedOrigins: ['localhost:3000', 'localhost:3001', 'localhost:1111'],
+      allowedOrigins: serverActionOrigins,
     },
   },
   async headers() {

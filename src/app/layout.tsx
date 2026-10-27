@@ -19,6 +19,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://thegoldenoak.in'),
   title: 'The Golden Oak | Premium Dining Experience',
   description:
     'Experience luxury dining with The Golden Oak. Explore our premium menu, view dishes in 3D & AR, and book your table for an unforgettable culinary journey.',

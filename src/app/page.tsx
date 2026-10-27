@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import { HeroSection } from '@/components/home/HeroSection';
 import { CuratedSignaturesSection } from '@/components/home/CuratedSignaturesSection';
-import { RecentlyViewedSection } from '@/components/home/RecentlyViewedSection';
 import { ARPromoSection } from '@/components/home/ARPromoSection';
 import { StorySection } from '@/components/home/StorySection';
 import { BookingCTASection } from '@/components/home/BookingCTASection';
@@ -19,13 +18,10 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col w-full overflow-x-hidden">
-      {/* 1. Asymmetric Split Editorial Hero & Trust Strip */}
+      {/* 1. Asymmetric Split Editorial Hero with 3D Warrior Pedestal & Integrated Continue Exploring Dock */}
       <HeroSection />
 
-      {/* 2. Sleek Horizontal Continue Exploring Bar (when user has recent views) */}
-      <RecentlyViewedSection />
-
-      {/* 3. Chef's Curated Signatures: Merged 4-Card Luxury Grid with Architectural Tabs */}
+      {/* 2. Chef's Curated Signatures: Merged 4-Card Luxury Grid with Architectural Tabs */}
       <CuratedSignaturesSection dishes={allDishes} />
 
       {/* 4. Spatial 3D Showcase Spotlight */}

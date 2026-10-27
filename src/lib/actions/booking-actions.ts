@@ -130,17 +130,24 @@ export async function customerConfirmBookingPayment(bookingId: string, paymentMe
 
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return { error: 'Unauthorized' };
 
     const db = sb(supabase);
-    const { data: booking }: QR<{ id: string; status: string; advance_amount_paise: number; user_id: string | null }> = await db
+    const { data: booking }: QR<{ id: string; status: string; advance_amount_paise: number; user_id: string | null; customer_phone: string | null }> = await db
       .from('bookings')
-      .select('id, status, advance_amount_paise, user_id')
+      .select('id, status, advance_amount_paise, user_id, customer_phone')
       .eq('id', bookingId)
       .single();
 
     if (!booking) return { error: 'Booking not found' };
-    if (booking.user_id !== user.id) return { error: 'Unauthorized: Not your booking' };
+
+    // Authorize if logged-in user matches or customerPhone matches booking phone, or guest booking
+    const isOwner = user && booking.user_id === user.id;
+    const isMatchingPhone = Boolean(customerPhone && booking.customer_phone && booking.customer_phone.replace(/\D/g, '').endsWith(customerPhone.replace(/\D/g, '').slice(-10)));
+    const isGuestBooking = !booking.user_id;
+
+    if (!isOwner && !isMatchingPhone && !isGuestBooking) {
+      return { error: 'Unauthorized: Not your booking' };
+    }
     if (booking.status !== 'pending') return { error: 'Not in pending state' };
 
     const { error } = await db.from('bookings').update({ status: 'confirmed', payment_status: 'paid' }).eq('id', bookingId);

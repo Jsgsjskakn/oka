@@ -1,14 +1,14 @@
 'use client';
 
-import { Wine, Gift, Briefcase, Sparkles, LucideIcon } from 'lucide-react';
+import { Wine, Gift, Briefcase, Sparkles, Ban, LucideIcon } from 'lucide-react';
 
 interface OccasionChipsProps {
   selected: string;
   onSelect: (occasion: string) => void;
 }
 
-const occasions: Array<{ label: string; icon?: LucideIcon }> = [
-  { label: 'None' },
+const occasions: Array<{ label: string; icon: LucideIcon }> = [
+  { label: 'None', icon: Ban },
   { label: 'Anniversary', icon: Wine },
   { label: 'Birthday', icon: Gift },
   { label: 'Business Dining', icon: Briefcase },
@@ -18,10 +18,13 @@ const occasions: Array<{ label: string; icon?: LucideIcon }> = [
 export function OccasionChips({ selected, onSelect }: OccasionChipsProps) {
   return (
     <div className="w-full">
-      <h3 className="text-xs font-semibold text-[#E2A84B] tracking-[0.2em] uppercase mb-2.5">
-        Special Occasion (Optional)
-      </h3>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex items-center gap-2 mb-2.5">
+        <Sparkles className="w-3.5 h-3.5 text-[#F0C36B]" />
+        <h3 className="text-xs font-semibold text-[#F0C36B] tracking-[0.2em] uppercase font-mono">
+          SPECIAL OCCASION (OPTIONAL)
+        </h3>
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
         {occasions.map((occ) => {
           const isSelected = selected === occ.label;
           const Icon = occ.icon;
@@ -30,14 +33,14 @@ export function OccasionChips({ selected, onSelect }: OccasionChipsProps) {
               key={occ.label}
               type="button"
               onClick={() => onSelect(occ.label)}
-              className={`px-3.5 py-2 rounded-xl border text-xs font-medium transition-all active:scale-95 flex items-center gap-1.5 ${
+              className={`px-3 py-2.5 rounded-xl border text-xs font-medium transition-all duration-200 active:scale-95 flex items-center justify-center gap-1.5 ${
                 isSelected
-                  ? 'bg-[#0E1F18] border-[1.5px] border-[#E2A84B] text-[#F6D386] shadow-[0_0_12px_rgba(226,168,75,0.25)]'
-                  : 'bg-[#16110E] border-white/[0.07] text-[#9A9286] hover:text-[#FAF5EC] hover:border-white/20'
+                  ? 'bg-[#F0C36B]/20 border-[1.5px] border-[#F0C36B] text-[#FFE3A5] shadow-[0_0_12px_rgba(240,195,107,0.3)]'
+                  : 'bg-white/[0.04] backdrop-blur-md border-white/[0.08] text-[#A99A88] hover:text-[#F8F2E8] hover:border-[#F0C36B]/40 hover:bg-white/[0.07]'
               }`}
             >
-              {Icon && <Icon className="w-3.5 h-3.5 text-[#E2A84B]" />}
-              <span>{occ.label}</span>
+              <Icon className={`w-3.5 h-3.5 ${isSelected ? 'text-[#F0C36B]' : 'text-[#A99A88]'}`} />
+              <span className="truncate">{occ.label}</span>
             </button>
           );
         })}

@@ -29,146 +29,7 @@ function disposeObject(obj: THREE.Object3D) {
   });
 }
 
-/**
- * 360° Molten Gold Compass & Degree Ring on Pedestal Rim
- * High-precision luxury ticks (0°, 90°, 180°, 270°) and degree marks
- * that rotate synchronously with the turntable pedestal.
- */
-function GoldCompassRing({ scale = 1 }: { scale?: number }) {
-  // Generate 24 ticks around 360 degrees
-  const ticks = useMemo(() => {
-    const items: Array<{
-      angle: number;
-      isMajor: boolean;
-      isSemiMajor: boolean;
-      label?: string;
-      x: number;
-      z: number;
-      length: number;
-      width: number;
-    }> = [];
-    const radius = 1.84 * scale;
-
-    for (let i = 0; i < 24; i++) {
-      const deg = i * 15;
-      const angle = (deg * Math.PI) / 180;
-      const isMajor = deg % 90 === 0;
-      const isSemiMajor = !isMajor && deg % 45 === 0;
-
-      const length = isMajor ? 0.12 * scale : isSemiMajor ? 0.08 * scale : 0.045 * scale;
-      const width = isMajor ? 0.02 * scale : isSemiMajor ? 0.015 * scale : 0.01 * scale;
-
-      const x = Math.sin(angle) * (radius - length / 2);
-      const z = Math.cos(angle) * (radius - length / 2);
-
-      items.push({ angle, isMajor, isSemiMajor, x, z, length, width });
-    }
-    return items;
-  }, [scale]);
-
-  const radius = 1.84 * scale;
-
-  return (
-    <group position={[0, 0.015, 0]}>
-      {/* Outer Continuous Molten Gold Rim */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[radius - 0.02 * scale, radius + 0.02 * scale, 72]} />
-        <meshStandardMaterial
-          color="#E2A84B"
-          metalness={0.85}
-          roughness={0.2}
-          side={THREE.DoubleSide}
-        />
-      </mesh>
-
-      {/* Inner Concentric Hairline Track */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[radius - 0.14 * scale, radius - 0.125 * scale, 72]} />
-        <meshStandardMaterial
-          color="#E2A84B"
-          metalness={0.7}
-          roughness={0.3}
-          transparent
-          opacity={0.65}
-          side={THREE.DoubleSide}
-        />
-      </mesh>
-
-      {/* Radial Ticks */}
-      {ticks.map((t, idx) => (
-        <group key={idx} position={[t.x, 0.002, t.z]} rotation={[0, -t.angle, 0]}>
-          <mesh rotation={[-Math.PI / 2, 0, 0]}>
-            <planeGeometry args={[t.width, t.length]} />
-            <meshStandardMaterial
-              color={t.isMajor ? '#E2A84B' : t.isSemiMajor ? '#D49432' : '#9E6818'}
-              metalness={0.8}
-              roughness={0.25}
-              side={THREE.DoubleSide}
-            />
-          </mesh>
-        </group>
-      ))}
-    </group>
-  );
-}
-
-/**
- * 3 Glowing Ingredient X-Ray Hotspot Pins
- * Highlights signature culinary elements directly over the 3D dish.
- */
-function IngredientHotspotPins() {
-  const hotspots = [
-    {
-      name: 'Pickled Onions',
-      pos: [-0.45, 1.35, 0.35] as [number, number, number],
-    },
-    {
-      name: 'Aged Cheddar',
-      pos: [0.4, 1.55, -0.2] as [number, number, number],
-    },
-    {
-      name: 'Smoky Mint Chutney',
-      pos: [0.08, 0.9, 0.55] as [number, number, number],
-    },
-  ];
-
-  return (
-    <group>
-      {hotspots.map((pin, i) => (
-        <group key={pin.name} position={pin.pos}>
-          {/* Glowing Pin Tip */}
-          <mesh position={[0, 0, 0]}>
-            <sphereGeometry args={[0.035, 16, 16]} />
-            <meshBasicMaterial color="#E2A84B" />
-          </mesh>
-
-          {/* Vertical Needle Line */}
-          <mesh position={[0, -0.16, 0]}>
-            <cylinderGeometry args={[0.003, 0.003, 0.32, 8]} />
-            <meshBasicMaterial color="#E2A84B" transparent opacity={0.65} />
-          </mesh>
-
-          {/* Floating Luxury Glass Pill Badge */}
-          <Html center distanceFactor={6} style={{ pointerEvents: 'none' }}>
-            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#15110E]/90 backdrop-blur-md border border-[#E2A84B]/60 shadow-[0_0_18px_rgba(226,168,75,0.45)] whitespace-nowrap animate-in fade-in zoom-in-75 duration-300">
-              <span className="w-2 h-2 rounded-full bg-[#E2A84B] shadow-[0_0_8px_#E2A84B] animate-pulse" />
-              <span className="font-sans text-[11px] font-semibold text-[#FAF5EC] tracking-wide">
-                {pin.name}
-              </span>
-            </div>
-          </Html>
-        </group>
-      ))}
-    </group>
-  );
-}
-
-/**
- * 3D Model Loader with vibrant, authentic material colors.
- * Loads the warrior GLB and applies full rich colors to all materials
- * with the luxury turntable compass ring and optional ingredient pins.
- */
-function FoodModel({ config, onLoaded, onProgress, showHotspots = false }: FoodModelProps) {
+function FoodModel({ config, onLoaded, onProgress }: FoodModelProps) {
   const { scene } = useGLTF(config.modelPath);
   const groupRef = useRef<THREE.Group>(null);
 
@@ -190,18 +51,12 @@ function FoodModel({ config, onLoaded, onProgress, showHotspots = false }: FoodM
   }, [config.initialRotation, clonedScene, onLoaded, onProgress]);
 
   return (
-    <group ref={groupRef}>
+    <group ref={groupRef} position={[0, 0, 0]}>
       <primitive
         object={clonedScene}
         scale={config.initialScale}
         position={[0, 0, 0]}
       />
-
-      {/* 360° Molten Gold Compass Degree Ring on outer turntable rim */}
-      <GoldCompassRing scale={config.initialScale} />
-
-      {/* Ingredient X-Ray Hotspots (Toggled via Control Dock) */}
-      {showHotspots && <IngredientHotspotPins />}
     </group>
   );
 }

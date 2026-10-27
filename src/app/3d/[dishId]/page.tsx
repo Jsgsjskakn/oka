@@ -14,14 +14,18 @@ export default async function ThreeDViewerPage({ params }: { params: Promise<{ d
 
   const config = getModelConfig(dish.slug);
   
-  // Get all dishes for the switcher
+  // Get all dishes with complete culinary metadata for seamless client-side switching
   const allModelDishes = allDishes.map(d => ({
     id: d.slug,
+    slug: d.slug,
     name: d.name,
+    description: d.description || '',
     image: d.image_url || '/images/dishes/placeholder.jpg',
     price: d.price_paise ? d.price_paise / 100 : 0,
+    price_paise: d.price_paise,
     category: d.categories?.slug || 'menu',
     isVeg: d.is_veg,
+    ingredients: d.allergens || [],
   }));
   
   return (

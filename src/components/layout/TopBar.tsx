@@ -39,6 +39,7 @@ export function TopBar() {
   const [currentUser, setCurrentUser] = useState<{ id: string; name: string; email: string } | null>(null);
 
   const totalCartItems = useCartStore((s) => s.getTotalItems());
+  const totalPrice = useCartStore((s) => s.getTotalPrice());
   const favoriteCount = useFavoritesStore((s) => s.favoriteIds.length);
   const openSpotlight = useSpotlightStore((s) => s.openSpotlight);
 
@@ -56,10 +57,11 @@ export function TopBar() {
       .catch(() => setCurrentUser(null));
   }, [pathname]);
 
-  // Primary 4 editorial links only (Home, Favorites, My Account moved out of center bar)
+  // Primary editorial links matching reference screenshot
   const navLinks = [
+    { label: 'Home', href: '/' },
     { label: 'Menu', href: '/menu' },
-    { label: '3D Food Lounge', href: '/ar' },
+    { label: '3D Food Lounge', href: '/3d/mushroom-truffle-pizza' },
     { label: 'Our Story', href: '/about' },
     { label: 'Reservations', href: '/booking' },
   ];
@@ -67,39 +69,40 @@ export function TopBar() {
   return (
     <>
       <header
-        className="sticky top-0 left-0 right-0 h-[84px] z-50 transition-all select-none border-b"
+        className="fixed top-2.5 sm:top-4 left-3 sm:left-6 right-3 sm:right-6 max-w-7xl mx-auto h-[58px] sm:h-[62px] z-50 transition-all select-none rounded-2xl sm:rounded-full border"
         style={{
-          background: 'rgba(12, 11, 9, 0.82)',
-          backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)',
-          borderBottom: '1px solid rgba(226, 168, 75, 0.16)',
-          boxShadow: '0 4px 30px rgba(0, 0, 0, 0.45)',
+          background: 'rgba(16, 12, 9, 0.35)',
+          backdropFilter: 'blur(28px) saturate(160%)',
+          WebkitBackdropFilter: 'blur(28px) saturate(160%)',
+          border: '1px solid rgba(240, 195, 107, 0.35)',
+          borderTop: '1px solid rgba(255, 235, 185, 0.45)',
+          boxShadow: 'inset 0 1px 1px rgba(255, 255, 255, 0.20), 0 16px 45px rgba(0, 0, 0, 0.65)',
         }}
       >
-        <div className="max-w-[1440px] mx-auto h-full px-6 sm:px-10 lg:px-14 flex items-center justify-between gap-6">
+        <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
           {/* Left Zone: Brand Crest & Monogram */}
-          <Link href="/" className="flex items-center gap-3.5 group shrink-0">
+          <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group shrink-0">
             {/* Minimal Gold Monogram Crest (no yellow background box) */}
-            <UtensilsCrossed className="w-5 h-5 text-[#E2A84B] group-hover:scale-105 transition-transform" />
+            <UtensilsCrossed className="w-4.5 h-4.5 text-[#E2A84B] group-hover:scale-105 transition-transform" />
             <div className="flex flex-col">
-              <span className="font-serif text-[23px] font-bold tracking-tight text-[#FAF5EC] group-hover:text-[#E2A84B] transition-colors leading-none">
+              <span className="font-serif text-[19px] sm:text-[20px] font-bold tracking-tight text-[#FAF5EC] group-hover:text-[#E2A84B] transition-colors leading-none">
                 The Golden Oak
               </span>
-              <span className="text-[9px] tracking-[0.32em] uppercase text-[#9A9286] font-medium mt-1 leading-none font-mono">
+              <span className="text-[8.5px] tracking-[0.28em] uppercase text-[#9A9286] font-medium mt-0.5 leading-none font-mono">
                 ARTISANAL DINING
               </span>
             </div>
           </Link>
 
           {/* Center Zone: 4 Primary Editorial Nav Links */}
-          <nav className="hidden lg:flex items-center gap-9">
+          <nav className="hidden lg:flex items-center gap-6 xl:gap-8">
             {navLinks.map((link) => {
-              const isActive = pathname.startsWith(link.href);
+              const isActive = link.href === '/' ? pathname === '/' : pathname.startsWith(link.href);
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="relative py-2 text-[13.5px] tracking-[0.08em] transition-colors group flex flex-col items-center"
+                  className="relative py-1 text-[13px] tracking-[0.06em] transition-colors group flex flex-col items-center"
                 >
                   <span
                     className={`transition-colors ${
@@ -110,9 +113,9 @@ export function TopBar() {
                   </span>
                   {/* Smooth 2px sliding gold underline for active link (NO circular dot) */}
                   {isActive ? (
-                    <span className="absolute -bottom-2 left-0 right-0 h-[2px] rounded-full bg-gradient-to-r from-[#F6D386] via-[#E2A84B] to-[#D49432] shadow-[0_0_10px_rgba(226,168,75,0.7)]" />
+                    <span className="absolute -bottom-1.5 left-0 right-0 h-[2px] rounded-full bg-gradient-to-r from-[#F6D386] via-[#E2A84B] to-[#D49432] shadow-[0_0_10px_rgba(226,168,75,0.7)]" />
                   ) : (
-                    <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-[1.5px] rounded-full bg-[#E2A84B]/50 transition-all duration-300 group-hover:w-full" />
+                    <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-0 h-[1.5px] rounded-full bg-[#E2A84B]/50 transition-all duration-300 group-hover:w-full" />
                   )}
                 </Link>
               );
@@ -120,16 +123,16 @@ export function TopBar() {
           </nav>
 
           {/* Right Zone: Action Cluster */}
-          <div className="flex items-center gap-4 sm:gap-5 lg:gap-6">
+          <div className="flex items-center gap-2.5 sm:gap-3.5">
             {/* Search Icon with Spotlight Modal Trigger & ⌘K Badge */}
             <button
               type="button"
               onClick={() => openSpotlight()}
               title="Search Culinary Archive (⌘K)"
-              className="group flex items-center gap-1.5 text-[#B5ADA2] hover:text-[#FAF5EC] transition-all p-1.5 active:scale-95 cursor-pointer"
+              className="group flex items-center gap-1.5 text-[#B5ADA2] hover:text-[#FAF5EC] transition-all p-1 active:scale-95 cursor-pointer shrink-0"
             >
-              <Search className="w-4 h-4 transition-colors group-hover:text-[#E2A84B]" />
-              <span className="text-[9.5px] font-mono px-1.5 py-0.5 rounded-[4px] bg-white/[0.06] border border-white/10 text-[#9A9286] group-hover:border-[#E2A84B]/40 group-hover:text-[#E2A84B] opacity-0 group-hover:opacity-100 transition-all hidden sm:inline leading-none">
+              <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-colors group-hover:text-[#F0C36B]" />
+              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded-[4px] bg-white/[0.06] border border-white/10 text-[#9A9286] group-hover:border-[#F0C36B]/40 group-hover:text-[#F0C36B] opacity-0 group-hover:opacity-100 transition-all hidden sm:inline leading-none">
                 ⌘K
               </span>
             </button>
@@ -138,47 +141,64 @@ export function TopBar() {
             <Link
               href="/favorites"
               title="Personal Tasting Vault"
-              className={`relative p-1.5 transition-all flex flex-col items-center group ${
+              className={`relative p-1 transition-all flex flex-col items-center group shrink-0 ${
                 pathname === '/favorites'
-                  ? 'text-[#E2A84B]'
+                  ? 'text-[#F0C36B]'
                   : 'text-[#B5ADA2] hover:text-[#FAF5EC]'
               }`}
             >
               <Heart
-                className={`w-4 h-4 transition-transform group-hover:scale-110 ${
-                  pathname === '/favorites' ? 'fill-[#E2A84B]/25 stroke-[#E2A84B]' : ''
+                className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:scale-110 ${
+                  pathname === '/favorites' ? 'fill-[#F0C36B]/25 stroke-[#F0C36B]' : ''
                 }`}
               />
               {isMounted && favoriteCount > 0 && (
-                <span className="absolute -top-1 -right-1.5 min-w-[15px] h-[15px] px-0.5 rounded-full bg-[#E0532B] text-white text-[8.5px] font-bold flex items-center justify-center shadow-[0_2px_6px_rgba(224,83,43,0.4)]">
+                <span className="absolute -top-1 -right-1.5 min-w-[14px] h-[14px] px-0.5 rounded-full bg-[#E0532B] text-white text-[8px] font-bold flex items-center justify-center shadow-[0_2px_6px_rgba(224,83,43,0.4)]">
                   {favoriteCount}
                 </span>
               )}
               {pathname === '/favorites' && (
-                <span className="absolute -bottom-1.5 w-1.5 h-1.5 rounded-full bg-[#E2A84B] shadow-[0_0_8px_#E2A84B]" />
+                <span className="absolute -bottom-1.5 w-1.5 h-1.5 rounded-full bg-[#F0C36B] shadow-[0_0_8px_#F0C36B]" />
               )}
             </Link>
 
-            {/* Cart Bag Icon with Spiced Saffron Badge */}
+            {/* 1. Book Table CTA (Translucent Gold Glass Button) */}
+            <Link
+              href="/booking"
+              className="hidden sm:inline-flex relative items-center justify-center gap-1.5 h-[34px] px-3.5 lg:px-4 rounded-[6px] text-[10.5px] font-bold tracking-[0.1em] uppercase text-[#FFE1A0] transition-all duration-300 shadow-[inset_0_1px_1px_rgba(255,255,255,0.25),0_4px_14px_rgba(240,195,107,0.22)] hover:shadow-[inset_0_1px_1px_rgba(255,255,255,0.35),0_0_20px_rgba(240,195,107,0.4)] hover:scale-[1.02] active:scale-[0.98] overflow-hidden group/cta shrink-0 bg-[rgba(240,195,107,0.18)] hover:bg-[rgba(240,195,107,0.28)] border border-[#F0C36B]/60 hover:border-[#F0C36B] backdrop-blur-xl"
+            >
+              <Calendar className="w-3 h-3 text-[#F0C36B] shrink-0" />
+              <span className="relative z-10">BOOK TABLE</span>
+              <span className="absolute inset-0 -translate-x-full group-hover/cta:translate-x-full duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform ease-out pointer-events-none" />
+            </Link>
+
+            {/* 2. Dining Cart Button (Translucent Glass Pill) */}
             <Link
               href="/cart"
               title="Your Dining Cart"
-              className="relative text-[#B5ADA2] hover:text-[#FAF5EC] transition-colors p-1.5 group"
+              className="relative h-[34px] px-2.5 sm:px-3 rounded-[6px] flex items-center gap-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-[#F0C36B]/35 hover:border-[#F0C36B]/70 transition-all duration-300 shadow-[inset_0_1px_1px_rgba(255,255,255,0.12),0_4px_14px_rgba(0,0,0,0.25)] hover:shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_0_16px_rgba(240,195,107,0.25)] active:scale-95 group/cart shrink-0 backdrop-blur-xl"
             >
-              <ShoppingBag className="w-4 h-4 transition-transform group-hover:scale-110" />
-              {isMounted && totalCartItems > 0 && (
-                <span className="absolute -top-1 -right-1.5 min-w-[16px] h-[16px] px-1 rounded-full bg-[#E0532B] text-white text-[9px] font-bold flex items-center justify-center shadow-[0_2px_8px_rgba(224,83,43,0.5)] border border-[#E0532B]/60">
+              <ShoppingBag className="w-3.5 h-3.5 text-[#F0C36B] transition-transform group-hover/cart:scale-110" />
+              <span className="text-[10.5px] font-bold tracking-[0.08em] uppercase text-[#FAF5EC] group-hover/cart:text-[#F0C36B] transition-colors">
+                CART
+              </span>
+              {isMounted && totalCartItems > 0 ? (
+                <span className="min-w-[16px] h-[16px] px-1 rounded-full bg-[#E0532B] text-white text-[9px] font-mono font-bold flex items-center justify-center shadow-[0_2px_6px_rgba(224,83,43,0.5)]">
                   {totalCartItems > 99 ? '99+' : totalCartItems}
+                </span>
+              ) : (
+                <span className="min-w-[16px] h-[16px] px-1 rounded-full bg-white/10 text-[#D1C3B1] text-[8.5px] font-mono font-bold flex items-center justify-center">
+                  0
                 </span>
               )}
             </Link>
 
-            {/* User Profile Pill -> Clean 34px Avatar Circle with PG Initials */}
+            {/* 3. User Profile Avatar ("PG" glass pill on far right) */}
             {currentUser ? (
               <Link
                 href="/profile"
                 title={`${currentUser.name || 'Member'} - Concierge Dossier`}
-                className="w-[34px] h-[34px] rounded-full border border-[#E2A84B]/50 bg-[#161411] flex items-center justify-center text-[11px] font-mono font-bold tracking-tight text-[#E2A84B] hover:border-[#E2A84B] hover:shadow-[0_0_12px_rgba(226,168,75,0.25)] hover:scale-105 transition-all shadow-sm"
+                className="w-[32px] h-[32px] rounded-full border border-[#F0C36B]/60 bg-white/[0.05] hover:bg-white/[0.1] backdrop-blur-xl flex items-center justify-center text-[10.5px] font-mono font-bold tracking-tight text-[#F0C36B] hover:border-[#F0C36B] hover:shadow-[0_0_16px_rgba(240,195,107,0.4)] hover:scale-105 active:scale-95 transition-all shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] shrink-0"
               >
                 {getInitials(currentUser.name, currentUser.email)}
               </Link>
@@ -186,31 +206,18 @@ export function TopBar() {
               <Link
                 href="/auth/login"
                 title="Member Sign In"
-                className="w-[34px] h-[34px] rounded-full border border-white/20 bg-white/[0.04] flex items-center justify-center text-[#B5ADA2] hover:text-[#E2A84B] hover:border-[#E2A84B]/50 transition-all"
+                className="w-[32px] h-[32px] rounded-full border border-[#F0C36B]/60 bg-white/[0.05] hover:bg-white/[0.1] backdrop-blur-xl flex items-center justify-center text-[10.5px] font-mono font-bold tracking-tight text-[#F0C36B] hover:border-[#F0C36B] hover:shadow-[0_0_16px_rgba(240,195,107,0.4)] hover:scale-105 active:scale-95 transition-all shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] shrink-0"
               >
-                <User className="w-4 h-4" />
+                PG
               </Link>
             )}
-
-            {/* Book Table CTA: Molten Gold Gradient with Shimmer Sweep & 6px Luxury Edge */}
-            <Link
-              href="/booking"
-              className="hidden sm:inline-flex relative items-center justify-center h-[42px] px-[22px] rounded-[6px] text-[11.5px] font-bold tracking-[0.12em] uppercase text-[#0D0A08] transition-all duration-300 shadow-[0_4px_16px_rgba(226,168,75,0.28)] hover:shadow-[0_6px_22px_rgba(226,168,75,0.42)] hover:scale-[1.02] active:scale-[0.98] overflow-hidden group/cta"
-              style={{
-                background: 'linear-gradient(135deg, #F6D386 0%, #D49432 50%, #9E6818 100%)',
-              }}
-            >
-              <span className="relative z-10">BOOK TABLE</span>
-              {/* Shimmer sweep animation overlay */}
-              <span className="absolute inset-0 -translate-x-full group-hover/cta:translate-x-full duration-1000 bg-gradient-to-r from-transparent via-white/35 to-transparent transition-transform ease-out pointer-events-none" />
-            </Link>
 
             {/* Mobile Hamburger Button */}
             <button
               type="button"
               onClick={() => setMobileMenuOpen(true)}
               aria-label="Open navigation drawer"
-              className="lg:hidden text-[#FAF5EC] hover:text-[#E2A84B] transition-colors p-1"
+              className="lg:hidden text-[#FAF5EC] hover:text-[#F0C36B] transition-colors p-1 shrink-0"
             >
               <MenuIcon className="w-5 h-5" />
             </button>
