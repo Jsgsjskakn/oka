@@ -10,9 +10,11 @@ export interface FloorTable {
   zone: string;
   capacity: number;
   ambience: string;
-  x: number; // percentage in floor plan
-  y: number; // percentage in floor plan
+  x?: number; // percentage in floor plan
+  y?: number; // percentage in floor plan
   shape: 'round' | 'rect';
+  blenderNodeName?: string;
+  position3D?: [number, number, number];
 }
 
 export const RESTAURANT_TABLES: FloorTable[] = [
@@ -160,6 +162,7 @@ interface RestaurantFloorMapProps {
   availableTableNumbers?: number[]; // from live check
   selectedZone?: string;
   onSelectZone?: (zone: string) => void;
+  onSwitchTo3D?: () => void;
 }
 
 export function RestaurantFloorMap({
@@ -169,6 +172,7 @@ export function RestaurantFloorMap({
   availableTableNumbers,
   selectedZone: _selectedZone,
   onSelectZone: _onSelectZone,
+  onSwitchTo3D,
 }: RestaurantFloorMapProps) {
   const [hoveredTable, setHoveredTable] = useState<FloorTable | null>(null);
 
@@ -176,27 +180,40 @@ export function RestaurantFloorMap({
   return (
     <div className="w-full flex flex-col gap-3">
       {/* Floor Plan Header & Legend */}
-      <div className="flex items-center justify-between pb-2 border-b border-white/[0.08]">
+      <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-white/[0.08]">
         <div className="flex items-center gap-2">
           <Compass className="w-3.5 h-3.5 text-[#F0C36B]" />
           <span className="text-xs font-semibold tracking-wider uppercase text-[#F8F2E8] font-mono">
-            INTERACTIVE ARCHITECTURAL FLOOR MAP
+            ARCHITECTURAL BLUEPRINT (2D)
           </span>
         </div>
 
-        <div className="flex items-center gap-3 text-[10px] font-medium font-mono">
-          <span className="inline-flex items-center gap-1 text-[#36D6A0]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#36D6A0] shadow-[0_0_6px_#36D6A0]" />
-            Available
-          </span>
-          <span className="inline-flex items-center gap-1 text-[#F0C36B]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#F0C36B] shadow-[0_0_6px_#F0C36B]" />
-            Selected
-          </span>
-          <span className="inline-flex items-center gap-1 text-white/40">
-            <span className="w-1.5 h-1.5 rounded-full bg-white/20" />
-            Reserved
-          </span>
+        <div className="flex items-center gap-3">
+          {onSwitchTo3D && (
+            <button
+              type="button"
+              onClick={onSwitchTo3D}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono font-medium text-[#F0C36B] bg-[#F0C36B]/10 border border-[#F0C36B]/30 hover:bg-[#F0C36B]/20 transition-all shadow-[0_0_10px_rgba(240,195,107,0.2)]"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-[#F0C36B]" />
+              <span>✨ 3D Spatial View</span>
+            </button>
+          )}
+
+          <div className="flex items-center gap-3 text-[10px] font-medium font-mono">
+            <span className="inline-flex items-center gap-1 text-[#36D6A0]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#36D6A0] shadow-[0_0_6px_#36D6A0]" />
+              Available
+            </span>
+            <span className="inline-flex items-center gap-1 text-[#F0C36B]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#F0C36B] shadow-[0_0_6px_#F0C36B]" />
+              Selected
+            </span>
+            <span className="inline-flex items-center gap-1 text-white/40">
+              <span className="w-1.5 h-1.5 rounded-full bg-white/20" />
+              Reserved
+            </span>
+          </div>
         </div>
       </div>
 
@@ -217,7 +234,7 @@ export function RestaurantFloorMap({
         <div className="absolute left-0 right-0 top-[50%] h-[1px] border-b border-dashed border-[#F0C36B]/15 pointer-events-none" />
 
         {/* Interactive Tables (T1 through T12) */}
-        {RESTAURANT_TABLES.map((t) => {
+        {RESTAURANT_TABLES.filter((t) => t.x !== undefined && t.y !== undefined).map((t) => {
           const isSelected = selectedTableNumber === t.tableNumber;
           const fitsCapacity = t.capacity >= guests;
 
@@ -293,7 +310,7 @@ export function RestaurantFloorMap({
         </div>
 
         {/* Floating Table Hover Tooltip */}
-        {hoveredTable && (
+        {hoveredTable && hoveredTable.x !== undefined && hoveredTable.y !== undefined && (
           <div
             className="absolute z-30 pointer-events-none -translate-x-1/2 -translate-y-full mb-3 px-3 py-1.5 rounded-lg bg-[rgba(20,15,11,0.95)] backdrop-blur-md border border-[#F0C36B]/40 shadow-[0_8px_20px_rgba(0,0,0,0.8)] text-left whitespace-nowrap animate-in fade-in zoom-in-95 duration-150"
             style={{

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { BookingHeader } from '@/components/booking/BookingHeader';
 import { DateChipSelector } from '@/components/booking/DateChipSelector';
@@ -12,6 +13,28 @@ import { OccasionChips } from '@/components/booking/OccasionChips';
 import { TablePreferenceSelector } from '@/components/booking/TablePreferenceSelector';
 import { RestaurantFloorMap, RESTAURANT_TABLES, type FloorTable } from '@/components/booking/RestaurantFloorMap';
 import { BookingSummaryDossier } from '@/components/booking/BookingSummaryDossier';
+
+// Dynamic import with SSR false for Three.js 3D WebGL Canvas
+const Restaurant3DFloorplan = dynamic(
+  () =>
+    import('@/components/booking/Restaurant3DFloorplan').then(
+      (mod) => mod.Restaurant3DFloorplan
+    ),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-[520px] rounded-2xl flex flex-col items-center justify-center bg-[#0E0D0C]/80 border border-white/10 text-center">
+        <div className="w-8 h-8 border-2 border-[#F0C36B] border-t-transparent rounded-full animate-spin mb-3 shadow-[0_0_15px_rgba(240,195,107,0.3)]" />
+        <span className="text-xs font-mono font-semibold text-[#F0C36B] uppercase tracking-wider">
+          Initializing 3D Spatial Canvas...
+        </span>
+        <span className="text-[11px] text-[#A69F94] mt-1 font-serif">
+          The Golden Oak Dining Interior
+        </span>
+      </div>
+    ),
+  }
+);
 import { createBookingAction, customerConfirmBookingPayment } from '@/lib/actions/booking-actions';
 import { checkAvailabilityAction } from '@/lib/actions/booking-availability-action';
 import {
@@ -70,6 +93,7 @@ export default function BookingClient({
   );
   const [selectedZone, setSelectedZone] = useState<string>("The Hearth Chef's Counter");
   const [availableTableNumbers, setAvailableTableNumbers] = useState<number[] | undefined>(undefined);
+  const [view3DMode, setView3DMode] = useState(true);
   const [holdExpiresAt, setHoldExpiresAt] = useState<number | null>(null);
   const [availabilityMsg, setAvailabilityMsg] = useState<{
     text: string;
@@ -714,14 +738,27 @@ export default function BookingClient({
                 WebkitBackdropFilter: 'blur(24px) saturate(160%)',
               }}
             >
-              <RestaurantFloorMap
-                selectedTableNumber={selectedTable?.tableNumber || null}
-                onSelectTable={handleSelectTableFromMap}
-                guests={guests}
-                availableTableNumbers={availableTableNumbers}
-                selectedZone={selectedZone}
-                onSelectZone={setSelectedZone}
-              />
+              {view3DMode ? (
+                <Restaurant3DFloorplan
+                  selectedTableNumber={selectedTable?.tableNumber || null}
+                  onSelectTable={handleSelectTableFromMap}
+                  guests={guests}
+                  availableTableNumbers={availableTableNumbers}
+                  selectedZone={selectedZone}
+                  onSelectZone={setSelectedZone}
+                  onSwitchTo2D={() => setView3DMode(false)}
+                />
+              ) : (
+                <RestaurantFloorMap
+                  selectedTableNumber={selectedTable?.tableNumber || null}
+                  onSelectTable={handleSelectTableFromMap}
+                  guests={guests}
+                  availableTableNumbers={availableTableNumbers}
+                  selectedZone={selectedZone}
+                  onSelectZone={setSelectedZone}
+                  onSwitchTo3D={() => setView3DMode(true)}
+                />
+              )}
             </div>
 
             {/* 2. Live Selection Dossier & 5-Minute Hold Timer */}
