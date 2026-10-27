@@ -82,3 +82,6 @@ next-env.d.ts
 /public/images/right-wall-sample.png
 /public/images/right-dock-raw.png
 /public/images/hero-left-raw.png
+
+.vercel
+.env*

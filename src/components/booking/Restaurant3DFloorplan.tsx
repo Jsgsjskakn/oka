@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useRef, Suspense, useCallback, useMemo } from 'react';
+import React, { useState, useRef, Suspense, useCallback, useMemo, Component, ErrorInfo, ReactNode } from 'react';
 import { Canvas, useThree, ThreeEvent } from '@react-three/fiber';
-import { OrbitControls, useGLTF, Html, Environment } from '@react-three/drei';
+import { OrbitControls, useGLTF, Html } from '@react-three/drei';
 import * as THREE from 'three';
 import {
   Sparkles,
@@ -31,6 +31,54 @@ interface Restaurant3DFloorplanProps {
   selectedZone?: string;
   onSelectZone?: (zone: string) => void;
   onSwitchTo2D?: () => void;
+}
+
+interface ErrorBoundaryProps {
+  children: ReactNode;
+  onSwitchTo2D?: () => void;
+}
+
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error: Error | null;
+}
+
+class ThreeDErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error('Three.js / 3D Canvas Error caught by ErrorBoundary:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="w-full h-[520px] md:h-[600px] flex flex-col items-center justify-center p-8 text-center bg-[#0C0908] border border-[#F0C36B]/20 rounded-2xl">
+          <UtensilsCrossed className="w-12 h-12 text-[#F0C36B]/60 mb-4 animate-pulse" />
+          <h4 className="text-lg font-serif text-[#F8F2E8] mb-2">3D Architectural Viewport Offline</h4>
+          <p className="text-xs text-[#C8B89E] max-w-md mb-6 leading-relaxed">
+            Hardware acceleration or WebGL encountered an issue. You can still select and reserve any of our 28 luxury tables using the Interactive 2D Floorplan.
+          </p>
+          {this.props.onSwitchTo2D && (
+            <button
+              onClick={this.props.onSwitchTo2D}
+              className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#F0C36B] text-black font-semibold text-xs tracking-wider uppercase shadow-lg shadow-[#D4AF37]/20 hover:scale-105 transition-all"
+            >
+              Switch to 2D Floorplan
+            </button>
+          )}
+        </div>
+      );
+    }
+    return this.props.children;
+  }
 }
 
 // Subcomponent: 3D Scene Model & Raycasting Table Highlighting
@@ -381,87 +429,89 @@ export function Restaurant3DFloorplan({
 
       {/* 3D Canvas Viewport */}
       <div className="relative w-full h-[520px] md:h-[600px] rounded-2xl overflow-hidden bg-[#080605] border border-[#F0C36B]/30 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
-        <Canvas
-          camera={{
-            position: [0.0, 1.35, 4.8], // Eye-level foreground dining table setup
-            fov: 46,
-            near: 0.05,
-            far: 150,
-          }}
-          gl={{
-            antialias: true,
-            alpha: false,
-            powerPreference: 'high-performance',
-            toneMapping: THREE.ACESFilmicToneMapping,
-            toneMappingExposure: 1.05,
-          }}
-        >
-          {/* Deep Architectural Background matching Blender void */}
-          <color attach="background" args={['#080605']} />
+        <ThreeDErrorBoundary onSwitchTo2D={onSwitchTo2D}>
+          <Canvas
+            camera={{
+              position: [0.0, 1.35, 4.8], // Eye-level foreground dining table setup
+              fov: 46,
+              near: 0.05,
+              far: 150,
+            }}
+            gl={{
+              antialias: true,
+              alpha: false,
+              powerPreference: 'high-performance',
+              toneMapping: THREE.ACESFilmicToneMapping,
+              toneMappingExposure: 1.05,
+            }}
+          >
+            {/* Deep Architectural Background matching Blender void */}
+            <color attach="background" args={['#080605']} />
 
-          {/* Environmental HDRI for Realistic LookDev Brass, Glass & Marble Reflections */}
-          <Environment preset="city" environmentIntensity={0.85} />
-
-          {/* Authentic Warm Cinematic Architectural Lighting */}
-          <ambientLight color="#FFE8C8" intensity={0.5} />
-          
-          {/* Key Warm Sunlight */}
-          <directionalLight
-            position={[18, 28, 20]}
-            intensity={1.2}
-            color="#FFF4E0"
-            castShadow
-            shadow-mapSize-width={2048}
-            shadow-mapSize-height={2048}
-          />
-          
-          {/* Fill Light */}
-          <directionalLight
-            position={[-18, 16, -14]}
-            intensity={0.4}
-            color="#D8C8B4"
-          />
-          
-          {/* Central Rotunda Chandelier & Water Feature Glow */}
-          <pointLight position={[0, 4.5, 0]} intensity={2.8} distance={22} color="#FFA834" />
-          
-          {/* Sommelier Showcase Wine Wall Warm Accent */}
-          <pointLight position={[10, 4.0, -11]} intensity={1.8} distance={15} color="#FFD180" />
-          
-          {/* Cocktail Bar Warm Accent */}
-          <pointLight position={[-12, 4.0, 0]} intensity={1.5} distance={16} color="#FFB84D" />
-
-          <Suspense fallback={<CanvasLoadingScreen />}>
-            <RestaurantModel
-              selectedTableNumber={selectedTableNumber}
-              hoveredTable={hoveredTable}
-              setHoveredTable={setHoveredTable}
-              onSelectTable={handleSelectTable}
-              availableTableNumbers={availableTableNumbers}
-              guests={guests}
+            {/* Authentic Warm Cinematic Architectural Lighting (100% Local, zero external CDN fetch) */}
+            <ambientLight color="#FFE8C8" intensity={0.65} />
+            
+            {/* Sky/Floor Hemisphere Warm Fill */}
+            <hemisphereLight args={['#FFE4B5', '#1A140E', 0.9]} />
+            
+            {/* Key Warm Sunlight */}
+            <directionalLight
+              position={[18, 28, 20]}
+              intensity={1.5}
+              color="#FFF4E0"
+              castShadow
+              shadow-mapSize-width={2048}
+              shadow-mapSize-height={2048}
             />
-
-            <TableFloatingMarkers
-              selectedTableNumber={selectedTableNumber}
-              hoveredTable={hoveredTable}
-              onSelectTable={handleSelectTable}
-              availableTableNumbers={availableTableNumbers}
-              guests={guests}
+            
+            {/* Fill Light from Promenade */}
+            <directionalLight
+              position={[-18, 16, -14]}
+              intensity={0.6}
+              color="#D8C8B4"
             />
+            
+            {/* Central Rotunda Chandelier & Water Feature Glow */}
+            <pointLight position={[0, 4.5, 0]} intensity={3.2} distance={25} color="#FFA834" />
+            
+            {/* Sommelier Showcase Wine Wall Warm Accent */}
+            <pointLight position={[10, 4.0, -11]} intensity={2.2} distance={18} color="#FFD180" />
+            
+            {/* Cocktail Bar Warm Accent */}
+            <pointLight position={[-12, 4.0, 0]} intensity={1.8} distance={18} color="#FFB84D" />
 
-            <OrbitControls
-              ref={controlsRef}
-              makeDefault
-              enableDamping
-              dampingFactor={0.06}
-              minDistance={1.0}
-              maxDistance={65}
-              maxPolarAngle={Math.PI / 2.02} // Keep camera strictly above floor
-              minPolarAngle={0.05}
-              target={[0, 1.1, -1.0]}
-            />
-          </Suspense>
-        </Canvas>
+            <Suspense fallback={<CanvasLoadingScreen />}>
+              <RestaurantModel
+                selectedTableNumber={selectedTableNumber}
+                hoveredTable={hoveredTable}
+                setHoveredTable={setHoveredTable}
+                onSelectTable={handleSelectTable}
+                availableTableNumbers={availableTableNumbers}
+                guests={guests}
+              />
+
+              <TableFloatingMarkers
+                selectedTableNumber={selectedTableNumber}
+                hoveredTable={hoveredTable}
+                onSelectTable={handleSelectTable}
+                availableTableNumbers={availableTableNumbers}
+                guests={guests}
+              />
+
+              <OrbitControls
+                ref={controlsRef}
+                makeDefault
+                enableDamping
+                dampingFactor={0.06}
+                minDistance={1.0}
+                maxDistance={65}
+                maxPolarAngle={Math.PI / 2.02} // Keep camera strictly above floor
+                minPolarAngle={0.05}
+                target={[0, 1.1, -1.0]}
+              />
+            </Suspense>
+          </Canvas>
+        </ThreeDErrorBoundary>
 
         {/* Floating Controls Helper (Bottom-Left) */}
         <div className="absolute bottom-4 left-4 z-10 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/75 backdrop-blur-md border border-white/10 text-[10px] font-mono text-[#F8F2E8]/70 pointer-events-none">
