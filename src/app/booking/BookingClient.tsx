@@ -79,8 +79,14 @@ export default function BookingClient({
   const [bookingId, setBookingId] = useState<string | null>(null);
 
   // Cart store for pre-ordering feature
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const totalCartItems = useCartStore((s) => s.getTotalItems());
   const cartItems = useCartStore((s) => s.items);
+  const safeTotalCartItems = mounted ? totalCartItems : 0;
   const [attachCart, setAttachCart] = useState(false);
 
   // Step 1: Configurator State
@@ -486,9 +492,9 @@ export default function BookingClient({
                             <span className="px-1.5 py-0.2 rounded-full bg-[#E0532B] text-[9.5px] font-bold text-white uppercase tracking-wider font-mono">
                               New
                             </span>
-                            {totalCartItems > 0 && (
+                            {safeTotalCartItems > 0 && (
                               <span className="px-1.5 py-0.2 rounded-full bg-[#36D6A0]/20 text-[10px] font-bold text-[#36D6A0] border border-[#36D6A0]/30 font-mono">
-                                {totalCartItems} in cart
+                                {safeTotalCartItems} in cart
                               </span>
                             )}
                           </div>
@@ -772,7 +778,7 @@ export default function BookingClient({
               zone={selectedZone || selectedTable?.zone}
               advanceAmountPaise={advanceAmountPaise}
               holdExpiresAt={holdExpiresAt}
-              preOrderCartItemsCount={attachCart ? totalCartItems : 0}
+              preOrderCartItemsCount={attachCart ? safeTotalCartItems : 0}
             />
           </aside>
         </div>
