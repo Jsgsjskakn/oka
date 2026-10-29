@@ -1,4 +1,4 @@
-﻿import { describe, it } from 'node:test';
+import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -802,19 +802,20 @@ describe('Suite 4: 3D Model Slug & Centralized Asset Validation', () => {
     const config = getModelConfig('golden-oak-signature-burger');
     assert.equal(config.dishSlug, 'golden-oak-signature-burger');
     assert.equal(config.modelPath, SHARED_DEFAULT_MODEL_PATH);
-    assert.equal(config.modelPath, '/models/warrior_scene.glb');
+    assert.equal(config.modelPath, '/models/warrior_model.glb');
     assert.equal(config.initialScale, 0.8);
     assert.equal(config.cameraDistance, 4.5);
     assert.equal(config.isSharedPlaceholder, true);
     assert.ok(config.modelName.includes('Prototype Asset'));
   });
 
-  it('verifies warrior_scene.glb exists on disk and is a valid glTF binary', () => {
-    const modelPath = path.resolve('public/models/warrior_scene.glb');
-    assert.ok(fs.existsSync(modelPath), 'public/models/warrior_scene.glb must exist');
+  it('verifies warrior_model.glb and preserved warrior_scene.glb exist on disk and are valid glTF binaries', () => {
+    // 1. Primary optimized Draco model
+    const modelPath = path.resolve('public/models/warrior_model.glb');
+    assert.ok(fs.existsSync(modelPath), 'public/models/warrior_model.glb must exist');
 
     const stat = fs.statSync(modelPath);
-    assert.ok(stat.size > 5_000_000, `Model file size should be substantial (>5MB), got ${stat.size} bytes`);
+    assert.ok(stat.size > 500_000, `Model file size should be >500KB, got ${stat.size} bytes`);
 
     // Verify glTF binary magic: 0x46546C67 ('glTF')
     const fd = fs.openSync(modelPath, 'r');
@@ -822,6 +823,12 @@ describe('Suite 4: 3D Model Slug & Centralized Asset Validation', () => {
     fs.readSync(fd, header, 0, 4, 0);
     fs.closeSync(fd);
     assert.equal(header.toString('ascii'), 'glTF', 'File must begin with valid glTF binary magic');
+
+    // 2. SAFETY RULE: Preserve original uncompressed asset
+    const scenePath = path.resolve('public/models/warrior_scene.glb');
+    assert.ok(fs.existsSync(scenePath), 'public/models/warrior_scene.glb must remain preserved intact');
+    const sceneStat = fs.statSync(scenePath);
+    assert.ok(sceneStat.size > 5_000_000, `Original warrior_scene.glb must be intact (>5MB), got ${sceneStat.size} bytes`);
   });
 });
 

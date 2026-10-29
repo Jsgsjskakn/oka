@@ -2,26 +2,14 @@
 
 import { Suspense, useRef, useEffect, useMemo, useCallback, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { useGLTF, ContactShadows, useProgress, AdaptiveDpr } from '@react-three/drei';
-import type { Group, Object3D, Material, Mesh, BufferGeometry } from 'three';
+import { useGLTF, useProgress, AdaptiveDpr } from '@react-three/drei';
+import type { Group } from 'three';
 import { Vector3 } from 'three';
 import { type ModelConfig, SHARED_DEFAULT_MODEL_PATH } from '@/data/model-config';
 import type { IngredientHotspot } from '@/data/ar-config';
 import { enhanceWarriorMaterials } from '@/components/viewer/warrior-materials';
-
-// Dispose helper
-function disposeObject(obj: Object3D) {
-  obj.traverse((child) => {
-    if ((child as Mesh).isMesh) {
-      const mesh = child as Mesh;
-      if (mesh.geometry) (mesh.geometry as BufferGeometry).dispose();
-      if (mesh.material) {
-        const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-        materials.forEach((mat: Material) => mat.dispose());
-      }
-    }
-  });
-}
+import { SafeContactShadows } from '@/components/3d/SafeContactShadows';
+import { WebGLContextGuard } from '@/components/3d/WebGLContextGuard';
 
 // AR Reticle - premium gold ring
 function ARReticle({ visible }: { visible: boolean }) {
@@ -79,7 +67,7 @@ interface ARFoodModelProps {
 }
 
 function ARFoodModel({ config, placed, scale, rotation, onLoaded, onProgress }: ARFoodModelProps) {
-  const { scene } = useGLTF(config.modelPath);
+  const { scene } = useGLTF(config.modelPath, '/draco/');
   const groupRef = useRef<Group>(null);
   const clonedScene = useMemo(() => {
     const clone = scene.clone(true);
@@ -91,8 +79,7 @@ function ARFoodModel({ config, placed, scale, rotation, onLoaded, onProgress }: 
   useEffect(() => {
     onProgress?.(100);
     onLoaded?.();
-    return () => { disposeObject(clonedScene); };
-  }, [clonedScene, onLoaded, onProgress]);
+  }, [onLoaded, onProgress]);
 
   useFrame((_, delta) => {
     if (placed && animRef.current < 1) {
@@ -114,7 +101,7 @@ function ARFoodModel({ config, placed, scale, rotation, onLoaded, onProgress }: 
 
   return (
     <group ref={groupRef} position={[0, 0, 0]}>
-      <primitive object={clonedScene} />
+      <primitive object={clonedScene} dispose={null} />
     </group>
   );
 }
@@ -238,6 +225,9 @@ export function ARScene({
     >
       <AdaptiveDpr pixelated />
 
+      {/* WebGL Context Loss & Recovery Guard */}
+      <WebGLContextGuard canvasName="AR Food Viewer" />
+
       {/* Natural restaurant lighting */}
       <ambientLight intensity={0.7} />
       <directionalLight position={[3, 5, 3]} intensity={0.6} castShadow />
@@ -272,15 +262,22 @@ export function ARScene({
           />
         )}
         {placed && (
-          <ContactShadows
+          /* Contact Shadows: Leak-free SafeContactShadows */
+          <SafeContactShadows
             position={[0, -0.01, 0]}
             opacity={0.35}
             scale={8}
             blur={2.5}
             far={4}
+            resolution={512}
+            frames={1}
+            smooth
+            refreshTrigger={Math.round(modelScale * 10)}
           />
         )}
       </Suspense>
     </Canvas>
   );
 }
+
+useGLTF.preload(SHARED_DEFAULT_MODEL_PATH, '/draco/');

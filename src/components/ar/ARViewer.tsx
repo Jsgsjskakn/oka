@@ -57,8 +57,18 @@ export function ARViewer({ dish, config, isFavorite, onToggleFavorite, onAddToCa
     isScaling: boolean;
   }>({ lastTouchDist: 0, lastX: 0, isScaling: false });
 
-  // Check basic compatibility
+  // Check basic compatibility and PC/Laptop desktop detection
   useEffect(() => {
+    // Detect PC or Laptop (desktop) without rear-facing environment cameras
+    const isMobileDevice = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const hasTouchScreen = 'ontouchstart' in window || (typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0);
+    const isDesktop = !isMobileDevice || (!hasTouchScreen && window.innerWidth >= 1024);
+
+    if (isDesktop) {
+      setState('unsupported');
+      return;
+    }
+
     const hasMedia = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
     if (!hasMedia) setState('unsupported');
   }, []);
@@ -150,7 +160,7 @@ export function ARViewer({ dish, config, isFavorite, onToggleFavorite, onAddToCa
     return <ARPermissionDenied onGoBack={handleExit} onContinue3D={handleContinue3D} />;
   }
   if (state === 'unsupported') {
-    return <ARUnsupported dishId={dish.id} onGoBack={handleExit} />;
+    return <ARUnsupported dishId={dish.id} dishName={dish.name} onGoBack={handleExit} />;
   }
   if (state === 'error') {
     return (

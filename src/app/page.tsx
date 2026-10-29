@@ -3,8 +3,7 @@ import { HeroSection } from '@/components/home/HeroSection';
 import { CuratedSignaturesSection } from '@/components/home/CuratedSignaturesSection';
 import { ARPromoSection } from '@/components/home/ARPromoSection';
 import { StorySection } from '@/components/home/StorySection';
-import { BookingCTASection } from '@/components/home/BookingCTASection';
-import { RestaurantInfo } from '@/components/home/RestaurantInfo';
+import { HomeReservationAndLocationSection } from '@/components/home/HomeReservationAndLocationSection';
 import { getAllDishes } from '@/lib/services/menu.service';
 
 export const metadata: Metadata = {
@@ -30,11 +29,8 @@ export default async function Home() {
       {/* 5. Editorial Heritage Split Section (Ivory Contrast Flip) */}
       <StorySection />
 
-      {/* 6. Interactive Concierge Booking Bar */}
-      <BookingCTASection />
-
-      {/* 7. Split Architectural Concierge & Dark Map Card */}
-      <RestaurantInfo />
+      {/* 6. Side-by-Side Reservation & Our Location Flagship Map Cards (100% Reference Parity) */}
+      <HomeReservationAndLocationSection />
     </div>
   );
 }

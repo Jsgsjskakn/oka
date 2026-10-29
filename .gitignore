@@ -45,6 +45,9 @@ next-env.d.ts
 *.zip
 /the-golden-oak-export/
 /the-golden-oak-source/
+scratch/
+.temp/
+supabase/.temp/
 
 # temporary database diagnostic scripts
 /check-db.js

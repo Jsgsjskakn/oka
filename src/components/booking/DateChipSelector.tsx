@@ -85,13 +85,9 @@ export function DateChipSelector({ selectedDate, onSelect }: DateChipSelectorPro
 
   // Calendar Grid Calculation
   const monthStart = startOfMonth(viewMonth);
-  const monthEnd = endOfMonth(monthStart);
   const calendarStart = startOfWeek(monthStart, { weekStartsOn: 0 });
-  const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 0 });
-  const calendarDays = useMemo(
-    () => eachDayOfInterval({ start: calendarStart, end: calendarEnd }),
-    [calendarStart, calendarEnd]
-  );
+  const calendarEnd = endOfWeek(endOfMonth(monthStart), { weekStartsOn: 0 });
+  const calendarDays = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
 
   const canGoPrevMonth = !isBefore(subMonths(monthStart, 0), startOfMonth(today));
 
@@ -121,7 +117,7 @@ export function DateChipSelector({ selectedDate, onSelect }: DateChipSelectorPro
           <h3 className="text-xs font-semibold text-[#F0C36B] tracking-[0.2em] uppercase font-mono">
             SELECT DATE
           </h3>
-          <span className="text-[10px] text-[#A99A88] font-mono hidden sm:inline border-l border-white/10 pl-2">
+          <span className="text-[10px] text-[#D4C7B6] font-mono hidden sm:inline border-l border-white/10 pl-2">
             Single-Day Booking Only
           </span>
         </div>
@@ -332,7 +328,7 @@ export function DateChipSelector({ selectedDate, onSelect }: DateChipSelectorPro
               className={`flex flex-col items-center justify-center min-w-[72px] sm:min-w-[76px] py-3 px-2 rounded-xl border snap-start transition-all duration-200 active:scale-95 text-center cursor-pointer ${
                 isSelected
                   ? 'text-[#17100C] font-bold shadow-[0_4px_18px_rgba(240,195,107,0.45)] scale-[1.03] border-[#FFE3A5]'
-                  : 'bg-white/[0.04] backdrop-blur-md border-white/[0.08] text-[#A99A88] hover:text-[#F8F2E8] hover:border-[#F0C36B]/40 hover:bg-white/[0.07]'
+                  : 'bg-[rgba(26,20,16,0.65)] backdrop-blur-md border border-white/10 text-[#FAF5EC] hover:border-[#F0C36B]/50 hover:bg-[rgba(38,30,24,0.85)]'
               }`}
               style={
                 isSelected
@@ -346,21 +342,21 @@ export function DateChipSelector({ selectedDate, onSelect }: DateChipSelectorPro
             >
               <span
                 className={`text-[10px] font-semibold uppercase tracking-wider mb-1 ${
-                  isSelected ? 'text-[#17100C]/80 font-bold' : 'text-[#A99A88]'
+                  isSelected ? 'text-[#17100C]/80 font-bold' : 'text-[#D4C7B6]'
                 }`}
               >
                 {format(date, 'EEE')}
               </span>
               <span
                 className={`font-mono text-xl sm:text-[22px] font-bold leading-tight ${
-                  isSelected ? 'text-[#17100C]' : 'text-[#F8F2E8]'
+                  isSelected ? 'text-[#17100C]' : 'text-[#FAF5EC]'
                 }`}
               >
                 {format(date, 'd')}
               </span>
               <span
                 className={`text-[10px] font-medium mt-0.5 ${
-                  isSelected ? 'text-[#17100C]/85 font-semibold' : 'text-[#A99A88]'
+                  isSelected ? 'text-[#17100C]/85 font-semibold' : 'text-[#D4C7B6]'
                 }`}
               >
                 {format(date, 'MMM')}

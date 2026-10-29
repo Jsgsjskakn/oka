@@ -19,7 +19,7 @@ export function BookingHeader({ step, onStepChange, showBack = true }: BookingHe
   ];
 
   return (
-    <header className="relative pt-8 pb-6 px-4 sm:px-6 w-full max-w-[1320px] mx-auto text-center">
+    <header className="relative pt-4 pb-3 sm:pt-6 sm:pb-4 px-4 sm:px-6 w-full max-w-[1320px] mx-auto text-center">
       {/* Top Header Row with Editorial Overline & Back Button */}
       <div className="relative flex items-center justify-center mb-3">
         {showBack && (
@@ -31,7 +31,7 @@ export function BookingHeader({ step, onStepChange, showBack = true }: BookingHe
                 router.back();
               }
             }}
-            className="absolute left-0 group inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[rgba(16,12,9,0.35)] backdrop-blur-xl border border-[#F0C36B]/35 hover:border-[#F0C36B] hover:shadow-[0_0_18px_rgba(240,195,107,0.35)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] text-[#FAF5EC] text-xs font-medium transition-all active:scale-95"
+            className="absolute left-0 group inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#18120E] border border-[#F0C36B]/50 hover:border-[#F0C36B] hover:shadow-[0_0_18px_rgba(240,195,107,0.35)] shadow-lg text-[#FAF5EC] text-xs font-semibold transition-all active:scale-95"
             aria-label="Back"
           >
             <ChevronLeft className="w-4 h-4 text-[#E2A84B] transition-transform duration-200 group-hover:-translate-x-0.5" />
@@ -45,7 +45,7 @@ export function BookingHeader({ step, onStepChange, showBack = true }: BookingHe
       </div>
 
       {/* Main Michelin Editorial Title */}
-      <h1 className="font-serif text-3xl sm:text-4xl md:text-[44px] font-bold text-[#FAF5EC] tracking-tight leading-tight mb-2">
+      <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-[#FAF5EC] tracking-tight leading-tight mb-1.5">
         Reserve at The Golden Oak
       </h1>
       <p className="text-xs sm:text-sm text-[#9A9286] font-light max-w-lg mx-auto">
@@ -55,7 +55,7 @@ export function BookingHeader({ step, onStepChange, showBack = true }: BookingHe
       {/* Architectural Stepper (Editorial Numbering & Glowing Hairlines) */}
       <nav
         aria-label="Booking Progress"
-        className="mt-8 mb-4 max-w-3xl mx-auto flex items-center justify-between gap-3 text-xs"
+        className="mt-4 mb-3 max-w-3xl mx-auto flex items-center justify-between gap-3 text-xs"
       >
         {steps.map((s, idx) => {
           const isActive = step === s.stepVal;

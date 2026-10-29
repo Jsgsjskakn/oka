@@ -25,7 +25,8 @@ const routesToTest = [
   // 3. Health & Static Assets
   { path: '/api/health', expectedStatus: [200], name: 'Production Health API' },
   { path: '/manifest.json', expectedStatus: [200], name: 'PWA Web Manifest' },
-  { path: '/models/warrior_scene.glb', expectedStatus: [200], name: 'Shared 3D GLB Model Asset' },
+  { path: '/models/warrior_model.glb', expectedStatus: [200], name: 'Shared 3D GLB Model Asset (Draco)' },
+  { path: '/models/warrior_scene.glb', expectedStatus: [200], name: 'Legacy 3D GLB Model Asset (Preserved)' },
 
   // 4. Negative Route / 404 Tests
   { path: '/3d/non-existent-dish-slug-12345', expectedStatus: [404, 200], checkNotFoundContent: true, name: 'Invalid 3D Slug (Renders 404 Page)' },

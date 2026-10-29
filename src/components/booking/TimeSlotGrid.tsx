@@ -83,13 +83,13 @@ export function TimeSlotGrid({ selectedTime, onSelect, slots }: TimeSlotGridProp
             SELECT DINING TIME
           </h3>
         </div>
-        <span className="text-[11px] text-[#A99A88]">
+        <span className="text-[11px] text-[#D4C7B6] font-medium">
           {periods.find((p) => p.id === activePeriod)?.timeRange}
         </span>
       </div>
 
       {/* Service Period Segmented Tabs */}
-      <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-black/40 backdrop-blur-md border border-white/[0.08] mb-4">
+      <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-[rgba(20,15,12,0.65)] backdrop-blur-md border border-white/10 mb-4">
         {periods.map((p) => {
           const isActive = activePeriod === p.id;
           const Icon = p.icon;
@@ -101,12 +101,12 @@ export function TimeSlotGrid({ selectedTime, onSelect, slots }: TimeSlotGridProp
               className={`py-2 px-2 rounded-lg text-xs font-semibold transition-all flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 ${
                 isActive
                   ? 'bg-[#F0C36B]/20 border border-[#F0C36B] text-[#FFE3A5] shadow-[0_2px_12px_rgba(240,195,107,0.25)]'
-                  : 'text-[#A99A88] hover:text-[#F8F2E8] hover:bg-white/[0.04]'
+                  : 'text-[#D4C7B6] hover:text-[#FAF5EC] hover:bg-white/[0.06]'
               }`}
             >
               <Icon
                 className={`w-3.5 h-3.5 shrink-0 ${
-                  isActive ? 'text-[#F0C36B]' : 'text-[#A99A88]'
+                  isActive ? 'text-[#F0C36B]' : 'text-[#D4C7B6]'
                 }`}
               />
               <span className="truncate">{p.name}</span>
@@ -133,7 +133,7 @@ export function TimeSlotGrid({ selectedTime, onSelect, slots }: TimeSlotGridProp
               className={`p-2.5 rounded-xl border text-center transition-all duration-200 active:scale-95 cursor-pointer flex flex-col items-center justify-center gap-1 ${
                 isSelected
                   ? 'bg-[#F0C36B]/25 border-[1.5px] border-[#F0C36B] text-[#FFE3A5] shadow-[0_0_16px_rgba(240,195,107,0.35)] -translate-y-0.5'
-                  : 'bg-white/[0.04] backdrop-blur-md border-white/[0.08] text-[#F8F2E8] hover:border-[#F0C36B]/40 hover:bg-white/[0.07]'
+                  : 'bg-[rgba(26,20,16,0.65)] backdrop-blur-md border border-white/10 text-[#FAF5EC] hover:border-[#F0C36B]/50 hover:bg-[rgba(38,30,24,0.85)]'
               }`}
             >
               <span className="font-mono text-sm sm:text-[14.5px] font-bold tracking-tight">
@@ -144,19 +144,19 @@ export function TimeSlotGrid({ selectedTime, onSelect, slots }: TimeSlotGridProp
               <span
                 className={`text-[10px] font-medium leading-none flex items-center gap-1 ${
                   slot.status === 'urgent'
-                    ? 'text-[#F0786D]'
+                    ? 'text-[#FF8A7A]'
                     : slot.status === 'filling'
-                    ? 'text-[#F1B94E]'
-                    : 'text-[#36D6A0]'
+                    ? 'text-[#F5C258]'
+                    : 'text-[#3EE4AC]'
                 }`}
               >
                 <span
                   className={`w-1.5 h-1.5 rounded-full ${
                     slot.status === 'urgent'
-                      ? 'bg-[#F0786D]'
+                      ? 'bg-[#FF8A7A]'
                       : slot.status === 'filling'
-                      ? 'bg-[#F1B94E]'
-                      : 'bg-[#36D6A0]'
+                      ? 'bg-[#F5C258]'
+                      : 'bg-[#3EE4AC]'
                   }`}
                 />
                 {slot.status === 'urgent' ? (

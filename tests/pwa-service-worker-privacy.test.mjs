@@ -70,6 +70,7 @@ test('PWA Service Worker & Privacy Hardening Verification', async (t) => {
     assert.equal(isSensitive('/about'), false);
     assert.equal(isSensitive('/contact'), false);
     assert.equal(isSensitive('/offline'), false);
+    assert.equal(isSensitive('/models/warrior_model.glb'), false);
     assert.equal(isSensitive('/models/warrior_scene.glb'), false);
   });
 
@@ -85,6 +86,7 @@ test('PWA Service Worker & Privacy Hardening Verification', async (t) => {
     };
 
     // Valid static assets
+    assert.equal(isStaticAsset('/models/warrior_model.glb'), true);
     assert.equal(isStaticAsset('/models/warrior_scene.glb'), true);
     assert.equal(isStaticAsset('/images/dishes/burger.jpg'), true);
     assert.equal(isStaticAsset('/icons/icon-192.png'), true);

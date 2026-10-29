@@ -4,12 +4,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 test('3D Asset & Centralized Model Verification', async (t) => {
-  const modelPath = path.resolve('public/models/warrior_scene.glb');
+  const modelPath = path.resolve('public/models/warrior_model.glb');
+  const scenePath = path.resolve('public/models/warrior_scene.glb');
   
-  await t.test('derived warrior_scene.glb asset exists and is valid glTF binary', () => {
-    assert.ok(fs.existsSync(modelPath), 'warrior_scene.glb must exist in public/models/');
+  await t.test('optimized warrior_model.glb asset exists and is valid Draco glTF binary', () => {
+    assert.ok(fs.existsSync(modelPath), 'warrior_model.glb must exist in public/models/');
     const stat = fs.statSync(modelPath);
-    assert.ok(stat.size > 5_000_000, `File size should be substantial (>5MB), got ${stat.size} bytes`);
+    assert.ok(stat.size > 500_000, `File size should be >500KB, got ${stat.size} bytes`);
     
     // Check glTF binary header magic 'glTF' (0x46546C67)
     const fd = fs.openSync(modelPath, 'r');
@@ -17,6 +18,12 @@ test('3D Asset & Centralized Model Verification', async (t) => {
     fs.readSync(fd, buffer, 0, 4, 0);
     fs.closeSync(fd);
     assert.equal(buffer.toString('ascii'), 'glTF', 'File must begin with glTF binary magic');
+  });
+
+  await t.test('SAFETY RULE: original uncompressed warrior_scene.glb is preserved intact', () => {
+    assert.ok(fs.existsSync(scenePath), 'warrior_scene.glb must exist in public/models/');
+    const stat = fs.statSync(scenePath);
+    assert.ok(stat.size > 5_000_000, `File size should be substantial (>5MB), got ${stat.size} bytes`);
   });
 
   await t.test('original blender file and backup are preserved intact', () => {

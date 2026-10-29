@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useRef, useState, useCallback } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useRef, useState, useMemo, useEffect, useCallback } from 'react';
+import { ChevronLeft, ChevronRight, ChevronDown, Check, Sparkles } from 'lucide-react';
 
-interface DishSwitcherItem {
+export interface DishSwitcherItem {
   id: string;
   name: string;
   image: string;
@@ -12,11 +12,37 @@ interface DishSwitcherItem {
   isVeg?: boolean;
 }
 
-interface DishSwitcherProps {
+export interface DishSwitcherProps {
   dishes: DishSwitcherItem[];
   currentDishId: string;
   currentCategory?: string;
   onSwitchDish: (dishId: string) => void;
+}
+
+const CATEGORY_LABEL_MAP: Record<string, string> = {
+  pizza: 'Pizzas',
+  pizzas: 'Pizzas',
+  burger: 'Burgers',
+  burgers: 'Burgers',
+  chinese: 'Chinese',
+  starters: 'Starters',
+  starter: 'Starters',
+  desserts: 'Desserts',
+  dessert: 'Desserts',
+  beverages: 'Drinks',
+  drinks: 'Drinks',
+  menu: 'Chef Specials',
+};
+
+function getCategoryEmoji(slug: string): string {
+  const s = slug.toLowerCase();
+  if (s.includes('pizza')) return '🍕';
+  if (s.includes('burger')) return '🍔';
+  if (s.includes('chinese')) return '🥢';
+  if (s.includes('starter')) return '🍟';
+  if (s.includes('dessert')) return '🍰';
+  if (s.includes('drink') || s.includes('beverage')) return '🍷';
+  return '🍽️';
 }
 
 export function DishSwitcher({
@@ -26,173 +52,364 @@ export function DishSwitcher({
   onSwitchDish,
 }: DishSwitcherProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
-  const [mouseX, setMouseX] = useState<number | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // Dropdown open/close state
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  // Active dish object
+  const activeDish = useMemo(() => {
+    return dishes.find((d) => d.id === currentDishId) || dishes[0];
+  }, [dishes, currentDishId]);
+
+  // Derived category list with counts
+  const categories = useMemo(() => {
+    const catMap = new Map<string, { label: string; count: number }>();
+
+    dishes.forEach((d) => {
+      const rawKey = (d.category || 'menu').toLowerCase();
+      const existing = catMap.get(rawKey);
+      if (existing) {
+        existing.count += 1;
+      } else {
+        const label = CATEGORY_LABEL_MAP[rawKey] || (rawKey.charAt(0).toUpperCase() + rawKey.slice(1));
+        catMap.set(rawKey, { label, count: 1 });
+      }
+    });
+
+    return Array.from(catMap.entries()).map(([slug, val]) => ({
+      slug,
+      label: val.label,
+      count: val.count,
+    }));
+  }, [dishes]);
+
+  // Active category filter: defaults to the active dish's category
+  const [selectedCategory, setSelectedCategory] = useState<string>(() => {
+    return (activeDish?.category || currentCategory || 'pizza').toLowerCase();
+  });
+
+  // When active dish changes from outside, sync category if needed
+  useEffect(() => {
+    if (activeDish?.category && selectedCategory !== 'all') {
+      const dishCat = activeDish.category.toLowerCase();
+      if (dishCat !== selectedCategory) {
+        setSelectedCategory(dishCat);
+      }
+    }
+  }, [activeDish, selectedCategory]);
+
+  // Click-outside listener to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isDropdownOpen]);
+
+  // Filtered dishes based on category selection
+  const filteredDishes = useMemo(() => {
+    if (selectedCategory === 'all') {
+      return dishes;
+    }
+    const matching = dishes.filter(
+      (d) => (d.category || '').toLowerCase() === selectedCategory.toLowerCase()
+    );
+    return matching.length > 0 ? matching : dishes;
+  }, [dishes, selectedCategory]);
+
+  // Display label and count for the single category button
+  const currentCategoryInfo = useMemo(() => {
+    if (selectedCategory === 'all') {
+      return {
+        label: 'All Dishes',
+        count: dishes.length,
+        emoji: '✦',
+      };
+    }
+    const match = categories.find((c) => c.slug === selectedCategory);
+    if (match) {
+      return {
+        label: match.label,
+        count: match.count,
+        emoji: getCategoryEmoji(match.slug),
+      };
+    }
+    const fallbackLabel =
+      CATEGORY_LABEL_MAP[selectedCategory] ||
+      selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1);
+    return {
+      label: fallbackLabel,
+      count: dishes.filter((d) => (d.category || '').toLowerCase() === selectedCategory).length,
+      emoji: getCategoryEmoji(selectedCategory),
+    };
+  }, [selectedCategory, categories, dishes]);
+
+  // Select a category from dropdown
+  const handleSelectCategory = (catSlug: string) => {
+    setSelectedCategory(catSlug);
+    setIsDropdownOpen(false);
+
+    // If active dish is not in the newly selected category, switch to the first dish of that category
+    if (catSlug !== 'all') {
+      const firstDishInCat = dishes.find((d) => (d.category || '').toLowerCase() === catSlug);
+      if (firstDishInCat && firstDishInCat.id !== currentDishId) {
+        onSwitchDish(firstDishInCat.id);
+      }
+    }
+
+    if (typeof window !== 'undefined' && 'vibrate' in navigator) {
+      navigator.vibrate(10);
+    }
+  };
+
+  // Scroll controls for dish filmstrip
   const scroll = (direction: 'left' | 'right') => {
     if (scrollRef.current) {
-      const offset = direction === 'left' ? -220 : 220;
+      const offset = direction === 'left' ? -260 : 260;
       scrollRef.current.scrollBy({ left: offset, behavior: 'smooth' });
     }
   };
 
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    setMouseX(e.clientX);
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    setMouseX(null);
-    setHoveredIdx(null);
-  }, []);
-
-  // Compute magnetic scale & translateY for a given item index
-  const getTransformStyle = (idx: number) => {
-    const isActive = dishes[idx].id === currentDishId;
-
-    if (mouseX === null) {
-      // Resting default state
-      return {
-        transform: isActive ? 'scale(1.1) translateY(-2px)' : 'scale(1) translateY(0px)',
-        zIndex: isActive ? 10 : 1,
-        transition: 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease',
-      };
+  // Auto-scroll active dish into view
+  useEffect(() => {
+    if (!scrollRef.current) return;
+    const activeEl = scrollRef.current.querySelector<HTMLElement>(
+      `[data-dish-id="${currentDishId}"]`
+    );
+    if (activeEl) {
+      activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     }
+  }, [currentDishId, selectedCategory]);
 
-    const el = itemRefs.current[idx];
-    if (!el) {
-      return {
-        transform: isActive ? 'scale(1.1) translateY(-2px)' : 'scale(1) translateY(0px)',
-        zIndex: isActive ? 10 : 1,
-      };
-    }
-
-    const rect = el.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const dist = Math.abs(mouseX - centerX);
-    const radius = 95; // Magnetic attraction boundary in pixels
-
-    if (dist < radius) {
-      // Smooth cosine curve for magnetic magnification
-      const intensity = Math.cos((dist / radius) * (Math.PI / 2));
-      const scale = 1.0 + (isActive ? 0.38 : 0.45) * intensity;
-      const translateY = -14 * intensity;
-
-      return {
-        transform: `scale(${scale.toFixed(3)}) translateY(${translateY.toFixed(1)}px)`,
-        zIndex: Math.round(20 + intensity * 10),
-        transition: 'transform 0.08s ease-out',
-      };
-    }
-
-    return {
-      transform: isActive ? 'scale(1.08) translateY(-2px)' : 'scale(1) translateY(0px)',
-      zIndex: isActive ? 10 : 1,
-      transition: 'transform 0.15s ease-out',
-    };
-  };
+  const handleDishClick = useCallback(
+    (dishId: string) => {
+      onSwitchDish(dishId);
+      if (typeof window !== 'undefined' && 'vibrate' in navigator) {
+        navigator.vibrate(12);
+      }
+    },
+    [onSwitchDish]
+  );
 
   return (
     <div
-      className="fixed left-1/2 -translate-x-1/2 z-35 pointer-events-auto max-w-[95vw] sm:max-w-4xl select-none"
-      style={{ bottom: 0 }}
+      className="fixed bottom-3 sm:bottom-3.5 left-1/2 -translate-x-1/2 lg:left-[calc((100vw-420px)/2)] lg:-translate-x-1/2 z-35 pointer-events-auto select-none w-[calc(100vw-24px)] max-w-[96vw] lg:max-w-4xl xl:max-w-5xl transition-all duration-300"
+      aria-label="Interactive Dish & Category Dock"
     >
-      {/* Curved Dark Glass Rail with Magnetic Track touching bottom */}
-      <div
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        className="relative flex items-center gap-2 px-3.5 pt-2 pb-2 sm:pb-3 rounded-t-2xl rounded-b-none bg-[rgba(16,12,9,0.92)] backdrop-blur-2xl border-t border-x border-[#F0C36B]/40 border-b-0 shadow-[inset_0_1px_1px_rgba(255,255,255,0.18),0_-8px_32px_rgba(0,0,0,0.9)]"
-      >
-        {/* Category Pill Tag */}
-        {currentCategory && (
-          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#F0C36B]/15 border border-[#F0C36B]/30 text-[#F0C36B] shrink-0 text-[10px] uppercase font-bold tracking-wider">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#F0C36B] animate-pulse" />
-            <span>{currentCategory} ({dishes.length})</span>
-          </div>
-        )}
+      {/* Luxury Glass Dock */}
+      <div className="relative flex items-center gap-2.5 p-2 sm:p-2.5 rounded-2xl sm:rounded-3xl bg-[rgba(14,10,8,0.92)] backdrop-blur-2xl border border-[#F0C36B]/40 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_12px_42px_rgba(0,0,0,0.88)]">
+        
+        {/* ========================================================================= */}
+        {/* SECTION 1: Single Category Button with Direct Dropdown Selector           */}
+        {/* (Directly matching user's yellow scribble request)                        */}
+        {/* ========================================================================= */}
+        <div ref={dropdownRef} className="relative shrink-0">
+          <button
+            type="button"
+            onClick={() => setIsDropdownOpen((prev) => !prev)}
+            aria-expanded={isDropdownOpen}
+            aria-haspopup="listbox"
+            className="group flex items-center gap-2 px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#F0C36B] to-[#D4A346] text-[#120E0B] font-serif font-bold text-xs sm:text-[13px] shadow-[0_2px_14px_rgba(240,195,107,0.45)] hover:shadow-[0_4px_18px_rgba(240,195,107,0.6)] active:scale-97 transition-all cursor-pointer border border-[#FFE3A5]/40"
+            title="Click to change food category"
+          >
+            <span className="text-sm select-none">{currentCategoryInfo.emoji}</span>
+            <span className="tracking-tight">{currentCategoryInfo.label}</span>
+            <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded-full bg-[#120E0B]/20 text-[#120E0B]">
+              {currentCategoryInfo.count}
+            </span>
+            <ChevronDown
+              className={`w-3.5 h-3.5 text-[#120E0B] transition-transform duration-200 ${
+                isDropdownOpen ? 'rotate-180' : ''
+              }`}
+            />
+          </button>
 
-        {/* Left Scroll Arrow */}
-        <button
-          type="button"
-          onClick={() => scroll('left')}
-          className="w-7 h-7 rounded-lg flex items-center justify-center bg-white/[0.04] hover:bg-white/[0.1] text-[#F0C36B] border border-white/5 active:scale-90 transition-all shrink-0 cursor-pointer"
-          aria-label="Previous dishes"
-        >
-          <ChevronLeft className="w-3.5 h-3.5" />
-        </button>
-
-        {/* Scrollable Filmstrip of Dishes with Magnetic Scale */}
-        <div
-          ref={scrollRef}
-          className="overflow-x-auto no-scrollbar scroll-smooth flex items-center gap-2.5 py-3 px-1 max-w-[78vw] sm:max-w-3xl overflow-y-visible"
-        >
-          {dishes.map((dish, idx) => {
-            const isActive = dish.id === currentDishId;
-            const isHovered = hoveredIdx === idx;
-            const style = getTransformStyle(idx);
-
-            return (
-              <div key={dish.id} className="relative shrink-0 flex items-center justify-center">
-                {/* Magnetic Hover Tooltip */}
-                {isHovered && (
-                  <div className="absolute -top-10 left-1/2 -translate-x-1/2 pointer-events-none whitespace-nowrap px-2.5 py-0.5 rounded-full bg-[#120E0B]/95 border border-[#F0C36B]/60 shadow-[0_4px_20px_rgba(0,0,0,0.85)] backdrop-blur-md flex items-center gap-1.5 z-40 animate-in fade-in zoom-in-95 duration-150">
-                    <span
-                      className={`w-1.5 h-1.5 rounded-full ${
-                        dish.isVeg ? 'bg-emerald-400' : 'bg-amber-500'
-                      }`}
-                    />
-                    <span className="font-serif text-[11px] font-semibold text-[#FAF5EC]">
-                      {dish.name}
-                    </span>
-                    {dish.price !== undefined && (
-                      <span className="font-mono text-[10px] font-bold text-[#F0C36B]">
-                        ₹{Math.round(dish.price)}
-                      </span>
-                    )}
-                  </div>
-                )}
-
-                {/* Dish Thumb Button with Magnetic Transform */}
-                <button
-                  ref={(el) => {
-                    itemRefs.current[idx] = el;
-                  }}
-                  type="button"
-                  onClick={() => onSwitchDish(dish.id)}
-                  onMouseEnter={() => setHoveredIdx(idx)}
-                  style={style}
-                  className={`relative shrink-0 rounded-xl overflow-hidden cursor-pointer focus:outline-none will-change-transform ${
-                    isActive
-                      ? 'w-12 h-12 sm:w-14 sm:h-14 border-2 border-[#F0C36B] shadow-[0_0_22px_rgba(240,195,107,0.7)] ring-2 ring-[#F0C36B]/30'
-                      : 'w-11 h-11 sm:w-12 sm:h-12 border border-white/15 opacity-80 hover:opacity-100 hover:border-[#F0C36B]/60 shadow-[0_4px_16px_rgba(0,0,0,0.4)]'
-                  }`}
-                  title={dish.name}
-                >
-                  <img
-                    src={dish.image}
-                    alt={dish.name}
-                    className="w-full h-full object-cover pointer-events-none"
-                    loading="lazy"
-                  />
-                  {/* Active Gold Indicator Underlay */}
-                  {isActive && (
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#F0C36B]/30 via-transparent to-transparent pointer-events-none" />
-                  )}
-                </button>
+          {/* ======================================================================= */}
+          {/* Direct Category Dropdown Menu ("sidha option dikhega select karne ka")  */}
+          {/* ======================================================================= */}
+          {isDropdownOpen && (
+            <div
+              role="listbox"
+              aria-label="Food Categories"
+              className="absolute bottom-full mb-3 left-0 w-56 sm:w-64 rounded-2xl bg-[rgba(18,14,11,0.96)] backdrop-blur-2xl border border-[#F0C36B]/50 shadow-[0_20px_50px_rgba(0,0,0,0.95),inset_0_1px_1px_rgba(255,255,255,0.18)] p-2 z-50 animate-in fade-in slide-in-from-bottom-2 duration-200"
+            >
+              <div className="px-3 py-1.5 text-[10px] font-mono uppercase tracking-widest text-[#F0C36B]/70 font-semibold border-b border-white/[0.08] mb-1 flex items-center justify-between">
+                <span>Select Category</span>
+                <Sparkles className="w-2.5 h-2.5 text-[#F0C36B]" />
               </div>
-            );
-          })}
+
+              {/* All Dishes Option */}
+              <button
+                type="button"
+                role="option"
+                aria-selected={selectedCategory === 'all'}
+                onClick={() => handleSelectCategory('all')}
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-serif font-bold transition-all cursor-pointer ${
+                  selectedCategory === 'all'
+                    ? 'bg-[#F0C36B]/20 text-[#FFE3A5] border border-[#F0C36B]/40'
+                    : 'text-[#D8CFBE] hover:text-white hover:bg-white/[0.07]'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <span>✦</span>
+                  <span>All Dishes</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-white/10 text-[#F0C36B]">
+                    {dishes.length}
+                  </span>
+                  {selectedCategory === 'all' && (
+                    <Check className="w-3.5 h-3.5 text-[#F0C36B]" />
+                  )}
+                </div>
+              </button>
+
+              {/* Specific Category Options */}
+              {categories.map((cat) => {
+                const isSelected = selectedCategory === cat.slug;
+                const emoji = getCategoryEmoji(cat.slug);
+                return (
+                  <button
+                    key={cat.slug}
+                    type="button"
+                    role="option"
+                    aria-selected={isSelected}
+                    onClick={() => handleSelectCategory(cat.slug)}
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-serif font-bold transition-all cursor-pointer mt-0.5 ${
+                      isSelected
+                        ? 'bg-[#F0C36B]/20 text-[#FFE3A5] border border-[#F0C36B]/40'
+                        : 'text-[#D8CFBE] hover:text-white hover:bg-white/[0.07]'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span>{emoji}</span>
+                      <span>{cat.label}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-white/10 text-[#F0C36B]">
+                        {cat.count}
+                      </span>
+                      {isSelected && (
+                        <Check className="w-3.5 h-3.5 text-[#F0C36B]" />
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
 
-        {/* Right Scroll Arrow */}
-        <button
-          type="button"
-          onClick={() => scroll('right')}
-          className="w-7 h-7 rounded-lg flex items-center justify-center bg-white/[0.04] hover:bg-white/[0.1] text-[#F0C36B] border border-white/5 active:scale-90 transition-all shrink-0 cursor-pointer"
-          aria-label="Next dishes"
-        >
-          <ChevronRight className="w-3.5 h-3.5" />
-        </button>
+        {/* Vertical Gold Divider between Category Button & Dishes */}
+        <div className="w-[1px] h-8 bg-gradient-to-b from-transparent via-[#F0C36B]/50 to-transparent shrink-0" />
+
+        {/* ========================================================================= */}
+        {/* SECTION 2: Prominent Tactile Mouse-Interactive Dish Cards                 */}
+        {/* ========================================================================= */}
+        <div className="relative flex-1 flex items-center min-w-0">
+          {/* Left Scroll Chevron */}
+          <button
+            type="button"
+            onClick={() => scroll('left')}
+            className="hidden sm:flex w-7 h-7 rounded-lg items-center justify-center bg-white/[0.04] hover:bg-[#F0C36B]/20 text-[#F0C36B] border border-white/10 hover:border-[#F0C36B]/50 active:scale-90 transition-all shrink-0 cursor-pointer mr-1.5"
+            aria-label="Previous dishes"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+
+          {/* Scrollable Filmstrip of Large, Tactile Mouse-Interactive Dish Cards */}
+          <div
+            ref={scrollRef}
+            className="overflow-x-auto no-scrollbar scroll-smooth flex items-center gap-2.5 py-1 px-0.5 flex-1 overflow-y-visible"
+          >
+            {filteredDishes.map((dishItem) => {
+              const isActive = dishItem.id === currentDishId;
+
+              return (
+                <button
+                  key={dishItem.id}
+                  data-dish-id={dishItem.id}
+                  type="button"
+                  onClick={() => handleDishClick(dishItem.id)}
+                  className={`group relative flex items-center gap-2.5 p-1.5 pr-3.5 rounded-xl border text-left cursor-pointer transition-all duration-200 shrink-0 select-none ${
+                    isActive
+                      ? 'bg-gradient-to-r from-[#F0C36B]/25 via-[#231A13] to-[#18130F] border-[#F0C36B] shadow-[0_0_24px_rgba(240,195,107,0.45),inset_0_1px_1px_rgba(255,255,255,0.22)] ring-1 ring-[#F0C36B]/40'
+                      : 'bg-[#18130F]/90 hover:bg-[#241C16] border-white/10 hover:border-[#F0C36B]/60 shadow-[0_4px_16px_rgba(0,0,0,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.7)] hover:-translate-y-1'
+                  }`}
+                  title={`Select ${dishItem.name}`}
+                >
+                  {/* High-Resolution Close-Up Dish Thumbnail */}
+                  <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden shrink-0 bg-[#0C0907] border border-white/15">
+                    <img
+                      src={dishItem.image}
+                      alt={dishItem.name}
+                      className="w-full h-full object-cover scale-105 group-hover:scale-120 transition-transform duration-300 pointer-events-none"
+                      loading="lazy"
+                    />
+                    {/* Veg / Non-Veg Indicator Dot */}
+                    <div className="absolute top-1 left-1 w-3.5 h-3.5 rounded bg-[#120E0B]/90 border border-white/20 flex items-center justify-center pointer-events-none">
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full ${
+                          dishItem.isVeg ? 'bg-emerald-400' : 'bg-red-500'
+                        }`}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Dish Name & Price for Easy Mouse Selection */}
+                  <div className="flex flex-col min-w-[95px] max-w-[130px] sm:max-w-[160px]">
+                    <span className="text-[12px] sm:text-[13px] font-serif font-bold text-[#FAF5EC] truncate group-hover:text-[#F0C36B] transition-colors leading-tight">
+                      {dishItem.name}
+                    </span>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-[11px] font-mono font-bold text-[#F0C36B]">
+                        ₹{Math.round(dishItem.price || 0)}
+                      </span>
+                      {isActive ? (
+                        <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider font-bold text-[#F0C36B] bg-[#F0C36B]/15 px-1.5 py-0.2 rounded border border-[#F0C36B]/30">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#F0C36B] animate-pulse" />
+                          Viewing
+                        </span>
+                      ) : (
+                        <span className="text-[9px] text-[#A69B8D] uppercase tracking-wider group-hover:text-[#E0D8CC]">
+                          Select
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Right Scroll Chevron */}
+          <button
+            type="button"
+            onClick={() => scroll('right')}
+            className="hidden sm:flex w-7 h-7 rounded-lg items-center justify-center bg-white/[0.04] hover:bg-[#F0C36B]/20 text-[#F0C36B] border border-white/10 hover:border-[#F0C36B]/50 active:scale-90 transition-all shrink-0 cursor-pointer ml-1.5"
+            aria-label="Next dishes"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+
       </div>
     </div>
   );

@@ -1,0 +1,2182 @@
+{
+  "$schema": "./unreferenced-assets-manifest.schema.json",
+  "audit_metadata": {
+    "manifest_version": "2.0.0",
+    "generated_at": "2026-10-27T19:58:34.664164+00:00",
+    "auditor": "Agent 12 (Static Media & Dead-Weight Bundle Auditor)",
+    "project": "The Golden Oak",
+    "scanner": "Phase 2 Comprehensive Asset Reference Scanner",
+    "scope": [
+      "public/",
+      "src/",
+      "convex/",
+      "public/manifest.json",
+      "public/sw.js"
+    ],
+    "safety_rule": "DO NOT DELETE ANY FILES DESTRUCTIVELY - Report and Manifest Only"
+  },
+  "summary": {
+    "total_public_files_count": 79,
+    "total_public_size_bytes": 58338492,
+    "total_public_size_mb": 55.64,
+    "actively_referenced_files_count": 32,
+    "actively_referenced_size_bytes": 22626090,
+    "actively_referenced_size_mb": 21.58,
+    "unreferenced_files_count": 47,
+    "unreferenced_size_bytes": 35712402,
+    "unreferenced_size_mb": 34.06,
+    "deployment_payload_savings": {
+      "excluded_files_count": 47,
+      "payload_savings_bytes": 35712402,
+      "payload_savings_mb": 34.06,
+      "reduction_percentage": 61.22,
+      "edge_bundle_efficiency": "Excluding these 47 unreferenced files shrinks static deployment payload by 34.06 MB (61.22% reduction)"
+    },
+    "phase_1_baseline_reconciliation": {
+      "phase_1_baseline_description": "Phase 1 initial audit identified ~46 unreferenced assets (~18 MB dead weight) including 8K wallpaper renders, master crops, and raw dish JPEGs.",
+      "legacy_dead_weight_count": 45,
+      "legacy_dead_weight_bytes": 19386341,
+      "legacy_dead_weight_mb": 18.49,
+      "phase_2_staging_candidates_count": 2,
+      "phase_2_staging_candidates_bytes": 6846909,
+      "phase_2_staging_candidates_mb": 6.53,
+      "phase_2_superseded_master_count": 1,
+      "phase_2_superseded_master_bytes": 10126288,
+      "phase_2_superseded_master_mb": 9.66,
+      "explanation": "The 47 unreferenced files consist of: (1) 44 legacy dead weight media assets (18.74 MB), (2) 2 Phase 2 companion optimization staging assets (the_golden_oak_interior.optimized.glb and forest_env.optimized.hdr totaling 6.53 MB), and (3) 1 preserved master GLB model (warrior_scene.glb, 9.66 MB) which is preserved on disk per tests/shared-3d-model.test.mjs but excluded from the edge bundle since the app uses warrior_model.glb (647 KB)."
+    },
+    "unreferenced_breakdown_by_category": {
+      "Preserved Original Master Asset / Fallback": {
+        "count": 1,
+        "size_bytes": 10126288,
+        "size_mb": 9.66
+      },
+      "Phase 2 Optimized 3D Model Staging": {
+        "count": 1,
+        "size_bytes": 6367656,
+        "size_mb": 6.07
+      },
+      "High-Resolution Renders (8K)": {
+        "count": 2,
+        "size_bytes": 3725146,
+        "size_mb": 3.55
+      },
+      "Unused High-Resolution Backgrounds": {
+        "count": 4,
+        "size_bytes": 4377638,
+        "size_mb": 4.17
+      },
+      "Design Reference Concepts & Mockups": {
+        "count": 5,
+        "size_bytes": 3207024,
+        "size_mb": 3.06
+      },
+      "Inpainted / Cleaned Iterations": {
+        "count": 5,
+        "size_bytes": 2054463,
+        "size_mb": 1.96
+      },
+      "Legacy Uncompressed Dish Photography (JPEG)": {
+        "count": 3,
+        "size_bytes": 2284993,
+        "size_mb": 2.18
+      },
+      "Hero Dish Showcase Cutouts & Iterations": {
+        "count": 4,
+        "size_bytes": 2028818,
+        "size_mb": 1.93
+      },
+      "Phase 2 Optimized Environment HDR Staging": {
+        "count": 1,
+        "size_bytes": 479253,
+        "size_mb": 0.46
+      },
+      "Unreferenced Asset": {
+        "count": 1,
+        "size_bytes": 373778,
+        "size_mb": 0.36
+      },
+      "Development Slices & Alignment Crops": {
+        "count": 12,
+        "size_bytes": 547760,
+        "size_mb": 0.52
+      },
+      "Unused Dish Thumbnails & Legacy PNGs": {
+        "count": 3,
+        "size_bytes": 136271,
+        "size_mb": 0.13
+      },
+      "Boilerplate / Starter SVGs": {
+        "count": 5,
+        "size_bytes": 3314,
+        "size_mb": 0.0
+      }
+    }
+  },
+  "unreferenced_assets": [
+    {
+      "path": "public/models/warrior_scene.glb",
+      "relative_to_public": "models/warrior_scene.glb",
+      "filename": "warrior_scene.glb",
+      "size_bytes": 10126288,
+      "size_formatted": "9.66 MB",
+      "dimensions": "3D Model (GLB)",
+      "width": null,
+      "height": null,
+      "type": "model/gltf-binary",
+      "references": [],
+      "is_referenced": false,
+      "category": "Preserved Original Master Asset / Fallback",
+      "reason": "Original 10.12 MB uncompressed GLB scene preserved intact on disk per test suite invariant (tests/shared-3d-model.test.mjs); active UI uses Draco-compressed warrior_model.glb (647 KB)",
+      "audit_status": "Preserved on Disk (Invariant Test Passed) / Excluded from Edge Payload"
+    },
+    {
+      "path": "public/models/the_golden_oak_interior.optimized.glb",
+      "relative_to_public": "models/the_golden_oak_interior.optimized.glb",
+      "filename": "the_golden_oak_interior.optimized.glb",
+      "size_bytes": 6367656,
+      "size_formatted": "6.07 MB",
+      "dimensions": "3D Model (GLB)",
+      "width": null,
+      "height": null,
+      "type": "model/gltf-binary",
+      "references": [],
+      "is_referenced": false,
+      "category": "Phase 2 Optimized 3D Model Staging",
+      "reason": "Draco-compressed optimized staging candidate (6.07 MB, 46.2% reduction) generated during Phase 2 3D optimization benchmarks, pending final production cutover",
+      "audit_status": "Staging Candidate / Excluded from Edge Payload"
+    },
+    {
+      "path": "public/images/hero-masterpiece-8k.png",
+      "relative_to_public": "images/hero-masterpiece-8k.png",
+      "filename": "hero-masterpiece-8k.png",
+      "size_bytes": 1862573,
+      "size_formatted": "1.78 MB",
+      "dimensions": "3840x1882",
+      "width": 3840,
+      "height": 1882,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "High-Resolution Renders (8K)",
+      "reason": "3840x1882 high-resolution render/wallpaper (1.78 MB), not referenced in any UI route or style",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/hero-masterpiece-v2.png",
+      "relative_to_public": "images/hero-masterpiece-v2.png",
+      "filename": "hero-masterpiece-v2.png",
+      "size_bytes": 1862573,
+      "size_formatted": "1.78 MB",
+      "dimensions": "3840x1882",
+      "width": 3840,
+      "height": 1882,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "High-Resolution Renders (8K)",
+      "reason": "3840x1882 high-resolution render/wallpaper (1.78 MB), not referenced in any UI route or style",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/golden-oak-interior.jpg",
+      "relative_to_public": "images/golden-oak-interior.jpg",
+      "filename": "golden-oak-interior.jpg",
+      "size_bytes": 1387101,
+      "size_formatted": "1.32 MB",
+      "dimensions": "2800x3733",
+      "width": 2800,
+      "height": 3733,
+      "type": "image/jpeg",
+      "references": [],
+      "is_referenced": false,
+      "category": "Unused High-Resolution Backgrounds",
+      "reason": "Large background renders (up to 2800x3733, 1.38 MB) not used in any page route",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/bg-perfectly-aligned.png",
+      "relative_to_public": "images/bg-perfectly-aligned.png",
+      "filename": "bg-perfectly-aligned.png",
+      "size_bytes": 1180553,
+      "size_formatted": "1.13 MB",
+      "dimensions": "1024x502",
+      "width": 1024,
+      "height": 502,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Unused High-Resolution Backgrounds",
+      "reason": "Large background renders (up to 2800x3733, 1.38 MB) not used in any page route",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/test-clean-hero.png",
+      "relative_to_public": "images/test-clean-hero.png",
+      "filename": "test-clean-hero.png",
+      "size_bytes": 1101853,
+      "size_formatted": "1.05 MB",
+      "dimensions": "1024x502",
+      "width": 1024,
+      "height": 502,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Unused High-Resolution Backgrounds",
+      "reason": "Large background renders (up to 2800x3733, 1.38 MB) not used in any page route",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/hero-reference-full.png",
+      "relative_to_public": "images/hero-reference-full.png",
+      "filename": "hero-reference-full.png",
+      "size_bytes": 1045248,
+      "size_formatted": "1020.75 KB",
+      "dimensions": "1024x502",
+      "width": 1024,
+      "height": 502,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Design Reference Concepts & Mockups",
+      "reason": "Intermediate design mockups and reference backdrops generated during development, never referenced in src/",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/hero-clean-1024.png",
+      "relative_to_public": "images/hero-clean-1024.png",
+      "filename": "hero-clean-1024.png",
+      "size_bytes": 1016376,
+      "size_formatted": "992.55 KB",
+      "dimensions": "1024x502",
+      "width": 1024,
+      "height": 502,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Inpainted / Cleaned Iterations",
+      "reason": "Intermediate inpainting and retouching iterations for the hero section, superseded by production assets",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/dishes/burger.jpg",
+      "relative_to_public": "images/dishes/burger.jpg",
+      "filename": "burger.jpg",
+      "size_bytes": 809026,
+      "size_formatted": "790.06 KB",
+      "dimensions": "1024x1024",
+      "width": 1024,
+      "height": 1024,
+      "type": "image/jpeg",
+      "references": [],
+      "is_referenced": false,
+      "category": "Legacy Uncompressed Dish Photography (JPEG)",
+      "reason": "Heavy uncompressed JPEG dish photo (~750 KB) superseded by lightweight production WebP dish image (~120 KB)",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/hero-reference-2k.png",
+      "relative_to_public": "images/hero-reference-2k.png",
+      "filename": "hero-reference-2k.png",
+      "size_bytes": 797389,
+      "size_formatted": "778.70 KB",
+      "dimensions": "2048x1004",
+      "width": 2048,
+      "height": 1004,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Design Reference Concepts & Mockups",
+      "reason": "Intermediate design mockups and reference backdrops generated during development, never referenced in src/",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/hero-unified-luxury.png",
+      "relative_to_public": "images/hero-unified-luxury.png",
+      "filename": "hero-unified-luxury.png",
+      "size_bytes": 765188,
+      "size_formatted": "747.25 KB",
+      "dimensions": "1920x960",
+      "width": 1920,
+      "height": 960,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Design Reference Concepts & Mockups",
+      "reason": "Intermediate design mockups and reference backdrops generated during development, never referenced in src/",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/dishes/chilli-potato.jpg",
+      "relative_to_public": "images/dishes/chilli-potato.jpg",
+      "filename": "chilli-potato.jpg",
+      "size_bytes": 759153,
+      "size_formatted": "741.36 KB",
+      "dimensions": "1024x1024",
+      "width": 1024,
+      "height": 1024,
+      "type": "image/jpeg",
+      "references": [],
+      "is_referenced": false,
+      "category": "Legacy Uncompressed Dish Photography (JPEG)",
+      "reason": "Heavy uncompressed JPEG dish photo (~750 KB) superseded by lightweight production WebP dish image (~120 KB)",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/dishes/chowmein.jpg",
+      "relative_to_public": "images/dishes/chowmein.jpg",
+      "filename": "chowmein.jpg",
+      "size_bytes": 716814,
+      "size_formatted": "700.01 KB",
+      "dimensions": "1024x1024",
+      "width": 1024,
+      "height": 1024,
+      "type": "image/jpeg",
+      "references": [],
+      "is_referenced": false,
+      "category": "Legacy Uncompressed Dish Photography (JPEG)",
+      "reason": "Heavy uncompressed JPEG dish photo (~750 KB) superseded by lightweight production WebP dish image (~120 KB)",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/story-hero-bg.jpg",
+      "relative_to_public": "images/story-hero-bg.jpg",
+      "filename": "story-hero-bg.jpg",
+      "size_bytes": 708131,
+      "size_formatted": "691.53 KB",
+      "dimensions": "1376x768",
+      "width": 1376,
+      "height": 768,
+      "type": "image/jpeg",
+      "references": [],
+      "is_referenced": false,
+      "category": "Unused High-Resolution Backgrounds",
+      "reason": "Large background renders (up to 2800x3733, 1.38 MB) not used in any page route",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/dishes/hero-showcase-raw.png",
+      "relative_to_public": "images/dishes/hero-showcase-raw.png",
+      "filename": "hero-showcase-raw.png",
+      "size_bytes": 616508,
+      "size_formatted": "602.06 KB",
+      "dimensions": "614x430",
+      "width": 614,
+      "height": 430,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Hero Dish Showcase Cutouts & Iterations",
+      "reason": "Raw and transparent cutout variations created while crafting the 3D hero pedestal, superseded by hero-pizza-full-showcase.png",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/dishes/hero-truffle-pizza-transparent.png",
+      "relative_to_public": "images/dishes/hero-truffle-pizza-transparent.png",
+      "filename": "hero-truffle-pizza-transparent.png",
+      "size_bytes": 547555,
+      "size_formatted": "534.72 KB",
+      "dimensions": "540x350",
+      "width": 540,
+      "height": 350,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Hero Dish Showcase Cutouts & Iterations",
+      "reason": "Raw and transparent cutout variations created while crafting the 3D hero pedestal, superseded by hero-pizza-full-showcase.png",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/dishes/hero-truffle-pizza-showcase.png",
+      "relative_to_public": "images/dishes/hero-truffle-pizza-showcase.png",
+      "filename": "hero-truffle-pizza-showcase.png",
+      "size_bytes": 484866,
+      "size_formatted": "473.50 KB",
+      "dimensions": "540x350",
+      "width": 540,
+      "height": 350,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Hero Dish Showcase Cutouts & Iterations",
+      "reason": "Raw and transparent cutout variations created while crafting the 3D hero pedestal, superseded by hero-pizza-full-showcase.png",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/textures/forest_env.optimized.hdr",
+      "relative_to_public": "textures/forest_env.optimized.hdr",
+      "filename": "forest_env.optimized.hdr",
+      "size_bytes": 479253,
+      "size_formatted": "468.02 KB",
+      "dimensions": "512x256",
+      "width": 512,
+      "height": 256,
+      "type": "image/vnd.radiance",
+      "references": [],
+      "is_referenced": false,
+      "category": "Phase 2 Optimized Environment HDR Staging",
+      "reason": "Downsampled 512x256 Radiance HDR companion (479 KB, 74.5% reduction) generated by Agent 11, verified by tests/hdr-optimization.test.mjs",
+      "audit_status": "Staging Candidate / Excluded from Edge Payload"
+    },
+    {
+      "path": "public/images/hero-reference-backdrop-clean.png",
+      "relative_to_public": "images/hero-reference-backdrop-clean.png",
+      "filename": "hero-reference-backdrop-clean.png",
+      "size_bytes": 411657,
+      "size_formatted": "402.01 KB",
+      "dimensions": "2048x1004",
+      "width": 2048,
+      "height": 1004,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Design Reference Concepts & Mockups",
+      "reason": "Intermediate design mockups and reference backdrops generated during development, never referenced in src/",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/ref2-left.png",
+      "relative_to_public": "images/ref2-left.png",
+      "filename": "ref2-left.png",
+      "size_bytes": 406102,
+      "size_formatted": "396.58 KB",
+      "dimensions": "450x502",
+      "width": 450,
+      "height": 502,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Inpainted / Cleaned Iterations",
+      "reason": "Intermediate inpainting and retouching iterations for the hero section, superseded by production assets",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/dishes/hero-pizza-clean.png",
+      "relative_to_public": "images/dishes/hero-pizza-clean.png",
+      "filename": "hero-pizza-clean.png",
+      "size_bytes": 388314,
+      "size_formatted": "379.21 KB",
+      "dimensions": "410x350",
+      "width": 410,
+      "height": 350,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Inpainted / Cleaned Iterations",
+      "reason": "Intermediate inpainting and retouching iterations for the hero section, superseded by production assets",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/dishes/hero-truffle-pizza-isolated.png",
+      "relative_to_public": "images/dishes/hero-truffle-pizza-isolated.png",
+      "filename": "hero-truffle-pizza-isolated.png",
+      "size_bytes": 379889,
+      "size_formatted": "370.99 KB",
+      "dimensions": "440x310",
+      "width": 440,
+      "height": 310,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Hero Dish Showcase Cutouts & Iterations",
+      "reason": "Raw and transparent cutout variations created while crafting the 3D hero pedestal, superseded by hero-pizza-full-showcase.png",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/hero-left-raw.png",
+      "relative_to_public": "images/hero-left-raw.png",
+      "filename": "hero-left-raw.png",
+      "size_bytes": 373778,
+      "size_formatted": "365.02 KB",
+      "dimensions": "415x502",
+      "width": 415,
+      "height": 502,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Unreferenced Asset",
+      "reason": "Not referenced in any source or config file",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/hero-inpainted-1024.png",
+      "relative_to_public": "images/hero-inpainted-1024.png",
+      "filename": "hero-inpainted-1024.png",
+      "size_bytes": 231114,
+      "size_formatted": "225.70 KB",
+      "dimensions": "1024x502",
+      "width": 1024,
+      "height": 502,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Inpainted / Cleaned Iterations",
+      "reason": "Intermediate inpainting and retouching iterations for the hero section, superseded by production assets",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/hero-reference-clean-bg.png",
+      "relative_to_public": "images/hero-reference-clean-bg.png",
+      "filename": "hero-reference-clean-bg.png",
+      "size_bytes": 187542,
+      "size_formatted": "183.15 KB",
+      "dimensions": "1024x502",
+      "width": 1024,
+      "height": 502,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Design Reference Concepts & Mockups",
+      "reason": "Intermediate design mockups and reference backdrops generated during development, never referenced in src/",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/3d-lounge-right-area.png",
+      "relative_to_public": "images/3d-lounge-right-area.png",
+      "filename": "3d-lounge-right-area.png",
+      "size_bytes": 128393,
+      "size_formatted": "125.38 KB",
+      "dimensions": "220x400",
+      "width": 220,
+      "height": 400,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Development Slices & Alignment Crops",
+      "reason": "UI slicing artifacts, alignment test patches, and button crops left behind during development",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/bg-right-wall.png",
+      "relative_to_public": "images/bg-right-wall.png",
+      "filename": "bg-right-wall.png",
+      "size_bytes": 97876,
+      "size_formatted": "95.58 KB",
+      "dimensions": "176x400",
+      "width": 176,
+      "height": 400,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Development Slices & Alignment Crops",
+      "reason": "UI slicing artifacts, alignment test patches, and button crops left behind during development",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/booking-crop-red.png",
+      "relative_to_public": "images/booking-crop-red.png",
+      "filename": "booking-crop-red.png",
+      "size_bytes": 90927,
+      "size_formatted": "88.80 KB",
+      "dimensions": "500x220",
+      "width": 500,
+      "height": 220,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Development Slices & Alignment Crops",
+      "reason": "UI slicing artifacts, alignment test patches, and button crops left behind during development",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/dishes/chicken-pot-pie.png",
+      "relative_to_public": "images/dishes/chicken-pot-pie.png",
+      "filename": "chicken-pot-pie.png",
+      "size_bytes": 53510,
+      "size_formatted": "52.26 KB",
+      "dimensions": "198x93",
+      "width": 198,
+      "height": 93,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Unused Dish Thumbnails & Legacy PNGs",
+      "reason": "Legacy dish crops/thumbnails for dishes not present in the active menu",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/right-dock-raw.png",
+      "relative_to_public": "images/right-dock-raw.png",
+      "filename": "right-dock-raw.png",
+      "size_bytes": 50765,
+      "size_formatted": "49.58 KB",
+      "dimensions": "109x260",
+      "width": 109,
+      "height": 260,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Development Slices & Alignment Crops",
+      "reason": "UI slicing artifacts, alignment test patches, and button crops left behind during development",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/dishes/massed-salad.png",
+      "relative_to_public": "images/dishes/massed-salad.png",
+      "filename": "massed-salad.png",
+      "size_bytes": 43564,
+      "size_formatted": "42.54 KB",
+      "dimensions": "198x93",
+      "width": 198,
+      "height": 93,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Unused Dish Thumbnails & Legacy PNGs",
+      "reason": "Legacy dish crops/thumbnails for dishes not present in the active menu",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/dishes/rice-toppings.png",
+      "relative_to_public": "images/dishes/rice-toppings.png",
+      "filename": "rice-toppings.png",
+      "size_bytes": 39197,
+      "size_formatted": "38.28 KB",
+      "dimensions": "198x93",
+      "width": 198,
+      "height": 93,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Unused Dish Thumbnails & Legacy PNGs",
+      "reason": "Legacy dish crops/thumbnails for dishes not present in the active menu",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/pill-patch-test.png",
+      "relative_to_public": "images/pill-patch-test.png",
+      "filename": "pill-patch-test.png",
+      "size_bytes": 38925,
+      "size_formatted": "38.01 KB",
+      "dimensions": "250x80",
+      "width": 250,
+      "height": 80,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Development Slices & Alignment Crops",
+      "reason": "UI slicing artifacts, alignment test patches, and button crops left behind during development",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/right-wall-sample.png",
+      "relative_to_public": "images/right-wall-sample.png",
+      "filename": "right-wall-sample.png",
+      "size_bytes": 28484,
+      "size_formatted": "27.82 KB",
+      "dimensions": "80x320",
+      "width": 80,
+      "height": 320,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Development Slices & Alignment Crops",
+      "reason": "UI slicing artifacts, alignment test patches, and button crops left behind during development",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/dock-crop.png",
+      "relative_to_public": "images/dock-crop.png",
+      "filename": "dock-crop.png",
+      "size_bytes": 27193,
+      "size_formatted": "26.56 KB",
+      "dimensions": "75x210",
+      "width": 75,
+      "height": 210,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Development Slices & Alignment Crops",
+      "reason": "UI slicing artifacts, alignment test patches, and button crops left behind during development",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/lower-left-test.png",
+      "relative_to_public": "images/lower-left-test.png",
+      "filename": "lower-left-test.png",
+      "size_bytes": 23088,
+      "size_formatted": "22.55 KB",
+      "dimensions": "250x50",
+      "width": 250,
+      "height": 50,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Development Slices & Alignment Crops",
+      "reason": "UI slicing artifacts, alignment test patches, and button crops left behind during development",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/far-right.png",
+      "relative_to_public": "images/far-right.png",
+      "filename": "far-right.png",
+      "size_bytes": 20890,
+      "size_formatted": "20.40 KB",
+      "dimensions": "44x250",
+      "width": 44,
+      "height": 250,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Development Slices & Alignment Crops",
+      "reason": "UI slicing artifacts, alignment test patches, and button crops left behind during development",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/left-marble-test.png",
+      "relative_to_public": "images/left-marble-test.png",
+      "filename": "left-marble-test.png",
+      "size_bytes": 20153,
+      "size_formatted": "19.68 KB",
+      "dimensions": "215x48",
+      "width": 215,
+      "height": 48,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Development Slices & Alignment Crops",
+      "reason": "UI slicing artifacts, alignment test patches, and button crops left behind during development",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/pill-crop.png",
+      "relative_to_public": "images/pill-crop.png",
+      "filename": "pill-crop.png",
+      "size_bytes": 19610,
+      "size_formatted": "19.15 KB",
+      "dimensions": "220x45",
+      "width": 220,
+      "height": 45,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Development Slices & Alignment Crops",
+      "reason": "UI slicing artifacts, alignment test patches, and button crops left behind during development",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/pill-clean-test.png",
+      "relative_to_public": "images/pill-clean-test.png",
+      "filename": "pill-clean-test.png",
+      "size_bytes": 12557,
+      "size_formatted": "12.26 KB",
+      "dimensions": "240x70",
+      "width": 240,
+      "height": 70,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Inpainted / Cleaned Iterations",
+      "reason": "Intermediate inpainting and retouching iterations for the hero section, superseded by production assets",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/images/foodie-kitchen-logo.png",
+      "relative_to_public": "images/foodie-kitchen-logo.png",
+      "filename": "foodie-kitchen-logo.png",
+      "size_bytes": 1456,
+      "size_formatted": "1.42 KB",
+      "dimensions": "110x40",
+      "width": 110,
+      "height": 40,
+      "type": "image/png",
+      "references": [],
+      "is_referenced": false,
+      "category": "Development Slices & Alignment Crops",
+      "reason": "UI slicing artifacts, alignment test patches, and button crops left behind during development",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/next.svg",
+      "relative_to_public": "next.svg",
+      "filename": "next.svg",
+      "size_bytes": 1375,
+      "size_formatted": "1.34 KB",
+      "dimensions": "394x80",
+      "width": 394,
+      "height": 80,
+      "type": "image/svg+xml",
+      "references": [],
+      "is_referenced": false,
+      "category": "Boilerplate / Starter SVGs",
+      "reason": "Default Next.js starter template boilerplate asset, not used anywhere in application",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/globe.svg",
+      "relative_to_public": "globe.svg",
+      "filename": "globe.svg",
+      "size_bytes": 1035,
+      "size_formatted": "1.01 KB",
+      "dimensions": "16x16",
+      "width": 16,
+      "height": 16,
+      "type": "image/svg+xml",
+      "references": [],
+      "is_referenced": false,
+      "category": "Boilerplate / Starter SVGs",
+      "reason": "Default Next.js starter template boilerplate asset, not used anywhere in application",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/file.svg",
+      "relative_to_public": "file.svg",
+      "filename": "file.svg",
+      "size_bytes": 391,
+      "size_formatted": "0.38 KB",
+      "dimensions": "16x16",
+      "width": 16,
+      "height": 16,
+      "type": "image/svg+xml",
+      "references": [],
+      "is_referenced": false,
+      "category": "Boilerplate / Starter SVGs",
+      "reason": "Default Next.js starter template boilerplate asset, not used anywhere in application",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/window.svg",
+      "relative_to_public": "window.svg",
+      "filename": "window.svg",
+      "size_bytes": 385,
+      "size_formatted": "0.38 KB",
+      "dimensions": "16x16",
+      "width": 16,
+      "height": 16,
+      "type": "image/svg+xml",
+      "references": [],
+      "is_referenced": false,
+      "category": "Boilerplate / Starter SVGs",
+      "reason": "Default Next.js starter template boilerplate asset, not used anywhere in application",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    },
+    {
+      "path": "public/vercel.svg",
+      "relative_to_public": "vercel.svg",
+      "filename": "vercel.svg",
+      "size_bytes": 128,
+      "size_formatted": "0.12 KB",
+      "dimensions": "1155x1000",
+      "width": 1155,
+      "height": 1000,
+      "type": "image/svg+xml",
+      "references": [],
+      "is_referenced": false,
+      "category": "Boilerplate / Starter SVGs",
+      "reason": "Default Next.js starter template boilerplate asset, not used anywhere in application",
+      "audit_status": "Dead Weight / Exclude from Edge Deployment"
+    }
+  ],
+  "actively_referenced_assets": [
+    {
+      "path": "public/models/the_golden_oak_interior.glb",
+      "relative_to_public": "models/the_golden_oak_interior.glb",
+      "filename": "the_golden_oak_interior.glb",
+      "size_bytes": 11840564,
+      "size_formatted": "11.29 MB",
+      "dimensions": "3D Model (GLB)",
+      "width": null,
+      "height": null,
+      "type": "model/gltf-binary",
+      "references": [
+        {
+          "file": "src/components/booking/OptimizedInteriorModel.tsx",
+          "line": 13,
+          "context": "export const INTERIOR_MODEL_URL = '/models/the_golden_oak_interior.glb';",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/booking/Restaurant3DFloorplan.tsx",
+          "line": 40,
+          "context": "useGLTF.preload('/models/the_golden_oak_interior.glb');",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/booking/Restaurant3DFloorplan.tsx",
+          "line": 245,
+          "context": "const { scene } = useGLTF('/models/the_golden_oak_interior.glb');",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "Production 3D Models (GLB)",
+      "description": "Active 3D glTF model loaded by Three.js / React Three Fiber viewers"
+    },
+    {
+      "path": "public/textures/forest_env.hdr",
+      "relative_to_public": "textures/forest_env.hdr",
+      "filename": "forest_env.hdr",
+      "size_bytes": 1881946,
+      "size_formatted": "1.79 MB",
+      "dimensions": "1024x512",
+      "width": 1024,
+      "height": 512,
+      "type": "image/vnd.radiance",
+      "references": [
+        {
+          "file": "src/components/booking/Restaurant3DFloorplan.tsx",
+          "line": 643,
+          "context": "<Environment files=\"/textures/forest_env.hdr\" environmentIntensity={quality.environmentIntensity} />",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "Production Environment HDR Textures",
+      "description": "Radiance HDR image used for image-based lighting (IBL) in 3D floorplan"
+    },
+    {
+      "path": "public/images/hero.jpg",
+      "relative_to_public": "images/hero.jpg",
+      "filename": "hero.jpg",
+      "size_bytes": 1166539,
+      "size_formatted": "1.11 MB",
+      "dimensions": "1536x2752",
+      "width": 1536,
+      "height": 2752,
+      "type": "image/jpeg",
+      "references": [
+        {
+          "file": "src/components/home/StorySection.tsx",
+          "line": 85,
+          "context": "src=\"/images/hero.jpg\"",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "Active UI Photography & Backgrounds",
+      "description": "Active background graphic or avatar wired directly to Next.js page routes"
+    },
+    {
+      "path": "public/images/reservation-bg.jpg",
+      "relative_to_public": "images/reservation-bg.jpg",
+      "filename": "reservation-bg.jpg",
+      "size_bytes": 854183,
+      "size_formatted": "834.16 KB",
+      "dimensions": "1376x768",
+      "width": 1376,
+      "height": 768,
+      "type": "image/jpeg",
+      "references": [
+        {
+          "file": "src/app/booking/BookingClient.tsx",
+          "line": 353,
+          "context": "backgroundImage: \"url('/images/reservation-bg.jpg')\",",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "Active UI Photography & Backgrounds",
+      "description": "Active background graphic or avatar wired directly to Next.js page routes"
+    },
+    {
+      "path": "public/images/profile-bg.jpg",
+      "relative_to_public": "images/profile-bg.jpg",
+      "filename": "profile-bg.jpg",
+      "size_bytes": 782349,
+      "size_formatted": "764.01 KB",
+      "dimensions": "1376x768",
+      "width": 1376,
+      "height": 768,
+      "type": "image/jpeg",
+      "references": [
+        {
+          "file": "src/components/profile/ProfileDashboardClient.tsx",
+          "line": 146,
+          "context": "backgroundImage: \"url('/images/profile-bg.jpg')\",",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/profile/ProfileDashboardClient.tsx",
+          "line": 290,
+          "context": "src=\"/images/profile-bg.jpg\"",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "Active UI Photography & Backgrounds",
+      "description": "Active background graphic or avatar wired directly to Next.js page routes"
+    },
+    {
+      "path": "public/images/dishes/pizza.jpg",
+      "relative_to_public": "images/dishes/pizza.jpg",
+      "filename": "pizza.jpg",
+      "size_bytes": 760798,
+      "size_formatted": "742.97 KB",
+      "dimensions": "1024x1024",
+      "width": 1024,
+      "height": 1024,
+      "type": "image/jpeg",
+      "references": [
+        {
+          "file": "src/components/profile/ProfileDashboardClient.tsx",
+          "line": 533,
+          "context": "src=\"/images/dishes/pizza.jpg\"",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "Dish Photography Fallback / Showcase",
+      "description": "Fallback dish image or 3D pedestal showcase graphic"
+    },
+    {
+      "path": "public/images/dishes/placeholder.jpg",
+      "relative_to_public": "images/dishes/placeholder.jpg",
+      "filename": "placeholder.jpg",
+      "size_bytes": 760798,
+      "size_formatted": "742.97 KB",
+      "dimensions": "1024x1024",
+      "width": 1024,
+      "height": 1024,
+      "type": "image/jpeg",
+      "references": [
+        {
+          "file": "src/app/layout.tsx",
+          "line": 38,
+          "context": "url: '/images/dishes/placeholder.jpg',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/app/layout.tsx",
+          "line": 52,
+          "context": "images: ['/images/dishes/placeholder.jpg'],",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/app/layout.tsx",
+          "line": 68,
+          "context": "image: '/images/dishes/placeholder.jpg',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/app/3d/[dishId]/page.tsx",
+          "line": 23,
+          "context": "image: d.image_url || '/images/dishes/placeholder.jpg',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/app/3d/[dishId]/page.tsx",
+          "line": 37,
+          "context": "dishImage={dish.image_url || '/images/dishes/placeholder.jpg'}",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/app/ar/[dishId]/page.tsx",
+          "line": 23,
+          "context": "dishImage={dish.image_url || '/images/dishes/placeholder.jpg'}",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/app/favorites/page.tsx",
+          "line": 15,
+          "context": "image: d.image_url || '/images/dishes/placeholder.jpg',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/app/profile/orders/page.tsx",
+          "line": 34,
+          "context": "image: '/images/dishes/placeholder.jpg',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/app/profile/orders/[orderId]/page.tsx",
+          "line": 45,
+          "context": "image: '/images/dishes/placeholder.jpg',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/dish/DishDetailHero.tsx",
+          "line": 18,
+          "context": "src={dish.image || '/images/dishes/placeholder.jpg'}",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/dish/RecommendationCarousel.tsx",
+          "line": 29,
+          "context": "src={dish.image || '/images/dishes/placeholder.jpg'}",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/home/DishQuickViewModal.tsx",
+          "line": 80,
+          "context": "src={dish.image || '/images/dishes/placeholder.jpg'}",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/home/HeroSection.tsx",
+          "line": 80,
+          "context": "image: dish.image_url || '/images/dishes/placeholder.jpg',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/home/HeroSection.tsx",
+          "line": 235,
+          "context": "src={dish.image_url || '/images/dishes/placeholder.jpg'}",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/home/RecentlyViewedSection.tsx",
+          "line": 82,
+          "context": "image: dish.image_url || '/images/dishes/placeholder.jpg',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/home/RecentlyViewedSection.tsx",
+          "line": 127,
+          "context": "src={dish.image_url || '/images/dishes/placeholder.jpg'}",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/menu/DishDetailsClient.tsx",
+          "line": 39,
+          "context": "image: dish.image_url || '/images/dishes/placeholder.jpg',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/menu/DishDetailsClient.tsx",
+          "line": 74,
+          "context": "src={dish.image_url || '/images/dishes/placeholder.jpg'}",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/ui/DishCard.tsx",
+          "line": 53,
+          "context": "src={dish.image || '/images/dishes/placeholder.jpg'}",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/viewer/DishInfoBar.tsx",
+          "line": 116,
+          "context": "src={dish.image || '/images/dishes/placeholder.jpg'}",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/lib/db/bridge.ts",
+          "line": 25,
+          "context": "image: dish.image_url ?? '/images/dishes/placeholder.jpg',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/lib/utils/dish-images.ts",
+          "line": 21,
+          "context": "if (currentUrl && currentUrl !== '/images/dishes/placeholder.jpg' && !currentUrl.includes('placeholder')) {",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "convex/menu.ts",
+          "line": 44,
+          "context": "image: d.imageUrl || \"/images/dishes/placeholder.jpg\",",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "convex/menu.ts",
+          "line": 90,
+          "context": "image: d.imageUrl || \"/images/dishes/placeholder.jpg\",",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "convex/menu.ts",
+          "line": 130,
+          "context": "image: d.imageUrl || \"/images/dishes/placeholder.jpg\",",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "Dish Photography Fallback / Showcase",
+      "description": "Fallback dish image or 3D pedestal showcase graphic"
+    },
+    {
+      "path": "public/images/3d-lounge-bg.jpg",
+      "relative_to_public": "images/3d-lounge-bg.jpg",
+      "filename": "3d-lounge-bg.jpg",
+      "size_bytes": 737218,
+      "size_formatted": "719.94 KB",
+      "dimensions": "1376x768",
+      "width": 1376,
+      "height": 768,
+      "type": "image/jpeg",
+      "references": [
+        {
+          "file": "src/components/viewer/ThreeDViewer.tsx",
+          "line": 121,
+          "context": "backgroundImage: \"url('/images/3d-lounge-bg.jpg')\",",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "Active UI Photography & Backgrounds",
+      "description": "Active background graphic or avatar wired directly to Next.js page routes"
+    },
+    {
+      "path": "public/images/restaurant-backdrop.png",
+      "relative_to_public": "images/restaurant-backdrop.png",
+      "filename": "restaurant-backdrop.png",
+      "size_bytes": 714339,
+      "size_formatted": "697.60 KB",
+      "dimensions": "942x726",
+      "width": 942,
+      "height": 726,
+      "type": "image/png",
+      "references": [
+        {
+          "file": "src/app/auth/login/page.tsx",
+          "line": 132,
+          "context": "src=\"/images/restaurant-backdrop.png\"",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "Active UI Photography & Backgrounds",
+      "description": "Active background graphic or avatar wired directly to Next.js page routes"
+    },
+    {
+      "path": "public/models/warrior_model.glb",
+      "relative_to_public": "models/warrior_model.glb",
+      "filename": "warrior_model.glb",
+      "size_bytes": 647136,
+      "size_formatted": "631.97 KB",
+      "dimensions": "3D Model (GLB)",
+      "width": null,
+      "height": null,
+      "type": "model/gltf-binary",
+      "references": [
+        {
+          "file": "src/components/home/HeroWarriorCanvas.tsx",
+          "line": 16,
+          "context": "const { scene } = useGLTF('/models/warrior_model.glb', true);",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/home/HeroWarriorCanvas.tsx",
+          "line": 109,
+          "context": "useGLTF.preload('/models/warrior_model.glb', true);",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/home/PromoWarriorCanvas.tsx",
+          "line": 21,
+          "context": "const { scene } = useGLTF('/models/warrior_model.glb', true);",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/home/PromoWarriorCanvas.tsx",
+          "line": 131,
+          "context": "useGLTF.preload('/models/warrior_model.glb', true);",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/data/model-config.ts",
+          "line": 12,
+          "context": "export const SHARED_DEFAULT_MODEL_PATH = '/models/warrior_model.glb';",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "public/sw.js",
+          "line": 35,
+          "context": "'/models/warrior_model.glb',",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "Production 3D Models (GLB)",
+      "description": "Active 3D glTF model loaded by Three.js / React Three Fiber viewers"
+    },
+    {
+      "path": "public/images/dishes/hero-pizza-full-showcase.png",
+      "relative_to_public": "images/dishes/hero-pizza-full-showcase.png",
+      "filename": "hero-pizza-full-showcase.png",
+      "size_bytes": 537871,
+      "size_formatted": "525.26 KB",
+      "dimensions": "545x395",
+      "width": 545,
+      "height": 395,
+      "type": "image/png",
+      "references": [
+        {
+          "file": "src/components/home/Hero3DPedestal.tsx",
+          "line": 171,
+          "context": "src=\"/images/dishes/hero-pizza-full-showcase.png\"",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "Dish Photography Fallback / Showcase",
+      "description": "Fallback dish image or 3D pedestal showcase graphic"
+    },
+    {
+      "path": "public/images/hero-artisan-pizza.jpg",
+      "relative_to_public": "images/hero-artisan-pizza.jpg",
+      "filename": "hero-artisan-pizza.jpg",
+      "size_bytes": 319069,
+      "size_formatted": "311.59 KB",
+      "dimensions": "1024x571",
+      "width": 1024,
+      "height": 571,
+      "type": "image/jpeg",
+      "references": [
+        {
+          "file": "src/components/home/HeroSection.tsx",
+          "line": 100,
+          "context": "src=\"/images/hero-artisan-pizza.jpg\"",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "Active UI Photography & Backgrounds",
+      "description": "Active background graphic or avatar wired directly to Next.js page routes"
+    },
+    {
+      "path": "public/images/dishes/tandoori-paneer-pizza.webp",
+      "relative_to_public": "images/dishes/tandoori-paneer-pizza.webp",
+      "filename": "tandoori-paneer-pizza.webp",
+      "size_bytes": 178354,
+      "size_formatted": "174.17 KB",
+      "dimensions": "760x760",
+      "width": 760,
+      "height": 760,
+      "type": "image/webp",
+      "references": [
+        {
+          "file": "src/app/admin/(protected)/dashboard/DashboardClient.tsx",
+          "line": 156,
+          "context": "image: '/images/dishes/tandoori-paneer-pizza.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/home/HeroSection.tsx",
+          "line": 40,
+          "context": "image_url: '/images/dishes/tandoori-paneer-pizza.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/home/RecentlyViewedSection.tsx",
+          "line": 34,
+          "context": "image_url: '/images/dishes/tandoori-paneer-pizza.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/profile/ProfileDashboardClient.tsx",
+          "line": 100,
+          "context": "image: '/images/dishes/tandoori-paneer-pizza.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/profile/ProfileDashboardClient.tsx",
+          "line": 567,
+          "context": "src=\"/images/dishes/tandoori-paneer-pizza.webp\"",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/data/mock-menu.ts",
+          "line": 64,
+          "context": "image: '/images/dishes/tandoori-paneer-pizza.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/lib/utils/dish-images.ts",
+          "line": 2,
+          "context": "'tandoori-paneer-pizza': '/images/dishes/tandoori-paneer-pizza.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/lib/utils/dish-images.ts",
+          "line": 24,
+          "context": "return DISH_IMAGE_MAP[slug] || '/images/dishes/tandoori-paneer-pizza.webp';",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "convex/seed.ts",
+          "line": 56,
+          "context": "imageUrl: \"/images/dishes/tandoori-paneer-pizza.webp\",",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "convex/seed.ts",
+          "line": 57,
+          "context": "thumbnailUrl: \"/images/dishes/tandoori-paneer-pizza.webp\",",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "Production Dish Photography (WebP)",
+      "description": "Highly optimized production WebP menu photography displayed across menu, cart, and dashboard"
+    },
+    {
+      "path": "public/images/dishes/peri-peri-fiesta-pizza.webp",
+      "relative_to_public": "images/dishes/peri-peri-fiesta-pizza.webp",
+      "filename": "peri-peri-fiesta-pizza.webp",
+      "size_bytes": 159772,
+      "size_formatted": "156.03 KB",
+      "dimensions": "1024x1024",
+      "width": 1024,
+      "height": 1024,
+      "type": "image/webp",
+      "references": [
+        {
+          "file": "src/app/admin/(protected)/dashboard/DashboardClient.tsx",
+          "line": 163,
+          "context": "image: '/images/dishes/peri-peri-fiesta-pizza.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/data/mock-menu.ts",
+          "line": 218,
+          "context": "image: '/images/dishes/peri-peri-fiesta-pizza.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/lib/utils/dish-images.ts",
+          "line": 6,
+          "context": "'farmhouse-supreme-pizza': '/images/dishes/peri-peri-fiesta-pizza.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/lib/utils/dish-images.ts",
+          "line": 8,
+          "context": "'peri-peri-fiesta-pizza': '/images/dishes/peri-peri-fiesta-pizza.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "convex/seed.ts",
+          "line": 172,
+          "context": "imageUrl: \"/images/dishes/peri-peri-fiesta-pizza.webp\",",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "convex/seed.ts",
+          "line": 173,
+          "context": "thumbnailUrl: \"/images/dishes/peri-peri-fiesta-pizza.webp\",",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "Production Dish Photography (WebP)",
+      "description": "Highly optimized production WebP menu photography displayed across menu, cart, and dashboard"
+    },
+    {
+      "path": "public/images/dishes/bbq-chicken-overload.webp",
+      "relative_to_public": "images/dishes/bbq-chicken-overload.webp",
+      "filename": "bbq-chicken-overload.webp",
+      "size_bytes": 146482,
+      "size_formatted": "143.05 KB",
+      "dimensions": "1024x1024",
+      "width": 1024,
+      "height": 1024,
+      "type": "image/webp",
+      "references": [
+        {
+          "file": "src/app/admin/(protected)/dashboard/DashboardClient.tsx",
+          "line": 170,
+          "context": "image: '/images/dishes/bbq-chicken-overload.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/data/mock-menu.ts",
+          "line": 181,
+          "context": "image: '/images/dishes/bbq-chicken-overload.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/lib/utils/dish-images.ts",
+          "line": 5,
+          "context": "'keema-masala-pizza': '/images/dishes/bbq-chicken-overload.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/lib/utils/dish-images.ts",
+          "line": 7,
+          "context": "'bbq-chicken-overload': '/images/dishes/bbq-chicken-overload.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "convex/seed.ts",
+          "line": 198,
+          "context": "imageUrl: \"/images/dishes/bbq-chicken-overload.webp\",",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "convex/seed.ts",
+          "line": 199,
+          "context": "thumbnailUrl: \"/images/dishes/bbq-chicken-overload.webp\",",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "Production Dish Photography (WebP)",
+      "description": "Highly optimized production WebP menu photography displayed across menu, cart, and dashboard"
+    },
+    {
+      "path": "public/images/dishes/classic-smash-burger.webp",
+      "relative_to_public": "images/dishes/classic-smash-burger.webp",
+      "filename": "classic-smash-burger.webp",
+      "size_bytes": 131526,
+      "size_formatted": "128.44 KB",
+      "dimensions": "1024x1024",
+      "width": 1024,
+      "height": 1024,
+      "type": "image/webp",
+      "references": [
+        {
+          "file": "src/app/admin/(protected)/dashboard/DashboardClient.tsx",
+          "line": 148,
+          "context": "image: '/images/dishes/classic-smash-burger.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/profile/ProfileDashboardClient.tsx",
+          "line": 129,
+          "context": "image: '/images/dishes/classic-smash-burger.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/data/mock-menu.ts",
+          "line": 327,
+          "context": "image: '/images/dishes/classic-smash-burger.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/lib/utils/dish-images.ts",
+          "line": 10,
+          "context": "'classic-smash-burger': '/images/dishes/classic-smash-burger.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/lib/utils/dish-images.ts",
+          "line": 13,
+          "context": "'truffle-mushroom-cheese-burger': '/images/dishes/classic-smash-burger.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "convex/seed.ts",
+          "line": 226,
+          "context": "imageUrl: \"/images/dishes/classic-smash-burger.webp\",",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "convex/seed.ts",
+          "line": 227,
+          "context": "thumbnailUrl: \"/images/dishes/classic-smash-burger.webp\",",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "Production Dish Photography (WebP)",
+      "description": "Highly optimized production WebP menu photography displayed across menu, cart, and dashboard"
+    },
+    {
+      "path": "public/images/dishes/wok-tossed-chow-mein.webp",
+      "relative_to_public": "images/dishes/wok-tossed-chow-mein.webp",
+      "filename": "wok-tossed-chow-mein.webp",
+      "size_bytes": 131238,
+      "size_formatted": "128.16 KB",
+      "dimensions": "1024x1024",
+      "width": 1024,
+      "height": 1024,
+      "type": "image/webp",
+      "references": [
+        {
+          "file": "src/app/admin/(protected)/dashboard/DashboardClient.tsx",
+          "line": 198,
+          "context": "image: '/images/dishes/wok-tossed-chow-mein.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/data/mock-menu.ts",
+          "line": 362,
+          "context": "image: '/images/dishes/wok-tossed-chow-mein.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/lib/utils/dish-images.ts",
+          "line": 14,
+          "context": "'hakka-street-chow-mein': '/images/dishes/wok-tossed-chow-mein.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/lib/utils/dish-images.ts",
+          "line": 15,
+          "context": "'wok-tossed-chow-mein': '/images/dishes/wok-tossed-chow-mein.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "convex/seed.ts",
+          "line": 297,
+          "context": "imageUrl: \"/images/dishes/wok-tossed-chow-mein.webp\",",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "convex/seed.ts",
+          "line": 298,
+          "context": "thumbnailUrl: \"/images/dishes/wok-tossed-chow-mein.webp\",",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "Production Dish Photography (WebP)",
+      "description": "Highly optimized production WebP menu photography displayed across menu, cart, and dashboard"
+    },
+    {
+      "path": "public/images/dishes/chicken-tikka-pizza.webp",
+      "relative_to_public": "images/dishes/chicken-tikka-pizza.webp",
+      "filename": "chicken-tikka-pizza.webp",
+      "size_bytes": 128226,
+      "size_formatted": "125.22 KB",
+      "dimensions": "1024x1024",
+      "width": 1024,
+      "height": 1024,
+      "type": "image/webp",
+      "references": [
+        {
+          "file": "src/app/admin/(protected)/dashboard/DashboardClient.tsx",
+          "line": 141,
+          "context": "image: '/images/dishes/chicken-tikka-pizza.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/home/HeroSection.tsx",
+          "line": 29,
+          "context": "image_url: '/images/dishes/chicken-tikka-pizza.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/home/RecentlyViewedSection.tsx",
+          "line": 19,
+          "context": "image_url: '/images/dishes/chicken-tikka-pizza.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/data/mock-menu.ts",
+          "line": 104,
+          "context": "image: '/images/dishes/chicken-tikka-pizza.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/lib/utils/dish-images.ts",
+          "line": 3,
+          "context": "'chicken-tikka-pizza': '/images/dishes/chicken-tikka-pizza.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "convex/seed.ts",
+          "line": 97,
+          "context": "imageUrl: \"/images/dishes/chicken-tikka-pizza.webp\",",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "convex/seed.ts",
+          "line": 98,
+          "context": "thumbnailUrl: \"/images/dishes/chicken-tikka-pizza.webp\",",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "Production Dish Photography (WebP)",
+      "description": "Highly optimized production WebP menu photography displayed across menu, cart, and dashboard"
+    },
+    {
+      "path": "public/images/dishes/mushroom-truffle-pizza.webp",
+      "relative_to_public": "images/dishes/mushroom-truffle-pizza.webp",
+      "filename": "mushroom-truffle-pizza.webp",
+      "size_bytes": 125192,
+      "size_formatted": "122.26 KB",
+      "dimensions": "1024x1024",
+      "width": 1024,
+      "height": 1024,
+      "type": "image/webp",
+      "references": [
+        {
+          "file": "src/app/admin/(protected)/dashboard/DashboardClient.tsx",
+          "line": 134,
+          "context": "image: '/images/dishes/mushroom-truffle-pizza.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/profile/ProfileDashboardClient.tsx",
+          "line": 85,
+          "context": "image: '/images/dishes/mushroom-truffle-pizza.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/profile/ProfileDashboardClient.tsx",
+          "line": 122,
+          "context": "image: '/images/dishes/mushroom-truffle-pizza.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/profile/ProfileDashboardClient.tsx",
+          "line": 249,
+          "context": "src=\"/images/dishes/mushroom-truffle-pizza.webp\"",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/profile/ProfileDashboardClient.tsx",
+          "line": 555,
+          "context": "src=\"/images/dishes/mushroom-truffle-pizza.webp\"",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/data/mock-menu.ts",
+          "line": 142,
+          "context": "image: '/images/dishes/mushroom-truffle-pizza.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/lib/utils/dish-images.ts",
+          "line": 4,
+          "context": "'mushroom-truffle-pizza': '/images/dishes/mushroom-truffle-pizza.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "convex/seed.ts",
+          "line": 135,
+          "context": "imageUrl: \"/images/dishes/mushroom-truffle-pizza.webp\",",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "convex/seed.ts",
+          "line": 136,
+          "context": "thumbnailUrl: \"/images/dishes/mushroom-truffle-pizza.webp\",",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "Production Dish Photography (WebP)",
+      "description": "Highly optimized production WebP menu photography displayed across menu, cart, and dashboard"
+    },
+    {
+      "path": "public/images/dishes/crispy-paneer-burger.webp",
+      "relative_to_public": "images/dishes/crispy-paneer-burger.webp",
+      "filename": "crispy-paneer-burger.webp",
+      "size_bytes": 117904,
+      "size_formatted": "115.14 KB",
+      "dimensions": "1024x1024",
+      "width": 1024,
+      "height": 1024,
+      "type": "image/webp",
+      "references": [
+        {
+          "file": "src/app/admin/(protected)/dashboard/DashboardClient.tsx",
+          "line": 184,
+          "context": "image: '/images/dishes/crispy-paneer-burger.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/data/mock-menu.ts",
+          "line": 294,
+          "context": "image: '/images/dishes/crispy-paneer-burger.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/lib/utils/dish-images.ts",
+          "line": 11,
+          "context": "'paneer-royale-burger': '/images/dishes/crispy-paneer-burger.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/lib/utils/dish-images.ts",
+          "line": 12,
+          "context": "'crispy-paneer-burger': '/images/dishes/crispy-paneer-burger.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "convex/seed.ts",
+          "line": 274,
+          "context": "imageUrl: \"/images/dishes/crispy-paneer-burger.webp\",",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "convex/seed.ts",
+          "line": 275,
+          "context": "thumbnailUrl: \"/images/dishes/crispy-paneer-burger.webp\",",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "Production Dish Photography (WebP)",
+      "description": "Highly optimized production WebP menu photography displayed across menu, cart, and dashboard"
+    },
+    {
+      "path": "public/images/dishes/dynamite-chilli-potatoes.webp",
+      "relative_to_public": "images/dishes/dynamite-chilli-potatoes.webp",
+      "filename": "dynamite-chilli-potatoes.webp",
+      "size_bytes": 114312,
+      "size_formatted": "111.63 KB",
+      "dimensions": "1024x1024",
+      "width": 1024,
+      "height": 1024,
+      "type": "image/webp",
+      "references": [
+        {
+          "file": "src/app/admin/(protected)/dashboard/DashboardClient.tsx",
+          "line": 191,
+          "context": "image: '/images/dishes/dynamite-chilli-potatoes.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/home/HeroSection.tsx",
+          "line": 51,
+          "context": "image_url: '/images/dishes/dynamite-chilli-potatoes.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/home/RecentlyViewedSection.tsx",
+          "line": 49,
+          "context": "image_url: '/images/dishes/dynamite-chilli-potatoes.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/profile/ProfileDashboardClient.tsx",
+          "line": 136,
+          "context": "image: '/images/dishes/dynamite-chilli-potatoes.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/data/mock-menu.ts",
+          "line": 396,
+          "context": "image: '/images/dishes/dynamite-chilli-potatoes.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/lib/utils/dish-images.ts",
+          "line": 16,
+          "context": "'golden-chilli-potato': '/images/dishes/dynamite-chilli-potatoes.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/lib/utils/dish-images.ts",
+          "line": 17,
+          "context": "'dynamite-chilli-potatoes': '/images/dishes/dynamite-chilli-potatoes.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "convex/seed.ts",
+          "line": 318,
+          "context": "imageUrl: \"/images/dishes/dynamite-chilli-potatoes.webp\",",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "convex/seed.ts",
+          "line": 319,
+          "context": "thumbnailUrl: \"/images/dishes/dynamite-chilli-potatoes.webp\",",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "Production Dish Photography (WebP)",
+      "description": "Highly optimized production WebP menu photography displayed across menu, cart, and dashboard"
+    },
+    {
+      "path": "public/icons/apple-touch-icon.png",
+      "relative_to_public": "icons/apple-touch-icon.png",
+      "filename": "apple-touch-icon.png",
+      "size_bytes": 91836,
+      "size_formatted": "89.68 KB",
+      "dimensions": "1024x1024",
+      "width": 1024,
+      "height": 1024,
+      "type": "image/webp",
+      "references": [
+        {
+          "file": "src/app/layout.tsx",
+          "line": 29,
+          "context": "apple: '/icons/apple-touch-icon.png',",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "PWA App Icons",
+      "description": "Progressive Web App icon used by browser home screens and install banners"
+    },
+    {
+      "path": "public/icons/icon-192.png",
+      "relative_to_public": "icons/icon-192.png",
+      "filename": "icon-192.png",
+      "size_bytes": 91836,
+      "size_formatted": "89.68 KB",
+      "dimensions": "1024x1024",
+      "width": 1024,
+      "height": 1024,
+      "type": "image/webp",
+      "references": [
+        {
+          "file": "public/manifest.json",
+          "line": 12,
+          "context": "\"src\": \"/icons/icon-192.png\",",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "public/sw.js",
+          "line": 33,
+          "context": "'/icons/icon-192.png',",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "PWA App Icons",
+      "description": "Progressive Web App icon used by browser home screens and install banners"
+    },
+    {
+      "path": "public/icons/icon-512.png",
+      "relative_to_public": "icons/icon-512.png",
+      "filename": "icon-512.png",
+      "size_bytes": 91836,
+      "size_formatted": "89.68 KB",
+      "dimensions": "1024x1024",
+      "width": 1024,
+      "height": 1024,
+      "type": "image/webp",
+      "references": [
+        {
+          "file": "public/manifest.json",
+          "line": 17,
+          "context": "\"src\": \"/icons/icon-512.png\",",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "public/sw.js",
+          "line": 34,
+          "context": "'/icons/icon-512.png',",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "PWA App Icons",
+      "description": "Progressive Web App icon used by browser home screens and install banners"
+    },
+    {
+      "path": "public/images/dishes/golden-oak-signature-burger.webp",
+      "relative_to_public": "images/dishes/golden-oak-signature-burger.webp",
+      "filename": "golden-oak-signature-burger.webp",
+      "size_bytes": 91836,
+      "size_formatted": "89.68 KB",
+      "dimensions": "1024x1024",
+      "width": 1024,
+      "height": 1024,
+      "type": "image/webp",
+      "references": [
+        {
+          "file": "src/app/admin/(protected)/dashboard/DashboardClient.tsx",
+          "line": 177,
+          "context": "image: '/images/dishes/golden-oak-signature-burger.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/data/mock-menu.ts",
+          "line": 260,
+          "context": "image: '/images/dishes/golden-oak-signature-burger.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/lib/utils/dish-images.ts",
+          "line": 9,
+          "context": "'golden-oak-signature-burger': '/images/dishes/golden-oak-signature-burger.webp',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "convex/seed.ts",
+          "line": 252,
+          "context": "imageUrl: \"/images/dishes/golden-oak-signature-burger.webp\",",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "convex/seed.ts",
+          "line": 253,
+          "context": "thumbnailUrl: \"/images/dishes/golden-oak-signature-burger.webp\",",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "Production Dish Photography (WebP)",
+      "description": "Highly optimized production WebP menu photography displayed across menu, cart, and dashboard"
+    },
+    {
+      "path": "public/sw.js",
+      "relative_to_public": "sw.js",
+      "filename": "sw.js",
+      "size_bytes": 6482,
+      "size_formatted": "6.33 KB",
+      "dimensions": "N/A (Service Worker Script)",
+      "width": null,
+      "height": null,
+      "type": "text/javascript",
+      "references": [
+        {
+          "file": "src/components/pwa/ServiceWorkerRegister.tsx",
+          "line": 7,
+          "context": "* Safely registers the PWA service worker (/sw.js) only in production HTTPS environments.",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "src/components/pwa/ServiceWorkerRegister.tsx",
+          "line": 61,
+          "context": ".register('/sw.js', { scope: '/' })",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "PWA Core Infrastructure",
+      "description": "Web App Manifest / Service Worker registered in layout and PWA initializer"
+    },
+    {
+      "path": "public/models/chicken-tikka-pizza.glb",
+      "relative_to_public": "models/chicken-tikka-pizza.glb",
+      "filename": "chicken-tikka-pizza.glb",
+      "size_bytes": 3200,
+      "size_formatted": "3.12 KB",
+      "dimensions": "3D Model (GLB)",
+      "width": null,
+      "height": null,
+      "type": "model/gltf-binary",
+      "references": [
+        {
+          "file": "src/data/mock-menu.ts",
+          "line": 133,
+          "context": "modelUrl: '/models/chicken-tikka-pizza.glb',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "convex/seed.ts",
+          "line": 125,
+          "context": "modelUrl: \"/models/chicken-tikka-pizza.glb\",",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "Production 3D Models (GLB)",
+      "description": "Active 3D glTF model loaded by Three.js / React Three Fiber viewers"
+    },
+    {
+      "path": "public/models/classic-smash-burger.glb",
+      "relative_to_public": "models/classic-smash-burger.glb",
+      "filename": "classic-smash-burger.glb",
+      "size_bytes": 3200,
+      "size_formatted": "3.12 KB",
+      "dimensions": "3D Model (GLB)",
+      "width": null,
+      "height": null,
+      "type": "model/gltf-binary",
+      "references": [
+        {
+          "file": "convex/seed.ts",
+          "line": 242,
+          "context": "modelUrl: \"/models/classic-smash-burger.glb\",",
+          "match_type": "dynamic_model_or_seed"
+        }
+      ],
+      "is_referenced": true,
+      "category": "Production 3D Models (GLB)",
+      "description": "Active 3D glTF model loaded by Three.js / React Three Fiber viewers"
+    },
+    {
+      "path": "public/models/golden-oak-burger.glb",
+      "relative_to_public": "models/golden-oak-burger.glb",
+      "filename": "golden-oak-burger.glb",
+      "size_bytes": 3200,
+      "size_formatted": "3.12 KB",
+      "dimensions": "3D Model (GLB)",
+      "width": null,
+      "height": null,
+      "type": "model/gltf-binary",
+      "references": [
+        {
+          "file": "src/data/mock-menu.ts",
+          "line": 285,
+          "context": "modelUrl: '/models/golden-oak-burger.glb',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "convex/seed.ts",
+          "line": 264,
+          "context": "modelUrl: \"/models/golden-oak-burger.glb\",",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "Production 3D Models (GLB)",
+      "description": "Active 3D glTF model loaded by Three.js / React Three Fiber viewers"
+    },
+    {
+      "path": "public/models/tandoori-paneer-pizza.glb",
+      "relative_to_public": "models/tandoori-paneer-pizza.glb",
+      "filename": "tandoori-paneer-pizza.glb",
+      "size_bytes": 3200,
+      "size_formatted": "3.12 KB",
+      "dimensions": "3D Model (GLB)",
+      "width": null,
+      "height": null,
+      "type": "model/gltf-binary",
+      "references": [
+        {
+          "file": "src/data/mock-menu.ts",
+          "line": 94,
+          "context": "modelUrl: '/models/tandoori-paneer-pizza.glb',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "convex/seed.ts",
+          "line": 86,
+          "context": "modelUrl: \"/models/tandoori-paneer-pizza.glb\",",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "Production 3D Models (GLB)",
+      "description": "Active 3D glTF model loaded by Three.js / React Three Fiber viewers"
+    },
+    {
+      "path": "public/images/admin-avatar.png",
+      "relative_to_public": "images/admin-avatar.png",
+      "filename": "admin-avatar.png",
+      "size_bytes": 3158,
+      "size_formatted": "3.08 KB",
+      "dimensions": "38x38",
+      "width": 38,
+      "height": 38,
+      "type": "image/png",
+      "references": [
+        {
+          "file": "src/app/admin/(protected)/dashboard/DashboardClient.tsx",
+          "line": 343,
+          "context": "src=\"/images/admin-avatar.png\"",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "Active UI Photography & Backgrounds",
+      "description": "Active background graphic or avatar wired directly to Next.js page routes"
+    },
+    {
+      "path": "public/manifest.json",
+      "relative_to_public": "manifest.json",
+      "filename": "manifest.json",
+      "size_bytes": 490,
+      "size_formatted": "0.48 KB",
+      "dimensions": "N/A (Config/Manifest)",
+      "width": null,
+      "height": null,
+      "type": "application/json",
+      "references": [
+        {
+          "file": "src/app/layout.tsx",
+          "line": 26,
+          "context": "manifest: '/manifest.json',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "public/sw.js",
+          "line": 32,
+          "context": "'/manifest.json',",
+          "match_type": "exact_path"
+        },
+        {
+          "file": "public/sw.js",
+          "line": 83,
+          "context": "if (pathname === '/manifest.json') {",
+          "match_type": "exact_path"
+        }
+      ],
+      "is_referenced": true,
+      "category": "PWA Core Infrastructure",
+      "description": "Web App Manifest / Service Worker registered in layout and PWA initializer"
+    }
+  ]
+}

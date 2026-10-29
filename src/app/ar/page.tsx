@@ -17,6 +17,10 @@ export default async function ARPage() {
 
   return (
     <div className="relative min-h-screen bg-[#0D0A08] text-[#FAF5EC] overflow-x-hidden selection:bg-[#E2A84B] selection:text-[#0D0A08]">
+      {/* Background prefetch 3D model & decoder for instantaneous 0ms transition into 3D Inspect view */}
+      <link rel="prefetch" href="/models/warrior_model.glb" as="fetch" crossOrigin="anonymous" />
+      <link rel="prefetch" href="/draco/draco_decoder.wasm" as="fetch" crossOrigin="anonymous" />
+      <link rel="prefetch" href="/draco/draco_wasm_wrapper.js" as="script" />
       {/* Background Layer 2: Top Ambient Spotlight Behind Header */}
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-[650px] z-0"

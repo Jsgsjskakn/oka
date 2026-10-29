@@ -218,7 +218,7 @@ export function RestaurantFloorMap({
       </div>
 
       {/* Visual Architectural Map Canvas */}
-      <div className="relative w-full h-[250px] sm:h-[270px] rounded-2xl bg-[rgba(12,9,7,0.35)] backdrop-blur-xl border border-[#F0C36B]/35 p-3 overflow-hidden select-none shadow-[inset_0_1px_1px_rgba(255,255,255,0.15),0_10px_30px_rgba(0,0,0,0.45)]">
+      <div className="relative w-full h-[480px] sm:h-[520px] md:h-[540px] lg:h-[580px] xl:h-[620px] rounded-2xl bg-[rgba(12,9,7,0.35)] backdrop-blur-xl border border-[#F0C36B]/35 p-3 overflow-hidden select-none shadow-[inset_0_1px_1px_rgba(255,255,255,0.15),0_10px_30px_rgba(0,0,0,0.45)]">
         {/* Subtle Architectural Grid Lines */}
         <div
           className="absolute inset-0 opacity-10 pointer-events-none"

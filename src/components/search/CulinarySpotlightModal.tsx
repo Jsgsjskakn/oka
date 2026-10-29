@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Search, X, Plus, Box, Sparkles, Flame, Check } from 'lucide-react';
+import { Search, X, Plus, Minus, Trash2, Box, Sparkles, Flame, Check, Tag, UtensilsCrossed, ChevronRight } from 'lucide-react';
 import { useSpotlightStore } from '@/store/spotlight-store';
 import { useCartStore } from '@/store/cart-store';
 import { toast } from '@/store/toast-store';
@@ -16,6 +16,8 @@ interface SpotlightDish {
   name: string;
   description: string;
   price: number;
+  originalPrice: number;
+  discountPercent: number; // 10, 20, 30% OFF
   image: string;
   category: string;
   isVeg: boolean;
@@ -33,6 +35,8 @@ export const SPOTLIGHT_CATALOG: SpotlightDish[] = [
     description:
       'Charcoal-grilled cottage cheese marinated in aromatic spices, topped with bell peppers, crisp red onions, and fresh coriander on our signature stone-baked crust.',
     price: 449,
+    originalPrice: 499,
+    discountPercent: 10,
     image: resolveDishImageUrl('tandoori-paneer-pizza'),
     category: 'pizza',
     isVeg: true,
@@ -47,6 +51,8 @@ export const SPOTLIGHT_CATALOG: SpotlightDish[] = [
     description:
       'Tandoor-smoked chicken tikka with pickled onions, aged cheddar, and smoky mint chutney drizzle on stone-baked crust.',
     price: 499,
+    originalPrice: 624,
+    discountPercent: 20,
     image: resolveDishImageUrl('chicken-tikka-pizza'),
     category: 'pizza',
     isVeg: false,
@@ -61,12 +67,14 @@ export const SPOTLIGHT_CATALOG: SpotlightDish[] = [
     description:
       'Wild mushroom medley with black truffle oil, aged parmesan, fresh thyme, and buffalo mozzarella on sourdough crust.',
     price: 549,
+    originalPrice: 785,
+    discountPercent: 30,
     image: resolveDishImageUrl('mushroom-truffle-pizza'),
     category: 'pizza',
     isVeg: true,
     isFeatured: true,
     isBestSeller: false,
-    tags: ['mushroom', 'truffle', 'pizza', 'wood-fired'],
+    tags: ['mushroom', 'truffle', 'pizza', 'wood-fired', 'gourmet'],
   },
   {
     id: 'peri-peri-fiesta-pizza',
@@ -75,6 +83,8 @@ export const SPOTLIGHT_CATALOG: SpotlightDish[] = [
     description:
       'Spicy peri peri sauce base with roasted capsicum, corn, black olives, and a fresh herb drizzle on crispy crust.',
     price: 429,
+    originalPrice: 539,
+    discountPercent: 20,
     image: resolveDishImageUrl('peri-peri-fiesta-pizza'),
     category: 'pizza',
     isVeg: true,
@@ -90,6 +100,8 @@ export const SPOTLIGHT_CATALOG: SpotlightDish[] = [
     description:
       'Hickory BBQ marinated chicken cubes with caramelized onions, bacon bits, and sharp cheddar on hand-stretched base.',
     price: 529,
+    originalPrice: 589,
+    discountPercent: 10,
     image: resolveDishImageUrl('bbq-chicken-overload'),
     category: 'pizza',
     isVeg: false,
@@ -104,6 +116,8 @@ export const SPOTLIGHT_CATALOG: SpotlightDish[] = [
     description:
       'Double smashed tender patty with melted American cheese, house secret sauce, and dill pickles on toasted brioche.',
     price: 379,
+    originalPrice: 475,
+    discountPercent: 20,
     image: resolveDishImageUrl('classic-smash-burger'),
     category: 'burger',
     isVeg: false,
@@ -118,12 +132,14 @@ export const SPOTLIGHT_CATALOG: SpotlightDish[] = [
     description:
       'Triple-stack gourmet delight with caramelized balsamic onions, aged gouda, arugula, and truffle mayo on artisanal brioche.',
     price: 499,
+    originalPrice: 715,
+    discountPercent: 30,
     image: resolveDishImageUrl('golden-oak-signature-burger'),
     category: 'burger',
     isVeg: false,
     isFeatured: true,
     isBestSeller: false,
-    tags: ['burger', 'signature', 'truffle'],
+    tags: ['burger', 'signature', 'truffle', 'gourmet'],
   },
   {
     id: 'crispy-paneer-burger',
@@ -132,6 +148,8 @@ export const SPOTLIGHT_CATALOG: SpotlightDish[] = [
     description:
       'Panko-crusted spiced cottage cheese steak with mint slaw and tangy tamarind reduction on toasted sesame brioche.',
     price: 349,
+    originalPrice: 389,
+    discountPercent: 10,
     image: resolveDishImageUrl('crispy-paneer-burger'),
     category: 'burger',
     isVeg: true,
@@ -146,6 +164,8 @@ export const SPOTLIGHT_CATALOG: SpotlightDish[] = [
     description:
       'Hand-pulled noodles stir-fried with julienned vegetables in dark aged soy and toasted sesame oil with wok hei.',
     price: 299,
+    originalPrice: 375,
+    discountPercent: 20,
     image: resolveDishImageUrl('wok-tossed-chow-mein'),
     category: 'chinese',
     isVeg: true,
@@ -160,6 +180,8 @@ export const SPOTLIGHT_CATALOG: SpotlightDish[] = [
     description:
       'Twice-cooked crispy potato wedges tossed in spicy Szechuan sauce with spring onion, toasted sesame, and garlic chips.',
     price: 249,
+    originalPrice: 355,
+    discountPercent: 30,
     image: resolveDishImageUrl('dynamite-chilli-potatoes'),
     category: 'starters',
     isVeg: true,
@@ -173,19 +195,24 @@ export const SPOTLIGHT_CATALOG: SpotlightDish[] = [
 export function CulinarySpotlightModal() {
   const router = useRouter();
   const { isOpen, query, closeSpotlight, toggleSpotlight, setQuery } = useSpotlightStore();
+  const cartItems = useCartStore((s) => s.items);
   const addItem = useCartStore((s) => s.addItem);
+  const updateQuantity = useCartStore((s) => s.updateQuantity);
+  const removeItem = useCartStore((s) => s.removeItem);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [activeCategory, setActiveCategory] = useState<string>('all');
   const [activeChip, setActiveChip] = useState<string | null>(null);
   const [addedSlug, setAddedSlug] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const listContainerRef = useRef<HTMLDivElement>(null);
 
   // Typewriter animated placeholder phrases
   const placeholderPhrases = useMemo(
     () => [
-      'Search for Tandoori Paneer Pizza...',
-      'Search for Black Truffle & Mushroom...',
-      'Search for Fiery Szechuan Starters...',
+      'Search for Tandoori Paneer Pizza (10% OFF)...',
+      'Search for Black Truffle & Mushroom (30% OFF)...',
+      'Search for Gourmet Smash Burgers (20% OFF)...',
       'Search dishes, wood-fired pizzas, truffle, or spice level...',
     ],
     []
@@ -223,38 +250,98 @@ export function CulinarySpotlightModal() {
     }
   }, [isOpen]);
 
-  // 1-Click Craving Chips filter definitions
+  // Top Category Tabs with Live Counts
+  const categoryTabs = useMemo(() => {
+    return [
+      { id: 'all', label: 'All Items', icon: Sparkles, count: SPOTLIGHT_CATALOG.length },
+      { id: 'pizza', label: 'Wood-Fired Pizzas', emoji: '🍕', count: SPOTLIGHT_CATALOG.filter((d) => d.category === 'pizza').length },
+      { id: 'burger', label: 'Gourmet Burgers', emoji: '🍔', count: SPOTLIGHT_CATALOG.filter((d) => d.category === 'burger').length },
+      { id: 'chinese', label: 'Wok Specialties', emoji: '🥢', count: SPOTLIGHT_CATALOG.filter((d) => d.category === 'chinese').length },
+      { id: 'starters', label: 'Sizzling Starters', emoji: '🌶️', count: SPOTLIGHT_CATALOG.filter((d) => d.category === 'starters').length },
+    ];
+  }, []);
+
+  // Upgraded Popular Cravings & Offers Chips (Enlarged with Luxury Design)
   const cravingChips = [
-    { id: 'paneer', label: 'Paneer Specialties', filter: 'paneer' },
-    { id: 'truffle', label: 'Truffle & Mushroom', filter: 'truffle' },
-    { id: 'fiery', label: 'Fiery & Spicy', dotColor: '#E0532B', filter: 'spicy' },
-    { id: '3d', label: '3D Ready Dishes', icon: Box, filter: '3d' },
-    { id: 'veg', label: 'Pure Veg', dotColor: '#22C58B', filter: 'veg' },
+    {
+      id: 'discount',
+      label: 'Special Offers',
+      badge: 'Up to 30% OFF',
+      icon: Tag,
+      filter: 'discount',
+      highlightColor: '#F59E0B',
+    },
+    {
+      id: 'bestseller',
+      label: "Chef's Best Sellers",
+      badge: 'POPULAR',
+      icon: Flame,
+      filter: 'bestseller',
+      highlightColor: '#EF4444',
+    },
+    {
+      id: 'truffle',
+      label: 'Truffle & Gourmet',
+      icon: Sparkles,
+      filter: 'truffle',
+      highlightColor: '#E2A84B',
+    },
+    {
+      id: 'spicy',
+      label: 'Fiery & Spicy',
+      dotColor: '#E0532B',
+      filter: 'spicy',
+      highlightColor: '#E0532B',
+    },
+    {
+      id: 'veg',
+      label: '100% Pure Veg',
+      dotColor: '#22C58B',
+      filter: 'veg',
+      highlightColor: '#22C58B',
+    },
+    {
+      id: '3d',
+      label: '3D Studio Ready',
+      icon: Box,
+      filter: '3d',
+      highlightColor: '#38BDF8',
+    },
   ];
+
+  const handleCategoryClick = (catId: string) => {
+    setActiveCategory(catId);
+    setSelectedIndex(0);
+  };
 
   const handleChipClick = (filterVal: string) => {
     if (activeChip === filterVal) {
       setActiveChip(null);
-      setQuery('');
     } else {
       setActiveChip(filterVal);
-      if (filterVal === '3d') {
-        setQuery('');
-      } else {
-        setQuery(filterVal);
-      }
     }
+    setSelectedIndex(0);
   };
 
-  // Filter Dishes based on search query and chip
+  // Filter Dishes based on search query, category tab, and cravings chip
   const filteredDishes = useMemo(() => {
     let list = [...SPOTLIGHT_CATALOG];
     const q = query.toLowerCase().trim();
 
+    // 1. Category Tab Filter
+    if (activeCategory !== 'all') {
+      list = list.filter((d) => d.category === activeCategory);
+    }
+
+    // 2. Craving Chip Filter
     if (activeChip === 'veg') {
       list = list.filter((d) => d.isVeg);
+    } else if (activeChip === 'bestseller') {
+      list = list.filter((d) => d.isBestSeller);
+    } else if (activeChip === 'discount') {
+      list = list.filter((d) => d.discountPercent >= 20);
     } else if (activeChip === '3d') {
-      // all 10 have 3D models!
+      // all 10 have 3D models
     } else if (activeChip === 'spicy') {
       list = list.filter(
         (d) =>
@@ -264,8 +351,16 @@ export function CulinarySpotlightModal() {
           d.name.toLowerCase().includes('peri') ||
           d.name.toLowerCase().includes('dynamite')
       );
+    } else if (activeChip === 'truffle') {
+      list = list.filter(
+        (d) =>
+          d.tags?.includes('truffle') ||
+          d.description.toLowerCase().includes('truffle') ||
+          d.name.toLowerCase().includes('truffle')
+      );
     }
 
+    // 3. Search Query Text Match
     if (q) {
       list = list.filter((d) => {
         const nameMatch = d.name.toLowerCase().includes(q);
@@ -277,23 +372,40 @@ export function CulinarySpotlightModal() {
     }
 
     return list;
-  }, [query, activeChip]);
+  }, [query, activeCategory, activeChip]);
 
   // Active highlighted dish for preview column
   const activeDish = filteredDishes[selectedIndex] || filteredDishes[0];
 
-  // Keyboard navigation within list
+  // Keyboard navigation within list with auto-scroll into view
   const handleListKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setSelectedIndex((prev) => (prev + 1) % Math.max(1, filteredDishes.length));
+      setSelectedIndex((prev) => {
+        const next = (prev + 1) % Math.max(1, filteredDishes.length);
+        scrollSelectedIntoView(next);
+        return next;
+      });
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      setSelectedIndex((prev) => (prev - 1 + filteredDishes.length) % Math.max(1, filteredDishes.length));
+      setSelectedIndex((prev) => {
+        const next = (prev - 1 + filteredDishes.length) % Math.max(1, filteredDishes.length);
+        scrollSelectedIntoView(next);
+        return next;
+      });
     } else if (e.key === 'Enter' && activeDish) {
       e.preventDefault();
       closeSpotlight();
       router.push(`/3d/${activeDish.slug}`);
+    }
+  };
+
+  const scrollSelectedIntoView = (index: number) => {
+    if (!listContainerRef.current) return;
+    const items = listContainerRef.current.querySelectorAll('[data-dish-item]');
+    const targetItem = items[index] as HTMLElement;
+    if (targetItem) {
+      targetItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   };
 
@@ -305,6 +417,7 @@ export function CulinarySpotlightModal() {
       name: dishItem.name,
       description: dishItem.description,
       price: dishItem.price,
+      originalPrice: dishItem.originalPrice,
       image: dishItem.image,
       category: dishItem.category as any,
       isVeg: dishItem.isVeg,
@@ -321,8 +434,26 @@ export function CulinarySpotlightModal() {
     if (typeof window !== 'undefined' && 'vibrate' in navigator) {
       navigator.vibrate(15);
     }
-    toast.success('Added to Order', `${dishItem.name} added to your bag.`);
+    toast.success('Added to Bag', `${dishItem.name} (Save ₹${dishItem.originalPrice - dishItem.price}) added.`);
     setTimeout(() => setAddedSlug(null), 1800);
+  };
+
+  const handleDecrementActiveDish = (dishItem: SpotlightDish, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const item = cartItems.find((i) => i.dish.id === dishItem.id || i.dish.slug === dishItem.slug);
+    if (!item) return;
+
+    if (item.quantity > 1) {
+      updateQuantity(item.cartItemId, item.quantity - 1);
+      toast.info('Updated Quantity', `${dishItem.name} (×${item.quantity - 1})`);
+    } else {
+      removeItem(item.cartItemId);
+      toast.info('Removed from Bag', dishItem.name);
+    }
+    if (typeof window !== 'undefined' && 'vibrate' in navigator) {
+      navigator.vibrate(10);
+    }
   };
 
   // Matched Text Highlighter Helper
@@ -335,7 +466,7 @@ export function CulinarySpotlightModal() {
           part.toLowerCase() === highlight.toLowerCase() ? (
             <mark
               key={i}
-              className="bg-[rgba(226,168,75,0.28)] text-[#FAF5EC] rounded-sm px-0.5"
+              className="bg-[rgba(226,168,75,0.3)] text-[#FAF5EC] rounded-sm px-0.5"
             >
               {part}
             </mark>
@@ -354,11 +485,11 @@ export function CulinarySpotlightModal() {
       role="dialog"
       aria-modal="true"
       aria-label="Culinary Spotlight Command Palette"
-      className="fixed inset-0 z-[100] flex items-start justify-center pt-[7vh] sm:pt-[9vh] px-3 sm:px-4 animate-in fade-in duration-200"
+      className="fixed inset-0 z-[100] flex items-start justify-center pt-[5vh] sm:pt-[7vh] px-3 sm:px-4 animate-in fade-in duration-200"
       style={{
-        backgroundColor: 'rgba(13, 10, 8, 0.82)',
-        backdropFilter: 'blur(18px)',
-        WebkitBackdropFilter: 'blur(18px)',
+        backgroundColor: 'rgba(10, 8, 6, 0.86)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
       }}
       onClick={(e) => {
         if (e.target === e.currentTarget) closeSpotlight();
@@ -366,18 +497,18 @@ export function CulinarySpotlightModal() {
     >
       {/* Floating Luxury Glass Search Modal */}
       <div
-        className="w-full max-w-[820px] rounded-2xl border border-[rgba(226,168,75,0.35)] shadow-[0_25px_70px_rgba(0,0,0,0.85)] overflow-hidden flex flex-col relative animate-in zoom-in-95 duration-200"
+        className="w-full max-w-[880px] rounded-2xl border border-[rgba(226,168,75,0.38)] shadow-[0_30px_90px_rgba(0,0,0,0.92)] overflow-hidden flex flex-col relative animate-in zoom-in-95 duration-200"
         style={{
-          backgroundColor: '#14100D',
+          backgroundColor: '#130E0B',
           backgroundImage:
-            'radial-gradient(circle at 50% 0%, rgba(226, 168, 75, 0.20) 0%, transparent 65%)',
+            'radial-gradient(circle at 50% 0%, rgba(226, 168, 75, 0.22) 0%, transparent 60%)',
         }}
         onKeyDown={handleListKeyDown}
       >
         {/* ========================================================= */}
-        {/* ZONE 1: Oversized Editorial Input Bar (Height: 72px)       */}
+        {/* ZONE 1: Oversized Editorial Input Bar (Height: 70px)       */}
         {/* ========================================================= */}
-        <div className="h-[70px] sm:h-[72px] px-5 sm:px-6 flex items-center gap-3.5 border-b border-[rgba(226,168,75,0.16)] bg-[#14100D]/90">
+        <div className="h-[68px] sm:h-[72px] px-5 sm:px-6 flex items-center gap-3.5 border-b border-[rgba(226,168,75,0.18)] bg-[#130E0B]/95">
           <Search className="w-5 h-5 sm:w-6 sm:h-6 text-[#E2A84B] shrink-0" />
 
           <input
@@ -390,7 +521,7 @@ export function CulinarySpotlightModal() {
             }}
             placeholder={placeholderPhrases[placeholderIndex]}
             aria-label="Search culinary archive"
-            className="flex-1 h-full bg-transparent text-lg sm:text-[21px] text-[#FAF5EC] placeholder:text-[#9A9286]/55 placeholder:italic placeholder:font-serif outline-none font-light tracking-wide"
+            className="flex-1 h-full bg-transparent text-lg sm:text-[21px] text-[#FAF5EC] placeholder:text-[#9A9286]/60 placeholder:italic placeholder:font-serif outline-none font-light tracking-wide"
           />
 
           {query && (
@@ -411,17 +542,58 @@ export function CulinarySpotlightModal() {
           <button
             type="button"
             onClick={closeSpotlight}
-            className="px-2 py-1 rounded bg-[#1F1914] border border-white/10 text-[#9A9286] hover:text-white text-[11px] font-mono tracking-wider transition-colors active:scale-95"
+            className="px-2.5 py-1 rounded bg-[#1F1914] border border-white/10 text-[#9A9286] hover:text-white text-[11px] font-mono tracking-wider transition-colors active:scale-95 cursor-pointer"
           >
             ESC
           </button>
         </div>
 
         {/* ========================================================= */}
-        {/* ZONE 2: 1-Click Craving & Ingredient Chips                */}
+        {/* ZONE 1.5: CATEGORIES SELECTOR BAR (Requested by User)     */}
         {/* ========================================================= */}
-        <div className="px-5 sm:px-6 py-2.5 sm:py-3 bg-[#100C0A] border-b border-white/[0.04] flex items-center gap-2 overflow-x-auto no-scrollbar">
-          <span className="text-[10px] font-semibold text-[#9A9286] tracking-[0.2em] uppercase shrink-0 mr-1">
+        <div className="px-4 sm:px-6 py-2.5 bg-[#17110D] border-b border-white/[0.06] flex items-center gap-2 overflow-x-auto no-scrollbar">
+          <span className="text-[10px] font-mono font-bold text-[#E2A84B] tracking-[0.2em] uppercase shrink-0 mr-1 flex items-center gap-1">
+            <UtensilsCrossed className="w-3 h-3 text-[#E2A84B]" />
+            <span>CATEGORIES:</span>
+          </span>
+
+          {categoryTabs.map((cat) => {
+            const isActive = activeCategory === cat.id;
+            const Icon = cat.icon;
+
+            return (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => handleCategoryClick(cat.id)}
+                className={`px-3 py-1.5 rounded-xl text-xs sm:text-[13px] font-medium whitespace-nowrap transition-all duration-200 flex items-center gap-1.5 active:scale-95 cursor-pointer select-none ${
+                  isActive
+                    ? 'bg-[#E2A84B]/20 border border-[#E2A84B] text-[#FAF5EC] shadow-[0_0_15px_rgba(226,168,75,0.3)] font-semibold'
+                    : 'bg-white/[0.04] border border-white/[0.08] text-[#A69F94] hover:text-[#FAF5EC] hover:bg-white/[0.08] hover:border-white/20'
+                }`}
+              >
+                {cat.emoji && <span className="text-sm">{cat.emoji}</span>}
+                {Icon && <Icon className="w-3.5 h-3.5 text-[#E2A84B]" />}
+                <span>{cat.label}</span>
+                <span
+                  className={`text-[10px] font-mono px-1.5 py-0.2 rounded-full ${
+                    isActive
+                      ? 'bg-[#E2A84B] text-[#130E0B] font-bold'
+                      : 'bg-white/10 text-[#A69F94]'
+                  }`}
+                >
+                  {cat.count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* ========================================================= */}
+        {/* ZONE 2: POPULAR CRAVINGS & DISCOUNTS (Bigger & Redesigned)*/}
+        {/* ========================================================= */}
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 bg-[#0E0B09] border-b border-white/[0.06] flex items-center gap-2 overflow-x-auto no-scrollbar">
+          <span className="text-[10px] font-mono font-bold text-[#A69F94] tracking-[0.2em] uppercase shrink-0 mr-1">
             POPULAR CRAVINGS:
           </span>
 
@@ -434,20 +606,37 @@ export function CulinarySpotlightModal() {
                 key={chip.id}
                 type="button"
                 onClick={() => handleChipClick(chip.filter)}
-                className={`px-3 py-1 rounded-full text-[11px] font-medium whitespace-nowrap transition-all duration-200 flex items-center gap-1.5 active:scale-95 cursor-pointer ${
+                className={`px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-[13px] font-medium whitespace-nowrap transition-all duration-200 flex items-center gap-2 active:scale-95 cursor-pointer shadow-sm select-none ${
                   isChipActive
-                    ? 'bg-[#0E1F18] border border-[#22C58B]/50 text-[#F6D386] shadow-[0_0_10px_rgba(34,197,139,0.25)]'
-                    : 'bg-white/[0.04] border border-white/[0.08] text-[#9A9286] hover:text-[#FAF5EC] hover:bg-white/[0.08]'
+                    ? 'bg-gradient-to-r from-[#2B1E12] to-[#1E1710] border border-[#E2A84B] text-[#FAF5EC] shadow-[0_0_18px_rgba(226,168,75,0.35)] font-semibold'
+                    : 'bg-gradient-to-r from-white/[0.05] to-white/[0.02] border border-white/[0.09] text-[#A69F94] hover:text-[#FAF5EC] hover:border-[#E2A84B]/40 hover:bg-white/[0.07]'
                 }`}
               >
                 {chip.dotColor && (
                   <span
-                    className="w-1.5 h-1.5 rounded-full"
+                    className="w-2 h-2 rounded-full shrink-0 shadow-sm"
                     style={{ backgroundColor: chip.dotColor }}
                   />
                 )}
-                {Icon && <Icon className="w-3 h-3 text-[#E2A84B]" />}
+                {Icon && (
+                  <Icon
+                    className="w-3.5 h-3.5 shrink-0"
+                    style={{ color: chip.highlightColor || '#E2A84B' }}
+                  />
+                )}
                 <span>{chip.label}</span>
+
+                {chip.badge && (
+                  <span
+                    className={`text-[9.5px] font-mono font-bold px-1.5 py-0.5 rounded-md uppercase tracking-wider ${
+                      isChipActive
+                        ? 'bg-[#E2A84B] text-[#130E0B]'
+                        : 'bg-[#E0532B]/20 text-[#E0532B] border border-[#E0532B]/30'
+                    }`}
+                  >
+                    {chip.badge}
+                  </span>
+                )}
               </button>
             );
           })}
@@ -456,9 +645,15 @@ export function CulinarySpotlightModal() {
         {/* ========================================================= */}
         {/* ZONE 3: Split-Screen Live Results & 3D Preview             */}
         {/* ========================================================= */}
-        <div className="grid grid-cols-1 md:grid-cols-12 min-h-[340px] max-h-[420px] overflow-hidden">
-          {/* Left Column (58% Width — Instant Dish Matches) */}
-          <div className="md:col-span-7 overflow-y-auto no-scrollbar p-3 space-y-1.5 border-r border-white/[0.05]">
+        <div className="grid grid-cols-1 md:grid-cols-12 h-[450px] sm:h-[490px] max-h-[58vh] overflow-hidden">
+          {/* Left Column (58% Width — Smoothly Scrollable Dish List) */}
+          <div
+            ref={listContainerRef}
+            tabIndex={0}
+            role="region"
+            aria-label="Dish Search Results List"
+            className="md:col-span-7 h-full overflow-y-auto overscroll-contain p-3 sm:p-4 space-y-2 border-r border-white/[0.06] [scrollbar-width:thin] [scrollbar-color:rgba(226,168,75,0.45)_rgba(0,0,0,0.35)] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-black/40 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#E2A84B]/40 hover:[&::-webkit-scrollbar-thumb]:bg-[#E2A84B]/80 [&::-webkit-scrollbar-thumb]:rounded-full"
+          >
             {filteredDishes.length > 0 ? (
               filteredDishes.map((dish, idx) => {
                 const isSelected = activeDish?.id === dish.id;
@@ -466,20 +661,21 @@ export function CulinarySpotlightModal() {
                 return (
                   <div
                     key={dish.id}
+                    data-dish-item
                     onMouseEnter={() => setSelectedIndex(idx)}
                     onClick={() => {
                       closeSpotlight();
                       router.push(`/3d/${dish.slug}`);
                     }}
-                    className={`group flex items-center justify-between p-2.5 rounded-xl transition-all duration-200 cursor-pointer ${
+                    className={`group flex items-center justify-between p-2.5 sm:p-3 rounded-xl transition-all duration-200 cursor-pointer ${
                       isSelected
-                        ? 'bg-[#1D1612] border border-[rgba(226,168,75,0.35)] shadow-[0_4px_16px_rgba(0,0,0,0.5)] -translate-y-0.5'
-                        : 'bg-transparent border border-transparent hover:bg-white/[0.03]'
+                        ? 'bg-[#1F1712] border border-[rgba(226,168,75,0.45)] shadow-[0_4px_18px_rgba(0,0,0,0.6)] -translate-y-0.5'
+                        : 'bg-white/[0.02] border border-white/[0.04] hover:bg-white/[0.04] hover:border-white/10'
                     }`}
                   >
                     {/* Left: Dish Thumbnail */}
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-12 h-12 rounded-lg overflow-hidden bg-dark shrink-0 border border-white/10 relative">
+                      <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-lg overflow-hidden bg-black/60 shrink-0 border border-white/10 relative shadow-sm">
                         <img
                           src={dish.image}
                           alt={dish.name}
@@ -504,44 +700,67 @@ export function CulinarySpotlightModal() {
                           </h4>
                         </div>
 
-                        {/* Subtle Badge Row */}
-                        <div className="flex items-center gap-2 mt-0.5">
+                        {/* Badges Row */}
+                        <div className="flex items-center gap-2 mt-1 flex-wrap">
                           {dish.isBestSeller && (
-                            <span className="text-[9px] font-bold text-[#E0532B] uppercase tracking-wider">
+                            <span className="text-[9px] font-bold text-[#E0532B] uppercase tracking-wider bg-[#E0532B]/12 px-1.5 py-0.2 rounded">
                               Best Seller
                             </span>
                           )}
                           {dish.isFeatured && (
-                            <span className="text-[9px] font-bold text-[#E2A84B] uppercase tracking-wider">
+                            <span className="text-[9px] font-bold text-[#E2A84B] uppercase tracking-wider bg-[#E2A84B]/12 px-1.5 py-0.2 rounded">
                               Featured
                             </span>
                           )}
-                          <span className="text-[9px] text-[#9A9286] uppercase tracking-wider">
+                          <span className="text-[9.5px] text-[#A69F94] uppercase tracking-wider font-mono">
                             {dish.category}
                           </span>
                         </div>
                       </div>
                     </div>
 
-                    {/* Right: Price & Quick Add Button */}
-                    <div className="flex items-center gap-2 shrink-0">
-                      <span className="font-mono text-xs sm:text-sm font-bold text-[#FAF5EC]">
-                        ₹{dish.price}
-                      </span>
+                    {/* Right: Price with Strikethrough Discount & Quick Add Button */}
+                    <div className="flex items-center gap-2.5 shrink-0 pl-1">
+                      <div className="flex flex-col items-end">
+                        <div className="flex items-center gap-1.5">
+                          {dish.originalPrice && (
+                            <span className="font-mono text-[11px] text-[#8C8477] line-through decoration-white/40">
+                              ₹{dish.originalPrice}
+                            </span>
+                          )}
+                          <span className="font-mono text-sm sm:text-[15px] font-bold text-[#FAF5EC]">
+                            ₹{dish.price}
+                          </span>
+                        </div>
+
+                        {dish.discountPercent && (
+                          <span className="text-[9.5px] font-mono font-bold text-[#E0532B] bg-[#E0532B]/15 border border-[#E0532B]/35 px-1.5 py-0.2 rounded-md mt-0.5">
+                            {dish.discountPercent}% OFF
+                          </span>
+                        )}
+                      </div>
+
                       <button
                         type="button"
                         onClick={(e) => handleAddToCart(dish, e)}
-                        className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all ${
+                        className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center transition-all cursor-pointer ${
                           addedSlug === dish.slug
-                            ? 'bg-[#22C58B] text-[#0D0A08]'
-                            : 'bg-white/[0.05] hover:bg-[#E2A84B] text-[#E2A84B] hover:text-[#0D0A08] border border-white/10 active:scale-90'
+                            ? 'bg-[#22C58B] text-[#0D0A08] shadow-[0_0_12px_rgba(34,197,139,0.4)]'
+                            : 'bg-white/[0.06] hover:bg-[#E2A84B] text-[#E2A84B] hover:text-[#0D0A08] border border-white/10 active:scale-90 shadow-sm'
                         }`}
                         title="Add to order"
                       >
                         {addedSlug === dish.slug ? (
-                          <Check className="w-3.5 h-3.5 stroke-[3]" />
+                          <Check className="w-4 h-4 stroke-[3]" />
                         ) : (
-                          <Plus className="w-3.5 h-3.5" />
+                          (() => {
+                            const itemInCart = cartItems.find((i) => i.dish.id === dish.id || i.dish.slug === dish.slug);
+                            return itemInCart && itemInCart.quantity > 0 ? (
+                              <span className="font-mono text-[11px] font-black text-[#E2A84B]">{itemInCart.quantity}</span>
+                            ) : (
+                              <Plus className="w-4 h-4" />
+                            );
+                          })()
                         )}
                       </button>
                     </div>
@@ -550,14 +769,14 @@ export function CulinarySpotlightModal() {
               })
             ) : (
               /* Zero-Result Chef Concierge Recommendation State */
-              <div className="p-5 rounded-xl bg-[#0E1F18] border border-[#22C58B]/30 text-center flex flex-col items-center gap-2 my-4">
-                <Sparkles className="w-6 h-6 text-[#E2A84B]" />
+              <div className="p-6 rounded-2xl bg-[#0E1F18] border border-[#22C58B]/30 text-center flex flex-col items-center gap-2.5 my-4">
+                <Sparkles className="w-7 h-7 text-[#E2A84B]" />
                 <h4 className="font-serif text-base font-bold text-[#FAF5EC]">
                   Chef&apos;s Signature Recommendation
                 </h4>
                 <p className="text-xs text-[#B5ADA2] font-light max-w-xs leading-relaxed">
-                  We don&apos;t currently serve &ldquo;{query}&rdquo;, but our Head Chef recommends
-                  trying our <span className="text-[#E2A84B] font-semibold">Mushroom Truffle Sourdough Pizza</span> instead!
+                  We don&apos;t currently find &ldquo;{query}&rdquo; under this filter, but our Head Chef recommends
+                  trying our <span className="text-[#E2A84B] font-semibold">Mushroom Truffle Sourdough Pizza (30% OFF)</span> instead!
                 </p>
                 <button
                   type="button"
@@ -565,7 +784,7 @@ export function CulinarySpotlightModal() {
                     closeSpotlight();
                     router.push('/3d/mushroom-truffle-pizza');
                   }}
-                  className="mt-2 px-4 py-1.5 rounded-lg text-xs font-bold text-[#0D0A08] shadow-md transition-all active:scale-95"
+                  className="mt-2 px-5 py-2 rounded-xl text-xs font-bold text-[#0D0A08] shadow-md transition-all active:scale-95 cursor-pointer"
                   style={{
                     background:
                       'linear-gradient(135deg, #F6D386 0%, #D49432 100%)',
@@ -578,32 +797,67 @@ export function CulinarySpotlightModal() {
           </div>
 
           {/* Right Column (42% Width — Live Dish & 3D Stage Card) */}
-          <div className="hidden md:flex md:col-span-5 p-4 bg-[#0E1F18]/90 flex-col justify-between overflow-y-auto no-scrollbar">
+          <div className="hidden md:flex md:col-span-5 p-4 sm:p-5 bg-[#0E1F18]/90 flex-col justify-between overflow-y-auto no-scrollbar">
             {activeDish ? (
               <div className="flex flex-col gap-3">
                 {/* Large Photo Stage */}
-                <div className="relative w-full h-[155px] rounded-xl overflow-hidden bg-dark border border-[rgba(226,168,75,0.25)] shadow-lg group">
+                <div className="relative w-full h-[165px] rounded-xl overflow-hidden bg-dark border border-[rgba(226,168,75,0.3)] shadow-lg group">
                   <img
                     src={activeDish.image}
                     alt={activeDish.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-[#0D0A08]/80 backdrop-blur-md border border-[#E2A84B]/40 text-[10px] font-mono font-bold text-[#E2A84B] flex items-center gap-1">
+                  <div className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-[#0D0A08]/85 backdrop-blur-md border border-[#E2A84B]/40 text-[10px] font-mono font-bold text-[#E2A84B] flex items-center gap-1 shadow-sm">
                     <Box className="w-3 h-3" />
                     3D Ready
                   </div>
+
+                  {activeDish.discountPercent && (
+                    <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded-md bg-[#E0532B] text-white text-[10px] font-mono font-bold shadow-md">
+                      SAVE {activeDish.discountPercent}% TODAY
+                    </div>
+                  )}
                 </div>
 
                 {/* Dish Identity & Full Description */}
                 <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <h3 className="font-serif text-base font-bold text-[#FAF5EC] leading-tight truncate">
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <h3 className="font-serif text-base sm:text-lg font-bold text-[#FAF5EC] leading-tight truncate">
                       {activeDish.name}
                     </h3>
-                    <span className="font-mono text-sm font-bold text-[#E2A84B]">
-                      ₹{activeDish.price}
-                    </span>
                   </div>
+
+                  {/* Pricing with Original Price & Discount Banner */}
+                  <div className="flex items-baseline justify-between mb-2">
+                    <div className="flex items-baseline gap-2">
+                      <span className="font-mono text-lg font-bold text-[#E2A84B]">
+                        ₹{activeDish.price}
+                      </span>
+                      {activeDish.originalPrice && (
+                        <span className="font-mono text-xs text-[#8C8477] line-through">
+                          ₹{activeDish.originalPrice}
+                        </span>
+                      )}
+                    </div>
+                    {activeDish.discountPercent && (
+                      <span className="px-2 py-0.5 rounded-full bg-[#E0532B]/20 border border-[#E0532B]/40 text-[#E0532B] text-[10.5px] font-mono font-bold">
+                        {activeDish.discountPercent}% OFF
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Savings Highlight Box */}
+                  {activeDish.originalPrice && (
+                    <div className="px-2.5 py-1.5 rounded-lg bg-[#E2A84B]/10 border border-[#E2A84B]/25 text-[11px] text-[#E2A84B] flex items-center justify-between mb-2">
+                      <span className="flex items-center gap-1 font-medium">
+                        <Sparkles className="w-3 h-3 text-[#E2A84B]" />
+                        <span>Dining Discount</span>
+                      </span>
+                      <span className="font-bold font-mono">
+                        Save ₹{activeDish.originalPrice - activeDish.price}
+                      </span>
+                    </div>
+                  )}
 
                   <p className="text-[11.5px] text-[#B5ADA2] font-light leading-relaxed line-clamp-3">
                     {activeDish.description}
@@ -611,24 +865,77 @@ export function CulinarySpotlightModal() {
                 </div>
 
                 {/* Dual Action Buttons */}
-                <div className="flex flex-col gap-2 pt-2">
-                  <button
-                    type="button"
-                    onClick={(e) => handleAddToCart(activeDish, e)}
-                    className="w-full py-2.5 rounded-lg text-[#0D0A08] font-bold text-xs shadow-md transition-all active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer"
-                    style={{
-                      background:
-                        'linear-gradient(135deg, #F6D386 0%, #D49432 50%, #9E6818 100%)',
-                    }}
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>Add to Bag · ₹{activeDish.price}</span>
-                  </button>
+                <div className="flex flex-col gap-2 pt-1">
+                  {(() => {
+                    const activeDishCartItem = cartItems.find((i) => i.dish.id === activeDish.id || i.dish.slug === activeDish.slug);
+                    const activeDishQty = activeDishCartItem?.quantity || 0;
+
+                    if (activeDishQty === 0) {
+                      return (
+                        <button
+                          type="button"
+                          onClick={(e) => handleAddToCart(activeDish, e)}
+                          className="w-full py-2.5 rounded-xl text-[#0D0A08] font-bold text-xs sm:text-[13px] shadow-md transition-all active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer hover:brightness-105"
+                          style={{
+                            background:
+                              'linear-gradient(135deg, #F6D386 0%, #D49432 50%, #9E6818 100%)',
+                          }}
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>Add to Bag · ₹{activeDish.price}</span>
+                        </button>
+                      );
+                    }
+
+                    return (
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center rounded-xl overflow-hidden border border-[#E2A84B]/60 shadow-lg bg-[#0A0806] h-10 px-1">
+                          <button
+                            type="button"
+                            onClick={(e) => handleDecrementActiveDish(activeDish, e)}
+                            title={activeDishQty === 1 ? 'Remove from bag' : 'Decrease quantity'}
+                            className="w-8 h-8 flex items-center justify-center text-[#E2A84B] hover:bg-white/[0.08] rounded active:scale-90 transition-all cursor-pointer"
+                          >
+                            {activeDishQty === 1 ? (
+                              <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+                            ) : (
+                              <Minus className="w-3.5 h-3.5 stroke-[2.5]" />
+                            )}
+                          </button>
+                          <div className="px-2 text-center font-mono select-none">
+                            <span className="text-xs font-bold text-[#FAF5EC]">{activeDishQty}</span>
+                            <span className="text-[10px] text-[#E2A84B] ml-1">in bag</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={(e) => handleAddToCart(activeDish, e)}
+                            title="Add more"
+                            className="w-8 h-8 flex items-center justify-center text-[#E2A84B] hover:bg-white/[0.08] rounded active:scale-90 transition-all cursor-pointer"
+                          >
+                            <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+                          </button>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={(e) => handleAddToCart(activeDish, e)}
+                          className="flex-1 py-2.5 rounded-xl text-[#0D0A08] font-bold text-xs shadow-md transition-all active:scale-95 flex items-center justify-center gap-1 cursor-pointer hover:brightness-105"
+                          style={{
+                            background:
+                              'linear-gradient(135deg, #F6D386 0%, #D49432 50%, #9E6818 100%)',
+                          }}
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>Add More · ₹{activeDish.price}</span>
+                        </button>
+                      </div>
+                    );
+                  })()}
 
                   <Link
                     href={`/3d/${activeDish.slug}`}
                     onClick={closeSpotlight}
-                    className="w-full py-2 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-xs font-semibold text-[#FAF5EC] flex items-center justify-center gap-1.5 transition-all active:scale-95"
+                    className="w-full py-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-xs font-semibold text-[#FAF5EC] flex items-center justify-center gap-1.5 transition-all active:scale-95"
                   >
                     <Box className="w-3.5 h-3.5 text-[#E2A84B]" />
                     <span>Inspect in 3D Studio →</span>
@@ -646,25 +953,30 @@ export function CulinarySpotlightModal() {
         {/* ========================================================= */}
         {/* ZONE 4: Concierge Command Footer (Height: 42px)           */}
         {/* ========================================================= */}
-        <div className="h-[42px] px-5 sm:px-6 bg-[#0B0907] border-t border-[rgba(226,168,75,0.12)] flex items-center justify-between text-[11px]">
+        <div className="h-[44px] px-5 sm:px-6 bg-[#0A0806] border-t border-[rgba(226,168,75,0.15)] flex items-center justify-between text-[11px]">
           <div className="flex items-center gap-3 text-[#9A9286]">
             <span>
-              <kbd className="px-1 py-0.5 rounded bg-white/[0.06] border border-white/10 text-[10px] font-mono">
+              <kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] border border-white/10 text-[10px] font-mono">
                 ↑↓
               </kbd>{' '}
-              to navigate
+              to scroll list
             </span>
             <span>
-              <kbd className="px-1 py-0.5 rounded bg-white/[0.06] border border-white/10 text-[10px] font-mono">
+              <kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] border border-white/10 text-[10px] font-mono">
                 ↵
               </kbd>{' '}
-              to open 3D
+              to inspect 3D
             </span>
           </div>
 
-          <span className="font-mono text-[#E2A84B] font-semibold">
-            {filteredDishes.length} Curated Dishes Available
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-[#E2A84B] font-semibold">
+              {filteredDishes.length} Dishes Available
+            </span>
+            <span className="text-[10px] text-emerald-400 font-mono font-bold bg-emerald-500/15 border border-emerald-500/30 px-1.5 py-0.5 rounded">
+              10%–30% OFF LIVE
+            </span>
+          </div>
         </div>
       </div>
     </div>

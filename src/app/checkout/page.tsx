@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/store/cart-store';
 import { useOrderStore } from '@/store/order-store';
+import { useRecentlyViewedStore } from '@/store/recently-viewed-store';
 import { CheckoutHeader } from '@/components/checkout/CheckoutHeader';
 import { OrderTypeSelector } from '@/components/checkout/OrderTypeSelector';
 import { PickupTimeChips } from '@/components/checkout/PickupTimeChips';
@@ -172,6 +173,35 @@ export default function CheckoutPage() {
         tax,
         total,
       });
+
+      // Link newly ordered dishes to customer past history
+      try {
+        const addRecent = useRecentlyViewedStore.getState().addRecentDish;
+        items.forEach((item) => {
+          if (item?.dish) {
+            addRecent(
+              {
+                id: item.dish.id,
+                slug: item.dish.slug,
+                name: item.dish.name,
+                description: item.dish.description,
+                price_paise: Math.round(item.dish.price * 100),
+                image_url: item.dish.image,
+                category: item.dish.category,
+                is_veg: item.dish.isVeg,
+                is_available: true,
+                is_featured: item.dish.isFeatured,
+                is_best_seller: item.dish.isBestSeller,
+                spice_level: item.dish.spiceLevel,
+                has_3d_model: item.dish.has3DModel,
+              },
+              'order_history'
+            );
+          }
+        });
+      } catch (e) {
+        console.warn('Could not record ordered dishes in history store:', e);
+      }
 
       orderSuccessRef.current = true;
       clearCart();

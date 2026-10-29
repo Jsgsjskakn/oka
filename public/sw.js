@@ -32,7 +32,7 @@ const STATIC_ASSETS = [
   '/manifest.json',
   '/icons/icon-192.png',
   '/icons/icon-512.png',
-  '/models/warrior_scene.glb',
+  '/models/warrior_model.glb',
 ];
 
 // Sensitive route patterns that MUST NEVER be cached or intercepted by Service Worker
@@ -64,8 +64,8 @@ function isSensitiveRoute(url) {
 function isStaticAsset(url) {
   const pathname = url.pathname.toLowerCase();
 
-  // 1. 3D Models (.glb, .gltf, .bin, .usdz)
-  if (pathname.endsWith('.glb') || pathname.endsWith('.gltf') || pathname.endsWith('.bin') || pathname.endsWith('.usdz')) {
+  // 1. 3D Models & Decoders (.glb, .gltf, .bin, .usdz, .wasm, .hdr)
+  if (pathname.endsWith('.glb') || pathname.endsWith('.gltf') || pathname.endsWith('.bin') || pathname.endsWith('.usdz') || pathname.endsWith('.wasm') || pathname.endsWith('.hdr')) {
     return true;
   }
 

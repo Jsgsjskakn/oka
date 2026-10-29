@@ -1,11 +1,17 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useGLTF } from '@react-three/drei';
 import { ThreeDViewer } from '@/components/viewer/ThreeDViewer';
 import { useFavoritesStore } from '@/store/favorites-store';
 import { useCartStore } from '@/store/cart-store';
-import type { ModelConfig } from '@/data/model-config';
+import { useToastStore, toast } from '@/store/toast-store';
+import { useRecentlyViewedStore } from '@/store/recently-viewed-store';
+import { type ModelConfig, SHARED_DEFAULT_MODEL_PATH, getModelConfig } from '@/data/model-config';
 import type { Dish, AddOn } from '@/types/menu';
+
+// Eagerly preload the 3D model and local Draco decoder as soon as this client route loads
+useGLTF.preload(SHARED_DEFAULT_MODEL_PATH, '/draco/');
 
 interface Props {
   dishSlug: string;
@@ -50,6 +56,33 @@ export default function ThreeDViewerClient(props: Props) {
   const isFavorite = useFavoritesStore((s) => s.isFavorite(currentSlug));
   const toggleFavorite = useFavoritesStore((s) => s.toggleFavorite);
   const addItem = useCartStore((s) => s.addItem);
+  const addRecentDish = useRecentlyViewedStore((s) => s.addRecentDish);
+
+  // Automatically record this explored dish in customer history & account store
+  useEffect(() => {
+    if (activeDishData && (activeDishData.slug || currentSlug)) {
+      addRecentDish(
+        {
+          id: activeDishData.id || currentSlug,
+          slug: activeDishData.slug || currentSlug,
+          name: activeDishData.name || props.dishName,
+          description: activeDishData.description || props.dishDescription || '',
+          price_paise:
+            activeDishData.price_paise ||
+            (activeDishData.price ? Math.round(activeDishData.price * 100) : props.dishPrice),
+          image_url: activeDishData.image || props.dishImage,
+          category: (activeDishData.category || props.dishCategory || 'pizza') as string,
+          is_veg: activeDishData.isVeg ?? props.dishIsVeg ?? true,
+          is_available: true,
+          is_featured: false,
+          is_best_seller: false,
+          spice_level: 'medium',
+          ingredients: activeDishData.ingredients || props.dishIngredients || [],
+        },
+        '3d_viewer'
+      );
+    }
+  }, [currentSlug, activeDishData, addRecentDish, props.dishName, props.dishDescription, props.dishPrice, props.dishImage, props.dishCategory, props.dishIsVeg, props.dishIngredients]);
 
   // Adapt DB dish to legacy Dish type for ThreeDViewer
   const dish: Dish = {
@@ -72,18 +105,32 @@ export default function ThreeDViewerClient(props: Props) {
     has3DModel: true,
   };
 
+  const activeConfig = useMemo(() => {
+    return getModelConfig(activeDishData.slug || currentSlug) || props.config;
+  }, [activeDishData.slug, currentSlug, props.config]);
+
   const handleAddToCart = useCallback(
     (quantity: number = 1, selectedAddOns?: AddOn[]) => {
       addItem(dish, quantity, { selectedAddOns });
-      if ('vibrate' in navigator) navigator.vibrate(15);
+      const totalFormatted = `₹${Math.round((dish.price || 0) * quantity)}`;
+      toast.success(
+        `${quantity}x ${dish.name} added to cart`,
+        `Item total: ${totalFormatted}. Ready for checkout in your Order Dossier.`
+      );
+      if (typeof window !== 'undefined' && 'vibrate' in navigator) navigator.vibrate(15);
     },
     [dish, addItem]
   );
 
   const handleToggleFavorite = useCallback(() => {
     toggleFavorite(currentSlug);
-    if ('vibrate' in navigator) navigator.vibrate(10);
-  }, [currentSlug, toggleFavorite]);
+    const willBeFavorite = !isFavorite;
+    toast.info(
+      willBeFavorite ? `Saved to Favorites` : `Removed from Favorites`,
+      dish.name
+    );
+    if (typeof window !== 'undefined' && 'vibrate' in navigator) navigator.vibrate(10);
+  }, [currentSlug, toggleFavorite, isFavorite, dish.name]);
 
   const handleSwitchDish = useCallback((dishId: string) => {
     setCurrentSlug(dishId);
@@ -95,7 +142,7 @@ export default function ThreeDViewerClient(props: Props) {
   return (
     <ThreeDViewer
       dish={dish}
-      config={props.config}
+      config={activeConfig}
       allModelDishes={props.allModelDishes}
       onSwitchDish={handleSwitchDish}
       isFavorite={isFavorite}

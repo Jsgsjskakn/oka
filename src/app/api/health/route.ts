@@ -132,7 +132,7 @@ export async function GET() {
       const magic = headerBuf.toString('ascii');
 
       const isGlTF = magic === 'glTF';
-      const isSubstantial = stats.size > 5_000_000;
+      const isSubstantial = stats.size > 500_000;
 
       checks.assets3D = {
         status: isGlTF && isSubstantial ? 'healthy' : 'degraded',
@@ -143,7 +143,7 @@ export async function GET() {
           binaryMagicHeader: magic,
           knownSlugsConfigured: KNOWN_DISH_SLUGS.length,
         },
-        error: !isGlTF ? 'Invalid GLB magic header' : !isSubstantial ? 'Asset size below expected 5MB' : undefined,
+        error: !isGlTF ? 'Invalid GLB magic header' : !isSubstantial ? 'Asset size below expected 500KB' : undefined,
       };
     }
   } catch (err: any) {

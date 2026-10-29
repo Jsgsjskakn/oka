@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Heart, Box, Check } from 'lucide-react';
+import { Heart, Box, Plus, Minus, Trash2 } from 'lucide-react';
 import { DishWithCategory, formatMoney } from '@/lib/db/types';
 import { useFavoritesStore } from '@/store/favorites-store';
 import { useCartStore } from '@/store/cart-store';
@@ -12,6 +12,7 @@ import { useRecentlyViewedStore } from '@/store/recently-viewed-store';
 import { toast } from '@/store/toast-store';
 import { resolveDishImageUrl } from '@/lib/utils/dish-images';
 import { hasModel } from '@/data/model-config';
+import type { Dish } from '@/types/menu';
 
 interface MenuDishCardProps {
   dish: DishWithCategory;
@@ -22,9 +23,37 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
   const router = useRouter();
   const isFav = useFavoritesStore((s) => s.isFavorite(dish.id));
   const toggleFav = useFavoritesStore((s) => s.toggleFavorite);
+  const cartItems = useCartStore((s) => s.items);
   const addItem = useCartStore((s) => s.addItem);
+  const updateQuantity = useCartStore((s) => s.updateQuantity);
+  const removeItem = useCartStore((s) => s.removeItem);
   const addRecentDish = useRecentlyViewedStore((s) => s.addRecentDish);
-  const [isAdded, setIsAdded] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const dishForCart: Dish = {
+    id: dish.id,
+    slug: dish.slug,
+    name: dish.name,
+    description: dish.description || '',
+    price: dish.price_paise / 100,
+    image: resolveDishImageUrl(dish.slug, dish.image_url),
+    category: (dish.categories?.slug as any) || 'pizza',
+    isVeg: dish.is_veg,
+    isAvailable: dish.is_available,
+    isFeatured: dish.is_featured,
+    isBestSeller: dish.is_best_seller,
+    spiceLevel: (dish.spice_level as any) || 'mild',
+    has3DModel: dish.has_3d_model,
+  };
+
+  const matchingItems = isMounted
+    ? cartItems.filter((i) => i.dish.id === dish.id || i.dish.slug === dish.slug)
+    : [];
+  const cartQuantity = matchingItems.reduce((acc, curr) => acc + curr.quantity, 0);
 
   const handleCardClick = () => {
     addRecentDish(dish);
@@ -33,27 +62,39 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    addItem(
-      {
-        id: dish.id,
-        slug: dish.slug,
-        name: dish.name,
-        description: dish.description || '',
-        price: dish.price_paise / 100,
-        image: resolveDishImageUrl(dish.slug, dish.image_url),
-        category: (dish.categories?.slug as any) || 'pizza',
-        isVeg: dish.is_veg,
-        isAvailable: dish.is_available,
-        isFeatured: dish.is_featured,
-        isBestSeller: dish.is_best_seller,
-        spiceLevel: (dish.spice_level as any) || 'mild',
-        has3DModel: dish.has_3d_model,
-      },
-      1
-    );
-    setIsAdded(true);
-    setTimeout(() => setIsAdded(false), 1600);
-    toast.success('Added to Cart', `${dish.name} (${formatMoney(dish.price_paise)})`);
+    addItem(dishForCart, 1);
+    toast.success('Added to Bag', `${dish.name} (${formatMoney(dish.price_paise)})`);
+    if (typeof window !== 'undefined' && 'vibrate' in navigator) navigator.vibrate(12);
+  };
+
+  const handleIncrement = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const targetItem = matchingItems.find((i) => i.cartItemId === dish.id) || matchingItems[0];
+    if (targetItem) {
+      updateQuantity(targetItem.cartItemId, targetItem.quantity + 1);
+      toast.success('Added More to Bag', `${dish.name} (×${cartQuantity + 1})`);
+    } else {
+      addItem(dishForCart, 1);
+      toast.success('Added More to Bag', `${dish.name} (×${cartQuantity + 1})`);
+    }
+    if (typeof window !== 'undefined' && 'vibrate' in navigator) navigator.vibrate(10);
+  };
+
+  const handleDecrement = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const targetItem = matchingItems.find((i) => i.cartItemId === dish.id) || matchingItems[matchingItems.length - 1];
+    if (!targetItem) return;
+
+    if (targetItem.quantity > 1) {
+      updateQuantity(targetItem.cartItemId, targetItem.quantity - 1);
+      toast.info('Updated Bag', `${dish.name} (×${cartQuantity - 1})`);
+    } else {
+      removeItem(targetItem.cartItemId);
+      toast.info('Removed from Bag', dish.name);
+    }
+    if (typeof window !== 'undefined' && 'vibrate' in navigator) navigator.vibrate(10);
   };
 
   const handleToggleFav = (e: React.MouseEvent) => {
@@ -264,30 +305,73 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
               <span className="whitespace-nowrap">View in AR</span>
             </Link>
 
-            <button
-              type="button"
-              onClick={handleAddToCart}
-              aria-label={`Add ${dish.name} to dining order`}
-              className={`px-4 sm:px-5 py-2 text-xs font-extrabold transition-all duration-300 active:scale-95 shadow-md flex items-center gap-1.5 rounded-xl cursor-pointer ${
-                isAdded
-                  ? 'bg-[#22C58B] text-[#0D0A08] shadow-[0_0_15px_rgba(34,197,139,0.5)]'
-                  : 'text-[#17100C] hover:brightness-110 shadow-lg'
-              }`}
-              style={{
-                background: isAdded
-                  ? '#22C58B'
-                  : 'linear-gradient(135deg, #F0C36B 0%, #DDA33E 50%, #A8792A 100%)',
-              }}
-            >
-              {isAdded ? (
-                <>
-                  <Check className="w-3.5 h-3.5 stroke-[3]" />
-                  <span>ADDED</span>
-                </>
-              ) : (
+            {cartQuantity === 0 ? (
+              <button
+                type="button"
+                onClick={handleAddToCart}
+                aria-label={`Add ${dish.name} to dining order`}
+                className="px-4 sm:px-5 py-2 text-xs font-extrabold transition-all duration-300 active:scale-95 shadow-md flex items-center gap-1.5 rounded-xl cursor-pointer text-[#17100C] hover:brightness-110 shadow-lg"
+                style={{
+                  background: 'linear-gradient(135deg, #F0C36B 0%, #DDA33E 50%, #A8792A 100%)',
+                }}
+              >
                 <span>ADD +</span>
-              )}
-            </button>
+              </button>
+            ) : (
+              <div
+                className="flex items-center rounded-xl overflow-hidden border shadow-lg backdrop-blur-md transition-all duration-300 h-9"
+                style={{
+                  background:
+                    'linear-gradient(135deg, rgba(240, 195, 107, 0.22) 0%, rgba(221, 163, 62, 0.12) 100%)',
+                  borderColor: 'rgba(240, 195, 107, 0.65)',
+                  boxShadow:
+                    '0 0 16px rgba(240, 195, 107, 0.22), inset 0 1px 1px rgba(255, 240, 200, 0.35)',
+                }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+              >
+                {/* Decrement / Remove Button */}
+                <button
+                  type="button"
+                  onClick={handleDecrement}
+                  aria-label={`Decrease ${dish.name} quantity`}
+                  title={cartQuantity === 1 ? 'Remove from order' : 'Decrease quantity'}
+                  className="w-8 h-full flex items-center justify-center text-[#F0C36B] hover:text-[#17100C] hover:bg-[#F0C36B] active:scale-90 transition-all cursor-pointer group/dec"
+                >
+                  {cartQuantity === 1 ? (
+                    <Trash2 className="w-3.5 h-3.5 text-rose-400 group-hover/dec:text-[#17100C] transition-colors" />
+                  ) : (
+                    <Minus className="w-3.5 h-3.5 stroke-[2.5]" />
+                  )}
+                </button>
+
+                {/* Display Current Added Quantity (Kitna Add Hua) */}
+                <div
+                  className="flex items-center justify-center gap-1 px-2.5 font-mono select-none border-x border-[#F0C36B]/30 h-full bg-black/30"
+                  title={`${cartQuantity} in your order`}
+                >
+                  <span className="text-xs font-black text-[#FAF5EC]">
+                    {cartQuantity}
+                  </span>
+                  <span className="text-[10px] font-bold text-[#F0C36B] uppercase tracking-wider hidden sm:inline">
+                    in bag
+                  </span>
+                </div>
+
+                {/* Increment / Add More Button (Add More Option) */}
+                <button
+                  type="button"
+                  onClick={handleIncrement}
+                  aria-label={`Add more ${dish.name} to order`}
+                  title="Add more"
+                  className="w-8 h-full flex items-center justify-center text-[#F0C36B] hover:text-[#17100C] hover:bg-[#F0C36B] active:scale-90 transition-all cursor-pointer group/inc"
+                >
+                  <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

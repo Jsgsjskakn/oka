@@ -9,7 +9,7 @@ export interface ModelConfig {
   notes?: string;
 }
 
-export const SHARED_DEFAULT_MODEL_PATH = '/models/warrior_scene.glb';
+export const SHARED_DEFAULT_MODEL_PATH = '/models/warrior_model.glb';
 
 export const DEFAULT_MODEL_CONFIG: Omit<ModelConfig, 'dishSlug'> = {
   modelPath: SHARED_DEFAULT_MODEL_PATH,

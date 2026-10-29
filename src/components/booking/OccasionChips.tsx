@@ -36,10 +36,10 @@ export function OccasionChips({ selected, onSelect }: OccasionChipsProps) {
               className={`px-3 py-2.5 rounded-xl border text-xs font-medium transition-all duration-200 active:scale-95 flex items-center justify-center gap-1.5 ${
                 isSelected
                   ? 'bg-[#F0C36B]/20 border-[1.5px] border-[#F0C36B] text-[#FFE3A5] shadow-[0_0_12px_rgba(240,195,107,0.3)]'
-                  : 'bg-white/[0.04] backdrop-blur-md border-white/[0.08] text-[#A99A88] hover:text-[#F8F2E8] hover:border-[#F0C36B]/40 hover:bg-white/[0.07]'
+                  : 'bg-[rgba(26,20,16,0.65)] backdrop-blur-md border border-white/10 text-[#FAF5EC] hover:border-[#F0C36B]/50 hover:bg-[rgba(38,30,24,0.85)]'
               }`}
             >
-              <Icon className={`w-3.5 h-3.5 ${isSelected ? 'text-[#F0C36B]' : 'text-[#A99A88]'}`} />
+              <Icon className={`w-3.5 h-3.5 ${isSelected ? 'text-[#F0C36B]' : 'text-[#D4C7B6]'}`} />
               <span className="truncate">{occ.label}</span>
             </button>
           );

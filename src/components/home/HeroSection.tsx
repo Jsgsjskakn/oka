@@ -12,9 +12,12 @@ import {
   ChevronLeft,
   RotateCw,
   Box,
+  History,
+  Sparkles,
+  UserCheck,
 } from 'lucide-react';
 import { Hero3DPedestal } from './Hero3DPedestal';
-import { useRecentlyViewedStore } from '@/store/recently-viewed-store';
+import { useRecentlyViewedStore, type ExploredDishItem } from '@/store/recently-viewed-store';
 import { useCartStore } from '@/store/cart-store';
 import { toast } from '@/store/toast-store';
 import { formatMoney } from '@/lib/db/types';
@@ -58,16 +61,51 @@ const CURATED_EXPLORE_DISHES = [
 export function HeroSection() {
   const [isMounted, setIsMounted] = useState(false);
   const recentDishes = useRecentlyViewedStore((s) => s.recentDishes);
+  const accountHistoryDishes = useRecentlyViewedStore((s) => s.accountHistoryDishes);
+  const customerAccount = useRecentlyViewedStore((s) => s.customerAccount);
+  const setAccountHistoryDishes = useRecentlyViewedStore((s) => s.setAccountHistoryDishes);
+  const setCustomerAccount = useRecentlyViewedStore((s) => s.setCustomerAccount);
   const addItem = useCartStore((s) => s.addItem);
 
   useEffect(() => {
     setIsMounted(true);
-  }, []);
 
-  const displayDishes =
-    isMounted && recentDishes.length > 0
+    // Fetch customer account & past order history to link with explore dock
+    fetch('/api/customer/history')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.user) {
+          setCustomerAccount({
+            id: data.user.id,
+            name: data.user.name,
+            email: data.user.email,
+            phone: data.user.phone,
+            isAuthenticated: !!data.authenticated,
+          });
+        }
+        if (Array.isArray(data?.pastDishes) && data.pastDishes.length > 0) {
+          setAccountHistoryDishes(data.pastDishes);
+        }
+      })
+      .catch((err) => {
+        console.warn('Customer account history fetch failed:', err);
+      });
+  }, [setAccountHistoryDishes, setCustomerAccount]);
+
+  // Priority for Explore Dock:
+  // 1. Customer's actively explored dishes (last explored is displayDishes[0])
+  // 2. Customer's past orders from their linked account/history
+  // 3. Curated default dishes
+  const displayDishes: ExploredDishItem[] = isMounted
+    ? recentDishes.length > 0
       ? recentDishes.slice(0, 3)
-      : CURATED_EXPLORE_DISHES;
+      : accountHistoryDishes.length > 0
+      ? accountHistoryDishes.slice(0, 3)
+      : (CURATED_EXPLORE_DISHES as any[])
+    : (CURATED_EXPLORE_DISHES as any[]);
+
+  const isActivelyExplored = isMounted && recentDishes.length > 0;
+  const isFromPastHistory = isMounted && recentDishes.length === 0 && accountHistoryDishes.length > 0;
 
   const handleQuickAdd = (dish: any) => {
     addItem(
@@ -208,73 +246,129 @@ export function HeroSection() {
       {/* Bottom Floating "Continue Exploring" Strip docked directly inside hero */}
       <div className="relative z-20 max-w-[1240px] mx-auto w-full px-4 sm:px-6 lg:px-8 pb-1 sm:pb-2 pt-0 mt-auto select-none">
         <div className="w-full px-4 sm:px-5 py-2 rounded-2xl flex flex-wrap md:flex-nowrap items-center justify-between gap-3 border border-[#F0C36B]/25 bg-[rgba(10,8,6,0.85)] backdrop-blur-2xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.14),0_20px_45px_rgba(0,0,0,0.85)]">
-          {/* Left Label & Decorative Chevron */}
-          <div className="flex items-center gap-2 shrink-0">
-            <Compass className="w-4 h-4 text-[#F0C36B]" />
-            <span className="text-[10.5px] sm:text-[11px] uppercase tracking-[0.22em] text-[#D1C3B1] font-semibold">
-              CONTINUE EXPLORING
-            </span>
-            <div className="w-5.5 h-5.5 rounded-lg bg-black/40 border border-white/10 flex items-center justify-center text-[#F0C36B] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
-              <ChevronLeft className="w-3.5 h-3.5" />
+          {/* Left Label & Decorative Chevron & Customer Account Sync */}
+          <div className="flex items-center gap-2.5 shrink-0">
+            <div className="w-7 h-7 rounded-lg bg-black/40 border border-[#F0C36B]/30 flex items-center justify-center text-[#F0C36B] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+              <Compass className="w-3.5 h-3.5 text-[#F0C36B]" />
+            </div>
+            <div className="flex flex-col">
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-[#D1C3B1] font-semibold">
+                  CONTINUE EXPLORING
+                </span>
+                <ChevronLeft className="w-3 h-3 text-[#F0C36B]/70" />
+              </div>
+              <div className="flex items-center gap-1.5 text-[9.5px] font-mono text-[#F0C36B]/90">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#22C58B] inline-block animate-pulse" />
+                <span>
+                  {customerAccount?.name
+                    ? `${customerAccount.name} · Account History`
+                    : 'Customer Account Linked'}
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Horizontal Row of Dishes - Compacted per user request */}
+          {/* Horizontal Row of Dishes - Customer's Last Explored or Account History */}
           <div className="flex items-center gap-2.5 overflow-x-auto hide-scrollbar py-0.5 flex-1">
-            {displayDishes.map((dish) => (
-              <div
-                key={dish.id}
-                className="flex items-center gap-2.5 p-1.5 pr-2.5 rounded-xl bg-[rgba(20,15,11,0.80)] border border-[#F0C36B]/20 hover:border-[#F0C36B]/50 hover:bg-[#F0C36B]/10 backdrop-blur-xl transition-all shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_4px_16px_rgba(0,0,0,0.5)] shrink-0 group"
-              >
-                {/* 38x38px Compact Thumbnail */}
-                <Link
-                  href={`/3d/${dish.slug}`}
-                  className="relative w-[38px] h-[38px] rounded-lg overflow-hidden bg-black/50 shrink-0 border border-white/10 group-hover:border-[#F0C36B]/40"
+            {displayDishes.map((dish, idx) => {
+              const isFirstDish = idx === 0;
+              return (
+                <div
+                  key={dish.id || dish.slug || idx}
+                  className={`flex items-center gap-2.5 p-1.5 pr-2.5 rounded-xl border backdrop-blur-xl transition-all shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_4px_16px_rgba(0,0,0,0.5)] shrink-0 group ${
+                    isFirstDish
+                      ? 'bg-[rgba(26,19,13,0.92)] border-[#F0C36B]/45 shadow-[0_0_18px_rgba(240,195,107,0.18)] ring-1 ring-[#F0C36B]/30'
+                      : 'bg-[rgba(20,15,11,0.80)] border-[#F0C36B]/20 hover:border-[#F0C36B]/50 hover:bg-[#F0C36B]/10'
+                  }`}
                 >
-                  <Image
-                    src={dish.image_url || '/images/dishes/placeholder.jpg'}
-                    alt={dish.name}
-                    fill
-                    sizes="38px"
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                </Link>
-
-                {/* Title & Price */}
-                <div className="flex flex-col min-w-0 pr-1">
+                  {/* 38x38px Compact Thumbnail with 3D link */}
                   <Link
                     href={`/3d/${dish.slug}`}
-                    className="font-serif text-xs font-semibold text-[#F8F2E8] truncate group-hover:text-[#F0C36B] transition-colors max-w-[110px] sm:max-w-[135px] leading-tight"
+                    title={`Explore ${dish.name} in 3D`}
+                    className="relative w-[38px] h-[38px] rounded-lg overflow-hidden bg-black/50 shrink-0 border border-white/10 group-hover:border-[#F0C36B]/40"
                   >
-                    {dish.name}
+                    <Image
+                      src={dish.image_url || '/images/dishes/placeholder.jpg'}
+                      alt={dish.name}
+                      fill
+                      sizes="38px"
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
                   </Link>
-                  <span className="font-mono text-[10.5px] font-bold text-[#F0C36B] mt-0.5">
-                    {formatMoney(dish.price_paise)}
-                  </span>
-                </div>
 
-                {/* Quick Add + Button */}
-                <button
-                  type="button"
-                  onClick={() => handleQuickAdd(dish)}
-                  className="w-6 h-6 rounded-lg bg-white/[0.04] hover:bg-[#F0C36B] hover:text-[#17100C] text-[#F0C36B] border border-[#F0C36B]/35 hover:border-[#F0C36B] flex items-center justify-center transition-all active:scale-90 cursor-pointer shrink-0 shadow-sm"
-                  title={`Add ${dish.name} to Cart`}
-                  aria-label={`Add ${dish.name} to Cart`}
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            ))}
+                  {/* Title, Badge & Price */}
+                  <div className="flex flex-col min-w-0 pr-1">
+                    {/* Dynamic Source Badge: Last Explored vs Past Order vs Curated */}
+                    {isFirstDish && (
+                      <div className="flex items-center gap-1 mb-0.5">
+                        {isActivelyExplored ? (
+                          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded bg-[#F0C36B]/20 text-[#F0C36B] border border-[#F0C36B]/40 text-[8.5px] font-mono uppercase tracking-wider font-semibold">
+                            <Sparkles className="w-2.5 h-2.5 text-[#F0C36B]" />
+                            Last Explored
+                          </span>
+                        ) : isFromPastHistory ? (
+                          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[8.5px] font-mono uppercase tracking-wider font-semibold">
+                            <History className="w-2.5 h-2.5 text-emerald-400" />
+                            Past Order
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded bg-[#F0C36B]/15 text-[#F0C36B]/90 text-[8.5px] font-mono uppercase tracking-wider font-semibold">
+                            Chef&apos;s Pick
+                          </span>
+                        )}
+                      </div>
+                    )}
+
+                    <Link
+                      href={`/3d/${dish.slug}`}
+                      title={`Explore ${dish.name} in 3D`}
+                      className="font-serif text-xs font-semibold text-[#F8F2E8] truncate group-hover:text-[#F0C36B] transition-colors max-w-[110px] sm:max-w-[135px] leading-tight"
+                    >
+                      {dish.name}
+                    </Link>
+                    <span className="font-mono text-[10.5px] font-bold text-[#F0C36B] mt-0.5">
+                      {formatMoney(dish.price_paise)}
+                    </span>
+                  </div>
+
+                  {/* Quick Add + Button */}
+                  <button
+                    type="button"
+                    onClick={() => handleQuickAdd(dish)}
+                    className="w-6 h-6 rounded-lg bg-white/[0.04] hover:bg-[#F0C36B] hover:text-[#17100C] text-[#F0C36B] border border-[#F0C36B]/35 hover:border-[#F0C36B] flex items-center justify-center transition-all active:scale-90 cursor-pointer shrink-0 shadow-sm"
+                    title={`Add ${dish.name} to Cart`}
+                    aria-label={`Add ${dish.name} to Cart`}
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              );
+            })}
           </div>
 
-          {/* Right Full Menu Link */}
-          <Link
-            href="/menu"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-[#F0C36B]/15 border border-[#F0C36B]/30 hover:border-[#F0C36B] text-[11px] font-semibold text-[#F0C36B] hover:text-[#FFE3A5] transition-all group shrink-0 ml-auto shadow-sm backdrop-blur-md"
-          >
-            <span>Full Menu</span>
-            <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
-          </Link>
+          {/* Right Action Group: Past History & Full Menu Links */}
+          <div className="flex items-center gap-2 shrink-0 ml-auto">
+            {/* Customer Past History Button */}
+            <Link
+              href="/profile/orders"
+              title="View Customer Order History & Past Dishes"
+              className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-[#F0C36B]/15 border border-[#F0C36B]/25 hover:border-[#F0C36B] text-[10.5px] sm:text-xs text-[#E2A84B] hover:text-[#FFE3A5] font-medium transition-all group shrink-0 shadow-sm backdrop-blur-md"
+            >
+              <History className="w-3.5 h-3.5 text-[#F0C36B]" />
+              <span className="hidden sm:inline">Past History</span>
+              <span className="sm:hidden">History</span>
+            </Link>
+
+            {/* Full Menu Link */}
+            <Link
+              href="/menu"
+              className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-[#F0C36B]/15 border border-[#F0C36B]/30 hover:border-[#F0C36B] text-[11px] font-semibold text-[#F0C36B] hover:text-[#FFE3A5] transition-all group shrink-0 shadow-sm backdrop-blur-md"
+            >
+              <span>Full Menu</span>
+              <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+          </div>
         </div>
       </div>
     </section>

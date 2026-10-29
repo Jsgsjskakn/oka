@@ -51,6 +51,16 @@
 
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Optimize touch responsiveness & prevent unwanted double-tap zoom delay */
+button,
+a,
+input,
+select,
+textarea {
+  touch-action: manipulation;
 }
 
 body {

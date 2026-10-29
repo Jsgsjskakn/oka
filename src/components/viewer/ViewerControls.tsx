@@ -101,7 +101,7 @@ export function ViewerControls({
             {index > 0 && <div className="w-6 h-[1px] bg-white/[0.06] my-0.5 mx-auto" />}
             <button
               onClick={ctrl.onClick}
-              className="flex flex-col items-center justify-center gap-1.5 py-1 transition-all active:scale-90 group cursor-pointer"
+              className="flex flex-col items-center justify-center gap-1.5 p-1 min-h-[48px] min-w-[48px] transition-all active:scale-90 group cursor-pointer touch-manipulation"
               title={ctrl.label}
               aria-label={ctrl.label}
             >

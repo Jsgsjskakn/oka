@@ -44,7 +44,7 @@ export function CameraFeed({ onReady, onError }: CameraFeedProps) {
         const error = err as Error;
         if (error.name === 'NotAllowedError') {
           onError('permission_denied');
-        } else if (error.name === 'NotFoundError') {
+        } else if (error.name === 'NotFoundError' || error.name === 'OverconstrainedError') {
           onError('no_camera');
         } else {
           onError('camera_error');

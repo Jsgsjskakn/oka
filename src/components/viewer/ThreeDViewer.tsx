@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import type { OrbitControls as OrbitControlsType } from 'three-stdlib';
 import type { ModelConfig } from '@/data/model-config';
@@ -53,22 +53,48 @@ export function ThreeDViewer({
   const [autoRotate, setAutoRotate] = useState(false);
   const [showHotspots, setShowHotspots] = useState(true);
   const [cameraPreset, setCameraPreset] = useState<'side' | 'top'>('side');
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState(15);
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [retryKey, setRetryKey] = useState(0);
   const [showInfo, setShowInfo] = useState(false);
   const controlsRef = useRef<OrbitControlsType | null>(null);
 
+  // Active dynamic progress simulation: smoothly ticks from 15% -> 92% while chunk & model load
+  // Prevents the user from ever seeing a frozen 0% spinner
+  useEffect(() => {
+    if (isLoaded) return;
+    let current = 15;
+    setProgress((prev) => Math.max(prev, current));
+
+    const interval = setInterval(() => {
+      current = Math.min(92, current + (current < 50 ? 14 : current < 75 ? 8 : 3));
+      setProgress((prev) => Math.max(prev, current));
+    }, 70);
+
+    return () => clearInterval(interval);
+  }, [isLoaded, retryKey]);
+
+  // Safety watchdog: Automatically unveils the 3D scene after 2.5s maximum
+  useEffect(() => {
+    const watchdog = setTimeout(() => {
+      setProgress(100);
+      setIsLoaded(true);
+    }, 2500);
+    return () => clearTimeout(watchdog);
+  }, [retryKey]);
+
   const handleProgress = useCallback((p: number) => {
-    setProgress(p);
+    setProgress((prev) => Math.max(prev, p));
     if (p >= 100) {
-      setTimeout(() => setIsLoaded(true), 300);
+      setProgress(100);
+      setTimeout(() => setIsLoaded(true), 120);
     }
   }, []);
 
   const handleLoaded = useCallback(() => {
-    setIsLoaded(true);
+    setProgress(100);
+    setTimeout(() => setIsLoaded(true), 80);
   }, []);
 
   const handleError = useCallback((msg: string) => {
@@ -100,14 +126,6 @@ export function ThreeDViewer({
   const handleViewDetails = useCallback(() => {
     setShowInfo(true);
   }, []);
-
-  // Filter dishes strictly to current category per user request ("bas us type ka catagories ka he dishes rahega")
-  const currentCategorySlug = (dish.category || '').toLowerCase();
-  const categoryDishes = allModelDishes.filter((d) => {
-    const itemCat = (d.category || '').toLowerCase();
-    return itemCat === currentCategorySlug;
-  });
-  const dishesToShow = categoryDishes.length > 0 ? categoryDishes : allModelDishes;
 
   return (
     <div
@@ -197,10 +215,10 @@ export function ThreeDViewer({
         )}
       </div>
 
-      {/* Horizontal Dish Selection Carousel - Filtered to Current Category */}
-      {isLoaded && dishesToShow.length > 1 && (
+      {/* Horizontal Dish Selection & Category Filter Dock */}
+      {isLoaded && allModelDishes.length > 0 && (
         <DishSwitcher
-          dishes={dishesToShow}
+          dishes={allModelDishes}
           currentDishId={dish.id}
           currentCategory={dish.category}
           onSwitchDish={onSwitchDish}

@@ -6,7 +6,7 @@ const cspHeader = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' blob: data: https://*.supabase.co https://jimdmvzpmawbgzodzxhv.supabase.co https://*.convex.cloud https://*.convex.site https://*.google.com https://*.googleapis.com https://*.gstatic.com https://*.openstreetmap.org",
   "font-src 'self' data:",
-  "connect-src 'self' https://*.convex.cloud wss://*.convex.cloud https://*.convex.site https://*.supabase.co wss://*.supabase.co blob: data:",
+  "connect-src 'self' https://*.convex.cloud wss://*.convex.cloud https://*.convex.site https://*.supabase.co wss://*.supabase.co https://*.gstatic.com blob: data:",
   "media-src 'self' blob: data:",
   "worker-src 'self' blob:",
   "frame-src 'self' https://www.google.com https://maps.google.com https://*.google.com https://*.openstreetmap.org",
@@ -72,6 +72,33 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [
+      {
+        source: '/models/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/draco/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/textures/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
       {
         source: '/:path*',
         headers: [

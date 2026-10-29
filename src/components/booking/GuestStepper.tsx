@@ -56,7 +56,7 @@ export function GuestStepper({ guests, onChange }: GuestStepperProps) {
               className={`py-3 px-1 rounded-xl border text-center transition-all duration-200 active:scale-95 cursor-pointer flex flex-col items-center justify-center ${
                 isSelected
                   ? 'text-[#17100C] font-bold shadow-[0_4px_18px_rgba(240,195,107,0.45)] scale-[1.03] border-[#FFE3A5]'
-                  : 'bg-white/[0.04] backdrop-blur-md border-white/[0.08] text-[#F8F2E8] hover:border-[#F0C36B]/40 hover:bg-white/[0.07]'
+                  : 'bg-[rgba(26,20,16,0.65)] backdrop-blur-md border border-white/10 text-[#FAF5EC] hover:border-[#F0C36B]/50 hover:bg-[rgba(38,30,24,0.85)]'
               }`}
               style={
                 isSelected
@@ -72,7 +72,7 @@ export function GuestStepper({ guests, onChange }: GuestStepperProps) {
               </span>
               <span
                 className={`text-[9.5px] font-medium mt-1 leading-none ${
-                  isSelected ? 'text-[#17100C]/85 font-semibold' : 'text-[#A99A88]'
+                  isSelected ? 'text-[#17100C]/85 font-semibold' : 'text-[#D4C7B6] font-medium'
                 }`}
               >
                 {item.label}
