@@ -108,42 +108,134 @@ function withTimeout<T>(promise: Promise<T>, ms = 3500): Promise<T> {
   ]);
 }
 
-export async function getCategories(): Promise<Category[]> {
-  // 1. Primary: Try Convex
-  try {
-    const data = await withTimeout(fetchQuery(api.menu.getCategories, {}), 3500);
-    if (data && data.length > 0) {
-      return data.map((c: any) => ({
-        id: c.id,
-        restaurant_id: RESTAURANT_ID,
-        name: c.name,
-        slug: c.slug,
-        icon: c.icon,
-        sort_order: c.sort_order,
-        is_active: c.is_active,
-        created_at: '2026-01-01T00:00:00Z',
-        updated_at: '2026-01-01T00:00:00Z',
-      }));
+/**
+ * High-performance, isolated, in-memory cache for public menu data.
+ * - 60s TTL with concurrent in-flight request deduplication
+ * - Defensive cloning prevents mutation leaks
+ * - Stale-while-error fallback
+ * - Bounded memory structure (max 100 keys)
+ */
+interface CacheEntry<T> {
+  data: T;
+  cachedAt: number;
+  ttlMs: number;
+}
+
+const MENU_CACHE = new Map<string, CacheEntry<any>>();
+const IN_FLIGHT_REQUESTS = new Map<string, Promise<any>>();
+const DEFAULT_MENU_CACHE_TTL_MS = 60 * 1000; // 60 seconds
+const MAX_CACHE_ENTRIES = 100;
+
+export function invalidateMenuCache(keyPattern?: string): void {
+  if (!keyPattern) {
+    MENU_CACHE.clear();
+    IN_FLIGHT_REQUESTS.clear();
+    return;
+  }
+  for (const key of MENU_CACHE.keys()) {
+    if (key.includes(keyPattern)) {
+      MENU_CACHE.delete(key);
     }
-  } catch (convexError) {
-    console.warn('[menu.service] Convex getCategories failed, falling back to Supabase:', convexError);
+  }
+}
+
+async function getCachedOrFetch<T>(
+  key: string,
+  fetcher: () => Promise<T>,
+  ttlMs = DEFAULT_MENU_CACHE_TTL_MS
+): Promise<T> {
+  const now = Date.now();
+  const cached = MENU_CACHE.get(key);
+
+  // Return fresh cache hit immediately (defensively cloned to prevent external mutation)
+  if (cached && now - cached.cachedAt < cached.ttlMs) {
+    return Array.isArray(cached.data)
+      ? ([...cached.data] as unknown as T)
+      : ({ ...cached.data });
   }
 
-  // 2. Secondary Fallback: Supabase
-  try {
-    const supabase = await createClient();
-    const { data, error } = await supabase
-      .from('categories')
-      .select('*')
-      .eq('is_active', true)
-      .order('sort_order');
-    if (!error && data && data.length > 0) return data;
-  } catch (supabaseError) {
-    console.warn('[menu.service] Supabase categories query failed:', supabaseError);
+  // Deduplicate concurrent in-flight requests for the same key
+  if (IN_FLIGHT_REQUESTS.has(key)) {
+    const inFlightResult = await IN_FLIGHT_REQUESTS.get(key);
+    return Array.isArray(inFlightResult)
+      ? ([...inFlightResult] as unknown as T)
+      : ({ ...inFlightResult });
   }
 
-  // 3. Final Fallback: Local Data
-  return getFallbackCategories();
+  const fetchPromise = (async () => {
+    try {
+      const freshData = await fetcher();
+      if (freshData !== undefined && freshData !== null) {
+        // Enforce maximum cache bounds
+        if (MENU_CACHE.size >= MAX_CACHE_ENTRIES) {
+          const oldestKey = MENU_CACHE.keys().next().value;
+          if (oldestKey) MENU_CACHE.delete(oldestKey);
+        }
+        MENU_CACHE.set(key, {
+          data: freshData,
+          cachedAt: Date.now(),
+          ttlMs,
+        });
+      }
+      return freshData;
+    } catch (err) {
+      // If fresh fetch fails but stale data exists, serve stale data gracefully
+      if (cached && cached.data) {
+        console.warn(`[menu.service] Background revalidation failed for ${key}, serving stale cache:`, err);
+        return cached.data;
+      }
+      throw err;
+    } finally {
+      IN_FLIGHT_REQUESTS.delete(key);
+    }
+  })();
+
+  IN_FLIGHT_REQUESTS.set(key, fetchPromise);
+  const result = await fetchPromise;
+  return Array.isArray(result)
+    ? ([...result] as unknown as T)
+    : ({ ...result });
+}
+
+export async function getCategories(): Promise<Category[]> {
+  const cacheKey = `menu:categories:${RESTAURANT_ID}`;
+  return getCachedOrFetch(cacheKey, async () => {
+    // 1. Primary: Try Convex
+    try {
+      const data = await withTimeout(fetchQuery(api.menu.getCategories, {}), 3500);
+      if (data && data.length > 0) {
+        return data.map((c: any) => ({
+          id: c.id,
+          restaurant_id: RESTAURANT_ID,
+          name: c.name,
+          slug: c.slug,
+          icon: c.icon,
+          sort_order: c.sort_order,
+          is_active: c.is_active,
+          created_at: '2026-01-01T00:00:00Z',
+          updated_at: '2026-01-01T00:00:00Z',
+        }));
+      }
+    } catch (convexError) {
+      console.warn('[menu.service] Convex getCategories failed, falling back to Supabase:', convexError);
+    }
+
+    // 2. Secondary Fallback: Supabase
+    try {
+      const supabase = await createClient();
+      const { data, error } = await supabase
+        .from('categories')
+        .select('*')
+        .eq('is_active', true)
+        .order('sort_order');
+      if (!error && data && data.length > 0) return data;
+    } catch (supabaseError) {
+      console.warn('[menu.service] Supabase categories query failed:', supabaseError);
+    }
+
+    // 3. Final Fallback: Local Data
+    return getFallbackCategories();
+  });
 }
 
 export async function getDishesByCategory(categorySlug: string): Promise<DishWithCategory[]> {
@@ -249,35 +341,38 @@ export async function getDishById(dishId: string): Promise<DishWithCategory | nu
 }
 
 export async function getAllDishes(): Promise<DishWithCategory[]> {
-  // 1. Primary: Try Convex
-  try {
-    const data = await withTimeout(fetchQuery(api.menu.getAllDishes, {}), 3500);
-    if (data && data.length > 0) {
-      return data.map((d: any) => mapConvexDish(d));
+  const cacheKey = `menu:all_dishes:${RESTAURANT_ID}`;
+  return getCachedOrFetch(cacheKey, async () => {
+    // 1. Primary: Try Convex
+    try {
+      const data = await withTimeout(fetchQuery(api.menu.getAllDishes, {}), 3500);
+      if (data && data.length > 0) {
+        return data.map((d: any) => mapConvexDish(d));
+      }
+    } catch (convexError) {
+      console.warn('[menu.service] Convex getAllDishes failed, trying Supabase:', convexError);
     }
-  } catch (convexError) {
-    console.warn('[menu.service] Convex getAllDishes failed, trying Supabase:', convexError);
-  }
 
-  // 2. Secondary: Supabase
-  try {
-    const supabase = await createClient();
-    const { data, error } = await supabase
-      .from('dishes')
-      .select('*, categories(*)')
-      .eq('is_available', true);
-    if (!error && data && data.length > 0) {
-      return (data as any[]).map((d) => ({
-        ...d,
-        image_url: resolveDishImageUrl(d.slug, d.image_url),
-        thumbnail_url: resolveDishImageUrl(d.slug, d.thumbnail_url || d.image_url),
-      })) as DishWithCategory[];
+    // 2. Secondary: Supabase
+    try {
+      const supabase = await createClient();
+      const { data, error } = await supabase
+        .from('dishes')
+        .select('*, categories(*)')
+        .eq('is_available', true);
+      if (!error && data && data.length > 0) {
+        return (data as any[]).map((d) => ({
+          ...d,
+          image_url: resolveDishImageUrl(d.slug, d.image_url),
+          thumbnail_url: resolveDishImageUrl(d.slug, d.thumbnail_url || d.image_url),
+        })) as DishWithCategory[];
+      }
+    } catch {
+      // fallback to mock
     }
-  } catch {
-    // fallback to mock
-  }
 
-  return getFallbackDishes();
+    return getFallbackDishes();
+  });
 }
 
 export async function getFeaturedDishes(): Promise<DishWithCategory[]> {

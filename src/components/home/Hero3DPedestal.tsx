@@ -10,20 +10,72 @@ export function Hero3DPedestal() {
   const [showCallouts, setShowCallouts] = useState(true);
   const [rotation, setRotation] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
   const dragStart = useRef({ x: 0, y: 0, rotX: 0, rotY: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Gentle auto-rotation when not interacting
+  // Viewport visibility observer: Pauses animation work when scrolled away
   useEffect(() => {
-    if (!autoRotate || isDragging) return;
-    const interval = setInterval(() => {
-      setRotation((prev) => ({
-        ...prev,
-        y: (prev.y + 0.3) % 360,
-      }));
-    }, 30);
-    return () => clearInterval(interval);
-  }, [autoRotate, isDragging]);
+    if (!containerRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.05, rootMargin: '50px' }
+    );
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  // Gentle auto-rotation loop with rAF, delta clamping, and visibility guard
+  useEffect(() => {
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (!autoRotate || isDragging || !isVisible || prefersReducedMotion) return;
+
+    let animId: number | null = null;
+    let lastTime: number | null = null;
+
+    const step = (time: number) => {
+      if (document.hidden) {
+        lastTime = null;
+        return;
+      }
+      if (lastTime !== null) {
+        const delta = Math.min(time - lastTime, 100);
+        const degStep = delta * 0.01;
+        setRotation((prev) => ({
+          ...prev,
+          y: (prev.y + degStep) % 360,
+        }));
+      }
+      lastTime = time;
+      animId = requestAnimationFrame(step);
+    };
+
+    const handleVisibility = () => {
+      if (document.hidden) {
+        if (animId) cancelAnimationFrame(animId);
+        animId = null;
+        lastTime = null;
+      } else {
+        lastTime = null;
+        if (!animId) animId = requestAnimationFrame(step);
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibility);
+    if (!document.hidden) {
+      animId = requestAnimationFrame(step);
+    }
+
+    return () => {
+      if (animId) cancelAnimationFrame(animId);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+  }, [autoRotate, isDragging, isVisible]);
 
   // Interactive mouse drag to rotate
   const handleMouseDown = (e: React.MouseEvent) => {

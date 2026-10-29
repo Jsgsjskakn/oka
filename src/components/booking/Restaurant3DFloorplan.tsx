@@ -381,6 +381,19 @@ function MobileTouchSync({ touchOrbitActive }: { touchOrbitActive: boolean }) {
   return null;
 }
 
+// Subcomponent: Controlled settle frame when canvas enters 450px margin
+function ViewportVisibilitySync({ isVisible }: { isVisible: boolean }) {
+  const { invalidate } = useThree();
+  const prevVisible = useRef(isVisible);
+  useEffect(() => {
+    if (isVisible && !prevVisible.current) {
+      invalidate();
+    }
+    prevVisible.current = isVisible;
+  }, [isVisible, invalidate]);
+  return null;
+}
+
 function CanvasLoadingScreen() {
   return (
     <Html center>
@@ -522,10 +535,25 @@ export function Restaurant3DFloorplan({
   });
   const controlsRef = useRef<any>(null);
   const canvasContainerRef = useRef<HTMLDivElement>(null);
+  const [isViewportVisible, setIsViewportVisible] = useState(true);
   const [isDesktopActive, setIsDesktopActive] = useState(false);
   const [touchOrbitActive, setTouchOrbitActive] = useState(false);
   const [showTouchHint, setShowTouchHint] = useState(false);
   const touchHintTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Visibility-aware IntersectionObserver: Pauses 3D frameloop when scrolled out of view
+  useEffect(() => {
+    if (!canvasContainerRef.current) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        setIsViewportVisible(entry.isIntersecting);
+      },
+      { threshold: 0.05, rootMargin: '450px 0px 450px 0px' }
+    );
+    observer.observe(canvasContainerRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   // Accessible click-to-focus: Esc and outside-click release 3D wheel capture on desktop / exit fullscreen
   useEffect(() => {
@@ -921,7 +949,7 @@ export function Restaurant3DFloorplan({
                 e.stopPropagation();
                 handleSwitchPreset(viewMode === 'topdown' ? 'eyelevel' : 'topdown');
               }}
-              className="pointer-events-auto absolute bottom-3 left-3 px-3 py-1 rounded-xl bg-black/75 hover:bg-black border border-white/20 hover:border-[#F0C36B]/60 text-[11px] text-[#FAF5EC] font-mono flex items-center gap-1.5 backdrop-blur-md shadow-md transition-all active:scale-95 cursor-pointer"
+              className="pointer-events-auto absolute bottom-3 left-3 px-3 py-1 rounded-xl bg-black/90 hover:bg-black border border-white/20 hover:border-[#F0C36B]/60 text-[11px] text-[#FAF5EC] font-mono flex items-center gap-1.5 shadow-md transition-all active:scale-95 cursor-pointer"
             >
               <Maximize2 className="w-3 h-3 text-[#F0C36B]" />
               <span>Top View</span>
@@ -935,7 +963,7 @@ export function Restaurant3DFloorplan({
                 handleToggleFullscreen(true);
               }}
               title="View in Fullscreen"
-              className="pointer-events-auto absolute bottom-3 right-3 w-8 h-8 rounded-full bg-black/75 hover:bg-black border border-white/20 hover:border-[#F0C36B]/60 flex items-center justify-center text-[#F0C36B] backdrop-blur-md shadow-md transition-all hover:scale-105 active:scale-95 cursor-pointer"
+              className="pointer-events-auto absolute bottom-3 right-3 w-8 h-8 rounded-full bg-black/85 hover:bg-black border border-white/20 hover:border-[#F0C36B]/60 flex items-center justify-center text-[#F0C36B] shadow-md transition-all hover:scale-105 active:scale-95 cursor-pointer"
             >
               <Crosshair className="w-4 h-4" />
             </button>
@@ -944,7 +972,7 @@ export function Restaurant3DFloorplan({
 
         {/* Desktop 3D Focus Status Indicator */}
         {isDesktopActive && !quality.isMobile && !quality.isTouch && isFullscreenMode && (
-          <div className="absolute top-4 left-4 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/85 border border-[#F0C36B]/50 text-[#F8F2E8] text-[11px] font-mono backdrop-blur-md shadow-lg animate-in fade-in duration-200 pointer-events-none">
+          <div className="absolute top-4 left-4 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/92 border border-[#F0C36B]/50 text-[#F8F2E8] text-[11px] font-mono shadow-lg animate-in fade-in duration-200 pointer-events-none">
             <span className="w-2 h-2 rounded-full bg-[#F0C36B] animate-pulse" />
             <span>3D Controls Active · Scroll to zoom · Press Esc or click outside to scroll page</span>
           </div>
@@ -972,6 +1000,17 @@ export function Restaurant3DFloorplan({
               powerPreference: quality.powerPreference,
               toneMapping: THREE.ACESFilmicToneMapping,
               toneMappingExposure: quality.toneMappingExposure,
+            }}
+            onCreated={({ gl, scene, camera }) => {
+              if (gl.shadowMap) {
+                gl.shadowMap.autoUpdate = false;
+                gl.shadowMap.needsUpdate = true;
+              }
+              try {
+                gl.compile(scene, camera);
+              } catch {
+                // Ignore compile fallback in test/mock environments
+              }
             }}
           >
             {/* Deep Architectural Background matching warm dining ambiance */}
@@ -1031,6 +1070,7 @@ export function Restaurant3DFloorplan({
             <pointLight position={[-12, 4.0, 0]} intensity={3.5} distance={22} color="#FFBF55" />
 
             <MobileTouchSync touchOrbitActive={touchOrbitActive} />
+            <ViewportVisibilitySync isVisible={isViewportVisible} />
 
             <Suspense fallback={<CanvasLoadingScreen />}>
               {/* WebGL Context Loss & Recovery Guard */}
@@ -1044,8 +1084,11 @@ export function Restaurant3DFloorplan({
                   setContextLost(false);
                   setContextRestoring(false);
                 }}
-                onReinitialize={(restoredScene) => {
+                onReinitialize={(restoredScene, restoredGl) => {
                   applyArchitecturalPBR(restoredScene, quality.simplifyTransmission, quality.shadowsEnabled);
+                  if (restoredGl?.shadowMap) {
+                    restoredGl.shadowMap.needsUpdate = true;
+                  }
                 }}
                 restoreTimeoutMs={5000}
                 onRestoreTimeout={() => {
@@ -1202,7 +1245,7 @@ export function Restaurant3DFloorplan({
 
         {/* Dynamic Mobile Touch Hint Toast (Auto-appears when single finger moves over canvas in scroll mode) */}
         {showTouchHint && !touchOrbitActive && (
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#140F0A]/95 border border-[#F0C36B] text-[#F8F2E8] shadow-[0_12px_30px_rgba(0,0,0,0.85),0_0_20px_rgba(240,195,107,0.4)] backdrop-blur-xl animate-in fade-in zoom-in-95 duration-200 pointer-events-none">
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#140F0A]/98 border border-[#F0C36B] text-[#F8F2E8] shadow-[0_12px_30px_rgba(0,0,0,0.85),0_0_20px_rgba(240,195,107,0.4)] animate-in fade-in zoom-in-95 duration-200 pointer-events-none">
             <span className="text-base">✌️</span>
             <span className="text-xs font-mono font-medium text-[#F0C36B] whitespace-nowrap">
               Use 2 fingers to rotate · Tap button to orbit with 1 finger
@@ -1231,7 +1274,7 @@ export function Restaurant3DFloorplan({
 
         {/* Active Hover / Selected Table Card (Only shown in Fullscreen mode) */}
         {isFullscreenMode && (hoveredTable || selectedTableObj) && (
-          <div className="absolute top-4 left-4 z-10 max-w-xs sm:max-w-sm p-4 rounded-2xl bg-[#100C09]/95 backdrop-blur-2xl border border-[#F0C36B]/50 shadow-[0_12px_36px_rgba(0,0,0,0.85),0_0_20px_rgba(240,195,107,0.25)] transition-all duration-200">
+          <div className="absolute top-4 left-4 z-10 max-w-xs sm:max-w-sm p-4 rounded-2xl bg-[#100C09]/98 border border-[#F0C36B]/50 shadow-[0_12px_36px_rgba(0,0,0,0.85),0_0_20px_rgba(240,195,107,0.25)] transition-all duration-200">
             <div className="flex items-center justify-between gap-3 mb-1.5">
               <div className="flex items-center gap-2 min-w-0">
                 <span className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#F0C36B] to-[#D4AF37] text-black font-mono font-bold text-xs flex items-center justify-center shrink-0 shadow-[0_0_12px_rgba(240,195,107,0.5)]">
@@ -1287,7 +1330,7 @@ export function Restaurant3DFloorplan({
 
         {/* Fullscreen Table Tracking & Selection Dock (Bottom) */}
         {isFullscreenMode && (
-          <div className="absolute bottom-3 sm:bottom-4 left-3 right-3 sm:left-4 sm:right-4 z-20 flex flex-col sm:flex-row items-center justify-between gap-3 p-3 sm:p-4 rounded-2xl bg-[#100C09]/95 backdrop-blur-2xl border border-[#F0C36B]/50 shadow-[0_12px_36px_rgba(0,0,0,0.85),0_0_25px_rgba(240,195,107,0.25)]">
+          <div className="absolute bottom-3 sm:bottom-4 left-3 right-3 sm:left-4 sm:right-4 z-20 flex flex-col sm:flex-row items-center justify-between gap-3 p-3 sm:p-4 rounded-2xl bg-[#100C09]/98 border border-[#F0C36B]/50 shadow-[0_12px_36px_rgba(0,0,0,0.85),0_0_25px_rgba(240,195,107,0.25)]">
             <div className="flex items-center gap-3 w-full sm:w-auto overflow-hidden">
               <span className="text-xs font-mono text-[#F0C36B] font-bold shrink-0 hidden md:inline">
                 ALL 28 TABLES:

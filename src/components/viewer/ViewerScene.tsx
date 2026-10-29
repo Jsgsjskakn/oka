@@ -162,6 +162,16 @@ export function ViewerScene({
   const presentationRef = useRef(true);
   const internalControlsRef = useRef<OrbitControlsType | null>(null);
   const [shadowKey, setShadowKey] = useState(0);
+  const [isTabVisible, setIsTabVisible] = useState(true);
+
+  // Tab visibility listener: Suspends GPU rendering when tab is hidden
+  useEffect(() => {
+    const handleVisibility = () => {
+      setIsTabVisible(!document.hidden);
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => document.removeEventListener('visibilitychange', handleVisibility);
+  }, []);
 
   const triggerShadowRefresh = useCallback(() => {
     setShadowKey((k) => k + 1);
@@ -202,7 +212,7 @@ export function ViewerScene({
       onError={(err) => onError(err.message)}
     >
       <Canvas
-        frameloop={autoRotate ? 'always' : 'demand'}
+        frameloop={isTabVisible ? (autoRotate ? 'always' : 'demand') : 'never'}
         camera={{
           position: [0, config.cameraDistance * 0.35, config.cameraDistance],
           fov: 38,
@@ -285,7 +295,7 @@ export function ViewerScene({
             internalControlsRef.current = ref;
             onControlsRef(ref);
           }}
-          autoRotate={autoRotate}
+          autoRotate={autoRotate && isTabVisible}
           autoRotateSpeed={1.5}
           enablePan={true}
           enableZoom={true}

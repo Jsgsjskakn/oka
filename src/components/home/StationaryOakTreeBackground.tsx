@@ -58,6 +58,13 @@ export function StationaryOakTreeBackground({
   const lastHiddenTimeRef = useRef<number | null>(null);
   const pausedTimeRef = useRef<number>(0);
   const isVisibleRef = useRef<boolean>(true);
+  const renderRef = useRef<((now: number) => void) | null>(null);
+
+  const startAnimation = useCallback(() => {
+    if (animFrameRef.current === null && isVisibleRef.current && !document.hidden && renderRef.current) {
+      animFrameRef.current = requestAnimationFrame(renderRef.current);
+    }
+  }, []);
 
   // Normalized pointer lerp for subtle 2.5D depth parallax
   const pointerTargetRef = useRef<{ x: number; y: number; active: boolean }>({ x: 0, y: 0, active: false });
@@ -115,29 +122,40 @@ export function StationaryOakTreeBackground({
     const observer = new IntersectionObserver(
       (entries) => {
         const [entry] = entries;
+        const wasVisible = isVisibleRef.current;
         isVisibleRef.current = entry.isIntersecting;
+        if (entry.isIntersecting && !wasVisible) {
+          startAnimation();
+        }
       },
       { threshold: 0.05 }
     );
 
     observer.observe(containerRef.current);
     return () => observer.disconnect();
-  }, [isFixed]);
+  }, [isFixed, startAnimation]);
 
   // Visibility change pause/resume
   useEffect(() => {
     const handleVisibility = () => {
       if (document.hidden) {
         lastHiddenTimeRef.current = performance.now();
-      } else if (lastHiddenTimeRef.current !== null && startTimeRef.current !== null) {
-        pausedTimeRef.current += performance.now() - lastHiddenTimeRef.current;
-        lastHiddenTimeRef.current = null;
+        if (animFrameRef.current !== null) {
+          cancelAnimationFrame(animFrameRef.current);
+          animFrameRef.current = null;
+        }
+      } else {
+        if (lastHiddenTimeRef.current !== null && startTimeRef.current !== null) {
+          pausedTimeRef.current += performance.now() - lastHiddenTimeRef.current;
+          lastHiddenTimeRef.current = null;
+        }
+        startAnimation();
       }
     };
 
     document.addEventListener('visibilitychange', handleVisibility);
     return () => document.removeEventListener('visibilitychange', handleVisibility);
-  }, []);
+  }, [startAnimation]);
 
   // Pointer tracking for subtle 2.5D spatial parallax
   const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
@@ -220,9 +238,9 @@ export function StationaryOakTreeBackground({
         startTimeRef.current = now;
       }
 
-      // If hidden or scrolled out of view, sleep the render pass
+      // If hidden or scrolled out of view, sleep the render pass without scheduling new frames
       if (!isVisibleRef.current || document.hidden) {
-        animFrameRef.current = requestAnimationFrame(render);
+        animFrameRef.current = null;
         return;
       }
 
@@ -416,11 +434,18 @@ export function StationaryOakTreeBackground({
       animFrameRef.current = requestAnimationFrame(render);
     };
 
-    animFrameRef.current = requestAnimationFrame(render);
+    renderRef.current = render;
+    if (isVisibleRef.current && !document.hidden) {
+      animFrameRef.current = requestAnimationFrame(render);
+    }
 
     return () => {
       window.removeEventListener('resize', resize);
-      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+      if (animFrameRef.current) {
+        cancelAnimationFrame(animFrameRef.current);
+        animFrameRef.current = null;
+      }
+      renderRef.current = null;
     };
   }, []);
 
