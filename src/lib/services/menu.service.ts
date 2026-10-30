@@ -108,94 +108,15 @@ function withTimeout<T>(promise: Promise<T>, ms = 3500): Promise<T> {
   ]);
 }
 
-/**
- * High-performance, isolated, in-memory cache for public menu data.
- * - 60s TTL with concurrent in-flight request deduplication
- * - Defensive cloning prevents mutation leaks
- * - Stale-while-error fallback
- * - Bounded memory structure (max 100 keys)
- */
-interface CacheEntry<T> {
-  data: T;
-  cachedAt: number;
-  ttlMs: number;
-}
-
-const MENU_CACHE = new Map<string, CacheEntry<any>>();
-const IN_FLIGHT_REQUESTS = new Map<string, Promise<any>>();
-const DEFAULT_MENU_CACHE_TTL_MS = 60 * 1000; // 60 seconds
-const MAX_CACHE_ENTRIES = 100;
-
-export function invalidateMenuCache(keyPattern?: string): void {
-  if (!keyPattern) {
-    MENU_CACHE.clear();
-    IN_FLIGHT_REQUESTS.clear();
-    return;
-  }
-  for (const key of MENU_CACHE.keys()) {
-    if (key.includes(keyPattern)) {
-      MENU_CACHE.delete(key);
-    }
-  }
-}
-
-async function getCachedOrFetch<T>(
-  key: string,
-  fetcher: () => Promise<T>,
-  ttlMs = DEFAULT_MENU_CACHE_TTL_MS
-): Promise<T> {
-  const now = Date.now();
-  const cached = MENU_CACHE.get(key);
-
-  // Return fresh cache hit immediately (defensively cloned to prevent external mutation)
-  if (cached && now - cached.cachedAt < cached.ttlMs) {
-    return Array.isArray(cached.data)
-      ? ([...cached.data] as unknown as T)
-      : ({ ...cached.data });
-  }
-
-  // Deduplicate concurrent in-flight requests for the same key
-  if (IN_FLIGHT_REQUESTS.has(key)) {
-    const inFlightResult = await IN_FLIGHT_REQUESTS.get(key);
-    return Array.isArray(inFlightResult)
-      ? ([...inFlightResult] as unknown as T)
-      : ({ ...inFlightResult });
-  }
-
-  const fetchPromise = (async () => {
-    try {
-      const freshData = await fetcher();
-      if (freshData !== undefined && freshData !== null) {
-        // Enforce maximum cache bounds
-        if (MENU_CACHE.size >= MAX_CACHE_ENTRIES) {
-          const oldestKey = MENU_CACHE.keys().next().value;
-          if (oldestKey) MENU_CACHE.delete(oldestKey);
-        }
-        MENU_CACHE.set(key, {
-          data: freshData,
-          cachedAt: Date.now(),
-          ttlMs,
-        });
-      }
-      return freshData;
-    } catch (err) {
-      // If fresh fetch fails but stale data exists, serve stale data gracefully
-      if (cached && cached.data) {
-        console.warn(`[menu.service] Background revalidation failed for ${key}, serving stale cache:`, err);
-        return cached.data;
-      }
-      throw err;
-    } finally {
-      IN_FLIGHT_REQUESTS.delete(key);
-    }
-  })();
-
-  IN_FLIGHT_REQUESTS.set(key, fetchPromise);
-  const result = await fetchPromise;
-  return Array.isArray(result)
-    ? ([...result] as unknown as T)
-    : ({ ...result });
-}
+export {
+  invalidateMenuCache,
+  getMenuCacheStats,
+  getCachedOrFetch,
+  DEFAULT_MENU_CACHE_TTL_MS,
+  MAX_CACHE_ENTRIES,
+  resetMenuCacheState,
+} from './menu-cache';
+import { getCachedOrFetch } from './menu-cache';
 
 export async function getCategories(): Promise<Category[]> {
   const cacheKey = `menu:categories:${RESTAURANT_ID}`;

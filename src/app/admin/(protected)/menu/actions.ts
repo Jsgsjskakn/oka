@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/server';
 import { sb } from '@/lib/supabase/typed';
 import { requireAdmin } from '@/lib/auth/admin-auth';
 import { revalidatePath } from 'next/cache';
+import { invalidateMenuCache } from '@/lib/services/menu.service';
 
 export async function updateDishAvailability(dishId: string, isAvailable: boolean) {
   try {
@@ -20,6 +21,7 @@ export async function updateDishAvailability(dishId: string, isAvailable: boolea
         sessionToken,
       });
       if (res && res.success) {
+        invalidateMenuCache();
         revalidatePath('/menu');
         revalidatePath('/admin/menu');
         return { success: true };
@@ -33,6 +35,7 @@ export async function updateDishAvailability(dishId: string, isAvailable: boolea
     const { error } = await db.from('dishes').update({ is_available: isAvailable }).eq('id', dishId);
     if (error) throw new Error(error.message);
     
+    invalidateMenuCache();
     revalidatePath('/menu');
     revalidatePath('/admin/menu');
     return { success: true };
@@ -54,6 +57,7 @@ export async function updateDishFeatured(dishId: string, isFeatured: boolean) {
         sessionToken,
       });
       if (res && res.success) {
+        invalidateMenuCache();
         revalidatePath('/menu');
         revalidatePath('/admin/menu');
         return { success: true };
@@ -67,6 +71,7 @@ export async function updateDishFeatured(dishId: string, isFeatured: boolean) {
     const { error } = await db.from('dishes').update({ is_featured: isFeatured }).eq('id', dishId);
     if (error) throw new Error(error.message);
     
+    invalidateMenuCache();
     revalidatePath('/menu');
     revalidatePath('/admin/menu');
     return { success: true };
@@ -88,6 +93,7 @@ export async function updateDishPrice(dishId: string, pricePaise: number) {
         sessionToken,
       });
       if (res && res.success) {
+        invalidateMenuCache();
         revalidatePath('/menu');
         revalidatePath('/admin/menu');
         return { success: true };
@@ -101,6 +107,7 @@ export async function updateDishPrice(dishId: string, pricePaise: number) {
     const { error } = await db.from('dishes').update({ price_paise: pricePaise }).eq('id', dishId);
     if (error) throw new Error(error.message);
     
+    invalidateMenuCache();
     revalidatePath('/menu');
     revalidatePath('/admin/menu');
     return { success: true };
@@ -122,6 +129,7 @@ export async function updateFullDishDetails(dishId: string, payload: any) {
         sessionToken,
       });
       if (res && res.success) {
+        invalidateMenuCache();
         revalidatePath('/menu');
         revalidatePath('/admin/menu');
         revalidatePath(`/admin/menu/dishes/${dishId}`);
@@ -163,6 +171,7 @@ export async function updateFullDishDetails(dishId: string, payload: any) {
       if (addonError) throw new Error(addonError.message);
     }
     
+    invalidateMenuCache();
     revalidatePath('/menu');
     revalidatePath('/admin/menu');
     revalidatePath(`/admin/menu/dishes/${dishId}`);
@@ -185,6 +194,7 @@ export async function updateCategoryDetails(categoryId: string, payload: any) {
         sessionToken,
       });
       if (res && res.success) {
+        invalidateMenuCache();
         revalidatePath('/menu');
         revalidatePath('/admin/menu');
         revalidatePath(`/admin/menu/categories/${categoryId}`);
@@ -201,6 +211,7 @@ export async function updateCategoryDetails(categoryId: string, payload: any) {
     const { error } = await db.from('categories').update(payload).eq('id', categoryId);
     if (error) throw new Error(error.message);
     
+    invalidateMenuCache();
     revalidatePath('/menu');
     revalidatePath('/admin/menu');
     revalidatePath(`/admin/menu/categories/${categoryId}`);
@@ -225,6 +236,7 @@ export async function createCategory(payload: any) {
         sessionToken,
       });
       if (res && res.success) {
+        invalidateMenuCache();
         revalidatePath('/menu');
         revalidatePath('/admin/menu');
         return { success: true };
@@ -244,6 +256,7 @@ export async function createCategory(payload: any) {
     });
     if (error) throw new Error(error.message);
     
+    invalidateMenuCache();
     revalidatePath('/menu');
     revalidatePath('/admin/menu');
     return { success: true };
