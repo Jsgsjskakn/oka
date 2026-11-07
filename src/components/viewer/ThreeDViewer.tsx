@@ -148,37 +148,9 @@ export function ThreeDViewer({
   const handleReset = useCallback(() => {
     if (controlsRef.current) {
       controlsRef.current.reset();
+      setCameraPreset('side');
     }
-    setCameraPreset('side');
     setResetSignal((s) => s + 1);
-  }, []);
-
-  const handleZoomIn = useCallback(() => {
-    setZoomSignal((prev) => ({ id: (prev?.id ?? 0) + 1, factor: 0.8 }));
-  }, []);
-
-  const handleZoomOut = useCallback(() => {
-    setZoomSignal((prev) => ({ id: (prev?.id ?? 0) + 1, factor: 1.25 }));
-  }, []);
-
-  const handleToggleFullscreen = useCallback(() => {
-    if (typeof document === 'undefined') return;
-    const fsElement =
-      document.fullscreenElement ||
-      (document as Document & { webkitFullscreenElement?: Element | null }).webkitFullscreenElement;
-
-    if (!fsElement) {
-      const el = viewerRootRef.current as
-        | (HTMLDivElement & { webkitRequestFullscreen?: () => Promise<void> })
-        | null;
-      if (el?.requestFullscreen) {
-        el.requestFullscreen().catch(() => {});
-      } else if (el?.webkitRequestFullscreen) {
-        el.webkitRequestFullscreen();
-      }
-    } else if (document.exitFullscreen) {
-      document.exitFullscreen().catch(() => {});
-    }
   }, []);
 
   const handleRetry = useCallback(() => {
@@ -194,6 +166,26 @@ export function ThreeDViewer({
 
   const handleToggleCameraAngle = useCallback(() => {
     setCameraPreset((prev) => (prev === 'side' ? 'top' : 'side'));
+  }, []);
+
+  const handleZoomIn = useCallback(() => {
+    setZoomSignal({ id: Date.now(), factor: 0.85 });
+  }, []);
+
+  const handleZoomOut = useCallback(() => {
+    setZoomSignal({ id: Date.now(), factor: 1.18 });
+  }, []);
+
+  const handleToggleFullscreen = useCallback(() => {
+    if (typeof document === 'undefined') return;
+    const rootEl = viewerRootRef.current;
+    if (!rootEl) return;
+
+    if (!document.fullscreenElement) {
+      rootEl.requestFullscreen?.().catch(() => {});
+    } else {
+      document.exitFullscreen?.().catch(() => {});
+    }
   }, []);
 
   const handleViewDetails = useCallback(() => {
@@ -228,7 +220,7 @@ export function ThreeDViewer({
         }}
       />
 
-      {/* Layer 3: Warm Amber Glow around the central turntable pedestal (lightweight radial gradient on low tier) */}
+      {/* Layer 3: Warm Amber Glow around the central turntable pedestal */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] sm:w-[700px] h-[220px] sm:h-[350px] pointer-events-none opacity-45"
         style={{
@@ -237,7 +229,7 @@ export function ThreeDViewer({
         }}
       />
 
-      {/* Top Luxury Navigation Header with integrated 3D Camera Controls */}
+      {/* Top Luxury Navigation Header (Responsive: Desktop shows "3D Food Lounge", Mobile has top controls) */}
       <ViewerHeader
         dishName={dish.name}
         dishSlug={dish.slug}
@@ -245,6 +237,7 @@ export function ThreeDViewer({
       >
         {isLoaded && (
           <ViewerControls
+            variant="mobile"
             onReset={handleReset}
             autoRotate={autoRotate}
             onToggleAutoRotate={() => setAutoRotate((prev) => !prev)}
@@ -272,7 +265,7 @@ export function ThreeDViewer({
         {!isLoaded && !error && <ViewerLoadingState progress={progress} />}
         {error && <ViewerErrorState message={error} onRetry={handleRetry} />}
 
-        {/* Persistent 3D Scene Viewport: swaps FoodModel cleanly without WebGL context churn */}
+        {/* Persistent 3D Scene Viewport */}
         <ViewerScene
           key={`viewer-canvas-${retryKey}`}
           config={config}
@@ -300,21 +293,41 @@ export function ThreeDViewer({
             visible={showHotspots}
           />
         )}
+
+        {/* Vertical Floating 3D Controls Dock on Left (Original Desktop Position for Laptops) */}
+        {isLoaded && (
+          <ViewerControls
+            variant="desktop"
+            onReset={handleReset}
+            autoRotate={autoRotate}
+            onToggleAutoRotate={() => setAutoRotate((prev) => !prev)}
+            showHotspots={showHotspots}
+            onToggleHotspots={() => setShowHotspots((prev) => !prev)}
+            cameraPreset={cameraPreset}
+            onToggleCameraAngle={handleToggleCameraAngle}
+            onZoomIn={handleZoomIn}
+            onZoomOut={handleZoomOut}
+            isFullscreen={isFullscreen}
+            onToggleFullscreen={handleToggleFullscreen}
+            arHref={arHref}
+            qualityMode={qualityMode}
+            activeQualityTier={activeQualityTier}
+            onChangeQualityMode={setQualityMode}
+          />
+        )}
       </div>
 
-      {/* Horizontal Dish Selection & Category Filter Dock (Desktop only, hidden on mobile per user request) */}
+      {/* Horizontal Dish Selection & Category Filter Dock (Desktop and Laptop) */}
       {isLoaded && allModelDishes.length > 0 && (
-        <div className="hidden sm:block">
-          <DishSwitcher
-            dishes={allModelDishes}
-            currentDishId={dish.id}
-            currentCategory={dish.category}
-            onSwitchDish={onSwitchDish}
-          />
-        </div>
+        <DishSwitcher
+          dishes={allModelDishes}
+          currentDishId={dish.id}
+          currentCategory={dish.category}
+          onSwitchDish={onSwitchDish}
+        />
       )}
 
-      {/* Wide Product Information & Order Console */}
+      {/* Product Information & Order Console (Desktop: Original Right-hand 2-Zone Glass Box; Mobile: Compact Bottom Console) */}
       {isLoaded && (
         <DishInfoBar
           dish={dish}
