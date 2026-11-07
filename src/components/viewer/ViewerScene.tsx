@@ -79,6 +79,7 @@ export function resolveDishModelPath(
   const dynamicConfig = config as unknown as {
     modelPath: string;
     lodPaths?: Partial<Record<string, string>>;
+    culinaryAssetLodPaths?: Partial<Record<string, string>>;
     resolveModelPath?: (tier: string) => string;
   };
 
@@ -89,7 +90,7 @@ export function resolveDishModelPath(
     }
   }
 
-  const lodPaths = dynamicConfig.lodPaths;
+  const lodPaths = dynamicConfig.culinaryAssetLodPaths || dynamicConfig.lodPaths;
   if (lodPaths && typeof lodPaths === 'object') {
     const peerLod = (qualityObj as Record<string, unknown> | undefined)?.lodLevel;
     const numericLodKey =

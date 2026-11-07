@@ -190,9 +190,12 @@ export function ARViewer({
   useEffect(() => {
     let isMounted = true;
     const usdzPath = extractUsdzPath(selectedConfig);
+    const glbPath =
+      (selectedConfig.culinaryAssetLodPaths as any)?.balanced ||
+      selectedConfig.modelPath;
 
     detectARCapabilityMatrix({
-      glbPath: selectedConfig.modelPath,
+      glbPath,
       usdzPath,
       dishTitle: selectedDish.name,
     })

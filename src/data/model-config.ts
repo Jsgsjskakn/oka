@@ -69,6 +69,11 @@ export interface CulinaryDishProfile {
     | 'classic-smash-burger'
     | 'tandoori-paneer-pizza'
     | 'chicken-tikka-pizza'
+    | 'mushroom-truffle-pizza'
+    | 'bbq-chicken-overload'
+    | 'crispy-paneer-burger'
+    | 'wok-tossed-chow-mein'
+    | 'dynamite-chilli-potatoes'
     | 'gourmet-wok-bowl'
     | 'kaffir-lime-mocktail';
   arScale: number;
@@ -170,7 +175,7 @@ export const DISH_CULINARY_PROFILES: Record<string, CulinaryDishProfile> = {
   'mushroom-truffle-pizza': {
     culinaryCategory: 'melted-cheese',
     secondaryCategories: ['bread-crust', 'fresh-vegetables', 'glossy-sauce'],
-    culinaryArchetype: 'tandoori-paneer-pizza',
+    culinaryArchetype: 'mushroom-truffle-pizza',
     arScale: 0.18,
     preserveDynamicARLighting: true,
   },
@@ -184,7 +189,7 @@ export const DISH_CULINARY_PROFILES: Record<string, CulinaryDishProfile> = {
   'bbq-chicken-overload': {
     culinaryCategory: 'grilled-meat',
     secondaryCategories: ['glossy-sauce', 'melted-cheese', 'bread-crust'],
-    culinaryArchetype: 'chicken-tikka-pizza',
+    culinaryArchetype: 'bbq-chicken-overload',
     arScale: 0.18,
     preserveDynamicARLighting: true,
   },
@@ -205,21 +210,21 @@ export const DISH_CULINARY_PROFILES: Record<string, CulinaryDishProfile> = {
   'crispy-paneer-burger': {
     culinaryCategory: 'fried-food',
     secondaryCategories: ['bread-crust', 'melted-cheese', 'fresh-vegetables', 'glossy-sauce'],
-    culinaryArchetype: 'golden-oak-burger',
+    culinaryArchetype: 'crispy-paneer-burger',
     arScale: 0.16,
     preserveDynamicARLighting: true,
   },
   'wok-tossed-chow-mein': {
     culinaryCategory: 'glossy-sauce',
     secondaryCategories: ['fresh-vegetables'],
-    culinaryArchetype: 'gourmet-wok-bowl',
+    culinaryArchetype: 'wok-tossed-chow-mein',
     arScale: 0.16,
     preserveDynamicARLighting: true,
   },
   'dynamite-chilli-potatoes': {
     culinaryCategory: 'fried-food',
     secondaryCategories: ['glossy-sauce', 'fresh-vegetables'],
-    culinaryArchetype: 'gourmet-wok-bowl',
+    culinaryArchetype: 'dynamite-chilli-potatoes',
     arScale: 0.16,
     preserveDynamicARLighting: true,
   },

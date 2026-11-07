@@ -217,7 +217,7 @@ export function resolveAbsoluteAssetUrl(assetPath: string, baseOrigin?: string):
 export function extractUsdzPath(modelConfig: unknown): string | null {
   if (!modelConfig || typeof modelConfig !== 'object') return null;
   const record = modelConfig as Record<string, unknown>;
-  const candidate = record.usdzPath ?? record.iosUsdzPath ?? null;
+  const candidate = record.culinaryUsdzPath ?? record.usdzPath ?? record.iosUsdzPath ?? null;
   if (typeof candidate === 'string' && candidate.trim().length > 0) {
     return candidate.trim();
   }
@@ -237,11 +237,14 @@ export function resolveTieredModelPath(
     return arOverride.trim();
   }
 
-  const lodPaths = modelConfig.lodPaths;
+  const lodPaths =
+    (modelConfig.culinaryAssetLodPaths as Record<string, unknown> | undefined) ||
+    (modelConfig.lodPaths as Record<string, unknown> | undefined);
   if (lodPaths && typeof lodPaths === 'object') {
-    const tierPath = (lodPaths as Record<string, unknown>)[tier];
+    const tierKey = tier === 'low' ? 'ultraLight' : tier === 'medium' ? 'balanced' : 'high';
+    const tierPath = lodPaths[tierKey] || lodPaths[tier];
     if (typeof tierPath === 'string' && tierPath.trim().length > 0) {
-      return tierPath.trim();
+      return (tierPath as string).trim();
     }
   }
 
