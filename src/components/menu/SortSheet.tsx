@@ -29,7 +29,12 @@ export function SortSheet({ isOpen, onClose, currentSort, onApply }: SortSheetPr
         onClick={onClose}
       />
       
-      <div className="fixed bottom-0 left-0 right-0 bg-[#0a0a0a] rounded-t-3xl z-50 border-t border-border-subtle p-6 animate-in slide-in-from-bottom-full duration-300">
+      <div 
+        role="dialog"
+        aria-modal="true"
+        aria-label="Sort By"
+        className="fixed bottom-0 left-0 right-0 sm:bottom-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:max-w-md sm:w-full bg-[#0a0a0a] rounded-t-3xl sm:rounded-3xl z-50 border-t sm:border border-border-subtle p-6 animate-in slide-in-from-bottom-full sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300 shadow-[0_-10px_40px_rgba(0,0,0,0.8)] sm:shadow-[0_24px_70px_rgba(0,0,0,0.95)]"
+      >
         <div className="flex justify-between items-center mb-6">
           <h2 className="font-heading text-xl font-semibold text-text-primary">Sort By</h2>
           <button onClick={onClose} className="p-2 text-muted-foreground hover:text-text-primary">

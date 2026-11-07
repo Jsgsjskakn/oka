@@ -72,7 +72,12 @@ export function FilterSheet({
         onClick={onClose}
       />
       
-      <div className="fixed bottom-0 left-0 right-0 bg-[#0E0A08] rounded-t-3xl z-[70] border-t border-[#E2A84B]/30 p-5 sm:p-6 max-h-[88vh] overflow-y-auto animate-in slide-in-from-bottom-full duration-300 shadow-[0_-10px_40px_rgba(0,0,0,0.8)] pb-10">
+      <div 
+        role="dialog"
+        aria-modal="true"
+        aria-label="Filters and Categories"
+        className="fixed bottom-0 left-0 right-0 sm:bottom-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:max-w-xl sm:w-full bg-[#0E0A08] rounded-t-3xl sm:rounded-3xl z-[70] border-t sm:border border-[#E2A84B]/30 p-5 sm:p-6 max-h-[88vh] overflow-y-auto animate-in slide-in-from-bottom-full sm:slide-in-from-bottom-0 sm:zoom-in-95 sm:fade-in duration-300 shadow-[0_-10px_40px_rgba(0,0,0,0.8)] sm:shadow-[0_24px_70px_rgba(0,0,0,0.95),inset_0_1px_1px_rgba(255,255,255,0.12)] pb-10 sm:pb-6"
+      >
         {/* Header */}
         <div className="flex justify-between items-center pb-4 mb-4 border-b border-white/[0.08]">
           <div className="flex items-center gap-2">
