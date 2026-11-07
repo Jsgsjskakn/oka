@@ -1,7 +1,7 @@
 import { requireAdmin } from '@/lib/auth/admin-auth';
 import { getPublicSettings } from '@/lib/services/settings.service';
 import AdminSettingsClient from './SettingsClient';
-import { Sliders, Sparkles } from 'lucide-react';
+import { ShieldCheck, Coins, Receipt, Percent, TrendingUp } from 'lucide-react';
 
 const RESTAURANT_ID = 'a1b2c3d4-0000-0000-0000-000000000001';
 
@@ -14,38 +14,150 @@ export default async function AdminSettingsPage() {
   const settings = await getPublicSettings(RESTAURANT_ID);
 
   return (
-    <div className="relative min-h-screen p-6 md:p-10 max-w-5xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* Background Futuristic Ambient Glow Orbs */}
-      <div className="absolute top-12 left-1/4 w-96 h-96 bg-champagne/5 rounded-full blur-3xl pointer-events-none -z-10" />
-      <div className="absolute top-48 right-10 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none -z-10" />
-
-      {/* Top Header */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 pb-2 border-b border-border-subtle/60">
-        <div className="space-y-2">
-          <div className="flex items-center gap-3">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold tracking-widest uppercase bg-champagne/10 text-platinum border border-champagne/20 shadow-[0_0_15px_rgba(201,168,76,0.1)]">
-              <Sparkles className="w-3 h-3 text-champagne" />
-              System Architecture & Core Policies
-            </span>
+    <div className="space-y-3 select-none font-sans">
+      {/* ===================================================================== */}
+      {/* 1. TOP METRIC CARDS: 4 Glowing Dark Glass Cards with Sparklines       */}
+      {/* ===================================================================== */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        {/* Card 1: System Status (Emerald Glow) */}
+        <div className="rounded-[18px] bg-black/35 backdrop-blur-xl border border-emerald-500/25 p-3.5 relative overflow-hidden shadow-lg flex flex-col justify-between group hover:border-emerald-500/40 transition-all">
+          <div className="absolute top-0 right-0 w-28 h-28 bg-emerald-500/10 rounded-full blur-xl pointer-events-none" />
+          <div className="flex items-center gap-2 relative z-10">
+            <div className="w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center font-bold text-xs shadow-inner">
+              <ShieldCheck className="w-3.5 h-3.5" />
+            </div>
+            <span className="text-[11px] text-zinc-300 font-medium">System Status</span>
           </div>
 
-          <div className="space-y-1">
-            <h1 className="text-4xl md:text-5xl heading-ui text-text-primary text-2xl text-transparent bg-clip-text bg-gradient-to-r from-champagne via-platinum to-champagne drop-shadow-[0_0_20px_rgba(201,168,76,0.3)]">
-              Restaurant Settings
-            </h1>
-            <p className="text-champagne/80 text-[13px] font-medium tracking-[0.05em] uppercase">
-              Operational parameters, digital ticket workflows, statutory taxes, and concierge policies.
-            </p>
+          <div className="flex items-end justify-between my-1.5 relative z-10">
+            <span className="text-xl md:text-2xl font-black text-white tracking-tight">Active</span>
+            <svg className="w-20 h-8 overflow-visible" viewBox="0 0 100 40">
+              <defs>
+                <linearGradient id="emeraldGradSet" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#10b981" stopOpacity="0.4" />
+                  <stop offset="100%" stopColor="#10b981" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              <path d="M 0 35 Q 20 28, 35 30 T 60 18 T 80 12 T 100 5 L 100 40 L 0 40 Z" fill="url(#emeraldGradSet)" />
+              <path d="M 0 35 Q 20 28, 35 30 T 60 18 T 80 12 T 100 5" fill="none" stroke="#34d399" strokeWidth="2.5" strokeLinecap="round" className="drop-shadow-[0_0_8px_#34d399]" />
+            </svg>
+          </div>
+
+          <div className="flex items-center gap-1.5 text-[10px] text-emerald-400 font-bold relative z-10">
+            <TrendingUp className="w-3 h-3" /> Operational & Healthy
+          </div>
+        </div>
+
+        {/* Card 2: Currency & POS (Amber Glow) */}
+        <div className="rounded-[18px] bg-black/35 backdrop-blur-xl border border-amber-500/25 p-3.5 relative overflow-hidden shadow-lg flex flex-col justify-between group hover:border-amber-500/40 transition-all">
+          <div className="absolute top-0 right-0 w-28 h-28 bg-amber-500/10 rounded-full blur-xl pointer-events-none" />
+          <div className="flex items-center gap-2 relative z-10">
+            <div className="w-7 h-7 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center shadow-inner">
+              <Coins className="w-3.5 h-3.5 text-amber-400" />
+            </div>
+            <span className="text-[11px] text-zinc-300 font-medium">Base Currency</span>
+          </div>
+
+          <div className="flex items-end justify-between my-1.5 relative z-10">
+            <span className="text-xl md:text-2xl font-black text-white tracking-tight">INR (₹)</span>
+            <svg className="w-20 h-8 overflow-visible" viewBox="0 0 100 40">
+              <defs>
+                <linearGradient id="amberGradSet" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.4" />
+                  <stop offset="100%" stopColor="#f59e0b" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              <path d="M 0 32 Q 25 35, 45 22 T 75 18 T 100 8 L 100 40 L 0 40 Z" fill="url(#amberGradSet)" />
+              <path d="M 0 32 Q 25 35, 45 22 T 75 18 T 100 8" fill="none" stroke="#fbbf24" strokeWidth="2.5" strokeLinecap="round" className="drop-shadow-[0_0_8px_#fbbf24]" />
+            </svg>
+          </div>
+
+          <div className="flex items-center gap-1.5 text-[10px] text-amber-400 font-bold relative z-10">
+            Indian Rupee
+          </div>
+        </div>
+
+        {/* Card 3: Statutory Tax (Purple Glow) */}
+        <div className="rounded-[18px] bg-black/35 backdrop-blur-xl border border-purple-500/25 p-3.5 relative overflow-hidden shadow-lg flex flex-col justify-between group hover:border-purple-500/40 transition-all">
+          <div className="absolute top-0 right-0 w-28 h-28 bg-purple-500/10 rounded-full blur-xl pointer-events-none" />
+          <div className="flex items-center gap-2 relative z-10">
+            <div className="w-7 h-7 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30 flex items-center justify-center shadow-inner">
+              <Percent className="w-3.5 h-3.5 text-purple-400" />
+            </div>
+            <span className="text-[11px] text-zinc-300 font-medium">GST Rate</span>
+          </div>
+
+          <div className="flex items-end justify-between my-1.5 relative z-10">
+            <span className="text-xl md:text-2xl font-black text-white tracking-tight">5.0%</span>
+            <svg className="w-20 h-8 overflow-visible" viewBox="0 0 100 40">
+              <defs>
+                <linearGradient id="purpleGradSet" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#a855f7" stopOpacity="0.4" />
+                  <stop offset="100%" stopColor="#a855f7" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              <path d="M 0 25 Q 25 32, 50 20 T 75 14 T 100 10 L 100 40 L 0 40 Z" fill="url(#purpleGradSet)" />
+              <path d="M 0 25 Q 25 32, 50 20 T 75 14 T 100 10" fill="none" stroke="#c084fc" strokeWidth="2.5" strokeLinecap="round" className="drop-shadow-[0_0_8px_#c084fc]" />
+            </svg>
+          </div>
+
+          <div className="flex items-center gap-1.5 text-[10px] text-purple-400 font-bold relative z-10">
+            Restaurant Hospitality GST
+          </div>
+        </div>
+
+        {/* Card 4: Service Charge (Rose Glow) */}
+        <div className="rounded-[18px] bg-black/35 backdrop-blur-xl border border-rose-500/25 p-3.5 relative overflow-hidden shadow-lg flex flex-col justify-between group hover:border-rose-500/40 transition-all">
+          <div className="absolute top-0 right-0 w-28 h-28 bg-rose-500/10 rounded-full blur-xl pointer-events-none" />
+          <div className="flex items-center gap-2 relative z-10">
+            <div className="w-7 h-7 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center justify-center font-bold text-xs shadow-inner">
+              <Receipt className="w-3.5 h-3.5" />
+            </div>
+            <span className="text-[11px] text-zinc-300 font-medium">VIP Service Charge</span>
+          </div>
+
+          <div className="flex items-end justify-between my-1.5 relative z-10">
+            <span className="text-xl md:text-2xl font-black text-white tracking-tight">10.0%</span>
+            <svg className="w-20 h-8 overflow-visible" viewBox="0 0 100 40">
+              <defs>
+                <linearGradient id="roseGradSet" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#f43f5e" stopOpacity="0.4" />
+                  <stop offset="100%" stopColor="#f43f5e" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              <path d="M 0 35 Q 25 30, 45 32 T 75 16 T 100 10 L 100 40 L 0 40 Z" fill="url(#roseGradSet)" />
+              <path d="M 0 35 Q 25 30, 45 32 T 75 16 T 100 10" fill="none" stroke="#fb7185" strokeWidth="2.5" strokeLinecap="round" className="drop-shadow-[0_0_8px_#fb7185]" />
+            </svg>
+          </div>
+
+          <div className="flex items-center gap-1.5 text-[10px] text-rose-400 font-bold relative z-10">
+            Gratuity Allocation
           </div>
         </div>
       </div>
 
-      {/* Main Settings Card Container */}
-      <div className="bg-gradient-to-b from-zinc-900/80 via-zinc-900/60 to-zinc-950/90 backdrop-blur-2xl border border-border-subtle rounded-2xl p-6 lg:p-8 shadow-[0_20px_60px_rgba(201,168,76,0.15)] hover:shadow-[0_25px_70px_rgba(201,168,76,0.25)] hover:-translate-y-1 transition-all duration-500 hover:border-champagne/60">
+      {/* ===================================================================== */}
+      {/* 2. MAIN SETTINGS BOX                                                  */}
+      {/* ===================================================================== */}
+      <div className="rounded-[18px] bg-black/35 backdrop-blur-xl border border-white/10 p-4 shadow-lg space-y-3.5">
+        <div className="flex items-center justify-between pb-2 border-b border-white/10">
+          <div className="space-y-0.5">
+            <div className="flex items-center gap-2">
+              <h2 className="text-sm md:text-base font-bold text-white tracking-wide">
+                System Configuration
+              </h2>
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                Live Parameters
+              </span>
+            </div>
+            <p className="text-[11px] text-zinc-400">
+              Operational parameters, digital ticket workflows, statutory taxes, and concierge policies.
+            </p>
+          </div>
+        </div>
+
         <AdminSettingsClient initialSettings={settings} restaurantId={RESTAURANT_ID} />
       </div>
     </div>
   );
 }
-
-

@@ -55,7 +55,7 @@ test('Concierge Notification Center Specialist Audit', async (t) => {
     assert.ok(storeSrc.includes("'order'"), "Must support 'order' category");
   });
 
-  await t.test('4. Notification Center UI & Interaction Controls Audit', () => {
+  await t.test('4. Notification Center Luxury UI & Clean Guest Experience Audit', () => {
     // Bell icon with badge
     assert.ok(centerSrc.includes('<Bell'), 'NotificationCenter must render Bell trigger icon');
     assert.ok(centerSrc.includes('unreadCount'), 'NotificationCenter must display unread count badge');
@@ -65,17 +65,20 @@ test('Concierge Notification Center Specialist Audit', async (t) => {
     assert.ok(centerSrc.includes('Table / Seat'), 'NotificationCenter must include Table / Seat tab');
     assert.ok(centerSrc.includes('Orders'), 'NotificationCenter must include Orders tab');
 
-    // Action buttons & management
-    assert.ok(centerSrc.includes('markAllAsRead'), 'NotificationCenter must support marking all read');
-    assert.ok(centerSrc.includes('clearAll'), 'NotificationCenter must support clearing notifications');
-    assert.ok(centerSrc.includes('deleteNotification'), 'NotificationCenter must support dismissing notifications');
+    // Luxury refinement: Mark-as-read and delete options strictly removed from UI per owner specification
+    assert.ok(!centerSrc.includes('markAllAsRead'), 'NotificationCenter must remove mark-all-as-read button');
+    assert.ok(!centerSrc.includes('clearAll'), 'NotificationCenter must remove clear-all button');
+    assert.ok(!centerSrc.includes('deleteNotification'), 'NotificationCenter must remove delete/dismiss buttons from cards');
 
-    // Simulator dock
-    assert.ok(centerSrc.includes('simulateNotification'), 'NotificationCenter must provide live alert simulation');
-    assert.ok(centerSrc.includes('+ Paid'), 'Simulator must provide + Paid button');
-    assert.ok(centerSrc.includes('+ Fail'), 'Simulator must provide + Fail button');
-    assert.ok(centerSrc.includes('+ Seat'), 'Simulator must provide + Seat button');
-    assert.ok(centerSrc.includes('+ Order'), 'Simulator must provide + Order button');
+    // Simulator dock strictly removed from guest-facing luxury UI
+    assert.ok(!centerSrc.includes('+ Paid'), 'Simulator + Paid button must be removed from luxury guest UI');
+    assert.ok(!centerSrc.includes('+ Fail'), 'Simulator + Fail button must be removed from luxury guest UI');
+    assert.ok(!centerSrc.includes('+ Seat'), 'Simulator + Seat button must be removed from luxury guest UI');
+    assert.ok(!centerSrc.includes('+ Order'), 'Simulator + Order button must be removed from luxury guest UI');
+
+    // Store continues to retain underlying support
+    assert.ok(storeSrc.includes('markAllAsRead'), 'notification-store must retain markAllAsRead in store API');
+    assert.ok(storeSrc.includes('deleteNotification'), 'notification-store must retain deleteNotification in store API');
   });
 
   await t.test('5. Accessibility & Responsive Dialog Ergonomics', () => {

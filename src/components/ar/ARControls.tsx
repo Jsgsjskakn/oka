@@ -1,18 +1,35 @@
 'use client';
 
 import { useState } from 'react';
-import { Camera, RotateCcw, Share2, Eye, EyeOff, Box, MapPin } from 'lucide-react';
+import {
+  Camera,
+  RotateCcw,
+  Share2,
+  Eye,
+  EyeOff,
+  Box,
+  MapPin,
+  Crosshair,
+  UtensilsCrossed,
+  Sparkles,
+} from 'lucide-react';
 
-interface ARControlsProps {
+export interface ARControlsProps {
   onCapture: () => void;
   onReset: () => void;
   onShare: () => void;
   onToggleHotspots: () => void;
   onView3D: () => void;
   onReplace?: () => void;
+  onRecenter?: () => void;
+  onToggleDishSelector?: () => void;
+  isDishSelectorOpen?: boolean;
   showHotspots: boolean;
   isPlaced: boolean;
   isVisible?: boolean;
+  sceneViewerIntentUrl?: string | null;
+  quickLookUsdzUrl?: string | null;
+  dishPosterUrl?: string;
 }
 
 export function ARControls({
@@ -22,37 +39,140 @@ export function ARControls({
   onToggleHotspots,
   onView3D,
   onReplace,
+  onRecenter,
+  onToggleDishSelector,
+  isDishSelectorOpen = false,
   showHotspots,
   isPlaced,
   isVisible = true,
+  sceneViewerIntentUrl,
+  quickLookUsdzUrl,
+  dishPosterUrl,
 }: ARControlsProps) {
   const [activeBtn, setActiveBtn] = useState<string | null>(null);
 
   const handleBtn = (id: string, action: () => void) => {
     setActiveBtn(id);
     action();
-    if ('vibrate' in navigator) navigator.vibrate(10);
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      navigator.vibrate(10);
+    }
     setTimeout(() => setActiveBtn(null), 200);
   };
 
   const buttons = [
-    { id: 'hotspots', icon: showHotspots ? EyeOff : Eye, action: onToggleHotspots, active: showHotspots },
-    { id: 'capture', icon: Camera, action: onCapture },
-    { id: 'share', icon: Share2, action: onShare },
-    { id: 'reset', icon: RotateCcw, action: onReset },
-    ...(isPlaced && onReplace ? [{ id: 'replace', icon: MapPin, action: onReplace }] : []),
-    { id: '3d', icon: Box, action: onView3D },
+    ...(onToggleDishSelector
+      ? [
+          {
+            id: 'dishes',
+            label: 'Switch Dish',
+            icon: UtensilsCrossed,
+            action: onToggleDishSelector,
+            active: isDishSelectorOpen,
+          },
+        ]
+      : []),
+    {
+      id: 'hotspots',
+      label: showHotspots ? 'Hide Ingredients' : 'Show Ingredients',
+      icon: showHotspots ? EyeOff : Eye,
+      action: onToggleHotspots,
+      active: showHotspots,
+    },
+    {
+      id: 'capture',
+      label: 'Capture AR Photo',
+      icon: Camera,
+      action: onCapture,
+    },
+    {
+      id: 'share',
+      label: 'Share Dish',
+      icon: Share2,
+      action: onShare,
+    },
+    ...(isPlaced && onRecenter
+      ? [
+          {
+            id: 'recenter',
+            label: 'Re-center on Table',
+            icon: Crosshair,
+            action: onRecenter,
+          },
+        ]
+      : []),
+    {
+      id: 'reset',
+      label: 'Reset Scale & Angle',
+      icon: RotateCcw,
+      action: onReset,
+    },
+    ...(isPlaced && onReplace
+      ? [
+          {
+            id: 'replace',
+            label: 'Reposition Dish',
+            icon: MapPin,
+            action: onReplace,
+          },
+        ]
+      : []),
+    {
+      id: '3d',
+      label: 'Inspect in 3D Studio',
+      icon: Box,
+      action: onView3D,
+    },
   ];
 
   return (
     <div
+      data-testid="ar-controls-dock"
       className={`absolute right-3 top-16 bottom-24 z-20 flex flex-col justify-center items-end gap-1.5 max-h-[calc(100vh-160px)] overflow-y-auto no-scrollbar py-1 transition-opacity duration-300 ${
         isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
       }`}
     >
+      {/* Native Android ARCore Scene Viewer 1-Tap Launcher */}
+      {sceneViewerIntentUrl && (
+        <a
+          href={sceneViewerIntentUrl}
+          data-testid="ar-scene-viewer-launcher"
+          title="Open Native Android ARCore Plane Tracking"
+          aria-label="Open in Android ARCore Scene Viewer"
+          className="h-9 px-2.5 shrink-0 flex items-center gap-1.5 rounded-full backdrop-blur-md bg-[#E2A84B]/20 border border-[#E2A84B]/55 text-[#F6D386] text-[10px] font-semibold tracking-wide shadow-lg active:scale-95 transition-all"
+        >
+          <Sparkles className="w-3.5 h-3.5 shrink-0" />
+          <span>ARCore</span>
+        </a>
+      )}
+
+      {/* Native iOS Safari AR Quick Look Launcher (rendered ONLY when both rel="ar" and valid .usdz exist) */}
+      {quickLookUsdzUrl && (
+        <a
+          rel="ar"
+          href={quickLookUsdzUrl}
+          data-testid="ar-quick-look-launcher"
+          title="Open Apple AR Quick Look"
+          aria-label="Open in Apple AR Quick Look"
+          className="h-9 px-2.5 shrink-0 flex items-center gap-1.5 rounded-full backdrop-blur-md bg-[#E2A84B]/20 border border-[#E2A84B]/55 text-[#F6D386] text-[10px] font-semibold tracking-wide shadow-lg active:scale-95 transition-all"
+        >
+          {/* Apple Safari requires an <img> as the direct first child of <a rel="ar"> */}
+          <img
+            src={dishPosterUrl || '/images/dishes/placeholder.jpg'}
+            alt=""
+            className="w-px h-px opacity-0 absolute pointer-events-none"
+          />
+          <Sparkles className="w-3.5 h-3.5 shrink-0" />
+          <span>Quick Look</span>
+        </a>
+      )}
+
       {buttons.map((btn) => (
         <button
           key={btn.id}
+          type="button"
+          data-testid={`ar-control-${btn.id}`}
+          title={btn.label}
           onClick={() => handleBtn(btn.id, btn.action)}
           className={`w-10 h-10 shrink-0 flex items-center justify-center rounded-full backdrop-blur-md border transition-all active:scale-90 ${
             activeBtn === btn.id || btn.active

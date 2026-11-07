@@ -156,13 +156,6 @@ export const DEFAULT_TRENDING_DISHES: TrendingDishItem[] = [
     image: '/images/dishes/tandoori-paneer-pizza.webp',
   },
   {
-    id: 'dish-peri-peri-fiesta-pizza',
-    slug: 'peri-peri-fiesta-pizza',
-    name: 'Peri-Peri Fiesta Pizza',
-    priceDisplay: '$285',
-    image: '/images/dishes/peri-peri-fiesta-pizza.webp',
-  },
-  {
     id: 'dish-bbq-chicken-overload',
     slug: 'bbq-chicken-overload',
     name: 'BBQ Chicken Overload',

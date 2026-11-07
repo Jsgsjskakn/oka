@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, Suspense, useCallback, useMemo, Component, ErrorInfo, ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { Canvas, useThree, ThreeEvent, useLoader } from '@react-three/fiber';
-import { OrbitControls, useGLTF, Html, Environment } from '@react-three/drei';
+import { OrbitControls, Html, Environment } from '@react-three/drei';
 import * as THREE from 'three';
 import { RGBELoader } from 'three-stdlib';
 import {
@@ -39,17 +39,15 @@ import { TableColliders } from './TableColliders';
 import { OptimizedInteriorModel } from './OptimizedInteriorModel';
 import { useQualityTier, type QualityTier } from '@/hooks/useQualityTier';
 import { WebGLContextGuard } from '@/components/3d/WebGLContextGuard';
+import { AdaptiveQualityController } from '@/components/3d/AdaptiveQualityController';
+import { INTERIOR_MODEL_PATHS } from '@/data/model-config';
+import { INTERIOR_MODEL_URL } from '@/lib/three/interiorOptimization';
 import {
   DemandFrameloopController,
   DemandFrameloopBadge,
   type CameraTarget,
   type FrameloopTelemetry,
 } from '@/components/3d/DemandFrameloopController';
-
-import { INTERIOR_MODEL_URL } from '@/lib/three/interiorOptimization';
-
-// Preload the optimized interior model using local Draco decoder
-useGLTF.preload(INTERIOR_MODEL_URL, '/draco/');
 
 interface Restaurant3DFloorplanProps {
   selectedTableNumber: number | null;
@@ -62,6 +60,7 @@ interface Restaurant3DFloorplanProps {
   qualityTierOverride?: QualityTier | null;
   isFullscreen?: boolean;
   onToggleFullscreen?: (fullscreen: boolean) => void;
+  useRawHdr?: boolean;
 }
 
 interface ErrorBoundaryProps {
@@ -342,9 +341,11 @@ export function applyArchitecturalPBR(
 function RestaurantModel({
   simplifyTransmission = false,
   shadowsEnabled = true,
+  modelUrl = INTERIOR_MODEL_URL,
 }: {
   simplifyTransmission?: boolean;
   shadowsEnabled?: boolean;
+  modelUrl?: string;
   selectedTableNumber?: number | null;
   hoveredTable?: Floor3DTable | null;
   setHoveredTable?: (table: Floor3DTable | null) => void;
@@ -355,6 +356,7 @@ function RestaurantModel({
   return (
     <>
       <OptimizedInteriorModel
+        modelUrl={modelUrl}
         simplifyTransmission={simplifyTransmission}
         shadowsEnabled={shadowsEnabled}
         enableProxies={false}
@@ -381,7 +383,7 @@ function MobileTouchSync({ touchOrbitActive }: { touchOrbitActive: boolean }) {
   return null;
 }
 
-// Subcomponent: Controlled settle frame when canvas enters 450px margin
+// Subcomponent: Controlled settle frame when canvas enters 450px margin or tab becomes visible again
 function ViewportVisibilitySync({ isVisible }: { isVisible: boolean }) {
   const { invalidate } = useThree();
   const prevVisible = useRef(isVisible);
@@ -391,6 +393,75 @@ function ViewportVisibilitySync({ isVisible }: { isVisible: boolean }) {
     }
     prevVisible.current = isVisible;
   }, [isVisible, invalidate]);
+  return null;
+}
+
+// Subcomponent: Passive WebGL telemetry publisher (zero extra frames triggered)
+function FloorplanTelemetryBridge({
+  frameloop,
+  qualityTier,
+  dpr,
+  isViewportVisible,
+  isDocumentHidden,
+  hdrFile,
+  telemetry,
+}: {
+  frameloop: 'demand' | 'never';
+  qualityTier: QualityTier;
+  dpr: number | [number, number];
+  isViewportVisible: boolean;
+  isDocumentHidden: boolean;
+  hdrFile: string | null;
+  telemetry: FrameloopTelemetry;
+}) {
+  const { gl } = useThree();
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const win = window as Window & { __GOLDEN_OAK_3D_TELEMETRY__?: Record<string, unknown> };
+    win.__GOLDEN_OAK_3D_TELEMETRY__ = win.__GOLDEN_OAK_3D_TELEMETRY__ || {};
+    const prev = (win.__GOLDEN_OAK_3D_TELEMETRY__.Restaurant3DFloorplan as Record<string, unknown>) || {};
+    const isAsleep = frameloop === 'never' || telemetry.isIdle;
+    win.__GOLDEN_OAK_3D_TELEMETRY__.Restaurant3DFloorplan = {
+      ...prev,
+      component: 'Restaurant3DFloorplan',
+      mounted: true,
+      frameloop,
+      qualityTier,
+      dpr,
+      isViewportVisible,
+      isDocumentHidden,
+      hdrFile,
+      fps: isAsleep ? 0 : telemetry.fps,
+      isIdle: isAsleep,
+      estimatedWattage: isAsleep ? 0.1 : telemetry.estimatedWattage,
+      totalFramesRendered: telemetry.totalFramesRendered,
+      calls: gl?.info?.render?.calls ?? prev.calls ?? 0,
+      triangles: gl?.info?.render?.triangles ?? prev.triangles ?? 0,
+      lines: gl?.info?.render?.lines ?? prev.lines ?? 0,
+      points: gl?.info?.render?.points ?? prev.points ?? 0,
+      geometries: gl?.info?.memory?.geometries ?? prev.geometries ?? 0,
+      textures: gl?.info?.memory?.textures ?? prev.textures ?? 0,
+      programs: gl?.info?.programs?.length ?? prev.programs ?? 0,
+      updatedAt: Date.now(),
+    };
+  }, [gl, frameloop, qualityTier, dpr, isViewportVisible, isDocumentHidden, hdrFile, telemetry]);
+
+  useEffect(() => {
+    return () => {
+      const win = window as Window & { __GOLDEN_OAK_3D_TELEMETRY__?: Record<string, unknown> };
+      if (typeof window !== 'undefined' && win.__GOLDEN_OAK_3D_TELEMETRY__?.Restaurant3DFloorplan) {
+        win.__GOLDEN_OAK_3D_TELEMETRY__.Restaurant3DFloorplan = {
+          ...(win.__GOLDEN_OAK_3D_TELEMETRY__.Restaurant3DFloorplan as Record<string, unknown>),
+          mounted: false,
+          fps: 0,
+          isIdle: true,
+          updatedAt: Date.now(),
+        };
+      }
+    };
+  }, []);
+
   return null;
 }
 
@@ -475,6 +546,7 @@ export function Restaurant3DFloorplan({
   qualityTierOverride,
   isFullscreen,
   onToggleFullscreen,
+  useRawHdr = false,
 }: Restaurant3DFloorplanProps) {
   const quality = useQualityTier({ overrideTier: qualityTierOverride });
   const [mounted, setMounted] = useState(false);
@@ -536,10 +608,19 @@ export function Restaurant3DFloorplan({
   const controlsRef = useRef<any>(null);
   const canvasContainerRef = useRef<HTMLDivElement>(null);
   const [isViewportVisible, setIsViewportVisible] = useState(true);
+  const [isDocumentHidden, setIsDocumentHidden] = useState(false);
+  const [isSaveData, setIsSaveData] = useState(false);
   const [isDesktopActive, setIsDesktopActive] = useState(false);
   const [touchOrbitActive, setTouchOrbitActive] = useState(false);
   const [showTouchHint, setShowTouchHint] = useState(false);
   const touchHintTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (typeof navigator !== 'undefined') {
+      const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+      setIsSaveData(Boolean(conn?.saveData));
+    }
+  }, []);
 
   // Visibility-aware IntersectionObserver: Pauses 3D frameloop when scrolled out of view
   useEffect(() => {
@@ -553,6 +634,17 @@ export function Restaurant3DFloorplan({
     );
     observer.observe(canvasContainerRef.current);
     return () => observer.disconnect();
+  }, []);
+
+  // Document tab visibility listener: completely suspends WebGL frameloop ("never") when tab is hidden
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const handleVisibilityChange = () => {
+      setIsDocumentHidden(document.visibilityState === 'hidden' || document.hidden);
+    };
+    handleVisibilityChange();
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, []);
 
   // Accessible click-to-focus: Esc and outside-click release 3D wheel capture on desktop / exit fullscreen
@@ -597,6 +689,7 @@ export function Restaurant3DFloorplan({
         clearTimeout(touchHintTimeoutRef.current);
       }
       try {
+        useLoader.clear(RGBELoader, '/textures/forest_env.optimized.hdr');
         useLoader.clear(RGBELoader, '/textures/forest_env.hdr');
       } catch {
         // Safe no-op
@@ -660,6 +753,15 @@ export function Restaurant3DFloorplan({
     },
     [onSelectTable, onSelectZone, focusOnTable]
   );
+
+  const activeFrameloop: 'demand' | 'never' =
+    !isViewportVisible || isDocumentHidden ? 'never' : 'demand';
+  const shouldLoadHdr = quality.qualityTier !== 'low' && !isSaveData;
+  const activeHdrFile = !shouldLoadHdr
+    ? null
+    : useRawHdr
+      ? '/textures/forest_env.hdr'
+      : '/textures/forest_env.optimized.hdr';
 
   const content = (
     <div
@@ -985,7 +1087,7 @@ export function Restaurant3DFloorplan({
           selectedZone={selectedZone}
         >
           <Canvas
-            frameloop="demand"
+            frameloop={activeFrameloop}
             dpr={quality.dpr}
             shadows={quality.shadowsEnabled ? 'percentage' : false}
             camera={{
@@ -1070,7 +1172,16 @@ export function Restaurant3DFloorplan({
             <pointLight position={[-12, 4.0, 0]} intensity={3.5} distance={22} color="#FFBF55" />
 
             <MobileTouchSync touchOrbitActive={touchOrbitActive} />
-            <ViewportVisibilitySync isVisible={isViewportVisible} />
+            <ViewportVisibilitySync isVisible={isViewportVisible && !isDocumentHidden} />
+            <FloorplanTelemetryBridge
+              frameloop={activeFrameloop}
+              qualityTier={quality.qualityTier}
+              dpr={quality.dpr}
+              isViewportVisible={isViewportVisible}
+              isDocumentHidden={isDocumentHidden}
+              hdrFile={activeHdrFile}
+              telemetry={telemetry}
+            />
 
             <Suspense fallback={<CanvasLoadingScreen />}>
               {/* WebGL Context Loss & Recovery Guard */}
@@ -1096,8 +1207,14 @@ export function Restaurant3DFloorplan({
                 }}
               />
 
-              {/* Local LookDev Environment Reflections (from local public/textures, zero external CDN fetch!) */}
-              <Environment files="/textures/forest_env.hdr" environmentIntensity={quality.environmentIntensity} />
+              {/* Local LookDev Environment Reflections: 468 KB optimized HDR (74.5% smaller) on medium/high, skipped on low/saveData */}
+              {quality.isHydrated &&
+                shouldLoadHdr &&
+                (useRawHdr ? (
+                  <Environment files="/textures/forest_env.hdr" environmentIntensity={quality.environmentIntensity} />
+                ) : (
+                  <Environment files="/textures/forest_env.optimized.hdr" environmentIntensity={quality.environmentIntensity} />
+                ))}
 
               {/* Demand Frameloop & Camera Glide Controller: Drops to 0 FPS when idle */}
               <DemandFrameloopController
@@ -1109,10 +1226,22 @@ export function Restaurant3DFloorplan({
                 enableTelemetry={true}
               />
 
-              <RestaurantModel
-                simplifyTransmission={quality.simplifyTransmission}
-                shadowsEnabled={quality.shadowsEnabled}
+              <AdaptiveQualityController
+                canvasName="Floorplan_Adaptive"
+                enabled={isViewportVisible && !isDocumentHidden && !quality.tierOverride}
               />
+
+              {quality.isHydrated && (
+                <RestaurantModel
+                  modelUrl={
+                    quality.isMobile || quality.qualityTier === 'low' || isSaveData
+                      ? INTERIOR_MODEL_PATHS.mobileBalanced
+                      : INTERIOR_MODEL_URL
+                  }
+                  simplifyTransmission={quality.simplifyTransmission}
+                  shadowsEnabled={quality.shadowsEnabled}
+                />
+              )}
 
               <TableColliders
                 selectedTableNumber={selectedTableNumber}

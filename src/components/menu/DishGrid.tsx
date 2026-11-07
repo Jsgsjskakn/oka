@@ -14,7 +14,7 @@ export function DishGrid({ dishes, searchHighlight }: DishGridProps) {
   const showConciergeCard = dishes.length === 10;
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-4 sm:px-6 lg:px-8 pb-20 max-w-[1360px] mx-auto w-full items-stretch">
+    <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6 px-3 sm:px-6 lg:px-8 pb-20 max-w-[1360px] mx-auto w-full items-stretch">
       {dishes.map((dish) => (
         <MenuDishCard key={dish.id} dish={dish} searchHighlight={searchHighlight} />
       ))}
@@ -22,7 +22,7 @@ export function DishGrid({ dishes, searchHighlight }: DishGridProps) {
       {/* Concierge VIP Degustation & Private Dining Card (Fills Grid Hole seamlessly on full menu view) */}
       {showConciergeCard && (
         <div
-          className="col-span-1 sm:col-span-2 rounded-3xl p-6 sm:p-8 flex flex-col justify-between border relative overflow-hidden group shadow-2xl transition-all duration-500 hover:border-[#F0C36B]/60 hover:-translate-y-2 cursor-pointer"
+          className="col-span-2 rounded-2xl sm:rounded-3xl p-5 sm:p-8 flex flex-col justify-between border relative overflow-hidden group shadow-2xl transition-all duration-500 hover:border-[#F0C36B]/60 hover:-translate-y-2 cursor-pointer"
           style={{
             background: 'rgba(20, 15, 11, 0.45)',
             backdropFilter: 'blur(24px) saturate(160%)',

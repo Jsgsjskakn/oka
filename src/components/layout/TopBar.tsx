@@ -191,23 +191,6 @@ export function TopBar() {
               <Search className="w-4 h-4 transition-colors group-hover:text-[#F0C36B]" />
             </button>
 
-            {/* Favorites Heart Icon */}
-            <Link
-              href="/favorites"
-              title="Personal Tasting Vault"
-              className={`relative p-1 transition-all flex items-center group shrink-0 ${
-                pathname === '/favorites'
-                  ? 'text-[#F0C36B]'
-                  : 'text-[#B5ADA2] hover:text-[#FAF5EC]'
-              }`}
-            >
-              <Heart
-                className={`w-4 h-4 transition-transform group-hover:scale-110 ${
-                  pathname === '/favorites' ? 'fill-[#F0C36B]/25 stroke-[#F0C36B]' : ''
-                }`}
-              />
-            </Link>
-
             {/* Book Table Button (Rounded Capsule Outline) */}
             <Link
               href="/booking"
@@ -227,15 +210,6 @@ export function TopBar() {
               <span className="absolute -top-1 -right-1.5 min-w-[15px] h-[15px] px-0.5 rounded-full bg-[#E0532B] text-white text-[8.5px] font-mono font-bold flex items-center justify-center shadow-[0_2px_6px_rgba(224,83,43,0.5)]">
                 {isMounted && totalCartItems > 0 ? (totalCartItems > 99 ? '99+' : totalCartItems) : '2'}
               </span>
-            </Link>
-
-            {/* User Profile Avatar Circle (AK) */}
-            <Link
-              href="/profile"
-              title="Member Profile"
-              className="w-[32px] h-[32px] rounded-full border border-[#F0C36B]/60 bg-[#16100C] hover:bg-[#201712] flex items-center justify-center text-[10.5px] font-mono font-bold tracking-tight text-[#FAF5EC] hover:text-[#F0C36B] hover:border-[#F0C36B] transition-all shadow-sm shrink-0"
-            >
-              {currentUser ? getInitials(currentUser.name, currentUser.email) : 'AK'}
             </Link>
 
             {/* Mobile Hamburger Button */}
@@ -334,9 +308,11 @@ export function TopBar() {
                 </div>
               )}
 
-              {/* Navigation list */}
+              {/* Navigation list (Our Story removed on mobile per user request) */}
               <nav className="space-y-1">
-                {navLinks.map((link) => {
+                {navLinks
+                  .filter((link) => link.label !== 'Our Story')
+                  .map((link) => {
                   const isActive = pathname.startsWith(link.href);
                   return (
                     <Link

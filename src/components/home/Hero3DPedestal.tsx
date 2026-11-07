@@ -3,20 +3,51 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { RotateCw, Box, Eye, Layers, RotateCcw } from 'lucide-react';
+import { useQualityTier } from '@/hooks/useQualityTier';
 
-export function Hero3DPedestal() {
+const HeroWarriorCanvas = dynamic(
+  () => import('./HeroWarriorCanvas').then((mod) => ({ default: mod.HeroWarriorCanvas })),
+  { ssr: false }
+);
+
+export interface Hero3DPedestalProps {
+  render3DModel?: boolean;
+}
+
+export function Hero3DPedestal({ render3DModel = false }: Hero3DPedestalProps = {}) {
+  const quality = useQualityTier();
   const [autoRotate, setAutoRotate] = useState(true);
+  const [userToggledRotate, setUserToggledRotate] = useState(false);
   const [showCallouts, setShowCallouts] = useState(true);
-  const [rotation, setRotation] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
+  const [isDocumentHidden, setIsDocumentHidden] = useState(false);
+  const [isSaveData, setIsSaveData] = useState(false);
+
+  const rotationRef = useRef({ x: 0, y: 0 });
   const dragStart = useRef({ x: 0, y: 0, rotX: 0, rotY: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
 
-  // Viewport visibility observer: Pauses animation work when scrolled away
+  const applyStageTransform = useCallback((x: number, y: number) => {
+    rotationRef.current = { x, y };
+    if (stageRef.current) {
+      stageRef.current.style.transform = `perspective(1000px) rotateX(${x}deg) rotateY(${y}deg)`;
+    }
+  }, []);
+
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (typeof navigator !== 'undefined') {
+      const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+      setIsSaveData(Boolean(conn?.saveData));
+    }
+  }, []);
+
+  // Viewport visibility observer: Pauses Hero pedestal/WebGL work as soon as scrolled past Hero
+  useEffect(() => {
+    if (!containerRef.current || typeof IntersectionObserver === 'undefined') return;
     const observer = new IntersectionObserver(
       ([entry]) => {
         setIsVisible(entry.isIntersecting);
@@ -27,13 +58,30 @@ export function Hero3DPedestal() {
     return () => observer.disconnect();
   }, []);
 
-  // Gentle auto-rotation loop with rAF, delta clamping, and visibility guard
+  // Document visibility listener: Pauses work completely when browser tab is backgrounded
   useEffect(() => {
-    const prefersReducedMotion =
-      typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (typeof document === 'undefined') return;
+    const syncVisibility = () => {
+      setIsDocumentHidden(document.visibilityState === 'hidden' || document.hidden);
+    };
+    syncVisibility();
+    document.addEventListener('visibilitychange', syncVisibility);
+    return () => document.removeEventListener('visibilitychange', syncVisibility);
+  }, []);
 
-    if (!autoRotate || isDragging || !isVisible || prefersReducedMotion) return;
+  const isUltraLowPower =
+    quality.isLowPower ||
+    quality.isSoftwareGpu ||
+    isSaveData ||
+    (typeof quality.deviceMemory === 'number' && quality.deviceMemory <= 2);
+
+  const effectiveAutoRotate =
+    autoRotate && (userToggledRotate || (!quality.prefersReducedMotion && !isUltraLowPower));
+  const isStageActive = isVisible && !isDocumentHidden;
+
+  // Direct DOM rAF auto-rotation loop (zero React re-renders per frame; skipped when WebGL canvas handles rotation)
+  useEffect(() => {
+    if (render3DModel || !effectiveAutoRotate || isDragging || !isStageActive) return;
 
     let animId: number | null = null;
     let lastTime: number | null = null;
@@ -46,80 +94,61 @@ export function Hero3DPedestal() {
       if (lastTime !== null) {
         const delta = Math.min(time - lastTime, 100);
         const degStep = delta * 0.01;
-        setRotation((prev) => ({
-          ...prev,
-          y: (prev.y + degStep) % 360,
-        }));
+        const nextY = (rotationRef.current.y + degStep) % 360;
+        applyStageTransform(rotationRef.current.x, nextY);
       }
       lastTime = time;
       animId = requestAnimationFrame(step);
     };
 
-    const handleVisibility = () => {
-      if (document.hidden) {
-        if (animId) cancelAnimationFrame(animId);
-        animId = null;
-        lastTime = null;
-      } else {
-        lastTime = null;
-        if (!animId) animId = requestAnimationFrame(step);
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibility);
-    if (!document.hidden) {
-      animId = requestAnimationFrame(step);
-    }
+    animId = requestAnimationFrame(step);
 
     return () => {
       if (animId) cancelAnimationFrame(animId);
-      document.removeEventListener('visibilitychange', handleVisibility);
     };
-  }, [autoRotate, isDragging, isVisible]);
+  }, [render3DModel, effectiveAutoRotate, isDragging, isStageActive, applyStageTransform]);
 
   // Interactive mouse drag to rotate
   const handleMouseDown = (e: React.MouseEvent) => {
+    if (render3DModel) return;
     setIsDragging(true);
     dragStart.current = {
       x: e.clientX,
       y: e.clientY,
-      rotX: rotation.x,
-      rotY: rotation.y,
+      rotX: rotationRef.current.x,
+      rotY: rotationRef.current.y,
     };
   };
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
+      if (render3DModel || !isStageActive) return;
       if (!isDragging) {
-        // Subtle 3D perspective tilt on hover
-        if (containerRef.current) {
+        // Subtle 3D perspective tilt on hover (direct DOM update, zero React re-renders)
+        if (containerRef.current && !quality.prefersReducedMotion) {
           const rect = containerRef.current.getBoundingClientRect();
-          const normX = (e.clientX - rect.left) / rect.width - 0.5;
           const normY = (e.clientY - rect.top) / rect.height - 0.5;
-          setRotation((prev) => ({
-            ...prev,
-            x: normY * -12,
-          }));
+          applyStageTransform(normY * -12, rotationRef.current.y);
         }
         return;
       }
 
       const deltaX = e.clientX - dragStart.current.x;
       const deltaY = e.clientY - dragStart.current.y;
-      setRotation({
-        x: Math.max(-18, Math.min(18, dragStart.current.rotX - deltaY * 0.15)),
-        y: dragStart.current.rotY + deltaX * 0.4,
-      });
+      const nextX = Math.max(-18, Math.min(18, dragStart.current.rotX - deltaY * 0.15));
+      const nextY = dragStart.current.rotY + deltaX * 0.4;
+      applyStageTransform(nextX, nextY);
     },
-    [isDragging]
+    [render3DModel, isStageActive, isDragging, quality.prefersReducedMotion, applyStageTransform]
   );
 
   const handleMouseUp = () => {
-    setIsDragging(false);
+    if (isDragging) setIsDragging(false);
   };
 
   const handleReset = () => {
-    setRotation({ x: 0, y: 0 });
+    applyStageTransform(0, 0);
+    setUserToggledRotate(true);
     setAutoRotate(true);
   };
 
@@ -199,17 +228,20 @@ export function Hero3DPedestal() {
         </div>
       )}
 
-      {/* Main Interactive Truffle Pizza 3D Showcase on Turntable Plinth */}
+      {/* Main Interactive Truffle Pizza / Optional WebGL Showcase on Turntable Plinth */}
       <div
+        ref={stageRef}
         onMouseDown={handleMouseDown}
         className="relative w-[340px] h-[340px] sm:w-[440px] sm:h-[400px] z-20 flex items-center justify-center cursor-grab active:cursor-grabbing transition-transform duration-100 ease-out"
         style={{
-          transform: `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
+          transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg)',
         }}
       >
         {/* Glowing Molten Gold Neon Ring on Circular Turntable Plinth */}
         <div
-          className="absolute bottom-6 sm:bottom-7 w-[290px] sm:w-[380px] h-[75px] rounded-[100%] border-[2.5px] border-[#F0C36B] shadow-[0_0_40px_rgba(240,195,107,0.85),inset_0_0_20px_rgba(240,195,107,0.5)] pointer-events-none animate-pulse"
+          className={`absolute bottom-6 sm:bottom-7 w-[290px] sm:w-[380px] h-[75px] rounded-[100%] border-[2.5px] border-[#F0C36B] shadow-[0_0_40px_rgba(240,195,107,0.85),inset_0_0_20px_rgba(240,195,107,0.5)] pointer-events-none ${
+            isStageActive && !quality.prefersReducedMotion ? 'animate-pulse' : ''
+          }`}
           style={{ transform: 'rotateX(68deg)' }}
         />
         <div
@@ -217,17 +249,23 @@ export function Hero3DPedestal() {
           style={{ transform: 'rotateX(68deg)' }}
         />
 
-        {/* High-Resolution Artisanal Wood-Fired Pizza Showcase */}
-        <div className="relative w-full h-full flex items-center justify-center pointer-events-none">
-          <Image
-            src="/images/dishes/hero-pizza-full-showcase.png"
-            alt="The Golden Oak Artisanal Wood-Fired Mushroom Truffle Pizza"
-            fill
-            priority
-            sizes="(max-width: 768px) 340px, 440px"
-            className="object-contain filter drop-shadow-[0_20px_35px_rgba(0,0,0,0.8)]"
-          />
-        </div>
+        {render3DModel ? (
+          <div className="relative w-full h-full">
+            <HeroWarriorCanvas autoRotate={effectiveAutoRotate} isVisible={isStageActive} />
+          </div>
+        ) : (
+          /* High-Resolution Artisanal Wood-Fired Pizza Showcase */
+          <div className="relative w-full h-full flex items-center justify-center pointer-events-none">
+            <Image
+              src="/images/dishes/hero-pizza-full-showcase.png"
+              alt="The Golden Oak Artisanal Wood-Fired Mushroom Truffle Pizza"
+              fill
+              priority
+              sizes="(max-width: 768px) 340px, 440px"
+              className="object-contain filter drop-shadow-[0_20px_35px_rgba(0,0,0,0.8)]"
+            />
+          </div>
+        )}
       </div>
 
       {/* Floating Drag Hint Pill Directly Beneath Pedestal */}
@@ -251,23 +289,36 @@ export function Hero3DPedestal() {
       <div className="hidden xl:flex absolute -right-12 sm:-right-16 top-1/2 -translate-y-1/2 z-30 flex-col gap-2 p-2 rounded-full bg-[rgba(16,12,9,0.55)] backdrop-blur-2xl border border-[#F0C36B]/40 shadow-[inset_0_1px_1px_rgba(255,255,255,0.18),0_16px_40px_rgba(0,0,0,0.65)]">
         <button
           type="button"
-          onClick={() => setAutoRotate(!autoRotate)}
+          onClick={() => {
+            setUserToggledRotate(true);
+            setAutoRotate(!autoRotate);
+          }}
           className="flex flex-col items-center justify-center gap-1 py-1 transition-all active:scale-90 group cursor-pointer"
           title="Toggle Auto-Rotation"
         >
           <div
             className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
-              autoRotate
+              effectiveAutoRotate
                 ? 'bg-[#F0C36B]/25 border border-[#F0C36B] shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_0_16px_rgba(240,195,107,0.4)]'
                 : 'bg-white/[0.04] border border-white/10 group-hover:border-[#F0C36B]/50 group-hover:bg-[#F0C36B]/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]'
             }`}
           >
             <RotateCw
-              className={`w-4 h-4 ${autoRotate ? 'animate-spin text-[#F0C36B]' : 'text-[#D2C3AD]'}`}
-              style={autoRotate ? { animationDuration: '4s' } : undefined}
+              className={`w-4 h-4 ${
+                isStageActive && effectiveAutoRotate
+                  ? 'animate-spin text-[#F0C36B]'
+                  : effectiveAutoRotate
+                    ? 'text-[#F0C36B]'
+                    : 'text-[#D2C3AD]'
+              }`}
+              style={isStageActive && effectiveAutoRotate ? { animationDuration: '4s' } : undefined}
             />
           </div>
-          <span className={`text-[9.5px] font-medium leading-none ${autoRotate ? 'text-[#FFE1A0]' : 'text-[#A99B8B]'}`}>
+          <span
+            className={`text-[9.5px] font-medium leading-none ${
+              effectiveAutoRotate ? 'text-[#FFE1A0]' : 'text-[#A99B8B]'
+            }`}
+          >
             Rotate
           </span>
         </button>

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Playfair_Display, Inter } from 'next/font/google';
+import { Playfair_Display, Inter, Cinzel } from 'next/font/google';
 import './globals.css';
 import { MobileShell } from '@/components/layout/MobileShell';
 import ConvexClientProvider from './ConvexClientProvider';
@@ -14,6 +14,12 @@ const playfair = Playfair_Display({
 
 const inter = Inter({
   variable: '--font-sans',
+  subsets: ['latin'],
+  display: 'swap',
+});
+
+const cinzel = Cinzel({
+  variable: '--font-cinzel',
   subsets: ['latin'],
   display: 'swap',
 });
@@ -79,7 +85,7 @@ const restaurantJsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${playfair.variable} ${inter.variable} dark`}>
+    <html lang="en" className={`${playfair.variable} ${inter.variable} ${cinzel.variable} dark`}>
       <head>
         <script
           type="application/ld+json"

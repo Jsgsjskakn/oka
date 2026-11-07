@@ -20,7 +20,6 @@ const DISH_PAIRINGS: Record<string, string> = {
   'tandoori-paneer-pizza': 'Pairs well with: Mint Chutney & Rosemary Truffle Fries',
   'chicken-tikka-pizza': 'Pairs well with: Smoked Garlic Dip & Sparkling Cider',
   'mushroom-truffle-pizza': 'Pairs well with: Chianti Classico & Garlic Sourdough',
-  'peri-peri-fiesta-pizza': 'Pairs well with: Chilled Lemon Mint Cooler',
   'bbq-chicken-overload': 'Pairs well with: Aged Cheddar Wedges & Craft Stout',
   'classic-smash-burger': 'Pairs well with: Dynamite Chilli Potatoes & Aioli',
   'golden-oak-signature-burger': 'Pairs well with: Truffle Parmesan Fries & Craft IPA',

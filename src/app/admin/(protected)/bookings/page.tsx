@@ -7,18 +7,16 @@ import {
   Users, 
   Clock, 
   CheckCircle2, 
-  Sparkles, 
-  Filter, 
   CalendarCheck, 
-  AlertCircle, 
-  ChevronRight,
-  Phone,
-  PartyPopper,
-  CalendarDays
+  Phone, 
+  PartyPopper, 
+  CalendarDays,
+  Plus,
+  TrendingUp,
 } from 'lucide-react';
 
 export const metadata = {
-  title: 'Bookings | Admin | The Golden Oak',
+  title: 'Reservations | Admin | The Golden Oak',
 };
 
 const RESTAURANT_ID = 'a1b2c3d4-0000-0000-0000-000000000001';
@@ -46,257 +44,335 @@ export default async function BookingsPage({
     ?.reduce((sum, b) => sum + (b.guests || 0), 0) ?? 0;
 
   return (
-    <div className="relative min-h-screen p-6 md:p-10 max-w-7xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* Background Futuristic Ambient Glow Orbs */}
-      <div className="absolute top-12 left-1/4 w-96 h-96 bg-champagne/5 rounded-full blur-3xl pointer-events-none -z-10" />
-      <div className="absolute top-48 right-10 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none -z-10" />
-
-      {/* Top Header */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 pb-2 border-b border-border-subtle/60">
-        <div className="space-y-2">
-          <div className="flex items-center gap-3">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold tracking-widest uppercase bg-platinum/5 text-platinum border border-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.15)]">
-              <Sparkles className="w-3 h-3 text-platinum" />
-              VIP Concierge & Floor Seating
-            </span>
+    <div className="space-y-3 select-none font-sans">
+      {/* ===================================================================== */}
+      {/* 1. TOP METRIC CARDS: 4 Glowing Dark Glass Cards with Sparklines       */}
+      {/* ===================================================================== */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        {/* Card 1: Confirmed Tables (Emerald Glow) */}
+        <div className="rounded-[18px] bg-black/35 backdrop-blur-xl border border-emerald-500/25 p-3.5 relative overflow-hidden shadow-lg flex flex-col justify-between group hover:border-emerald-500/40 transition-all">
+          <div className="absolute top-0 right-0 w-28 h-28 bg-emerald-500/10 rounded-full blur-xl pointer-events-none" />
+          <div className="flex items-center gap-2 relative z-10">
+            <div className="w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center font-bold text-xs shadow-inner">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+            </div>
+            <span className="text-[11px] text-zinc-300 font-medium">Confirmed Tables</span>
           </div>
 
-          <div className="space-y-1">
-            <h1 className="text-4xl md:text-5xl heading-ui text-text-primary text-2xl text-transparent bg-clip-text bg-gradient-to-r from-champagne via-platinum to-champagne drop-shadow-[0_0_20px_rgba(201,168,76,0.3)]">
-              Table Bookings
-            </h1>
-            <p className="text-champagne/80 text-[13px] font-medium tracking-[0.05em] uppercase">
+          <div className="flex items-end justify-between my-1.5 relative z-10">
+            <span className="text-xl md:text-2xl font-black text-white tracking-tight">
+              {confirmedCount}
+            </span>
+            <svg className="w-20 h-8 overflow-visible" viewBox="0 0 100 40">
+              <defs>
+                <linearGradient id="emeraldGradB" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#10b981" stopOpacity="0.4" />
+                  <stop offset="100%" stopColor="#10b981" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              <path d="M 0 35 Q 20 28, 35 30 T 60 18 T 80 12 T 100 5 L 100 40 L 0 40 Z" fill="url(#emeraldGradB)" />
+              <path d="M 0 35 Q 20 28, 35 30 T 60 18 T 80 12 T 100 5" fill="none" stroke="#34d399" strokeWidth="2.5" strokeLinecap="round" className="drop-shadow-[0_0_8px_#34d399]" />
+            </svg>
+          </div>
+
+          <div className="flex items-center gap-1.5 text-[10px] text-emerald-400 font-bold relative z-10">
+            <TrendingUp className="w-3 h-3" /> +14% vs. last week
+          </div>
+        </div>
+
+        {/* Card 2: Total Bookings (Amber Glow) */}
+        <div className="rounded-[18px] bg-black/35 backdrop-blur-xl border border-amber-500/25 p-3.5 relative overflow-hidden shadow-lg flex flex-col justify-between group hover:border-amber-500/40 transition-all">
+          <div className="absolute top-0 right-0 w-28 h-28 bg-amber-500/10 rounded-full blur-xl pointer-events-none" />
+          <div className="flex items-center gap-2 relative z-10">
+            <div className="w-7 h-7 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center font-bold text-xs shadow-inner">
+              <CalendarCheck className="w-3.5 h-3.5" />
+            </div>
+            <span className="text-[11px] text-zinc-300 font-medium">Total Bookings</span>
+          </div>
+
+          <div className="flex items-end justify-between my-1.5 relative z-10">
+            <span className="text-xl md:text-2xl font-black text-white tracking-tight">
+              {totalCount}
+            </span>
+            <svg className="w-20 h-8 overflow-visible" viewBox="0 0 100 40">
+              <defs>
+                <linearGradient id="amberGradB" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.4" />
+                  <stop offset="100%" stopColor="#f59e0b" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              <path d="M 0 32 Q 25 35, 45 22 T 75 18 T 100 8 L 100 40 L 0 40 Z" fill="url(#amberGradB)" />
+              <path d="M 0 32 Q 25 35, 45 22 T 75 18 T 100 8" fill="none" stroke="#fbbf24" strokeWidth="2.5" strokeLinecap="round" className="drop-shadow-[0_0_8px_#fbbf24]" />
+            </svg>
+          </div>
+
+          <div className="flex items-center gap-1.5 text-[10px] text-amber-400 font-bold relative z-10">
+            <TrendingUp className="w-3 h-3" /> Live reservations
+          </div>
+        </div>
+
+        {/* Card 3: Expected Guests (Purple Glow) */}
+        <div className="rounded-[18px] bg-black/35 backdrop-blur-xl border border-purple-500/25 p-3.5 relative overflow-hidden shadow-lg flex flex-col justify-between group hover:border-purple-500/40 transition-all">
+          <div className="absolute top-0 right-0 w-28 h-28 bg-purple-500/10 rounded-full blur-xl pointer-events-none" />
+          <div className="flex items-center gap-2 relative z-10">
+            <div className="w-7 h-7 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30 flex items-center justify-center font-bold text-xs shadow-inner">
+              <Users className="w-3.5 h-3.5" />
+            </div>
+            <span className="text-[11px] text-zinc-300 font-medium">Expected Guests</span>
+          </div>
+
+          <div className="flex items-end justify-between my-1.5 relative z-10">
+            <span className="text-xl md:text-2xl font-black text-white tracking-tight">
+              {totalGuests}
+            </span>
+            <svg className="w-20 h-8 overflow-visible" viewBox="0 0 100 40">
+              <defs>
+                <linearGradient id="purpleGradB" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#a855f7" stopOpacity="0.4" />
+                  <stop offset="100%" stopColor="#a855f7" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              <path d="M 0 15 Q 30 18, 50 25 T 80 32 T 100 28 L 100 40 L 0 40 Z" fill="url(#purpleGradB)" />
+              <path d="M 0 15 Q 30 18, 50 25 T 80 32 T 100 28" fill="none" stroke="#c084fc" strokeWidth="2.5" strokeLinecap="round" className="drop-shadow-[0_0_8px_#c084fc]" />
+            </svg>
+          </div>
+
+          <div className="flex items-center gap-1.5 text-[10px] text-purple-400 font-bold relative z-10">
+            Covers Allocated
+          </div>
+        </div>
+
+        {/* Card 4: Pending Review (Rose Glow) */}
+        <div className="rounded-[18px] bg-black/35 backdrop-blur-xl border border-rose-500/25 p-3.5 relative overflow-hidden shadow-lg flex flex-col justify-between group hover:border-rose-500/40 transition-all">
+          <div className="absolute top-0 right-0 w-28 h-28 bg-rose-500/10 rounded-full blur-xl pointer-events-none" />
+          <div className="flex items-center gap-2 relative z-10">
+            <div className="w-7 h-7 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center justify-center font-bold text-xs shadow-inner">
+              <Clock className="w-3.5 h-3.5" />
+            </div>
+            <span className="text-[11px] text-zinc-300 font-medium">Pending Review</span>
+          </div>
+
+          <div className="flex items-end justify-between my-1.5 relative z-10">
+            <span className="text-xl md:text-2xl font-black text-white tracking-tight">
+              {pendingCount}
+            </span>
+            <svg className="w-20 h-8 overflow-visible" viewBox="0 0 100 40">
+              <defs>
+                <linearGradient id="roseGradB" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#f43f5e" stopOpacity="0.4" />
+                  <stop offset="100%" stopColor="#f43f5e" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              <path d="M 0 35 Q 25 30, 45 32 T 75 16 T 100 10 L 100 40 L 0 40 Z" fill="url(#roseGradB)" />
+              <path d="M 0 35 Q 25 30, 45 32 T 75 16 T 100 10" fill="none" stroke="#fb7185" strokeWidth="2.5" strokeLinecap="round" className="drop-shadow-[0_0_8px_#fb7185]" />
+            </svg>
+          </div>
+
+          <div className="flex items-center gap-1.5 text-[10px] text-rose-400 font-bold relative z-10">
+            {pendingCount > 0 ? 'Needs Attention' : 'Queue Cleared'}
+          </div>
+        </div>
+      </div>
+
+      {/* ===================================================================== */}
+      {/* 2. MAIN RESERVATIONS TABLE                                            */}
+      {/* ===================================================================== */}
+      <div className="rounded-[18px] bg-black/35 backdrop-blur-xl border border-white/10 p-4 shadow-lg space-y-3.5">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 pb-2 border-b border-white/10">
+          <div className="space-y-0.5">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" />
+              <h2 className="text-sm md:text-base font-bold text-white tracking-wide">
+                Reservation Log
+              </h2>
+              {statusFilter && (
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold capitalize bg-white/10 text-white border border-white/20">
+                  {statusFilter}
+                </span>
+              )}
+            </div>
+            <p className="text-[11px] text-zinc-400">
               Manage dining reservations, party sizes, special occasions, and seating allocations.
             </p>
           </div>
-        </div>
 
-        {/* Quick Filter Pill Group */}
-        <div className="flex flex-wrap items-center gap-2">
-          <Link
-            href="/admin/bookings"
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold tracking-wide transition-all duration-300 border ${
-              !statusFilter 
-                ? 'bg-gradient-to-r from-champagne to-platinum text-zinc-950 border-transparent shadow-lg shadow-[#c9a84c]/20' 
-                : 'bg-surface/80 text-text-secondary border-border-subtle hover:text-text-primary hover:border-border-strong'
-            }`}
-          >
-            All ({totalCount})
-          </Link>
-          <Link
-            href="/admin/bookings?status=confirmed"
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold tracking-wide transition-all duration-300 border ${
-              statusFilter === 'confirmed'
-                ? 'bg-success/10 text-success border-success/30 shadow-lg shadow-emerald-500/10'
-                : 'bg-surface/80 text-text-secondary border-border-subtle hover:text-success hover:border-border-strong'
-            }`}
-          >
-            Confirmed ({confirmedCount})
-          </Link>
-          <Link
-            href="/admin/bookings?status=pending"
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold tracking-wide transition-all duration-300 border ${
-              statusFilter === 'pending'
-                ? 'bg-warning/10 text-warning border-warning/30 shadow-lg shadow-amber-500/10'
-                : 'bg-surface/80 text-text-secondary border-border-subtle hover:text-warning hover:border-border-strong'
-            }`}
-          >
-            Pending ({pendingCount})
-          </Link>
-          <Link
-            href="/admin/bookings?status=cancelled"
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold tracking-wide transition-all duration-300 border ${
-              statusFilter === 'cancelled'
-                ? 'bg-danger/10 text-danger border-danger/30 shadow-lg shadow-rose-500/10'
-                : 'bg-surface/80 text-text-secondary border-border-subtle hover:text-danger hover:border-border-strong'
-            }`}
-          >
-            Cancelled
-          </Link>
-        </div>
-      </div>
-
-      {/* Metric Telemetry Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-        {/* 1. Total Reservations */}
-        <div className="bg-gradient-to-b from-zinc-900/80 to-zinc-950/90 backdrop-blur-xl border border-border-subtle p-5 rounded-2xl shadow-[0_15px_40px_rgba(201,168,76,0.15)] hover:shadow-[0_20px_50px_rgba(201,168,76,0.25)] hover:-translate-y-1 hover:border-border-subtle transition-all duration-300">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-text-secondary">Total Bookings</span>
-            <CalendarCheck className="w-4 h-4 text-champagne" />
-          </div>
-          <p className="text-3xl font-black text-text-primary mt-2">{totalCount}</p>
-        </div>
-
-        {/* 2. Confirmed VIP Tables */}
-        <div className="bg-gradient-to-b from-zinc-900/80 to-zinc-950/90 backdrop-blur-xl border border-border-subtle p-5 rounded-2xl shadow-[0_15px_40px_rgba(201,168,76,0.15)] hover:shadow-[0_20px_50px_rgba(201,168,76,0.25)] hover:-translate-y-1 hover:border-champagne/60 transition-all duration-300">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-success">Confirmed</span>
-            <CheckCircle2 className="w-4 h-4 text-success" />
-          </div>
-          <p className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-green-300 mt-2">
-            {confirmedCount}
-          </p>
-        </div>
-
-        {/* 3. Pending Requests */}
-        <div className="bg-gradient-to-b from-zinc-900/80 to-zinc-950/90 backdrop-blur-xl border border-border-subtle p-5 rounded-2xl shadow-[0_15px_40px_rgba(201,168,76,0.15)] hover:shadow-[0_20px_50px_rgba(201,168,76,0.25)] hover:-translate-y-1 hover:border-champagne/60 transition-all duration-300">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-warning">Pending Review</span>
-            <Clock className="w-4 h-4 text-warning" />
-          </div>
-          <p className="text-3xl font-black text-warning mt-2">{pendingCount}</p>
-        </div>
-
-        {/* 4. Expected Guests */}
-        <div className="bg-gradient-to-b from-zinc-900/80 to-zinc-950/90 backdrop-blur-xl border border-border-subtle p-5 rounded-2xl shadow-[0_15px_40px_rgba(201,168,76,0.15)] hover:shadow-[0_20px_50px_rgba(201,168,76,0.25)] hover:-translate-y-1 hover:border-champagne/60 transition-all duration-300">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-platinum">Total Guests</span>
-            <Users className="w-4 h-4 text-platinum" />
-          </div>
-          <p className="text-3xl font-black text-platinum mt-2">{totalGuests}</p>
-        </div>
-      </div>
-
-      {/* Bookings Table Container */}
-      <div className="space-y-5">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 " />
-            <h2 className="text-xl font-serif text-text-primary tracking-wide">Reservation Log</h2>
-            {statusFilter && (
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold capitalize bg-elevated text-text-secondary border border-border-strong/50">
-                Filtered: {statusFilter}
-              </span>
-            )}
+          {/* Quick Filter Pill Group */}
+          <div className="flex flex-wrap items-center gap-1.5">
+            <Link
+              href="/admin/bookings"
+              className={`px-3 py-1 rounded-lg text-[11px] font-semibold tracking-wide transition-all duration-200 border ${
+                !statusFilter 
+                  ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-sm' 
+                  : 'bg-[#201d27] text-zinc-300 border-white/10 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              All ({totalCount})
+            </Link>
+            <Link
+              href="/admin/bookings?status=confirmed"
+              className={`px-3 py-1 rounded-lg text-[11px] font-semibold tracking-wide transition-all duration-200 border ${
+                statusFilter === 'confirmed'
+                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 shadow-sm'
+                  : 'bg-[#201d27] text-zinc-300 border-white/10 hover:text-emerald-400 hover:bg-white/10'
+              }`}
+            >
+              Confirmed ({confirmedCount})
+            </Link>
+            <Link
+              href="/admin/bookings?status=pending"
+              className={`px-3 py-1 rounded-lg text-[11px] font-semibold tracking-wide transition-all duration-200 border ${
+                statusFilter === 'pending'
+                  ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-sm'
+                  : 'bg-[#201d27] text-zinc-300 border-white/10 hover:text-amber-400 hover:bg-white/10'
+              }`}
+            >
+              Pending ({pendingCount})
+            </Link>
+            <Link
+              href="/admin/bookings?status=cancelled"
+              className={`px-3 py-1 rounded-lg text-[11px] font-semibold tracking-wide transition-all duration-200 border ${
+                statusFilter === 'cancelled'
+                  ? 'bg-rose-500/20 text-rose-300 border-rose-500/40 shadow-sm'
+                  : 'bg-[#201d27] text-zinc-300 border-white/10 hover:text-rose-400 hover:bg-white/10'
+              }`}
+            >
+              Cancelled
+            </Link>
+            <Link
+              href="/booking"
+              target="_blank"
+              className="flex items-center gap-1 px-3 py-1 rounded-lg bg-[#d4af37]/20 hover:bg-[#d4af37]/30 text-[11px] font-medium text-amber-200 transition-colors border border-[#d4af37]/40 ml-1"
+            >
+              <Plus className="w-3 h-3" />
+              <span>Dining Portal</span>
+            </Link>
           </div>
         </div>
 
-        <div className="bg-gradient-to-b from-zinc-900/80 via-zinc-900/60 to-zinc-950/90 backdrop-blur-2xl border border-border-subtle rounded-2xl overflow-hidden shadow-[0_20px_60px_rgba(201,168,76,0.15)] hover:shadow-[0_25px_70px_rgba(201,168,76,0.25)] hover:-translate-y-1 transition-all duration-500 hover:border-champagne/60">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm whitespace-nowrap">
-              <thead className="bg-obsidian/90 text-text-secondary border-b border-border-subtle backdrop-blur-xl">
-                <tr>
-                  <th className="px-6 py-4 font-semibold uppercase tracking-wider text-[11px]">Booking ID</th>
-                  <th className="px-6 py-4 font-semibold uppercase tracking-wider text-[11px]">Guest Details</th>
-                  <th className="px-6 py-4 font-semibold uppercase tracking-wider text-[11px]">Date & Schedule</th>
-                  <th className="px-6 py-4 font-semibold uppercase tracking-wider text-[11px]">Party</th>
-                  <th className="px-6 py-4 font-semibold uppercase tracking-wider text-[11px]">Occasion / Requests</th>
-                  <th className="px-6 py-4 font-semibold uppercase tracking-wider text-[11px] text-center">Status</th>
-                  <th className="px-6 py-4 font-semibold uppercase tracking-wider text-[11px] text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-800/50 text-text-secondary">
-                {bookings?.map((booking: any) => (
-                  <tr key={booking.id} className="group hover:bg-elevated/40 transition-all duration-300">
-                    <td className="px-6 py-4 font-mono text-xs">
-                      <span className="text-platinum/90 bg-platinum/5 px-2.5 py-1 rounded-md border border-cyan-500/20 font-medium">
-                        #{booking.id?.split('-')[0] ?? 'N/A'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-7 h-7 rounded-full bg-platinum/5 border border-cyan-500/20 flex items-center justify-center text-[11px] font-bold text-platinum">
-                          {(booking.customer_name || booking.guest_name || 'BK').slice(0, 2).toUpperCase()}
+        {/* Table Content */}
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs whitespace-nowrap">
+            <thead className="text-zinc-400 border-b border-white/10 text-[10px] uppercase tracking-wider font-semibold">
+              <tr>
+                <th className="px-4 py-3">Booking ID</th>
+                <th className="px-4 py-3">Guest Details</th>
+                <th className="px-4 py-3">Date & Schedule</th>
+                <th className="px-4 py-3">Party</th>
+                <th className="px-4 py-3">Occasion / Requests</th>
+                <th className="px-4 py-3 text-center">Status</th>
+                <th className="px-4 py-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/5 text-zinc-300">
+              {bookings?.map((booking: any) => (
+                <tr key={booking.id} className="hover:bg-white/5 transition-colors">
+                  <td className="px-4 py-3 font-mono text-[11px]">
+                    <span className="text-amber-200/90 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 font-semibold">
+                      #{booking.id?.split('-')[0] ?? 'N/A'}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-amber-600/30 to-amber-400/30 border border-amber-400/40 flex items-center justify-center text-[10px] font-bold text-amber-200 shrink-0">
+                        {(booking.customer_name || booking.guest_name || 'BK').slice(0, 2).toUpperCase()}
+                      </div>
+                      <div>
+                        <div className="font-semibold text-white text-xs">
+                          {booking.customer_name || booking.guest_name || 'Guest'}
                         </div>
-                        <div>
-                          <div className="font-semibold text-zinc-100 group-hover:text-platinum transition-colors">
-                            {booking.customer_name || booking.guest_name || 'Guest'}
+                        {(booking.customer_phone || booking.guest_phone) && (
+                          <div className="text-zinc-400 text-[10px] flex items-center gap-1 font-mono">
+                            <Phone className="w-2.5 h-2.5 opacity-60" />
+                            {booking.customer_phone || booking.guest_phone}
                           </div>
-                          {(booking.customer_phone || booking.guest_phone) && (
-                            <div className="text-text-secondary/70 text-xs flex items-center gap-1 mt-0.5 font-mono">
-                              <Phone className="w-2.5 h-2.5 opacity-60" />
-                              {booking.customer_phone || booking.guest_phone}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-1.5 text-xs text-zinc-200">
-                        <Calendar className="w-3.5 h-3.5 text-text-secondary/70" />
-                        <span>{new Date(booking.booking_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-                      </div>
-                      <div className="flex items-center gap-1 text-xs text-champagne font-medium mt-0.5">
-                        <Clock className="w-3 h-3 opacity-80" />
-                        <span>{booking.booking_time}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-elevated/80 border border-border-strong/40 text-xs font-medium text-zinc-200">
-                        <Users className="w-3.5 h-3.5 text-platinum" />
-                        {booking.guests ?? booking.number_of_guests ?? 1} Guests
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      {booking.special_requests ? (
-                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs text-warning max-w-xs truncate">
-                          <PartyPopper className="w-3 h-3 text-warning shrink-0" />
-                          <span className="truncate">{booking.special_requests}</span>
-                        </div>
-                      ) : (
-                        <span className="text-zinc-600 text-xs">—</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full border shadow-sm backdrop-blur-sm ${
-                        booking.status === 'confirmed'
-                          ? 'bg-emerald-500/10 text-success border-emerald-500/25 shadow-emerald-500/10'
-                          : booking.status === 'cancelled'
-                          ? 'bg-rose-500/10 text-danger border-rose-500/25 shadow-rose-500/10'
-                          : booking.status === 'completed'
-                          ? 'bg-zinc-500/10 text-text-secondary border-zinc-500/20'
-                          : 'bg-amber-400/10 text-warning border-amber-400/25 shadow-amber-400/10'
-                      }`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${
-                          booking.status === 'confirmed'
-                            ? 'bg-emerald-400 shadow-[0_0_6px_#34d399]'
-                            : booking.status === 'cancelled'
-                            ? 'bg-rose-400'
-                            : booking.status === 'completed'
-                            ? 'bg-zinc-400'
-                            : 'bg-amber-400 animate-pulse'
-                        }`} />
-                        {booking.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <ManageBookingModal booking={booking} />
-                    </td>
-                  </tr>
-                ))}
-                {(!bookings || bookings.length === 0) && (
-                  <tr>
-                    <td colSpan={7} className="px-6 py-16 text-center">
-                      <div className="flex flex-col items-center justify-center space-y-3">
-                        <div className="w-12 h-12 rounded-2xl bg-surface border border-border-subtle flex items-center justify-center text-zinc-600 shadow-inner">
-                          <CalendarDays className="w-6 h-6 stroke-[1.5]" />
-                        </div>
-                        <div className="space-y-1">
-                          <p className="text-sm font-semibold text-text-secondary">
-                            {statusFilter ? `No ${statusFilter} reservations found` : 'No table reservations recorded yet'}
-                          </p>
-                          <p className="text-xs text-text-secondary/70 max-w-sm">
-                            Customer bookings from the dining portal will sync directly into this live concierge queue.
-                          </p>
-                        </div>
-                        {statusFilter && (
-                          <Link 
-                            href="/admin/bookings" 
-                            className="mt-2 text-xs font-semibold text-champagne hover:underline"
-                          >
-                            Clear Status Filter
-                          </Link>
                         )}
                       </div>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-1 text-[11px] text-white font-medium">
+                      <Calendar className="w-3 h-3 text-zinc-400" />
+                      <span>{new Date(booking.booking_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-[10px] text-amber-300 font-medium mt-0.5">
+                      <Clock className="w-2.5 h-2.5 opacity-80" />
+                      <span>{booking.booking_time}</span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white/10 border border-white/10 text-[11px] text-white">
+                      <Users className="w-3 h-3 text-zinc-300" />
+                      {booking.guests ?? booking.number_of_guests ?? 1} Guests
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    {booking.special_requests ? (
+                      <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-500/15 border border-amber-500/30 text-[10px] text-amber-300 max-w-xs truncate">
+                        <PartyPopper className="w-2.5 h-2.5 text-amber-300 shrink-0" />
+                        <span className="truncate">{booking.special_requests}</span>
+                      </div>
+                    ) : (
+                      <span className="text-zinc-500 text-[11px]">—</span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-center">
+                    <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded-full border ${
+                      booking.status === 'confirmed'
+                        ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                        : booking.status === 'cancelled'
+                        ? 'bg-rose-500/20 text-rose-300 border-rose-500/40'
+                        : booking.status === 'completed'
+                        ? 'bg-zinc-500/20 text-zinc-300 border-zinc-500/30'
+                        : 'bg-amber-400/20 text-amber-300 border-amber-400/40'
+                    }`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${
+                        booking.status === 'confirmed'
+                          ? 'bg-emerald-400 shadow-[0_0_6px_#34d399]'
+                          : booking.status === 'cancelled'
+                          ? 'bg-rose-400'
+                          : booking.status === 'completed'
+                          ? 'bg-zinc-400'
+                          : 'bg-amber-400 animate-pulse'
+                      }`} />
+                      {booking.status}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <ManageBookingModal booking={booking} />
+                  </td>
+                </tr>
+              ))}
+              {(!bookings || bookings.length === 0) && (
+                <tr>
+                  <td colSpan={7} className="px-6 py-12 text-center">
+                    <div className="flex flex-col items-center justify-center space-y-2">
+                      <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-zinc-400 shadow-inner">
+                        <CalendarDays className="w-5 h-5 stroke-[1.5]" />
+                      </div>
+                      <div className="space-y-0.5">
+                        <p className="text-xs font-semibold text-white">
+                          {statusFilter ? `No ${statusFilter} reservations found` : 'No table reservations recorded yet'}
+                        </p>
+                        <p className="text-[11px] text-zinc-400 max-w-sm">
+                          Customer bookings from the dining portal will sync directly into this live concierge queue.
+                        </p>
+                      </div>
+                      {statusFilter && (
+                        <Link 
+                          href="/admin/bookings" 
+                          className="mt-1 text-[11px] font-semibold text-amber-300 hover:underline"
+                        >
+                          Clear Status Filter
+                        </Link>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
   );
 }
-

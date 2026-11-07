@@ -131,7 +131,7 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
 
   return (
     <div
-      className="group relative flex flex-col justify-between overflow-hidden transition-all duration-500 hover:-translate-y-2.5 w-full rounded-3xl border cursor-pointer"
+      className="group relative flex flex-col justify-between overflow-hidden transition-all duration-500 hover:-translate-y-2.5 w-full rounded-2xl sm:rounded-3xl border cursor-pointer"
       style={{
         background: 'rgba(20, 15, 11, 0.45)',
         backdropFilter: 'blur(24px) saturate(160%)',
@@ -165,7 +165,7 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
             src={resolvedImage}
             alt={dish.name}
             fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
             className="object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
           />
 
@@ -181,7 +181,7 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
 
         {/* Top-Left: Single Clean Frosted Glass Badge */}
         <div
-          className={`absolute top-3 left-3 z-20 px-3 py-1 rounded-full text-[10px] font-serif font-bold tracking-wider flex items-center gap-1 pointer-events-none border ${badgeColor}`}
+          className={`absolute top-2 left-2 sm:top-3 sm:left-3 z-20 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[8.5px] sm:text-[10px] font-serif font-bold tracking-wider flex items-center gap-1 pointer-events-none border ${badgeColor}`}
           style={{
             background: 'rgba(16, 12, 9, 0.55)',
             backdropFilter: 'blur(16px)',
@@ -197,7 +197,7 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
           href={`/ar/${dish.slug}`}
           onClick={(e) => e.stopPropagation()}
           title="Place on Table (AR)"
-          className="absolute top-3 right-3 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10.5px] font-bold text-[#FAF5EC] hover:text-[#FFE1A0] active:scale-95 transition-all group/ar"
+          className="absolute top-2 right-2 sm:top-3 sm:right-3 z-20 flex items-center gap-1 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[8.5px] sm:text-[10.5px] font-bold text-[#FAF5EC] hover:text-[#FFE1A0] active:scale-95 transition-all group/ar"
           style={{
             background: 'rgba(16, 12, 9, 0.55)',
             backdropFilter: 'blur(16px)',
@@ -206,8 +206,9 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
             boxShadow: 'inset 0 1px 1px rgba(255, 255, 255, 0.20), 0 4px 14px rgba(0, 0, 0, 0.4)',
           }}
         >
-          <Box className="w-3.5 h-3.5 text-[#F0C36B] group-hover/ar:rotate-45 transition-transform duration-300" />
-          <span>VIEW IN AR</span>
+          <Box className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#F0C36B] group-hover/ar:rotate-45 transition-transform duration-300" />
+          <span className="hidden xs:inline">VIEW IN AR</span>
+          <span className="xs:hidden">AR</span>
         </Link>
 
         {/* Bottom-Right: Heart Favorite Button */}
@@ -215,7 +216,7 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
           type="button"
           onClick={handleToggleFav}
           aria-label={isFav ? 'Remove favorite' : 'Add favorite'}
-          className="absolute bottom-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center text-white/80 hover:text-white active:scale-90 transition-all"
+          className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 z-20 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-white/80 hover:text-white active:scale-90 transition-all"
           style={{
             background: 'rgba(16, 12, 9, 0.55)',
             backdropFilter: 'blur(16px)',
@@ -225,7 +226,7 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
           }}
         >
           <Heart
-            className={`w-4 h-4 transition-colors ${
+            className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-colors ${
               isFav ? 'text-rose-500 fill-rose-500 scale-110' : 'text-[#FAF5EC]'
             }`}
           />
@@ -233,16 +234,16 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
       </div>
 
       {/* Card Body Typography */}
-      <div className="p-5 flex flex-col justify-between flex-1">
-        <div className="space-y-2.5">
+      <div className="p-3 sm:p-5 flex flex-col justify-between flex-1">
+        <div className="space-y-1.5 sm:space-y-2.5">
           {/* Dish Category Micro-Overline + Veg/Non-Veg Indicator */}
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] uppercase tracking-wider text-[#E2A84B]/80 font-bold">
+          <div className="flex items-center justify-between gap-1">
+            <span className="text-[9px] sm:text-[10px] uppercase tracking-wider text-[#E2A84B]/80 font-bold truncate">
               {categoryName}
             </span>
 
             <span
-              className={`inline-block w-3.5 h-3.5 border p-[2px] rounded-[3px] shrink-0 ${
+              className={`inline-block w-3 h-3 sm:w-3.5 sm:h-3.5 border p-[1.5px] sm:p-[2px] rounded-[2px] sm:rounded-[3px] shrink-0 ${
                 dish.is_veg ? 'border-emerald-600' : 'border-rose-600'
               }`}
               title={dish.is_veg ? 'Pure Vegetarian' : 'Non-Vegetarian'}
@@ -259,7 +260,7 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
           <Link
             href={`/3d/${dish.slug}`}
             onClick={handleCardClick}
-            className="block font-serif text-[20px] sm:text-[22px] font-bold text-[#FAF5EC] leading-snug hover:text-[#E2A84B] transition-colors line-clamp-2 min-h-[52px]"
+            className="block font-serif text-[14px] sm:text-[22px] font-bold text-[#FAF5EC] leading-tight sm:leading-snug hover:text-[#E2A84B] transition-colors line-clamp-2 min-h-[34px] sm:min-h-[52px]"
           >
             {searchHighlight && searchHighlight.trim() ? (
               dish.name.split(new RegExp(`(${searchHighlight.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi')).map((part, i) =>
@@ -277,32 +278,33 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
           </Link>
 
           {/* Description (2 lines balanced without horizontal clipping) */}
-          <p className="text-[13px] text-[#A6A095] font-light leading-relaxed line-clamp-2 min-h-[42px]">
+          <p className="text-[11px] sm:text-[13px] text-[#A6A095] font-light leading-snug sm:leading-relaxed line-clamp-2 min-h-[28px] sm:min-h-[42px]">
             {dish.description}
           </p>
         </div>
 
         {/* Card Footer: Price (Monospace Bold) + View in AR + Tactile ADD + Button */}
-        <div className="pt-4 mt-3 flex items-center justify-between border-t border-white/[0.08] gap-2">
+        <div className="pt-2.5 sm:pt-4 mt-2 sm:mt-3 flex items-center justify-between border-t border-white/[0.08] gap-1 sm:gap-2">
           <div className="flex flex-col shrink-0">
-            <span className="text-[10px] uppercase tracking-wider text-[#9A9286] font-medium">
+            <span className="text-[8.5px] sm:text-[10px] uppercase tracking-wider text-[#9A9286] font-medium">
               PRICE
             </span>
-            <span className="font-mono text-lg sm:text-[19px] font-bold text-[#FAF5EC]">
+            <span className="font-mono text-[14px] sm:text-[19px] font-bold text-[#FAF5EC]">
               {formatMoney(dish.price_paise)}
             </span>
           </div>
 
-          <div className="flex items-center gap-2">
-            {/* View in AR Button */}
+          <div className="flex items-center gap-1 sm:gap-2">
+            {/* View in AR Button (compact on mobile, full on desktop) */}
             <Link
               href={`/ar/${dish.slug}`}
               onClick={(e) => e.stopPropagation()}
               title={`View ${dish.name} in AR`}
-              className="px-3 py-2 text-xs font-semibold text-[#FFE1A0] hover:text-[#0D0A08] hover:bg-[#F0C36B] rounded-xl border border-[#F0C36B]/40 hover:border-[#F0C36B] transition-all active:scale-95 shadow-sm flex items-center gap-1.5 bg-white/[0.05] backdrop-blur-md group/arbtn cursor-pointer"
+              className="px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-semibold text-[#FFE1A0] hover:text-[#0D0A08] hover:bg-[#F0C36B] rounded-lg sm:rounded-xl border border-[#F0C36B]/40 hover:border-[#F0C36B] transition-all active:scale-95 shadow-sm flex items-center gap-1 bg-white/[0.05] backdrop-blur-md group/arbtn cursor-pointer shrink-0"
             >
-              <Box className="w-3.5 h-3.5 text-[#F0C36B] group-hover/arbtn:text-[#0D0A08] transition-colors" />
-              <span className="whitespace-nowrap">View in AR</span>
+              <Box className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#F0C36B] group-hover/arbtn:text-[#0D0A08] transition-colors" />
+              <span className="whitespace-nowrap hidden sm:inline">View in AR</span>
+              <span className="whitespace-nowrap sm:hidden">AR</span>
             </Link>
 
             {cartQuantity === 0 ? (
@@ -310,7 +312,7 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
                 type="button"
                 onClick={handleAddToCart}
                 aria-label={`Add ${dish.name} to dining order`}
-                className="px-4 sm:px-5 py-2 text-xs font-extrabold transition-all duration-300 active:scale-95 shadow-md flex items-center gap-1.5 rounded-xl cursor-pointer text-[#17100C] hover:brightness-110 shadow-lg"
+                className="px-2.5 sm:px-5 py-1.5 sm:py-2 text-[10.5px] sm:text-xs font-extrabold transition-all duration-300 active:scale-95 shadow-md flex items-center gap-1 rounded-lg sm:rounded-xl cursor-pointer text-[#17100C] hover:brightness-110 shadow-lg shrink-0"
                 style={{
                   background: 'linear-gradient(135deg, #F0C36B 0%, #DDA33E 50%, #A8792A 100%)',
                 }}
@@ -319,7 +321,7 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
               </button>
             ) : (
               <div
-                className="flex items-center rounded-xl overflow-hidden border shadow-lg backdrop-blur-md transition-all duration-300 h-9"
+                className="flex items-center rounded-lg sm:rounded-xl overflow-hidden border shadow-lg backdrop-blur-md transition-all duration-300 h-7 sm:h-9 shrink-0"
                 style={{
                   background:
                     'linear-gradient(135deg, rgba(240, 195, 107, 0.22) 0%, rgba(221, 163, 62, 0.12) 100%)',
@@ -338,24 +340,24 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
                   onClick={handleDecrement}
                   aria-label={`Decrease ${dish.name} quantity`}
                   title={cartQuantity === 1 ? 'Remove from order' : 'Decrease quantity'}
-                  className="w-8 h-full flex items-center justify-center text-[#F0C36B] hover:text-[#17100C] hover:bg-[#F0C36B] active:scale-90 transition-all cursor-pointer group/dec"
+                  className="w-6 sm:w-8 h-full flex items-center justify-center text-[#F0C36B] hover:text-[#17100C] hover:bg-[#F0C36B] active:scale-90 transition-all cursor-pointer group/dec"
                 >
                   {cartQuantity === 1 ? (
-                    <Trash2 className="w-3.5 h-3.5 text-rose-400 group-hover/dec:text-[#17100C] transition-colors" />
+                    <Trash2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-rose-400 group-hover/dec:text-[#17100C] transition-colors" />
                   ) : (
-                    <Minus className="w-3.5 h-3.5 stroke-[2.5]" />
+                    <Minus className="w-3 h-3 sm:w-3.5 sm:h-3.5 stroke-[2.5]" />
                   )}
                 </button>
 
                 {/* Display Current Added Quantity (Kitna Add Hua) */}
                 <div
-                  className="flex items-center justify-center gap-1 px-2.5 font-mono select-none border-x border-[#F0C36B]/30 h-full bg-black/30"
+                  className="flex items-center justify-center gap-0.5 sm:gap-1 px-1.5 sm:px-2.5 font-mono select-none border-x border-[#F0C36B]/30 h-full bg-black/30"
                   title={`${cartQuantity} in your order`}
                 >
-                  <span className="text-xs font-black text-[#FAF5EC]">
+                  <span className="text-[11px] sm:text-xs font-black text-[#FAF5EC]">
                     {cartQuantity}
                   </span>
-                  <span className="text-[10px] font-bold text-[#F0C36B] uppercase tracking-wider hidden sm:inline">
+                  <span className="text-[9px] font-bold text-[#F0C36B] uppercase tracking-wider hidden sm:inline">
                     in bag
                   </span>
                 </div>
@@ -366,9 +368,9 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
                   onClick={handleIncrement}
                   aria-label={`Add more ${dish.name} to order`}
                   title="Add more"
-                  className="w-8 h-full flex items-center justify-center text-[#F0C36B] hover:text-[#17100C] hover:bg-[#F0C36B] active:scale-90 transition-all cursor-pointer group/inc"
+                  className="w-6 sm:w-8 h-full flex items-center justify-center text-[#F0C36B] hover:text-[#17100C] hover:bg-[#F0C36B] active:scale-90 transition-all cursor-pointer group/inc"
                 >
-                  <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+                  <Plus className="w-3 h-3 sm:w-3.5 sm:h-3.5 stroke-[2.5]" />
                 </button>
               </div>
             )}

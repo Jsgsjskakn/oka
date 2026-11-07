@@ -39,7 +39,8 @@ export function MobileShell({ children }: MobileShellProps) {
       >
         {children}
       </main>
-      {!isImmersiveViewer && <CustomerFooter />}
+      {/* Footer rendered only on Home page per user specification */}
+      {!isImmersiveViewer && pathname === '/' && <CustomerFooter />}
       <BottomNav />
       <ToastContainer />
     </div>

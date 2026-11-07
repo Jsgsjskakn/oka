@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import {
@@ -14,7 +14,6 @@ import {
   ChevronDown,
   Box,
   Leaf,
-  Layers,
   Sparkles,
   Compass,
   ArrowRight,
@@ -23,6 +22,7 @@ import {
   Smartphone,
 } from 'lucide-react';
 import { toast } from '@/store/toast-store';
+import { useQualityTier } from '@/hooks/useQualityTier';
 
 const PromoWarriorCanvas = dynamic(
   () => import('./PromoWarriorCanvas').then((mod) => ({ default: mod.PromoWarriorCanvas })),
@@ -82,22 +82,94 @@ const PREVIEW_DISHES: DishPreviewData[] = [
 ];
 
 export function ARPromoSection() {
+  const quality = useQualityTier();
+  const sectionRef = useRef<HTMLElement>(null);
+
   const [activeDishIndex, setActiveDishIndex] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
+  const [userToggledRotate, setUserToggledRotate] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1.0);
   const [showQRModal, setShowQRModal] = useState(false);
+
+  // Lazy-mount PromoWarriorCanvas only when approaching viewport (rootMargin: '250px')
+  const [shouldMountCanvas, setShouldMountCanvas] = useState(false);
+  const [isInViewport, setIsInViewport] = useState(false);
+  const [isDocumentHidden, setIsDocumentHidden] = useState(false);
+  const [isSaveData, setIsSaveData] = useState(false);
+
+  useEffect(() => {
+    if (typeof navigator !== 'undefined') {
+      const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+      setIsSaveData(Boolean(conn?.saveData));
+    }
+  }, []);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return;
+
+    // 1. Lazy mount observer: fetches R3F chunk & GLB only within 250px of section
+    const mountObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldMountCanvas(true);
+          mountObserver.disconnect();
+        }
+      },
+      { rootMargin: '250px', threshold: 0.01 }
+    );
+
+    // 2. Active rendering observer: pauses WebGL frameloop ("never") when scrolled away
+    const activeObserver = new IntersectionObserver(
+      ([entry]) => {
+        setIsInViewport(entry.isIntersecting);
+      },
+      { rootMargin: '100px 0px 100px 0px', threshold: 0.01 }
+    );
+
+    mountObserver.observe(el);
+    activeObserver.observe(el);
+
+    return () => {
+      mountObserver.disconnect();
+      activeObserver.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const syncDocVisibility = () => {
+      setIsDocumentHidden(document.visibilityState === 'hidden' || document.hidden);
+    };
+    syncDocVisibility();
+    document.addEventListener('visibilitychange', syncDocVisibility);
+    return () => document.removeEventListener('visibilitychange', syncDocVisibility);
+  }, []);
+
+  const isUltraLowPower =
+    quality.isLowPower ||
+    quality.isSoftwareGpu ||
+    isSaveData ||
+    (typeof quality.deviceMemory === 'number' && quality.deviceMemory <= 2);
+
+  const effectiveAutoRotate =
+    autoRotate && (userToggledRotate || (!quality.prefersReducedMotion && !isUltraLowPower));
+  const isStageActive = isInViewport && !isDocumentHidden;
 
   const currentDish = PREVIEW_DISHES[activeDishIndex];
 
   const handleSelectDish = useCallback((index: number) => {
     const safeIndex = (index + PREVIEW_DISHES.length) % PREVIEW_DISHES.length;
     setActiveDishIndex(safeIndex);
+    setShouldMountCanvas(true);
     if (typeof window !== 'undefined' && 'vibrate' in navigator) {
       navigator.vibrate(10);
     }
   }, []);
 
   const handleToggleRotate = useCallback(() => {
+    setShouldMountCanvas(true);
+    setUserToggledRotate(true);
     setAutoRotate((prev) => {
       const next = !prev;
       toast.info(next ? 'Auto-rotation resumed' : 'Auto-rotation paused');
@@ -109,6 +181,7 @@ export function ARPromoSection() {
   }, []);
 
   const handleZoomIn = useCallback(() => {
+    setShouldMountCanvas(true);
     setZoomLevel((z) => Math.min(1.4, Number((z + 0.15).toFixed(2))));
     if (typeof window !== 'undefined' && 'vibrate' in navigator) {
       navigator.vibrate(6);
@@ -116,6 +189,7 @@ export function ARPromoSection() {
   }, []);
 
   const handleZoomOut = useCallback(() => {
+    setShouldMountCanvas(true);
     setZoomLevel((z) => Math.max(0.75, Number((z - 0.15).toFixed(2))));
     if (typeof window !== 'undefined' && 'vibrate' in navigator) {
       navigator.vibrate(6);
@@ -135,7 +209,10 @@ export function ARPromoSection() {
   }, [currentDish.slug]);
 
   return (
-    <section className="px-4 sm:px-6 md:px-10 lg:px-12 py-12 sm:py-16 max-w-[1360px] mx-auto w-full select-none">
+    <section
+      ref={sectionRef}
+      className="px-4 sm:px-6 md:px-10 lg:px-12 py-12 sm:py-16 max-w-[1360px] mx-auto w-full select-none"
+    >
       {/* Outer Card: Deep Obsidian Glass Frame Directly Matching User Reference */}
       <div
         className="relative overflow-hidden rounded-3xl sm:rounded-[36px] border border-[#F0C36B]/35 p-6 sm:p-10 lg:p-12 xl:p-14 shadow-[0_30px_90px_rgba(0,0,0,0.92)] group"
@@ -161,7 +238,7 @@ export function ARPromoSection() {
             {/* 1. Overline Badge: [ ⦿ INTERACTIVE 3D EXPERIENCE ] */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#F0C36B]/40 bg-black/50 text-[#F0C36B] font-mono text-[10px] tracking-[0.22em] uppercase font-semibold shadow-md mb-3">
               <span className="w-2 h-2 rounded-full border border-[#F0C36B] flex items-center justify-center">
-                <span className="w-1 h-1 rounded-full bg-[#F0C36B] animate-pulse" />
+                <span className={`w-1 h-1 rounded-full bg-[#F0C36B] ${isStageActive ? 'animate-pulse' : ''}`} />
               </span>
               <span>Interactive 3D Experience</span>
             </div>
@@ -317,7 +394,6 @@ export function ARPromoSection() {
           {/* RIGHT SIDE (lg:col-span-5): 3D Model Stage with Platter & Spatial UI       */}
           {/* ========================================================================= */}
           <div className="lg:col-span-5 relative w-full aspect-square max-w-[460px] mx-auto flex items-center justify-center">
-            
             {/* Top Right Active Dish Pill */}
             <Link
               href={`/3d/${currentDish.slug}`}
@@ -336,13 +412,14 @@ export function ARPromoSection() {
               <span className="text-[#F0C36B]">↙</span>
             </div>
 
-            {/* Glowing Golden Concentric Orbital Rings */}
+            {/* Glowing Golden Concentric Orbital Rings (spin paused when off-screen or reduced motion) */}
             <div className="absolute inset-2 sm:inset-4 pointer-events-none flex items-center justify-center">
-              {/* Outer Golden Dash Orbit */}
-              <div className="w-full h-full rounded-full border border-dashed border-[#F0C36B]/30 animate-[spin_60s_linear_infinite]" />
-              {/* Middle Thin Solid Gold Halo */}
+              <div
+                className={`w-full h-full rounded-full border border-dashed border-[#F0C36B]/30 ${
+                  isStageActive && effectiveAutoRotate ? 'animate-[spin_60s_linear_infinite]' : ''
+                }`}
+              />
               <div className="absolute w-[86%] h-[86%] rounded-full border border-[#F0C36B]/20" />
-              {/* Inner Glowing Amber Accent Ring */}
               <div className="absolute w-[72%] h-[72%] rounded-full border border-[#FFE3A5]/25 shadow-[0_0_30px_rgba(240,195,107,0.2)]" />
             </div>
 
@@ -353,14 +430,18 @@ export function ARPromoSection() {
                 type="button"
                 onClick={handleToggleRotate}
                 className={`w-9 h-9 rounded-full backdrop-blur-md border flex items-center justify-center transition-all cursor-pointer shadow-lg active:scale-95 ${
-                  autoRotate
+                  effectiveAutoRotate
                     ? 'bg-[#F0C36B]/20 border-[#F0C36B] text-[#FFE3A5] ring-2 ring-[#F0C36B]/40'
                     : 'bg-black/75 border-white/15 text-[#D8CFBE] hover:text-[#FAF5EC] hover:border-[#F0C36B]/50'
                 }`}
-                title={autoRotate ? 'Pause auto-rotation' : 'Start auto-rotation'}
+                title={effectiveAutoRotate ? 'Pause auto-rotation' : 'Start auto-rotation'}
                 aria-label="Toggle auto-rotate"
               >
-                <RotateCw className={`w-3.5 h-3.5 ${autoRotate ? 'animate-[spin_4s_linear_infinite]' : ''}`} />
+                <RotateCw
+                  className={`w-3.5 h-3.5 ${
+                    isStageActive && effectiveAutoRotate ? 'animate-[spin_4s_linear_infinite]' : ''
+                  }`}
+                />
               </button>
 
               {/* 2. Zoom In */}
@@ -396,12 +477,37 @@ export function ARPromoSection() {
               </Link>
             </div>
 
-            {/* Central Round 3D Model Stage: Displays 3D Warrior Model on Platter */}
+            {/* Central Round 3D Model Stage: Lazy-mounts WebGL platter only when within 250px of viewport */}
             <div
+              onClick={() => {
+                if (!shouldMountCanvas) setShouldMountCanvas(true);
+              }}
               className="relative w-[280px] h-[280px] sm:w-[330px] sm:h-[330px] rounded-full overflow-hidden border-2 border-[#F0C36B]/50 z-10 shadow-[0_25px_60px_rgba(0,0,0,0.95),0_0_35px_rgba(240,195,107,0.3)] bg-gradient-to-b from-[#18130F] via-[#0E0B09] to-[#070504] group/platter"
               title="Drag horizontally to rotate 360°"
             >
-              <PromoWarriorCanvas autoRotate={autoRotate} zoomLevel={zoomLevel} />
+              {shouldMountCanvas ? (
+                <PromoWarriorCanvas
+                  autoRotate={effectiveAutoRotate}
+                  zoomLevel={zoomLevel}
+                  isVisible={isStageActive}
+                  userToggledRotate={userToggledRotate}
+                />
+              ) : (
+                <div className="relative w-full h-full flex flex-col items-center justify-center bg-[#100C09]">
+                  <img
+                    src={currentDish.image}
+                    alt={currentDish.name}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover opacity-80"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent flex items-end justify-center pb-5">
+                    <span className="px-3 py-1 rounded-full bg-black/80 border border-[#F0C36B]/45 text-[10px] font-mono uppercase tracking-wider text-[#F0C36B]">
+                      3D Turntable Ready
+                    </span>
+                  </div>
+                </div>
+              )}
 
               {/* Inner Platter Rim Shadow & Specular Sheen */}
               <div
@@ -440,6 +546,8 @@ export function ARPromoSection() {
                     <img
                       src={dish.image}
                       alt={dish.name}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover group-hover:scale-115 transition-transform duration-300"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />

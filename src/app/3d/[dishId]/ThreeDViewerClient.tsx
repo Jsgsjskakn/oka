@@ -1,17 +1,13 @@
 'use client';
 
 import { useState, useCallback, useMemo, useEffect } from 'react';
-import { useGLTF } from '@react-three/drei';
 import { ThreeDViewer } from '@/components/viewer/ThreeDViewer';
 import { useFavoritesStore } from '@/store/favorites-store';
 import { useCartStore } from '@/store/cart-store';
-import { useToastStore, toast } from '@/store/toast-store';
+import { toast } from '@/store/toast-store';
 import { useRecentlyViewedStore } from '@/store/recently-viewed-store';
-import { type ModelConfig, SHARED_DEFAULT_MODEL_PATH, getModelConfig } from '@/data/model-config';
+import { type ModelConfig, getModelConfig } from '@/data/model-config';
 import type { Dish, AddOn } from '@/types/menu';
-
-// Eagerly preload the 3D model and local Draco decoder as soon as this client route loads
-useGLTF.preload(SHARED_DEFAULT_MODEL_PATH, '/draco/');
 
 interface Props {
   dishSlug: string;

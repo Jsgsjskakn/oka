@@ -5,7 +5,6 @@ import { CompactFooter } from '@/components/layout/CompactFooter';
 export default function MorePage() {
   const items = [
     { label: 'Customer Portal & Login', href: '/profile', icon: User },
-    { label: 'About Us', href: '/about', icon: Info },
     { label: 'Settings', href: '/settings', icon: Settings },
   ];
 

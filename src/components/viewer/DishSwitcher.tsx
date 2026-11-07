@@ -210,7 +210,7 @@ export function DishSwitcher({
 
   return (
     <div
-      className="fixed bottom-3 sm:bottom-3.5 left-1/2 -translate-x-1/2 lg:left-[calc((100vw-420px)/2)] lg:-translate-x-1/2 z-35 pointer-events-auto select-none w-[calc(100vw-24px)] max-w-[96vw] lg:max-w-4xl xl:max-w-5xl transition-all duration-300"
+      className="fixed bottom-[108px] sm:bottom-3.5 left-1/2 -translate-x-1/2 lg:left-[calc((100vw-420px)/2)] lg:-translate-x-1/2 z-35 pointer-events-auto select-none w-[calc(100vw-24px)] max-w-[96vw] lg:max-w-4xl xl:max-w-5xl transition-all duration-300"
       aria-label="Interactive Dish & Category Dock"
     >
       {/* Luxury Glass Dock */}

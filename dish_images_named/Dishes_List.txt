@@ -1,0 +1,36 @@
+﻿==========================================================
+  THE GOLDEN OAK - DISHES & IMAGES EXPORT LIST
+==========================================================
+
+- BBQ Chicken Overload                | Category: Pizzas                 | Saved as: BBQ Chicken Overload.webp
+- Chicken Tikka Pizza                 | Category: Pizzas                 | Saved as: Chicken Tikka Pizza.webp
+- Classic Smash Burger                | Category: Burgers                | Saved as: Classic Smash Burger.webp
+- Crispy Paneer Burger                | Category: Burgers                | Saved as: Crispy Paneer Burger.webp
+- Dynamite Chilli Potatoes            | Category: Starters               | Saved as: Dynamite Chilli Potatoes.webp
+- Golden Oak Signature Burger         | Category: Burgers                | Saved as: Golden Oak Signature Burger.webp
+- Mushroom Truffle Pizza              | Category: Pizzas                 | Saved as: Mushroom Truffle Pizza.webp
+- Peri Peri Fiesta Pizza              | Category: Pizzas                 | Saved as: Peri Peri Fiesta Pizza.webp
+- Tandoori Paneer Pizza               | Category: Pizzas                 | Saved as: Tandoori Paneer Pizza.webp
+- Wok-Tossed Chow Mein                | Category: Chinese                | Saved as: Wok-Tossed Chow Mein.webp
+- Keema Masala Pizza                  | Category: Pizzas (Mock Menu)     | Saved as: Keema Masala Pizza.webp
+- Farmhouse Supreme Pizza             | Category: Pizzas (Mock Menu)     | Saved as: Farmhouse Supreme Pizza.webp
+- Paneer Royale Burger                | Category: Burgers (Mock Menu)    | Saved as: Paneer Royale Burger.webp
+- Truffle Mushroom & Cheese Burger    | Category: Burgers (Mock Menu)    | Saved as: Truffle Mushroom & Cheese Burger.webp
+- Hakka Street Chow Mein              | Category: Chinese (Mock Menu)    | Saved as: Hakka Street Chow Mein.webp
+- Golden Chilli Potato                | Category: Starters (Mock Menu)   | Saved as: Golden Chilli Potato.webp
+- Chicken Pot Pie                     | Category: Starters / Mains       | Saved as: Chicken Pot Pie.png
+- Chocolate Lava Cake                 | Category: Desserts               | Saved as: Chocolate Lava Cake.png
+- Grilled Ribeye Steak                | Category: Mains                  | Saved as: Grilled Ribeye Steak.png
+- Massed Salad                        | Category: Salads                 | Saved as: Massed Salad.png
+- Paneer Tikka                        | Category: Starters               | Saved as: Paneer Tikka.png
+- Rice Toppings                       | Category: Sides                  | Saved as: Rice Toppings.png
+- Truffle Pasta                       | Category: Mains                  | Saved as: Truffle Pasta.png
+- Virgin Mojito                       | Category: Drinks                 | Saved as: Virgin Mojito.png
+- Classic Burger                      | Category: Burgers                | Saved as: Classic Burger.jpg
+- Chilli Potato                       | Category: Starters               | Saved as: Chilli Potato.jpg
+- Chowmein                            | Category: Chinese                | Saved as: Chowmein.jpg
+- Artisan Pizza                       | Category: Pizzas                 | Saved as: Artisan Pizza.jpg
+
+Total dishes/images processed: 28
+Export Folder: C:\Users\Pyiush Gupta\Desktop\Golden Oak Dish Images
+Date: 2026-11-03 13:46:21

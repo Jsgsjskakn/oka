@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   Bell,
@@ -10,22 +9,14 @@ import {
   Calendar,
   UtensilsCrossed,
   Sparkles,
-  Clock,
   X,
-  CheckCheck,
-  Trash2,
-  RefreshCw,
   ChefHat,
-  ArrowRight,
-  CreditCard,
-  Layers,
   ChevronRight,
 } from 'lucide-react';
 import {
   useNotificationStore,
   type NotificationItem,
   type NotificationCategory,
-  type NotificationType,
 } from '@/store/notification-store';
 import { toast } from '@/store/toast-store';
 
@@ -39,10 +30,6 @@ export function NotificationCenter() {
   const notifications = useNotificationStore((s) => s.notifications);
   const unreadCount = useNotificationStore((s) => s.unreadCount());
   const markAsRead = useNotificationStore((s) => s.markAsRead);
-  const markAllAsRead = useNotificationStore((s) => s.markAllAsRead);
-  const deleteNotification = useNotificationStore((s) => s.deleteNotification);
-  const clearAll = useNotificationStore((s) => s.clearAll);
-  const simulateNotification = useNotificationStore((s) => s.simulateNotification);
 
   useEffect(() => {
     setIsMounted(true);
@@ -95,7 +82,7 @@ export function NotificationCenter() {
     } else if (item.actionType === 'track_order') {
       toast.success(
         'Live Kitchen Status: Firing',
-        'Chef Antonio is stone-baking your wood-fired pizza at 450°C. ETA: ~12 mins.'
+        'Chef Antonio is stone-baking your wood-fired dish at 450°C. ETA: ~12 mins.'
       );
       setIsOpen(false);
     } else if (item.actionHref) {
@@ -107,7 +94,7 @@ export function NotificationCenter() {
   return (
     <div className="relative" ref={panelRef}>
       {/* ========================================================= */}
-      {/* 1. BELL TRIGGER BUTTON (EXACT LOCATION IN RED BOX)       */}
+      {/* 1. BELL TRIGGER BUTTON (LUXURY MINIMALIST TRIGGER)       */}
       {/* ========================================================= */}
       <button
         type="button"
@@ -115,95 +102,76 @@ export function NotificationCenter() {
         aria-label={`Concierge Notifications, ${isMounted ? unreadCount : 0} unread`}
         aria-expanded={isOpen}
         aria-haspopup="dialog"
-        title="Concierge Notifications & Live Alerts"
-        className={`relative p-1.5 rounded-full transition-all flex items-center justify-center group active:scale-95 cursor-pointer shrink-0 ${
+        title="Concierge Desk & Live Updates"
+        className={`relative p-2 rounded-full transition-all flex items-center justify-center group active:scale-95 cursor-pointer shrink-0 ${
           isOpen
-            ? 'text-[#F0C36B] bg-[#F0C36B]/15 ring-1 ring-[#F0C36B]/40 shadow-[0_0_12px_rgba(240,195,107,0.35)]'
+            ? 'text-[#D6B77A] bg-[#D6B77A]/15 ring-1 ring-[#D6B77A]/40 shadow-[0_0_14px_rgba(214,183,122,0.3)]'
             : 'text-[#B5ADA2] hover:text-[#FAF5EC] hover:bg-white/[0.05]'
         }`}
       >
         <Bell className="w-4 h-4 transition-transform group-hover:scale-110" />
 
-        {/* Unread Counter Badge */}
+        {/* Refined Unread Counter Badge */}
         {isMounted && unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 min-w-[17px] h-[17px] px-1 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#F0C36B] text-black text-[9px] font-mono font-bold flex items-center justify-center shadow-[0_0_10px_rgba(240,195,107,0.7)] animate-pulse">
+          <span className="absolute -top-0.5 -right-0.5 min-w-[15px] h-[15px] px-1 rounded-full bg-[#D6B77A] text-black text-[9px] font-sans font-bold flex items-center justify-center shadow-[0_0_8px_rgba(214,183,122,0.6)]">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
       </button>
 
       {/* ========================================================= */}
-      {/* 2. FLOATING LUXURY GLASS NOTIFICATION CENTER PANEL        */}
+      {/* 2. FLOATING BESPOKE CONCIERGE DESK PANEL                  */}
       {/* ========================================================= */}
       {isOpen && (
         <div
           role="dialog"
           aria-label="Concierge Notifications Panel"
-          className="absolute right-0 sm:right-[-60px] md:right-[-20px] top-[calc(100%+12px)] w-[330px] sm:w-[420px] max-w-[94vw] z-50 rounded-2xl border border-[#F0C36B]/40 shadow-[0_24px_60px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.18)] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+          className="absolute right-0 sm:right-[-40px] md:right-[-10px] top-[calc(100%+12px)] w-[340px] sm:w-[420px] max-w-[94vw] z-50 rounded-2xl border border-[#D6B77A]/25 shadow-[0_24px_60px_rgba(0,0,0,0.95),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_25px_rgba(214,183,122,0.06)] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200"
           style={{
-            background: 'rgba(16, 12, 9, 0.96)',
-            backdropFilter: 'blur(30px) saturate(180%)',
-            WebkitBackdropFilter: 'blur(30px) saturate(180%)',
+            background: 'linear-gradient(180deg, rgba(14, 12, 10, 0.98) 0%, rgba(8, 7, 6, 0.98) 100%)',
+            backdropFilter: 'blur(32px) saturate(190%)',
+            WebkitBackdropFilter: 'blur(32px) saturate(190%)',
           }}
         >
+          {/* Subtle Champagne Top Hairline */}
+          <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#D6B77A]/50 to-transparent pointer-events-none" />
+
           {/* Header */}
-          <div className="p-4 pb-3 border-b border-[#F0C36B]/20 flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-[#F0C36B]/15 border border-[#F0C36B]/30 flex items-center justify-center text-[#F0C36B] shadow-sm">
-                <Bell className="w-4 h-4" />
+          <div className="p-4 pb-3.5 border-b border-white/[0.07] flex items-center justify-between gap-3 bg-black/25">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#D6B77A]/20 to-black/40 border border-[#D6B77A]/30 flex items-center justify-center text-[#D6B77A] shadow-[0_0_12px_rgba(214,183,122,0.15)] shrink-0">
+                <Sparkles className="w-3.5 h-3.5" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-serif font-bold text-[#FAF5EC] leading-tight">
-                    Concierge Notifications
+                  <h3 className="text-sm font-heading font-medium tracking-wide text-[#FAF5EC] leading-tight">
+                    Concierge Desk
                   </h3>
                   {unreadCount > 0 && (
-                    <span className="px-2 py-0.5 rounded-full bg-[#36D6A0]/15 border border-[#36D6A0]/40 text-[#36D6A0] text-[10px] font-mono font-semibold">
-                      {unreadCount} New
+                    <span className="px-2 py-0.5 rounded-full bg-[#D6B77A]/15 border border-[#D6B77A]/30 text-[#D6B77A] text-[9.5px] font-sans font-medium tracking-wider uppercase">
+                      {unreadCount} Active
                     </span>
                   )}
                 </div>
-                <span className="text-[10.5px] text-[#9A9286] font-light">
-                  Live table, payment &amp; dining alerts
-                </span>
+                <p className="text-[10.5px] text-[#A6A29A] font-light tracking-wide mt-0.5">
+                  Bespoke dining, reservations &amp; cellar updates
+                </p>
               </div>
             </div>
 
-            {/* Quick Header Actions */}
-            <div className="flex items-center gap-1.5">
-              {unreadCount > 0 && (
-                <button
-                  type="button"
-                  onClick={markAllAsRead}
-                  title="Mark all as read"
-                  className="p-1.5 rounded-lg text-[#9A9286] hover:text-[#F0C36B] hover:bg-white/[0.05] transition-all cursor-pointer"
-                >
-                  <CheckCheck className="w-4 h-4" />
-                </button>
-              )}
-              {notifications.length > 0 && (
-                <button
-                  type="button"
-                  onClick={clearAll}
-                  title="Clear all notifications"
-                  className="p-1.5 rounded-lg text-[#9A9286] hover:text-rose-400 hover:bg-white/[0.05] transition-all cursor-pointer"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              )}
-              <button
-                type="button"
-                onClick={() => setIsOpen(false)}
-                title="Close"
-                className="p-1.5 rounded-lg text-[#9A9286] hover:text-[#FAF5EC] hover:bg-white/[0.05] transition-all cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
+            {/* Header Actions - Pure Minimalist Close Only (Mark as Read and Delete options removed) */}
+            <button
+              type="button"
+              onClick={() => setIsOpen(false)}
+              title="Close Concierge Desk"
+              className="w-7 h-7 rounded-full text-[#A6A29A] hover:text-[#FAF5EC] hover:bg-white/[0.06] flex items-center justify-center transition-all cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
 
           {/* Category Filter Tabs */}
-          <div className="px-3 pt-2 pb-1.5 border-b border-white/[0.06] flex items-center gap-1 overflow-x-auto scrollbar-none">
+          <div className="px-3.5 py-2 border-b border-white/[0.06] flex items-center gap-1.5 overflow-x-auto scrollbar-none bg-black/20">
             {[
               { id: 'all', label: 'All', count: notifications.length },
               { id: 'payment', label: 'Payments', count: paymentCount },
@@ -216,18 +184,18 @@ export function NotificationCenter() {
                   key={tab.id}
                   type="button"
                   onClick={() => setActiveTab(tab.id as NotificationCategory)}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-mono transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer select-none ${
+                  className={`px-3 py-1 rounded-full text-[11.5px] transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer select-none ${
                     isSelected
-                      ? 'bg-[#F0C36B]/20 text-[#FFE3A5] border border-[#F0C36B]/50 font-semibold'
-                      : 'text-[#9A9286] hover:text-[#FAF5EC] hover:bg-white/[0.04]'
+                      ? 'bg-gradient-to-r from-[#D6B77A]/15 to-[#D6B77A]/05 text-[#FAF5EC] border border-[#D6B77A]/35 shadow-sm font-medium'
+                      : 'text-[#8E877E] hover:text-[#FAF5EC] hover:bg-white/[0.03] border border-transparent font-normal'
                   }`}
                 >
                   <span>{tab.label}</span>
                   <span
-                    className={`text-[9.5px] px-1.5 py-0.2 rounded-full ${
+                    className={`text-[9px] font-mono px-1.5 py-0.2 rounded-full ${
                       isSelected
-                        ? 'bg-[#F0C36B] text-black font-bold'
-                        : 'bg-white/10 text-white/60'
+                        ? 'bg-[#D6B77A]/25 text-[#D6B77A] font-semibold'
+                        : 'bg-white/05 text-[#8E877E]'
                     }`}
                   >
                     {tab.count}
@@ -241,14 +209,17 @@ export function NotificationCenter() {
           <div className="max-h-[340px] sm:max-h-[380px] overflow-y-auto divide-y divide-white/[0.05] scrollbar-thin">
             {filteredNotifications.length === 0 ? (
               <div className="py-12 px-6 text-center flex flex-col items-center justify-center">
-                <div className="w-12 h-12 rounded-full bg-white/[0.04] border border-white/10 flex items-center justify-center text-[#9A9286] mb-3">
-                  <UtensilsCrossed className="w-5 h-5 opacity-60" />
+                <div className="relative mb-3.5">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-b from-[#D6B77A]/15 to-transparent border border-[#D6B77A]/25 flex items-center justify-center text-[#D6B77A] shadow-[0_0_20px_rgba(214,183,122,0.12)]">
+                    <UtensilsCrossed className="w-5 h-5 opacity-80" />
+                  </div>
+                  <div className="absolute inset-0 rounded-full bg-[#D6B77A]/10 blur-xl -z-10 pointer-events-none" />
                 </div>
-                <h4 className="text-xs font-serif font-bold text-[#FAF5EC] mb-1">
-                  All Caught Up
+                <h4 className="font-heading text-sm font-medium tracking-wide text-[#FAF5EC] mb-1.5">
+                  Concierge Ledger Pristine
                 </h4>
-                <p className="text-[11px] text-[#9A9286] max-w-[220px]">
-                  No active alerts in this category. You will be notified of real-time seat, payment and order updates.
+                <p className="text-[11.5px] text-[#A6A29A] max-w-[260px] font-light leading-relaxed">
+                  Your dining reservations, sommelier selections, and table updates will be gracefully presented here in real time.
                 </p>
               </div>
             ) : (
@@ -256,42 +227,42 @@ export function NotificationCenter() {
                 return (
                   <div
                     key={item.id}
-                    onClick={() => markAsRead(item.id)}
-                    className={`p-3.5 sm:p-4 transition-colors relative flex gap-3 group cursor-pointer ${
+                    onClick={() => handleActionClick(item)}
+                    className={`p-4 transition-all relative flex gap-3.5 group cursor-pointer ${
                       !item.isRead
-                        ? 'bg-[#F0C36B]/[0.06] hover:bg-[#F0C36B]/[0.10]'
-                        : 'hover:bg-white/[0.03]'
+                        ? 'bg-[#D6B77A]/[0.03] hover:bg-[#D6B77A]/[0.06] before:absolute before:left-0 before:top-2 before:bottom-2 before:w-[2px] before:rounded-r before:bg-gradient-to-b before:from-[#D6B77A] before:to-[#C5A059]'
+                        : 'hover:bg-white/[0.025]'
                     }`}
                   >
-                    {/* Icon by Type */}
+                    {/* Bespoke Muted Luxury Icon by Type */}
                     <div className="shrink-0 mt-0.5">
                       {item.type === 'payment_success' && (
-                        <div className="w-8 h-8 rounded-full bg-emerald-950/60 border border-emerald-500/40 text-[#36D6A0] flex items-center justify-center shadow-[0_0_10px_rgba(54,214,160,0.25)]">
+                        <div className="w-8 h-8 rounded-full bg-[#12241A] border border-[#2E5A47]/60 text-[#5ED49F] flex items-center justify-center shadow-[0_0_12px_rgba(94,212,159,0.15)]">
                           <CheckCircle2 className="w-4 h-4" />
                         </div>
                       )}
                       {item.type === 'payment_failed' && (
-                        <div className="w-8 h-8 rounded-full bg-rose-950/60 border border-rose-500/40 text-rose-400 flex items-center justify-center shadow-[0_0_10px_rgba(244,63,94,0.25)]">
+                        <div className="w-8 h-8 rounded-full bg-[#2A1215] border border-[#5A252B]/60 text-[#E07A85] flex items-center justify-center shadow-[0_0_12px_rgba(224,122,133,0.15)]">
                           <AlertCircle className="w-4 h-4" />
                         </div>
                       )}
                       {item.type === 'table_confirmed' && (
-                        <div className="w-8 h-8 rounded-full bg-[#20150A] border border-[#F0C36B]/50 text-[#F0C36B] flex items-center justify-center shadow-[0_0_10px_rgba(240,195,107,0.25)]">
+                        <div className="w-8 h-8 rounded-full bg-[#231A0F] border border-[#7A5C30]/60 text-[#D6B77A] flex items-center justify-center shadow-[0_0_12px_rgba(214,183,122,0.15)]">
                           <Calendar className="w-4 h-4" />
                         </div>
                       )}
                       {item.type === 'order_preparing' && (
-                        <div className="w-8 h-8 rounded-full bg-amber-950/60 border border-amber-500/40 text-amber-400 flex items-center justify-center shadow-[0_0_10px_rgba(245,158,11,0.25)]">
+                        <div className="w-8 h-8 rounded-full bg-[#241B0E] border border-[#6B4B1E]/60 text-[#E5A952] flex items-center justify-center shadow-[0_0_12px_rgba(229,169,82,0.15)]">
                           <ChefHat className="w-4 h-4" />
                         </div>
                       )}
                       {item.type === 'order_delivered' && (
-                        <div className="w-8 h-8 rounded-full bg-sky-950/60 border border-sky-500/40 text-sky-400 flex items-center justify-center shadow-[0_0_10px_rgba(56,189,248,0.25)]">
+                        <div className="w-8 h-8 rounded-full bg-[#18181C] border border-white/20 text-[#E8E5DE] flex items-center justify-center shadow-[0_0_12px_rgba(232,229,222,0.15)]">
                           <Sparkles className="w-4 h-4" />
                         </div>
                       )}
                       {item.type === 'general' && (
-                        <div className="w-8 h-8 rounded-full bg-white/10 border border-white/20 text-[#FAF5EC] flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-full bg-white/[0.05] border border-white/10 text-[#FAF5EC] flex items-center justify-center">
                           <Bell className="w-4 h-4" />
                         </div>
                       )}
@@ -299,59 +270,32 @@ export function NotificationCenter() {
 
                     {/* Content */}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2 mb-0.5">
+                      <div className="flex items-center justify-between gap-2 mb-1">
                         <div className="flex items-center gap-1.5 min-w-0">
-                          <h4 className="text-xs font-semibold text-[#FAF5EC] truncate leading-tight">
+                          <h4 className="text-xs font-medium text-[#FAF5EC] truncate leading-tight">
                             {item.title}
                           </h4>
                           {!item.isRead && (
-                            <span className="w-2 h-2 rounded-full bg-[#F0C36B] shadow-[0_0_6px_#F0C36B] shrink-0" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#D6B77A] shadow-[0_0_6px_#D6B77A] shrink-0" />
                           )}
                         </div>
-                        <span className="text-[10px] font-mono text-[#9A9286] shrink-0">
+                        <span className="text-[10px] font-mono text-[#8E877E] shrink-0">
                           {item.timestamp}
                         </span>
                       </div>
 
-                      <p className="text-[11px] text-[#C4B8A8] font-light leading-relaxed mb-2">
+                      <p className="text-[11px] text-[#A6A29A] font-light leading-relaxed mb-2.5">
                         {item.message}
                       </p>
 
-                      {/* Interactive Action Button */}
+                      {/* Interactive Action Link (Refined luxury affordance) */}
                       {item.actionLabel && (
-                        <div className="flex items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleActionClick(item);
-                            }}
-                            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10.5px] font-mono font-bold transition-all cursor-pointer active:scale-95 ${
-                              item.type === 'payment_failed'
-                                ? 'bg-rose-500/15 border border-rose-500/40 text-rose-300 hover:bg-rose-500/30'
-                                : item.type === 'payment_success'
-                                  ? 'bg-[#36D6A0]/15 border border-[#36D6A0]/40 text-[#36D6A0] hover:bg-[#36D6A0]/25'
-                                  : 'bg-[#F0C36B]/15 border border-[#F0C36B]/40 text-[#F0C36B] hover:bg-[#F0C36B]/25'
-                            }`}
-                          >
-                            <span>{item.actionLabel}</span>
-                          </button>
+                        <div className="inline-flex items-center gap-1.5 text-[10.5px] font-medium tracking-wide text-[#D6B77A] group-hover:text-white transition-colors">
+                          <span>{item.actionLabel}</span>
+                          <ChevronRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
                         </div>
                       )}
                     </div>
-
-                    {/* Delete Item Button */}
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        deleteNotification(item.id);
-                      }}
-                      title="Dismiss notification"
-                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-[#9A9286] hover:text-[#FAF5EC] shrink-0 self-start cursor-pointer"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </button>
                   </div>
                 );
               })
@@ -359,53 +303,17 @@ export function NotificationCenter() {
           </div>
 
           {/* ========================================================= */}
-          {/* 3. SIMULATOR DOCK (INSTANT LIVE TESTING OF ALL NOTIFS)    */}
+          {/* 3. REFINED CONCIERGE STATUS FOOTER                       */}
           {/* ========================================================= */}
-          <div className="p-3 bg-black/60 border-t border-[#F0C36B]/20 flex flex-col gap-2">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono text-[#F0C36B] uppercase tracking-wider flex items-center gap-1">
-                <span>⚡ Simulate Live Alerts</span>
+          <div className="px-4 py-2.5 bg-black/40 border-t border-white/[0.06] flex items-center justify-between text-[11px]">
+            <div className="flex items-center gap-2 text-[#A6A29A]">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#36D6A0] opacity-60" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#36D6A0]" />
               </span>
-              <span className="text-[9.5px] text-[#9A9286]">Instant Dispatch</span>
+              <span className="font-light tracking-wide text-[10.5px]">Concierge Desk Online</span>
             </div>
-
-            <div className="grid grid-cols-4 gap-1.5">
-              <button
-                type="button"
-                onClick={() => simulateNotification('payment_success')}
-                className="px-1.5 py-1 rounded-md bg-emerald-950/40 border border-emerald-500/30 text-emerald-400 text-[10px] font-mono hover:bg-emerald-950/80 transition-all cursor-pointer active:scale-95 truncate text-center"
-                title="Simulate Payment Accepted Notification"
-              >
-                + Paid ✓
-              </button>
-
-              <button
-                type="button"
-                onClick={() => simulateNotification('payment_failed')}
-                className="px-1.5 py-1 rounded-md bg-rose-950/40 border border-rose-500/30 text-rose-400 text-[10px] font-mono hover:bg-rose-950/80 transition-all cursor-pointer active:scale-95 truncate text-center"
-                title="Simulate Payment Failed Notification"
-              >
-                + Fail ✕
-              </button>
-
-              <button
-                type="button"
-                onClick={() => simulateNotification('table_confirmed')}
-                className="px-1.5 py-1 rounded-md bg-[#F0C36B]/10 border border-[#F0C36B]/30 text-[#F0C36B] text-[10px] font-mono hover:bg-[#F0C36B]/20 transition-all cursor-pointer active:scale-95 truncate text-center"
-                title="Simulate Seat / Table Reserved Notification"
-              >
-                + Seat 🍽️
-              </button>
-
-              <button
-                type="button"
-                onClick={() => simulateNotification('order_preparing')}
-                className="px-1.5 py-1 rounded-md bg-amber-950/40 border border-amber-500/30 text-amber-400 text-[10px] font-mono hover:bg-amber-950/80 transition-all cursor-pointer active:scale-95 truncate text-center"
-                title="Simulate Order In Kitchen Notification"
-              >
-                + Order 🔥
-              </button>
-            </div>
+            <span className="text-[9.5px] font-mono tracking-widest uppercase text-[#D6B77A]/75">The Golden Oak</span>
           </div>
         </div>
       )}

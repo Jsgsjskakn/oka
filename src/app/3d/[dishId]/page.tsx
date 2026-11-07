@@ -30,8 +30,7 @@ export default async function ThreeDViewerPage({ params }: { params: Promise<{ d
   
   return (
     <>
-      {/* High-priority browser preloads for instant 3D model & decoder bootstrap */}
-      <link rel="preload" href="/models/warrior_model.glb" as="fetch" crossOrigin="anonymous" />
+      {/* High-priority browser preloads for Draco WASM decoder bootstrap (tier-specific LOD GLB is selected dynamically per device) */}
       <link rel="preload" href="/draco/draco_decoder.wasm" as="fetch" crossOrigin="anonymous" />
       <link rel="preload" href="/draco/draco_wasm_wrapper.js" as="script" />
 

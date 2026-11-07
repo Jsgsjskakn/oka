@@ -5,6 +5,7 @@
 @theme {
   --font-sans: var(--font-sans);
   --font-heading: var(--font-heading);
+  --font-cinzel: var(--font-cinzel);
 
   /* Core Design Tokens */
   --color-obsidian: #050505;

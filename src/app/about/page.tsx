@@ -1,3 +1,7 @@
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { ChevronLeft, Leaf, Flame, Sparkles, Award } from 'lucide-react';
 import Link from 'next/link';
 import { CompactFooter } from '@/components/layout/CompactFooter';
@@ -5,8 +9,17 @@ import { RESTAURANT_CONFIG } from '@/lib/config';
 import { StationaryOakTreeBackground } from '@/components/home/StationaryOakTreeBackground';
 
 export default function AboutPage() {
+  const router = useRouter();
+
+  // Redirect mobile users to Home ("phone wale se our story wala page hatao")
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      router.replace('/');
+    }
+  }, [router]);
+
   return (
-    <div className="min-h-screen bg-[#070503] text-text-primary flex flex-col relative overflow-hidden select-none">
+    <div className="hidden md:flex min-h-screen bg-[#070503] text-text-primary flex-col relative overflow-hidden select-none">
       {/* ===================================================================== */}
       {/* STATIONARY THE GOLDEN OAK PARTICLE TREE BACKGROUND (EXACT SAME TREE)  */}
       {/* Stays majestically in place in the background ("ek he jagha rahega")  */}

@@ -134,9 +134,11 @@ export function MenuClient({ categories, initialDishes, initialCategory = 'all' 
   };
 
   let activeFilterCount = 0;
+  if (activeCategory !== 'all') activeFilterCount++;
   if (filters.vegOnly || filters.nonVegOnly) activeFilterCount++;
   if (filters.priceRange !== 'all') activeFilterCount++;
   if (filters.popularOnly) activeFilterCount++;
+  if (sort !== 'recommended') activeFilterCount++;
 
   return (
     <div className="relative min-h-screen bg-[#0D0A08] text-[#FAF5EC] overflow-x-hidden selection:bg-[#E2A84B] selection:text-[#0D0A08]">
@@ -160,68 +162,17 @@ export function MenuClient({ categories, initialDishes, initialCategory = 'all' 
       {/* Layer 4: Architectural Margin Lines (Subtle Gold Hairlines Container) */}
       <div className="max-w-[1360px] mx-auto border-l border-r border-[#E2A84B]/[0.07] min-h-screen relative z-10 flex flex-col justify-between">
         <div>
-          {/* Step 1: Compact Editorial Header with smooth collapse on search focus */}
-          <div
-            className={`transition-all duration-300 ease-in-out overflow-hidden ${
-              isSearchFocused || searchQuery.trim()
-                ? 'max-h-0 opacity-0 pointer-events-none'
-                : 'max-h-[350px] opacity-100'
-            }`}
-          >
-            <MenuHeader />
-          </div>
-
-          {/* Step 2: Unified Sticky Glass Command Bar (Navbar top: 80px sticky) */}
-          <div className="sticky top-20 z-40 bg-[#0D0A08]/90 backdrop-blur-2xl border-t border-b border-[#E2A84B]/15 py-3 px-4 sm:px-6 lg:px-8 transition-all shadow-2xl">
-            <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
-              {/* Left Side: Clean Typographic Category Tabs with Superscript Counts (NO EMOJIS) */}
-              <div className="flex items-center gap-6 sm:gap-7 overflow-x-auto hide-scrollbar w-full lg:w-auto pb-1 lg:pb-0">
-                {categoryTabs.map((tab) => {
-                  const isActive = activeCategory === tab.id;
-                  const countFormatted = tab.count < 10 ? `0${tab.count}` : `${tab.count}`;
-                  return (
-                    <button
-                      key={tab.id}
-                      type="button"
-                      onClick={() => setActiveCategory(tab.id)}
-                      className="relative pb-1.5 text-xs sm:text-sm whitespace-nowrap transition-all duration-300 group flex items-baseline gap-1 select-none active:scale-95"
-                    >
-                      <span
-                        className={`transition-colors tracking-wide ${
-                          isActive
-                            ? 'text-[#E2A84B] font-bold'
-                            : 'text-[#9A9286] font-medium hover:text-[#FAF5EC]'
-                        }`}
-                      >
-                        {tab.label}
-                      </span>
-                      <sup
-                        className={`text-[10px] font-mono transition-colors ${
-                          isActive ? 'text-[#E2A84B] font-bold' : 'text-[#9A9286]/70'
-                        }`}
-                      >
-                        {countFormatted}
-                      </sup>
-
-                      {/* Sliding 2px Gold Indicator */}
-                      {isActive && (
-                        <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#E2A84B] rounded-full shadow-[0_0_8px_rgba(226,168,75,0.6)]" />
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Right Side: Expandable Search + Dietary Toggles + Sort */}
-              <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 w-full lg:w-auto justify-between lg:justify-end">
-                {/* Sleek Expandable Glass Search Input with Gold Aura Focus */}
-                <div
-                  className={`relative flex items-center h-9 w-full sm:w-64 focus-within:sm:w-80 transition-all duration-300 rounded-[6px] bg-[#17120E] border shadow-inner ${
-                    isSearchFocused
-                      ? 'border-[#E2A84B] shadow-[0_0_24px_rgba(226,168,75,0.22)]'
-                      : 'border-[#E2A84B]/25 hover:border-[#E2A84B]/50'
-                  }`}
-                >
+          {/* Step 2: Unified Command Bar (Search + Quick Dietary & Filter Chips) */}
+          <div className="relative z-20 bg-[#0D0A08]/90 backdrop-blur-2xl border-t border-b border-[#E2A84B]/15 py-3 px-4 sm:px-6 lg:px-8 transition-all shadow-xl">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 w-full justify-between">
+              {/* Sleek Expandable Glass Search Input with Gold Aura Focus */}
+              <div
+                className={`relative flex items-center h-9 w-full sm:w-64 focus-within:sm:w-80 transition-all duration-300 rounded-[6px] bg-[#17120E] border shadow-inner ${
+                  isSearchFocused
+                    ? 'border-[#E2A84B] shadow-[0_0_24px_rgba(226,168,75,0.22)]'
+                    : 'border-[#E2A84B]/25 hover:border-[#E2A84B]/50'
+                }`}
+              >
                   <div className="pl-3 pr-2 text-[#E2A84B]">
                     <Search className="w-3.5 h-3.5" />
                   </div>
@@ -251,98 +202,98 @@ export function MenuClient({ categories, initialDishes, initialCategory = 'all' 
                   )}
                 </div>
 
-                {/* Tactile Dietary Switches: Veg Only */}
-                <button
-                  type="button"
-                  onClick={() =>
-                    setFilters((f) => ({ ...f, vegOnly: !f.vegOnly, nonVegOnly: false }))
-                  }
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] text-xs font-semibold transition-all duration-200 active:scale-95 border ${
-                    filters.vegOnly
-                      ? 'bg-[#22C58B]/20 border-[#22C58B] text-[#22C58B] shadow-[0_0_12px_rgba(34,197,139,0.25)]'
-                      : 'bg-[#16120E] border-white/10 text-[#9A9286] hover:text-[#FAF5EC]'
-                  }`}
-                >
-                  <span
-                    className={`w-2 h-2 rounded-full ${
-                      filters.vegOnly ? 'bg-[#22C58B]' : 'bg-[#22C58B]/50'
+                {/* Horizontal Quick Filter & Options Row */}
+                <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar py-0.5 shrink-0">
+                  {/* Tactile Dietary Switches: Veg Only */}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFilters((f) => ({ ...f, vegOnly: !f.vegOnly, nonVegOnly: false }))
+                    }
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] text-xs font-semibold whitespace-nowrap transition-all duration-200 active:scale-95 border ${
+                      filters.vegOnly
+                        ? 'bg-[#22C58B]/20 border-[#22C58B] text-[#22C58B] shadow-[0_0_12px_rgba(34,197,139,0.25)]'
+                        : 'bg-[#16120E] border-white/10 text-[#9A9286] hover:text-[#FAF5EC]'
                     }`}
-                  />
-                  <span>Veg Only</span>
-                </button>
+                  >
+                    <span
+                      className={`w-2 h-2 rounded-full ${
+                        filters.vegOnly ? 'bg-[#22C58B]' : 'bg-[#22C58B]/50'
+                      }`}
+                    />
+                    <span>Veg Only</span>
+                  </button>
 
-                {/* Tactile Dietary Switches: Non-Veg */}
-                <button
-                  type="button"
-                  onClick={() =>
-                    setFilters((f) => ({ ...f, nonVegOnly: !f.nonVegOnly, vegOnly: false }))
-                  }
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] text-xs font-semibold transition-all duration-200 active:scale-95 border ${
-                    filters.nonVegOnly
-                      ? 'bg-rose-500/20 border-rose-500 text-rose-300 shadow-[0_0_12px_rgba(244,63,94,0.25)]'
-                      : 'bg-[#16120E] border-white/10 text-[#9A9286] hover:text-[#FAF5EC]'
-                  }`}
-                >
-                  <span
-                    className={`w-2 h-2 rounded-full ${
-                      filters.nonVegOnly ? 'bg-rose-500' : 'bg-rose-500/50'
+                  {/* Tactile Dietary Switches: Non-Veg */}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFilters((f) => ({ ...f, nonVegOnly: !f.nonVegOnly, vegOnly: false }))
+                    }
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] text-xs font-semibold whitespace-nowrap transition-all duration-200 active:scale-95 border ${
+                      filters.nonVegOnly
+                        ? 'bg-rose-500/20 border-rose-500 text-rose-300 shadow-[0_0_12px_rgba(244,63,94,0.25)]'
+                        : 'bg-[#16120E] border-white/10 text-[#9A9286] hover:text-[#FAF5EC]'
                     }`}
-                  />
-                  <span>Non-Veg</span>
-                </button>
+                  >
+                    <span
+                      className={`w-2 h-2 rounded-full ${
+                        filters.nonVegOnly ? 'bg-rose-500' : 'bg-rose-500/50'
+                      }`}
+                    />
+                    <span>Non-Veg</span>
+                  </button>
 
-                {/* Chef's Picks */}
-                <button
-                  type="button"
-                  onClick={() =>
-                    setFilters((f) => ({ ...f, popularOnly: !f.popularOnly }))
-                  }
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] text-xs font-semibold transition-all duration-200 active:scale-95 border ${
-                    filters.popularOnly
-                      ? 'bg-[#E2A84B]/20 border-[#E2A84B] text-[#E2A84B] shadow-[0_0_12px_rgba(226,168,75,0.25)]'
-                      : 'bg-[#16120E] border-white/10 text-[#9A9286] hover:text-[#FAF5EC]'
-                  }`}
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-[#E2A84B]" />
-                  <span>Chef&apos;s Picks</span>
-                </button>
+                  {/* Chef's Picks */}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFilters((f) => ({ ...f, popularOnly: !f.popularOnly }))
+                    }
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] text-xs font-semibold whitespace-nowrap transition-all duration-200 active:scale-95 border ${
+                      filters.popularOnly
+                        ? 'bg-[#E2A84B]/20 border-[#E2A84B] text-[#E2A84B] shadow-[0_0_12px_rgba(226,168,75,0.25)]'
+                        : 'bg-[#16120E] border-white/10 text-[#9A9286] hover:text-[#FAF5EC]'
+                    }`}
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-[#E2A84B]" />
+                    <span>Chef&apos;s Picks</span>
+                  </button>
 
-                {/* Sort Modal Trigger */}
-                <button
-                  type="button"
-                  onClick={() => setIsSortOpen(true)}
-                  className="h-9 px-3 rounded-[6px] bg-[#16120E] border border-white/10 hover:border-[#E2A84B]/40 flex items-center justify-center gap-1.5 text-xs font-medium text-[#FAF5EC] hover:text-[#E2A84B] transition-all"
-                >
-                  <ArrowUpDown className="w-3.5 h-3.5 text-[#E2A84B]" />
-                  <span>Sort</span>
-                  {sort !== 'recommended' && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#E2A84B]" />
-                  )}
-                </button>
-
-                {/* All Filters Trigger */}
-                <button
-                  type="button"
-                  onClick={() => setIsFilterOpen(true)}
-                  className="h-9 px-3 rounded-[6px] bg-[#16120E] border border-white/10 hover:border-[#E2A84B]/40 flex items-center justify-center gap-1.5 text-xs font-medium text-[#FAF5EC] hover:text-[#E2A84B] transition-all relative"
-                >
-                  <SlidersHorizontal className="w-3.5 h-3.5 text-[#E2A84B]" />
-                  <span>Filters</span>
-                  {activeFilterCount > 0 && (
-                    <span className="w-4 h-4 rounded-full bg-[#E2A84B] text-[#0D0A08] text-[9px] font-extrabold flex items-center justify-center">
-                      {activeFilterCount}
-                    </span>
-                  )}
-                </button>
+                  {/* Unified Filters Trigger (Includes Sorting per user request) */}
+                  <button
+                    type="button"
+                    onClick={() => setIsFilterOpen(true)}
+                    className={`h-[31px] px-3 rounded-[6px] flex items-center justify-center gap-1.5 text-xs font-semibold whitespace-nowrap transition-all active:scale-95 border ${
+                      activeFilterCount > 0
+                        ? 'bg-[#E2A84B]/20 border-[#E2A84B] text-[#FAF5EC] shadow-[0_0_12px_rgba(226,168,75,0.2)]'
+                        : 'bg-[#16120E] border-white/10 hover:border-[#E2A84B]/40 text-[#FAF5EC] hover:text-[#E2A84B]'
+                    }`}
+                  >
+                    <SlidersHorizontal className="w-3.5 h-3.5 text-[#E2A84B]" />
+                    <span>Filters</span>
+                    {activeFilterCount > 0 && (
+                      <span className="w-4 h-4 rounded-full bg-[#E2A84B] text-[#0D0A08] text-[9px] font-extrabold flex items-center justify-center">
+                        {activeFilterCount}
+                      </span>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
 
           {/* Active Filter Indicators Bar */}
-          {(searchQuery || filters.vegOnly || filters.nonVegOnly || filters.popularOnly || filters.priceRange !== 'all') && (
-            <div className="pt-4 px-4 sm:px-6 lg:px-8 max-w-[1360px] mx-auto flex items-center justify-between text-xs text-[#9A9286]">
+          {(searchQuery || activeCategory !== 'all' || filters.vegOnly || filters.nonVegOnly || filters.popularOnly || filters.priceRange !== 'all') && (
+            <div className="pt-3 px-4 sm:px-6 lg:px-8 max-w-[1360px] mx-auto flex flex-wrap items-center justify-between gap-2 text-xs text-[#9A9286]">
               <div className="flex items-center gap-2">
-                <span>Showing results for current filters ({filteredAndSortedDishes.length} items)</span>
+                <span>
+                  {activeCategory !== 'all' ? (
+                    <span className="text-[#FAF5EC] font-medium">
+                      Category: <span className="text-[#E2A84B] font-semibold">{categoryTabs.find((c) => c.id === activeCategory)?.label}</span> · 
+                    </span>
+                  ) : null}
+                  Showing results for current filters ({filteredAndSortedDishes.length} items)
+                </span>
               </div>
               <button
                 type="button"
@@ -355,7 +306,7 @@ export function MenuClient({ categories, initialDishes, initialCategory = 'all' 
           )}
 
           {/* Dish Grid Showcase */}
-          <div className="pt-8">
+          <div className="pt-4 sm:pt-6">
             {filteredAndSortedDishes.length > 0 ? (
               <DishGrid dishes={filteredAndSortedDishes} searchHighlight={searchQuery} />
             ) : (
@@ -365,19 +316,17 @@ export function MenuClient({ categories, initialDishes, initialCategory = 'all' 
         </div>
       </div>
 
-      {/* Filter & Sort Bottom Sheets */}
+      {/* Filter Bottom Sheet with Integrated Categories & Sorting */}
       <FilterSheet
         isOpen={isFilterOpen}
         onClose={() => setIsFilterOpen(false)}
         filters={filters}
         onApply={(f) => setFilters(f)}
-      />
-
-      <SortSheet
-        isOpen={isSortOpen}
-        onClose={() => setIsSortOpen(false)}
         currentSort={sort}
-        onApply={(s) => setSort(s)}
+        onSelectSort={(s) => setSort(s)}
+        categories={categoryTabs}
+        activeCategory={activeCategory}
+        onSelectCategory={(c) => setActiveCategory(c)}
       />
     </div>
   );

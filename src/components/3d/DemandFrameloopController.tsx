@@ -12,7 +12,7 @@ import React, {
 import { useThree, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import type { OrbitControls as OrbitControlsType } from 'three-stdlib';
-import { Zap, Moon, Activity, Cpu } from 'lucide-react';
+import { Zap, Moon, Cpu } from 'lucide-react';
 
 export interface CameraTarget {
   position: [number, number, number] | THREE.Vector3;
@@ -48,23 +48,26 @@ export interface DemandFrameloopControllerProps {
   controlsRef?: React.RefObject<OrbitControlsType | null>;
   targetCamera?: CameraTarget | null;
   onTargetReached?: () => void;
-  deps?: any[];
+  deps?: ReadonlyArray<unknown>;
   onTelemetryChange?: (telemetry: FrameloopTelemetry) => void;
   dampingLambda?: number;
   epsilon?: number;
   enableTelemetry?: boolean;
+  children?: ReactNode;
 }
 
 /**
  * DemandFrameloopController
- * 
+ *
  * High-performance on-demand rendering coordinator for React Three Fiber.
- * Drops GPU rendering from unthrottled 60 FPS (3.8W-5.2W) to 0 FPS (~0.1W) when idle.
+ * Drops GPU rendering from unthrottled 60 FPS (3.8W-5.2W) to 0 FPS (~0.1W) when idle,
+ * and completely halts frame requests + telemetry timers when `document.visibilityState === 'hidden'`.
+ *
  * Automatically invalidates on:
  * - OrbitControls start, change, end, and inertial damping
- * - Table selection, hover, and arbitrary prop dependencies
+ * - Table/dish selection, hover, and arbitrary prop dependencies
  * - Smooth camera transitions (interpolating until velocity < epsilon, then sleeping)
- * - Window resize and viewport layout changes
+ * - Window resize, orientation changes, and tab visibility restoration
  */
 export function DemandFrameloopController({
   controlsRef,
@@ -75,16 +78,39 @@ export function DemandFrameloopController({
   dampingLambda = 5.5,
   epsilon = 0.001,
   enableTelemetry = false,
+  children,
 }: DemandFrameloopControllerProps) {
-  const { invalidate, camera, size, controls: contextControls } = useThree();
+  const { invalidate, size, controls: contextControls } = useThree();
+  const controlsPropRef = useRef(controlsRef);
 
-  // Active controls reference (prop takes priority, fallback to R3F context)
-  const activeControls = controlsRef?.current || (contextControls as OrbitControlsType | null);
+  useEffect(() => {
+    controlsPropRef.current = controlsRef;
+  }, [controlsRef]);
+
+  // Document visibility state (suspends frame invalidation & telemetry polling when hidden)
+  const [isDocumentVisible, setIsDocumentVisible] = useState<boolean>(() =>
+    typeof document !== 'undefined' ? document.visibilityState !== 'hidden' : true
+  );
+  const isHiddenRef = useRef<boolean>(false);
+
+  useEffect(() => {
+    isHiddenRef.current = !isDocumentVisible;
+  }, [isDocumentVisible]);
+
+  const safeInvalidate = useCallback(() => {
+    if (typeof document !== 'undefined' && document.visibilityState === 'hidden') {
+      return;
+    }
+    invalidate();
+  }, [invalidate]);
 
   // Transition state
   const currentTargetRef = useRef<CameraTarget | null>(null);
   const onTargetReachedRef = useRef<(() => void) | undefined>(onTargetReached);
-  onTargetReachedRef.current = onTargetReached;
+
+  useEffect(() => {
+    onTargetReachedRef.current = onTargetReached;
+  }, [onTargetReached]);
 
   // Instance-safe reusable scratch vectors for useFrame (eliminates per-frame heap allocations)
   const scratchTargetPos = useRef(new THREE.Vector3());
@@ -108,59 +134,105 @@ export function DemandFrameloopController({
     totalFramesRendered: 0,
   });
 
+  // Listen to document visibility changes: halt background work when hidden, refresh once on wake
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+
+    const handleVisibilityChange = () => {
+      const visible = document.visibilityState !== 'hidden';
+      isHiddenRef.current = !visible;
+      setIsDocumentVisible(visible);
+
+      if (!visible) {
+        isInteractingRef.current = false;
+        dampingFramesRemaining.current = 0;
+        extraFramesRequested.current = 0;
+        frameTimestamps.current = [];
+        if (enableTelemetry || onTelemetryChange) {
+          const hiddenSnapshot: FrameloopTelemetry = {
+            fps: 0,
+            isIdle: true,
+            isTransitioning: false,
+            isInteracting: false,
+            estimatedWattage: 0.05,
+            totalFramesRendered: totalFramesCount.current,
+          };
+          setTelemetry(hiddenSnapshot);
+          onTelemetryChange?.(hiddenSnapshot);
+        }
+      } else {
+        extraFramesRequested.current = 2;
+        invalidate();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [invalidate, enableTelemetry, onTelemetryChange]);
+
   // Track targetCamera prop changes
   useEffect(() => {
     if (targetCamera) {
       currentTargetRef.current = targetCamera;
       isTransitioningRef.current = true;
-      invalidate();
+      safeInvalidate();
     } else {
       currentTargetRef.current = null;
       isTransitioningRef.current = false;
     }
-  }, [targetCamera, invalidate]);
+  }, [targetCamera, safeInvalidate]);
 
   // Request extra consecutive frames (e.g. for animations or transitions)
-  const requestFrames = useCallback((count = 10) => {
-    extraFramesRequested.current = Math.max(extraFramesRequested.current, count);
-    invalidate();
-  }, [invalidate]);
+  const requestFrames = useCallback(
+    (count = 10) => {
+      if (isHiddenRef.current) return;
+      extraFramesRequested.current = Math.max(extraFramesRequested.current, count);
+      safeInvalidate();
+    },
+    [safeInvalidate]
+  );
 
   // Public transition function
-  const transitionTo = useCallback((target: CameraTarget, onComplete?: () => void) => {
-    currentTargetRef.current = target;
-    isTransitioningRef.current = true;
-    onTargetReachedRef.current = onComplete;
-    invalidate();
-  }, [invalidate]);
+  const transitionTo = useCallback(
+    (target: CameraTarget, onComplete?: () => void) => {
+      currentTargetRef.current = target;
+      isTransitioningRef.current = true;
+      onTargetReachedRef.current = onComplete;
+      safeInvalidate();
+    },
+    [safeInvalidate]
+  );
 
   const cancelTransition = useCallback(() => {
     currentTargetRef.current = null;
     isTransitioningRef.current = false;
   }, []);
 
-  // Invalidate on dependencies change (e.g. table selection, hover, filter change)
+  // Invalidate on dependencies change (e.g. table selection, dish switch, hover, filter change)
   useEffect(() => {
-    invalidate();
-    // Also wake up a few frames to let any CSS/HTML transition settle cleanly
+    if (isHiddenRef.current) return;
+    safeInvalidate();
+    // Wake up a few frames to let any CSS/HTML/shadow transition settle cleanly
     extraFramesRequested.current = 5;
   }, deps); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Invalidate on viewport size or window resize
   useEffect(() => {
-    invalidate();
-    const handleResize = () => invalidate();
+    safeInvalidate();
+    const handleResize = () => safeInvalidate();
     window.addEventListener('resize', handleResize, { passive: true });
     window.addEventListener('orientationchange', handleResize, { passive: true });
     return () => {
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('orientationchange', handleResize);
     };
-  }, [size.width, size.height, invalidate]);
+  }, [size.width, size.height, safeInvalidate]);
 
   // Wire up OrbitControls events
   useEffect(() => {
-    const controls = activeControls;
+    const controls = controlsRef?.current || (contextControls as OrbitControlsType | null);
     if (!controls) return;
 
     const handleStart = () => {
@@ -169,18 +241,18 @@ export function DemandFrameloopController({
       if (isTransitioningRef.current) {
         cancelTransition();
       }
-      invalidate();
+      safeInvalidate();
     };
 
     const handleChange = () => {
-      invalidate();
+      safeInvalidate();
     };
 
     const handleEnd = () => {
       isInteractingRef.current = false;
       // Allow up to 60 frames for OrbitControls inertia damping to settle smoothly
       dampingFramesRemaining.current = 60;
-      invalidate();
+      safeInvalidate();
     };
 
     controls.addEventListener('start', handleStart);
@@ -192,17 +264,25 @@ export function DemandFrameloopController({
       controls.removeEventListener('change', handleChange);
       controls.removeEventListener('end', handleEnd);
     };
-  }, [activeControls, invalidate, cancelTransition]);
+  }, [controlsRef, contextControls, safeInvalidate, cancelTransition]);
 
   // Main demand frame hook
   useFrame((state, delta) => {
+    // Hard guard: never schedule frames when document tab is hidden
+    if (isHiddenRef.current || (typeof document !== 'undefined' && document.visibilityState === 'hidden')) {
+      dampingFramesRemaining.current = 0;
+      extraFramesRequested.current = 0;
+      return;
+    }
+
     const now = performance.now();
     frameTimestamps.current.push(now);
     totalFramesCount.current += 1;
 
     let needsAnotherDemandFrame = false;
     const clampedDelta = Math.min(delta, 0.1);
-    const controls = activeControls;
+    const camera = state.camera;
+    const controls = controlsPropRef.current?.current || (state.controls as OrbitControlsType | null);
 
     // 1. Process active camera transition / glide
     if (currentTargetRef.current && isTransitioningRef.current) {
@@ -306,7 +386,7 @@ export function DemandFrameloopController({
     if (dampingFramesRemaining.current > 0) {
       dampingFramesRemaining.current -= 1;
       if (controls && controls.enableDamping) {
-        const moved = Boolean((controls as any).update?.());
+        const moved = Boolean((controls as unknown as { update?: () => boolean }).update?.());
         // If OrbitControls reports that it has completely ceased moving, end damping early
         if (!moved && dampingFramesRemaining.current < 45) {
           dampingFramesRemaining.current = 0;
@@ -331,15 +411,19 @@ export function DemandFrameloopController({
 
     // Schedule next frame if animation or interaction is active
     if (needsAnotherDemandFrame) {
-      invalidate();
+      safeInvalidate();
     }
   });
 
-  // Telemetry periodic polling (every 300ms)
+  // Telemetry periodic polling (every 280ms ONLY while document is visible!)
   useEffect(() => {
     if (!enableTelemetry && !onTelemetryChange) return;
+    if (!isDocumentVisible) return;
 
     const interval = setInterval(() => {
+      if (typeof document !== 'undefined' && document.visibilityState === 'hidden') {
+        return;
+      }
       const now = performance.now();
       // Remove timestamps older than 1000ms
       frameTimestamps.current = frameTimestamps.current.filter((t) => now - t <= 1000);
@@ -371,14 +455,30 @@ export function DemandFrameloopController({
     }, 280);
 
     return () => clearInterval(interval);
-  }, [enableTelemetry, onTelemetryChange]);
+  }, [enableTelemetry, onTelemetryChange, isDocumentVisible]);
 
-  return null;
+  if (!children) {
+    return null;
+  }
+
+  return (
+    <DemandFrameloopContext.Provider
+      value={{
+        invalidate: safeInvalidate,
+        requestFrames,
+        transitionTo,
+        cancelTransition,
+        telemetry,
+      }}
+    >
+      {children}
+    </DemandFrameloopContext.Provider>
+  );
 }
 
 /**
  * DemandFrameloopBadge
- * 
+ *
  * Floating HUD pill displaying real-time FPS, idle sleep state, and GPU power consumption.
  * Visibly demonstrates the drop to 0 FPS / 0.1W when idle, and 60 FPS / 4.2W upon interaction.
  */

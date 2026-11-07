@@ -306,3 +306,17 @@ export const updateCategoryDetails = mutation({
   },
 });
 
+// Delete dish by slug or ID
+export const deleteDish = mutation({
+  args: {
+    idOrSlug: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const dish = await resolveDish(ctx, args.idOrSlug);
+    if (!dish) return { error: "Dish not found", success: false };
+    await ctx.db.delete(dish._id);
+    return { success: true, deletedSlug: dish.slug };
+  },
+});
+
+

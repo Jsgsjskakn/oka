@@ -77,23 +77,6 @@ export const SPOTLIGHT_CATALOG: SpotlightDish[] = [
     tags: ['mushroom', 'truffle', 'pizza', 'wood-fired', 'gourmet'],
   },
   {
-    id: 'peri-peri-fiesta-pizza',
-    slug: 'peri-peri-fiesta-pizza',
-    name: 'Peri Peri Fiesta Pizza',
-    description:
-      'Spicy peri peri sauce base with roasted capsicum, corn, black olives, and a fresh herb drizzle on crispy crust.',
-    price: 429,
-    originalPrice: 539,
-    discountPercent: 20,
-    image: resolveDishImageUrl('peri-peri-fiesta-pizza'),
-    category: 'pizza',
-    isVeg: true,
-    isFeatured: false,
-    isBestSeller: false,
-    spiceLevel: 'spicy',
-    tags: ['spicy', 'fiery', 'peri-peri', 'pizza'],
-  },
-  {
     id: 'bbq-chicken-overload',
     slug: 'bbq-chicken-overload',
     name: 'BBQ Chicken Overload',

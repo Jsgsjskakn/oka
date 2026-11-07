@@ -798,15 +798,22 @@ describe('Suite 4: 3D Model Slug & Centralized Asset Validation', () => {
     }
   });
 
-  it('getModelConfig returns valid configuration mapped to shared GLB model', () => {
-    const config = getModelConfig('golden-oak-signature-burger');
-    assert.equal(config.dishSlug, 'golden-oak-signature-burger');
+  it('getModelConfig returns valid configuration mapped to shared GLB model for default dishes and authentic model for golden-oak-signature-burger', () => {
+    const config = getModelConfig('classic-smash-burger');
+    assert.equal(config.dishSlug, 'classic-smash-burger');
     assert.equal(config.modelPath, SHARED_DEFAULT_MODEL_PATH);
     assert.equal(config.modelPath, '/models/warrior_model.glb');
     assert.equal(config.initialScale, 0.8);
     assert.equal(config.cameraDistance, 4.5);
     assert.equal(config.isSharedPlaceholder, true);
     assert.ok(config.modelName.includes('Prototype Asset'));
+
+    const burger = getModelConfig('golden-oak-signature-burger');
+    assert.equal(burger.dishSlug, 'golden-oak-signature-burger');
+    assert.equal(burger.modelPath, '/models/optimized/golden-oak-burger-high.glb');
+    assert.equal(burger.isSharedPlaceholder, false);
+    assert.equal(burger.modelName, 'Golden Oak Signature Burger');
+    assert.equal(burger.lodPaths.high, '/models/optimized/golden-oak-burger-high.glb');
   });
 
   it('verifies warrior_model.glb and preserved warrior_scene.glb exist on disk and are valid glTF binaries', () => {
