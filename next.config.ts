@@ -1,4 +1,27 @@
 import type { NextConfig } from "next";
+import os from "os";
+
+function getLocalIpAddresses(): string[] {
+  const ips: string[] = ['10.70.129.202', '127.0.0.1', 'localhost'];
+  try {
+    const interfaces = os.networkInterfaces();
+    for (const name of Object.keys(interfaces)) {
+      const netList = interfaces[name];
+      if (netList) {
+        for (const net of netList) {
+          if (net.family === 'IPv4' || (net.family as unknown as number) === 4) {
+            ips.push(net.address);
+          }
+        }
+      }
+    }
+  } catch {
+    // Ignore error reading network interfaces
+  }
+  return Array.from(new Set(ips));
+}
+
+const localIps = getLocalIpAddresses();
 
 const cspHeader = [
   "default-src 'self'",
@@ -6,7 +29,7 @@ const cspHeader = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' blob: data: https://*.supabase.co https://jimdmvzpmawbgzodzxhv.supabase.co https://*.convex.cloud https://*.convex.site https://*.google.com https://*.googleapis.com https://*.gstatic.com https://*.openstreetmap.org",
   "font-src 'self' data:",
-  "connect-src 'self' https://*.convex.cloud wss://*.convex.cloud https://*.convex.site https://*.supabase.co wss://*.supabase.co https://*.gstatic.com blob: data:",
+  "connect-src 'self' ws: wss: https://*.convex.cloud wss://*.convex.cloud https://*.convex.site https://*.supabase.co wss://*.supabase.co https://*.gstatic.com blob: data:",
   "media-src 'self' blob: data:",
   "worker-src 'self' blob:",
   "frame-src 'self' https://www.google.com https://maps.google.com https://*.google.com https://*.openstreetmap.org",
@@ -25,6 +48,8 @@ const serverActionOrigins: string[] = [
   'localhost:3000',
   'localhost:3001',
   'localhost:1111',
+  ...localIps,
+  ...localIps.map((ip) => `${ip}:3000`),
 ];
 
 if (process.env.NEXT_PUBLIC_APP_URL) {
@@ -47,6 +72,10 @@ if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
 
 const nextConfig: NextConfig = {
   devIndicators: false,
+  allowedDevOrigins: [
+    ...localIps,
+    ...localIps.map((ip) => `${ip}:3000`),
+  ],
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [
