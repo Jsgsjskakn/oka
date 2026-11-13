@@ -1,6 +1,8 @@
 import { Users, ChefHat, UserCheck, ShieldCheck, TrendingUp } from 'lucide-react';
 import { requireAdmin } from '@/lib/auth/admin-auth';
 import { getEmployees } from '@/lib/services/employee.service';
+import { getSetting } from '@/lib/services/settings.service';
+import { RESTAURANT_ID } from '@/lib/config';
 import { EmployeeActions, RemoveEmployeeButton, ResetPasswordButton } from './EmployeeActions';
 
 export const metadata = {
@@ -9,7 +11,10 @@ export const metadata = {
 
 export default async function EmployeesPage() {
   await requireAdmin();
-  const employees = await getEmployees();
+  const [employees, savedPermissions] = await Promise.all([
+    getEmployees(),
+    getSetting(RESTAURANT_ID, 'staff_permissions').catch(() => null),
+  ]);
 
   const totalStaff = employees.length;
   const activeStaff = employees.filter(e => e.is_active).length;
@@ -166,7 +171,7 @@ export default async function EmployeesPage() {
             </p>
           </div>
 
-          <EmployeeActions />
+          <EmployeeActions initialPermissions={(savedPermissions && typeof savedPermissions === 'object') ? (savedPermissions as Record<string, boolean>) : undefined} />
         </div>
 
         <div className="overflow-x-auto">

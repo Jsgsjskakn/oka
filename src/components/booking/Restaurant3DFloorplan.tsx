@@ -377,6 +377,8 @@ function MobileTouchSync({ touchOrbitActive }: { touchOrbitActive: boolean }) {
   const { gl } = useThree();
   useEffect(() => {
     if (gl?.domElement) {
+      // Intentionally updating underlying Canvas DOM CSS touchAction outside React render
+      // eslint-disable-next-line react-hooks/immutability
       gl.domElement.style.touchAction = touchOrbitActive ? 'none' : 'pan-y';
     }
   }, [gl, touchOrbitActive]);
@@ -595,6 +597,23 @@ export function Restaurant3DFloorplan({
   const [hoveredTable, setHoveredTable] = useState<Floor3DTable | null>(null);
   const [viewMode, setViewMode] = useState<FloorplanCameraPreset>('eyelevel');
   const [targetCamera, setTargetCamera] = useState<CameraTarget | null>(null);
+  const [fullscreenNotice, setFullscreenNotice] = useState<{
+    text: string;
+    type: 'success' | 'error';
+  } | null>(null);
+  const fullscreenNoticeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const showFullscreenFeedback = useCallback((text: string, type: 'success' | 'error') => {
+    setFullscreenNotice({ text, type });
+    if (fullscreenNoticeTimerRef.current) clearTimeout(fullscreenNoticeTimerRef.current);
+    fullscreenNoticeTimerRef.current = setTimeout(() => setFullscreenNotice(null), 2800);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (fullscreenNoticeTimerRef.current) clearTimeout(fullscreenNoticeTimerRef.current);
+    };
+  }, []);
   const [contextLost, setContextLost] = useState(false);
   const [contextRestoring, setContextRestoring] = useState(false);
   const [telemetry, setTelemetry] = useState<FrameloopTelemetry>({
@@ -746,12 +765,42 @@ export function Restaurant3DFloorplan({
   const handleSelectTable = useCallback(
     (table: Floor3DTable) => {
       onSelectTable(table);
+      if (table.capacity < guests) {
+        if (isFullscreenMode) {
+          showFullscreenFeedback(
+            `${table.name} seats max ${table.capacity} guests (party: ${guests}).`,
+            'error'
+          );
+        }
+        return;
+      }
+      if (
+        availableTableNumbers &&
+        availableTableNumbers.length > 0 &&
+        !availableTableNumbers.includes(table.tableNumber)
+      ) {
+        if (isFullscreenMode) {
+          showFullscreenFeedback(`${table.name} is reserved for this time slot.`, 'error');
+        }
+        return;
+      }
       if (onSelectZone) {
         onSelectZone(table.zone);
       }
       focusOnTable(table);
+      if (isFullscreenMode) {
+        showFullscreenFeedback(`${table.name} (${table.zone}) locked for 5 mins`, 'success');
+      }
     },
-    [onSelectTable, onSelectZone, focusOnTable]
+    [
+      onSelectTable,
+      guests,
+      availableTableNumbers,
+      onSelectZone,
+      focusOnTable,
+      isFullscreenMode,
+      showFullscreenFeedback,
+    ]
   );
 
   const activeFrameloop: 'demand' | 'never' =
@@ -1044,31 +1093,33 @@ export function Restaurant3DFloorplan({
               <span>Bar</span>
             </button>
 
-            {/* Bottom Left: Top View Preset Pill */}
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleSwitchPreset(viewMode === 'topdown' ? 'eyelevel' : 'topdown');
-              }}
-              className="pointer-events-auto absolute bottom-3 left-3 px-3 py-1 rounded-xl bg-black/90 hover:bg-black border border-white/20 hover:border-[#F0C36B]/60 text-[11px] text-[#FAF5EC] font-mono flex items-center gap-1.5 shadow-md transition-all active:scale-95 cursor-pointer"
-            >
-              <Maximize2 className="w-3 h-3 text-[#F0C36B]" />
-              <span>Top View</span>
-            </button>
+            {/* Top Left: Top View Preset Pill & Quick Fullscreen Toggle (clears bottom mobile controls) */}
+            <div className="pointer-events-auto absolute top-3 left-3 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSwitchPreset(viewMode === 'topdown' ? 'eyelevel' : 'topdown');
+                }}
+                className="px-3 py-1 rounded-xl bg-black/90 hover:bg-black border border-white/20 hover:border-[#F0C36B]/60 text-[11px] text-[#FAF5EC] font-mono flex items-center gap-1.5 shadow-md transition-all active:scale-95 cursor-pointer"
+              >
+                <Maximize2 className="w-3 h-3 text-[#F0C36B]" />
+                <span>{viewMode === 'topdown' ? 'Eye View' : 'Top View'}</span>
+              </button>
 
-            {/* Bottom Right: Compass Crosshair Target Circle */}
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleToggleFullscreen(true);
-              }}
-              title="View in Fullscreen"
-              className="pointer-events-auto absolute bottom-3 right-3 w-8 h-8 rounded-full bg-black/85 hover:bg-black border border-white/20 hover:border-[#F0C36B]/60 flex items-center justify-center text-[#F0C36B] shadow-md transition-all hover:scale-105 active:scale-95 cursor-pointer"
-            >
-              <Crosshair className="w-4 h-4" />
-            </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleToggleFullscreen(true);
+                }}
+                title="View in Fullscreen"
+                aria-label="Open 3D Floorplan in Fullscreen"
+                className="w-7 h-7 rounded-full bg-black/85 hover:bg-black border border-white/20 hover:border-[#F0C36B]/60 flex items-center justify-center text-[#F0C36B] shadow-md transition-all hover:scale-105 active:scale-95 cursor-pointer"
+              >
+                <Crosshair className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
         )}
 
@@ -1374,11 +1425,26 @@ export function Restaurant3DFloorplan({
 
         {/* Dynamic Mobile Touch Hint Toast (Auto-appears when single finger moves over canvas in scroll mode) */}
         {showTouchHint && !touchOrbitActive && (
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#140F0A]/98 border border-[#F0C36B] text-[#F8F2E8] shadow-[0_12px_30px_rgba(0,0,0,0.85),0_0_20px_rgba(240,195,107,0.4)] animate-in fade-in zoom-in-95 duration-200 pointer-events-none">
-            <span className="text-base">✌️</span>
-            <span className="text-xs font-mono font-medium text-[#F0C36B] whitespace-nowrap">
+          <div className="absolute top-12 sm:top-4 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 px-3.5 py-2 rounded-2xl sm:rounded-full max-w-[calc(100%-24px)] bg-[#140F0A]/98 border border-[#F0C36B] text-[#F8F2E8] shadow-[0_12px_30px_rgba(0,0,0,0.85),0_0_20px_rgba(240,195,107,0.4)] animate-in fade-in zoom-in-95 duration-200 pointer-events-none">
+            <span className="text-base shrink-0">✌️</span>
+            <span className="text-[11px] sm:text-xs font-mono font-medium text-[#F0C36B] leading-snug">
               Use 2 fingers to rotate · Tap button to orbit with 1 finger
             </span>
+          </div>
+        )}
+
+        {/* Inline Fullscreen Feedback Banner (always visible inside z-[99999] portal) */}
+        {isFullscreenMode && fullscreenNotice && (
+          <div
+            role="status"
+            aria-live="polite"
+            className={`absolute top-14 sm:top-4 left-1/2 -translate-x-1/2 z-40 px-4 py-2 rounded-full border text-xs font-mono font-semibold shadow-2xl max-w-[calc(100%-24px)] text-center pointer-events-none animate-in fade-in zoom-in-95 duration-150 ${
+              fullscreenNotice.type === 'error'
+                ? 'bg-rose-950/95 border-rose-400/70 text-rose-100'
+                : 'bg-[#101F18]/95 border-[#36D6A0]/70 text-[#36D6A0]'
+            }`}
+          >
+            {fullscreenNotice.text}
           </div>
         )}
 
@@ -1403,7 +1469,7 @@ export function Restaurant3DFloorplan({
 
         {/* Active Hover / Selected Table Card (Only shown in Fullscreen mode) */}
         {isFullscreenMode && (hoveredTable || selectedTableObj) && (
-          <div className="absolute top-4 left-4 z-10 max-w-xs sm:max-w-sm p-4 rounded-2xl bg-[#100C09]/98 border border-[#F0C36B]/50 shadow-[0_12px_36px_rgba(0,0,0,0.85),0_0_20px_rgba(240,195,107,0.25)] transition-all duration-200">
+          <div className="absolute top-14 sm:top-4 left-3 right-3 sm:right-auto sm:left-4 z-10 max-w-none sm:max-w-sm p-3 sm:p-4 rounded-2xl bg-[#100C09]/98 border border-[#F0C36B]/50 shadow-[0_12px_36px_rgba(0,0,0,0.85),0_0_20px_rgba(240,195,107,0.25)] transition-all duration-200">
             <div className="flex items-center justify-between gap-3 mb-1.5">
               <div className="flex items-center gap-2 min-w-0">
                 <span className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#F0C36B] to-[#D4AF37] text-black font-mono font-bold text-xs flex items-center justify-center shrink-0 shadow-[0_0_12px_rgba(240,195,107,0.5)]">

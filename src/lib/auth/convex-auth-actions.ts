@@ -1,10 +1,31 @@
 'use server';
 
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { fetchMutation, fetchQuery } from 'convex/nextjs';
 import { api } from '@/../convex/_generated/api';
 
 const COOKIE_NAME = 'golden_oak_session';
+
+async function shouldUseSecureCookie(): Promise<boolean> {
+  try {
+    const hdrs = await headers();
+    const forwardedProto = hdrs.get('x-forwarded-proto');
+    if (forwardedProto) {
+      return forwardedProto.split(',')[0].trim().toLowerCase() === 'https';
+    }
+    const origin = hdrs.get('origin') || hdrs.get('referer');
+    if (origin) {
+      if (origin.startsWith('https://')) return true;
+      if (origin.startsWith('http://')) return false;
+    }
+    const host = hdrs.get('host') || '';
+    const isLocalOrLan = /^(localhost|127\.0\.0\.1|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)/i.test(host);
+    if (isLocalOrLan) return false;
+  } catch {
+    // Fallback outside request header context
+  }
+  return process.env.NODE_ENV === 'production';
+}
 
 export async function loginAction(formData: {
   identifier: string;
@@ -37,11 +58,12 @@ export async function loginAction(formData: {
       return { error: 'Access denied. Employee accounts only.' };
     }
 
-    // Set HTTP-only secure cookie
+    // Set HTTP-only session cookie (respects HTTPS in prod while working on HTTP LAN previews)
     const cookieStore = await cookies();
+    const secureCookie = await shouldUseSecureCookie();
     cookieStore.set(COOKIE_NAME, res.token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: secureCookie,
       sameSite: 'lax',
       path: '/',
       maxAge: 30 * 24 * 60 * 60, // 30 days
@@ -76,9 +98,10 @@ export async function signupAction(formData: {
     }
 
     const cookieStore = await cookies();
+    const secureCookie = await shouldUseSecureCookie();
     cookieStore.set(COOKIE_NAME, res.token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: secureCookie,
       sameSite: 'lax',
       path: '/',
       maxAge: 30 * 24 * 60 * 60,
@@ -188,8 +211,9 @@ export async function updateUserProfileAction(payload: {
 
   // 2. Secondary: Fallback to Supabase if authenticated via Supabase session
   try {
-    const { createClient } = await import('@/lib/supabase/server');
-    const supabase = await createClient();
+    const { createClient, isSupabaseConfigured } = await import('@/lib/supabase/server');
+    if (isSupabaseConfigured()) {
+      const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (user) {
@@ -208,6 +232,7 @@ export async function updateUserProfileAction(payload: {
 
       writeOccurred = true;
       return { success: true };
+    }
     }
   } catch (err: any) {
     console.warn('[auth-actions] Supabase update profile failed:', err);

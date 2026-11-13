@@ -19,7 +19,14 @@ export default function AboutPage() {
   }, [router]);
 
   return (
-    <div className="hidden md:flex min-h-screen bg-[#070503] text-text-primary flex-col relative overflow-hidden select-none">
+    <>
+      <div className="md:hidden min-h-[60vh] bg-[#070503] text-text-primary flex flex-col items-center justify-center p-6 text-center">
+        <p className="font-serif text-lg text-[#F0C36B] mb-2">Returning to Home Experience...</p>
+        <Link href="/" className="text-xs underline text-white/70">
+          Tap here if not redirected
+        </Link>
+      </div>
+      <div className="hidden md:flex min-h-screen bg-[#070503] text-text-primary flex-col relative overflow-hidden select-none">
       {/* ===================================================================== */}
       {/* STATIONARY THE GOLDEN OAK PARTICLE TREE BACKGROUND (EXACT SAME TREE)  */}
       {/* Stays majestically in place in the background ("ek he jagha rahega")  */}
@@ -27,7 +34,7 @@ export default function AboutPage() {
       <StationaryOakTreeBackground isFixed={true} />
 
       {/* Top Header / Breadcrumb navigation */}
-      <header className="px-4 sm:px-6 py-4 flex items-center gap-3 border-b border-white/[0.08] sticky top-0 bg-[#070503]/85 backdrop-blur-md z-40 shadow-sm">
+      <header className="px-4 sm:px-6 py-4 flex items-center gap-3 border-b border-white/[0.08] sticky top-[76px] sm:top-[84px] bg-[#070503]/85 backdrop-blur-md z-40 shadow-sm">
         <Link
           href="/"
           className="w-9 h-9 rounded-full bg-white/[0.05] border border-white/10 flex items-center justify-center text-[#D4C8B8] hover:text-[#F0C36B] hover:border-[#F0C36B]/40 active:scale-95 transition-all"
@@ -159,6 +166,7 @@ export default function AboutPage() {
       <div className="relative z-10">
         <CompactFooter />
       </div>
-    </div>
+      </div>
+    </>
   );
 }

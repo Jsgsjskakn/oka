@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { updateEmployeePassword } from '@/lib/actions/employee-actions';
 
@@ -27,7 +28,7 @@ export default function UpdatePasswordPage() {
     setError(null);
 
     const res = await updateEmployeePassword(password);
-    
+
     if (res.error) {
       setError(res.error);
       setLoading(false);
@@ -42,10 +43,16 @@ export default function UpdatePasswordPage() {
   if (success) {
     return (
       <div className="min-h-screen bg-[#0d0d0d] flex items-center justify-center p-4">
-        <div className="bg-[#1a1a1a] p-8 rounded-2xl border border-[#333] shadow-2xl w-full max-w-md text-center">
-          <h2 className="text-2xl font-semibold text-champagne mb-2">Password Updated!</h2>
+        <div className="bg-[#1a1a1a] p-8 rounded-2xl border border-[#333] shadow-2xl w-full max-w-md text-center space-y-3">
+          <h2 className="text-2xl font-semibold text-champagne">Password Updated!</h2>
           <p className="text-gray-400">Your password has been securely changed.</p>
-          <p className="text-gray-500 text-sm mt-4">Redirecting to login...</p>
+          <p className="text-gray-500 text-sm">Redirecting to login...</p>
+          <Link
+            href="/employee/login"
+            className="inline-block text-xs text-champagne hover:underline pt-2"
+          >
+            Continue to Employee Login
+          </Link>
         </div>
       </div>
     );
@@ -53,11 +60,10 @@ export default function UpdatePasswordPage() {
 
   return (
     <div className="min-h-screen bg-[#0d0d0d] flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Background accents */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-champagne/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-champagne/5 rounded-full blur-3xl" />
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-champagne/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-champagne/5 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="bg-[#1a1a1a] p-8 rounded-2xl border border-[#333] shadow-2xl w-full max-w-md relative z-10">
+      <div className="bg-[#1a1a1a] p-6 sm:p-8 rounded-2xl border border-[#333] shadow-2xl w-full max-w-md relative z-10">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-text-primary tracking-tight mb-2">Update Password</h1>
           <p className="text-gray-400 text-sm">Please enter your new password below.</p>
@@ -77,6 +83,7 @@ export default function UpdatePasswordPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              minLength={6}
               className="w-full bg-[#0d0d0d] border border-[#333] text-text-primary px-4 py-3 rounded-lg focus:outline-none focus:border-champagne focus:ring-1 focus:ring-[#c9a84c] transition-all"
               placeholder="••••••••"
             />
@@ -89,6 +96,7 @@ export default function UpdatePasswordPage() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
+              minLength={6}
               className="w-full bg-[#0d0d0d] border border-[#333] text-text-primary px-4 py-3 rounded-lg focus:outline-none focus:border-champagne focus:ring-1 focus:ring-[#c9a84c] transition-all"
               placeholder="••••••••"
             />
@@ -97,11 +105,17 @@ export default function UpdatePasswordPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-champagne hover:bg-[#b09240] text-black font-semibold py-3 rounded-lg transition-colors mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-champagne hover:bg-[#b09240] text-black font-semibold py-3 rounded-lg transition-colors mt-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             {loading ? 'Updating...' : 'Set New Password'}
           </button>
         </form>
+
+        <div className="mt-6 text-center">
+          <Link href="/employee/login" className="text-xs text-zinc-400 hover:text-champagne transition-colors">
+            ← Back to Employee Login
+          </Link>
+        </div>
       </div>
     </div>
   );

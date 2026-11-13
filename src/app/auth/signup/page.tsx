@@ -6,11 +6,24 @@ import Link from 'next/link';
 import { TreePine, AlertCircle, Loader2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { signupAction } from '@/lib/auth/convex-auth-actions';
+import { useAuthStore } from '@/store/user-store';
+
+function sanitizeRedirect(raw: string | null, fallback = '/booking'): string {
+  if (!raw || typeof raw !== 'string') return fallback;
+  const trimmed = raw.trim();
+  if (!trimmed.startsWith('/') || trimmed.startsWith('//') || trimmed.startsWith('/\\')) {
+    return fallback;
+  }
+  return trimmed;
+}
 
 function SignupContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get('redirectTo') || '/booking';
+  const redirectTo = sanitizeRedirect(
+    searchParams.get('redirectTo') || searchParams.get('returnUrl'),
+    '/booking'
+  );
   const supabase = createClient();
 
   const [name, setName] = useState('');
@@ -26,6 +39,12 @@ function SignupContent() {
     setLoading(true);
     setError(null);
 
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      setLoading(false);
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       setLoading(false);
@@ -35,28 +54,36 @@ function SignupContent() {
     try {
       // 1. Primary: Convex Signup
       const res = await signupAction({
-        email,
+        email: email.trim(),
         password,
-        name,
+        name: name.trim(),
       });
 
       if (res.success) {
+        if (res.user) {
+          useAuthStore.getState().setAuth(
+            String(res.user._id || res.user.userId || ''),
+            res.user.name || name.trim(),
+            res.user.email || email.trim(),
+            res.user.phone || null
+          );
+        }
         router.push(redirectTo);
         router.refresh();
         return;
       }
 
-      if (res.error && !res.error.includes('failed')) {
+      if (res.error && !/network|fetch|timeout|unavailable|Signup failed/i.test(res.error)) {
         throw new Error(res.error);
       }
 
       // 2. Secondary: Supabase Fallback
       const { data, error } = await supabase.auth.signUp({
-        email,
+        email: email.trim(),
         password,
         options: {
           data: {
-            full_name: name,
+            full_name: name.trim(),
           }
         }
       });
@@ -66,6 +93,11 @@ function SignupContent() {
       }
 
       if (data.session) {
+        useAuthStore.getState().setAuth(
+          data.session.user.id,
+          name.trim(),
+          data.session.user.email || email.trim()
+        );
         // Auto sign-in successful
         router.push(redirectTo);
         router.refresh();
@@ -82,9 +114,9 @@ function SignupContent() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="min-h-[calc(100vh-76px)] sm:min-h-[calc(100vh-84px)] bg-[#0a0a0a] flex flex-col justify-center px-4 py-10 pb-24 md:pb-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white/5 backdrop-blur-xl py-8 px-4 shadow sm:rounded-2xl sm:px-10 border border-border-subtle text-center">
+          <div className="bg-white/5 backdrop-blur-xl py-8 px-5 shadow rounded-2xl sm:px-10 border border-border-subtle text-center">
             <div className="w-16 h-16 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto mb-4">
               <TreePine className="w-8 h-8 text-amber-500" />
             </div>
@@ -105,12 +137,12 @@ function SignupContent() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-[calc(100vh-76px)] sm:min-h-[calc(100vh-84px)] bg-[#0a0a0a] flex flex-col justify-center px-4 py-8 pb-24 md:pb-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md flex flex-col items-center">
-        <div className="w-16 h-16 rounded-full bg-white/5 border border-border-subtle flex items-center justify-center mb-4">
-          <TreePine className="w-8 h-8 text-amber-500" />
+        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white/5 border border-border-subtle flex items-center justify-center mb-3 sm:mb-4">
+          <TreePine className="w-7 h-7 sm:w-8 sm:h-8 text-amber-500" />
         </div>
-        <h2 className="mt-2 text-center text-3xl font-light tracking-tight text-text-primary">
+        <h2 className="mt-1 sm:mt-2 text-center text-2xl sm:text-3xl font-light tracking-tight text-text-primary">
           Create an account
         </h2>
         <p className="mt-2 text-center text-sm text-gray-400">
@@ -118,8 +150,8 @@ function SignupContent() {
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white/5 backdrop-blur-xl py-8 px-4 shadow sm:rounded-2xl sm:px-10 border border-border-subtle">
+      <div className="mt-6 sm:mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white/5 backdrop-blur-xl py-7 px-5 shadow rounded-2xl sm:px-10 border border-border-subtle">
           {error && (
             <div className="mb-4 bg-red-500/10 border border-red-500/50 rounded-lg p-3 flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
@@ -211,6 +243,7 @@ function SignupContent() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="appearance-none block w-full px-3 py-2 border border-white/10 rounded-lg bg-black/40 placeholder-gray-500 text-text-primary focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-transparent sm:text-sm"
+                  placeholder="Re-enter your password"
                 />
               </div>
             </div>

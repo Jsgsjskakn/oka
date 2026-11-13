@@ -39,9 +39,9 @@ export default async function EditProfilePage() {
   if (supabaseUser) {
     return (
       <EditableProfileForm
-        name={supabaseProfile?.name || ''}
+        name={supabaseProfile?.name || supabaseProfile?.full_name || supabaseUser.user_metadata?.full_name || ''}
         email={supabaseUser.email || ''}
-        phone={supabaseProfile?.phone || ''}
+        phone={supabaseProfile?.phone || supabaseUser.phone || ''}
       />
     );
   }

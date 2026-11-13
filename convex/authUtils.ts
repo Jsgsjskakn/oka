@@ -66,3 +66,50 @@ export async function authenticateCaller(
 
   return { authorized: true, user, session };
 }
+
+/**
+ * Extracts normalized digits (last 10 digits when >= 10 digits) from a phone string.
+ * Returns "" if fewer than 7 digits exist so non-phone identifiers never false-match.
+ */
+export function normalizePhone(phone: string | undefined | null): string {
+  if (!phone || typeof phone !== "string") return "";
+  const digits = phone.replace(/\D/g, "");
+  if (digits.length < 7) return "";
+  return digits.length >= 10 ? digits.slice(-10) : digits;
+}
+
+/**
+ * Compares two phone strings cleanly regardless of spaces, dashes, or +91 prefixes.
+ */
+export function phonesMatch(
+  a: string | undefined | null,
+  b: string | undefined | null
+): boolean {
+  const normA = normalizePhone(a);
+  const normB = normalizePhone(b);
+  return normA !== "" && normA === normB;
+}
+
+/**
+ * Generates candidate phone formats for O(log n) exact-match index lookups.
+ */
+export function buildPhoneCandidates(rawPhone: string | undefined | null): string[] {
+  if (!rawPhone || typeof rawPhone !== "string") return [];
+  const trimmed = rawPhone.trim();
+  const norm = normalizePhone(trimmed);
+  if (!norm) return [];
+
+  const candidates = new Set<string>([trimmed, norm]);
+  const allDigits = trimmed.replace(/\D/g, "");
+  if (allDigits.length >= 7) {
+    candidates.add(allDigits);
+  }
+  if (norm.length === 10) {
+    candidates.add(`+91${norm}`);
+    candidates.add(`+91 ${norm}`);
+    candidates.add(`+91 ${norm.slice(0, 5)} ${norm.slice(5)}`);
+    candidates.add(`91${norm}`);
+    candidates.add(`0${norm}`);
+  }
+  return Array.from(candidates);
+}

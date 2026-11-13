@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { Heart, Plus, Box, Check, Sparkles } from 'lucide-react';
 import type { Dish } from '@/types/menu';
 import { useFavoritesStore } from '@/store/favorites-store';
@@ -23,7 +22,7 @@ const DISH_PAIRINGS: Record<string, string> = {
   'bbq-chicken-overload': 'Pairs well with: Aged Cheddar Wedges & Craft Stout',
   'classic-smash-burger': 'Pairs well with: Dynamite Chilli Potatoes & Aioli',
   'golden-oak-signature-burger': 'Pairs well with: Truffle Parmesan Fries & Craft IPA',
-  'crispy-chicken-burger': 'Pairs well with: Jalapeño Poppers & House Slaw',
+  'crispy-paneer-burger': 'Pairs well with: Jalapeño Poppers & House Slaw',
   'wok-tossed-chow-mein': 'Pairs well with: Dynamite Chilli Potatoes',
   'dynamite-chilli-potatoes': 'Pairs well with: Wok-Tossed Schezwan Sauce',
   'golden-chilli-potato': 'Pairs well with: Wok-Tossed Schezwan Sauce',
@@ -38,8 +37,7 @@ function getDishPairing(slug: string, category?: string): string {
 }
 
 export function FavoriteDishCard({ dish }: FavoriteDishCardProps) {
-  const router = useRouter();
-  const toggleFavorite = useFavoritesStore((s) => s.toggleFavorite);
+  const toggleDishFavorite = useFavoritesStore((s) => s.toggleDishFavorite);
   const addItem = useCartStore((s) => s.addItem);
   const [isAdded, setIsAdded] = useState(false);
 
@@ -55,7 +53,7 @@ export function FavoriteDishCard({ dish }: FavoriteDishCardProps) {
   const handleRemoveFavorite = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    toggleFavorite(dish.id);
+    toggleDishFavorite(dish.id, [dish.slug]);
     toast.info('Removed from Tasting Vault', dish.name);
   };
 
@@ -127,7 +125,7 @@ export function FavoriteDishCard({ dish }: FavoriteDishCardProps) {
           onClick={handleRemoveFavorite}
           aria-label="Remove from vault"
           title="Remove from Tasting Vault"
-          className="absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center text-[#E0532B] hover:scale-110 active:scale-90 transition-all shadow-xl"
+          className="absolute top-2.5 right-2.5 z-20 w-11 h-11 rounded-full flex items-center justify-center text-[#E0532B] hover:scale-110 active:scale-90 transition-all shadow-xl"
           style={{
             background: 'rgba(13, 10, 8, 0.88)',
             backdropFilter: 'blur(8px)',
@@ -201,7 +199,7 @@ export function FavoriteDishCard({ dish }: FavoriteDishCardProps) {
               type="button"
               onClick={handleAddToCart}
               aria-label={`Add ${dish.name} to dining order`}
-              className={`py-2 px-3 text-xs font-bold transition-all duration-300 active:scale-95 shadow-md flex items-center justify-center gap-1 rounded-[6px] ${
+              className={`min-h-[44px] py-2 px-3 text-xs font-bold transition-all duration-300 active:scale-95 shadow-md flex items-center justify-center gap-1 rounded-[6px] ${
                 isAdded
                   ? 'bg-[#22C58B] text-[#0D0A08]'
                   : 'text-[#0D0A08]'
@@ -225,13 +223,13 @@ export function FavoriteDishCard({ dish }: FavoriteDishCardProps) {
               )}
             </button>
 
-            {/* View in AR Button */}
+            {/* View in AR / Dish Details Button */}
             <Link
-              href={`/ar/${dish.slug}`}
-              className="py-2 px-3 rounded-[6px] bg-white/[0.05] hover:bg-white/[0.1] border border-[rgba(226,168,75,0.3)] text-xs font-semibold text-[#FAF5EC] hover:text-[#E2A84B] flex items-center justify-center gap-1.5 transition-all active:scale-95 text-center"
+              href={canShow3D ? `/ar/${dish.slug}` : `/menu/${dish.category}/${dish.slug}`}
+              className="min-h-[44px] py-2 px-3 rounded-[6px] bg-white/[0.05] hover:bg-white/[0.1] border border-[rgba(226,168,75,0.3)] text-xs font-semibold text-[#FAF5EC] hover:text-[#E2A84B] flex items-center justify-center gap-1.5 transition-all active:scale-95 text-center"
             >
               <Box className="w-3.5 h-3.5 text-[#E2A84B]" />
-              <span>View in AR</span>
+              <span>{canShow3D ? 'View in AR' : 'View Dish'}</span>
             </Link>
           </div>
         </div>

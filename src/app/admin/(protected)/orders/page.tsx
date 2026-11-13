@@ -88,11 +88,17 @@ export default async function OrdersPage({
   
   // Fetch all orders for telemetry metrics
   const allOrders = await getAllOrders(RESTAURANT_ID);
-  
-  // Filtered orders for table
-  const orders = await getAllOrders(RESTAURANT_ID, {
-    status: statusFilter as import('@/lib/db/types').OrderStatus | undefined,
-    phone: search,
+  const normalizedSearch = search?.trim().toLowerCase() || '';
+
+  // Filtered orders for table (supports status + search across name, phone, or order ID)
+  const orders = (allOrders ?? []).filter((o: any) => {
+    if (statusFilter && o.status !== statusFilter) return false;
+    if (!normalizedSearch) return true;
+    return (
+      String(o.customer_phone || '').toLowerCase().includes(normalizedSearch) ||
+      String(o.customer_name || '').toLowerCase().includes(normalizedSearch) ||
+      String(o.id || '').toLowerCase().includes(normalizedSearch)
+    );
   });
 
   const totalOrdersCount = allOrders?.length ?? 0;
@@ -125,7 +131,7 @@ export default async function OrdersPage({
           </div>
           <div className="flex items-end justify-between my-1.5 relative z-10">
             <span className="text-xl md:text-2xl font-black text-white tracking-tight">
-              {totalRevenuePaise > 0 ? formatMoney(totalRevenuePaise) : '₹ 11,256'}
+              {formatMoney(totalRevenuePaise)}
             </span>
             <svg className="w-20 h-8 overflow-visible" viewBox="0 0 100 40">
               <defs>
@@ -247,13 +253,13 @@ export default async function OrdersPage({
           </div>
 
           {/* Search & Filter Form */}
-          <form className="flex items-center gap-2 w-full sm:w-auto">
-            <div className="relative flex-1 sm:w-48">
+          <form className="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full sm:w-auto">
+            <div className="relative flex-1 min-w-[140px] sm:w-48">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3 w-3 text-zinc-400" />
-              <input 
+              <input
                 name="search"
                 defaultValue={search}
-                placeholder="Search phone..."
+                placeholder="Search name, phone, ID..."
                 className="w-full pl-7 pr-2.5 py-1 bg-[#201d24] border border-white/10 rounded-lg text-[10px] text-white placeholder-zinc-500 focus:border-amber-400/40 outline-none"
               />
             </div>

@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { X, Minus, Plus, ShoppingCart, Box, Check, Leaf, AlertCircle } from 'lucide-react';
 import type { Dish } from '@/types/menu';
 import { useCartStore } from '@/store/cart-store';
 import { toast } from '@/store/toast-store';
+import { hasModel } from '@/data/model-config';
 
 interface DishQuickViewModalProps {
   dish: Dish | null;
@@ -18,37 +19,46 @@ export function DishQuickViewModal({ dish, isOpen, onClose }: DishQuickViewModal
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
   const addItem = useCartStore((s) => s.addItem);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     setQuantity(1);
     setIsAdded(false);
   }, [dish]);
 
+  useEffect(() => {
+    return () => {
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    };
+  }, []);
+
   // Handle escape key
   useEffect(() => {
+    if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
-    if (isOpen) {
-      window.addEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'hidden';
-    }
+    const prevOverflow = document.body.style.overflow;
+    window.addEventListener('keydown', handleKeyDown);
+    document.body.style.overflow = 'hidden';
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = prevOverflow;
     };
   }, [isOpen, onClose]);
 
   if (!isOpen || !dish) return null;
 
   const totalPrice = Math.round((dish.price || 0) * quantity);
+  const show3D = Boolean(dish.has3DModel || hasModel(dish.slug));
 
   const handleAddToCart = () => {
     addItem(dish, quantity);
     setIsAdded(true);
     toast.success('Added to Cart', `${quantity}x ${dish.name} (₹${totalPrice})`);
     if (typeof window !== 'undefined' && 'vibrate' in navigator) navigator.vibrate(15);
-    setTimeout(() => {
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    closeTimerRef.current = setTimeout(() => {
       setIsAdded(false);
       onClose();
     }, 1200);
@@ -56,26 +66,29 @@ export function DishQuickViewModal({ dish, isOpen, onClose }: DishQuickViewModal
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md animate-in fade-in duration-200 select-none"
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${dish.name} quick view`}
+      className="fixed inset-0 z-[70] flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md animate-in fade-in duration-200 select-none"
       onClick={onClose}
     >
       {/* Modal Surface */}
       <div
-        className="relative w-full max-w-2xl rounded-3xl bg-[rgba(23,16,12,0.96)] border border-[rgba(240,195,107,0.3)] shadow-[0_25px_60px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col md:flex-row animate-in zoom-in-95 duration-200"
+        className="relative w-full max-w-2xl max-h-[90dvh] overflow-y-auto overscroll-contain rounded-3xl bg-[rgba(23,16,12,0.96)] border border-[rgba(240,195,107,0.3)] shadow-[0_25px_60px_rgba(0,0,0,0.9)] flex flex-col md:flex-row animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 z-30 w-9 h-9 rounded-full bg-[rgba(13,10,8,0.85)] border border-white/15 text-[#D1C3B1] hover:text-[#F8F2E8] hover:border-[#F0C36B] flex items-center justify-center transition-all cursor-pointer shadow-lg"
+          className="absolute top-3.5 right-3.5 z-30 w-9 h-9 rounded-full bg-[rgba(13,10,8,0.85)] border border-white/15 text-[#D1C3B1] hover:text-[#F8F2E8] hover:border-[#F0C36B] flex items-center justify-center transition-all cursor-pointer shadow-lg"
           aria-label="Close modal"
         >
           <X className="w-4 h-4" />
         </button>
 
         {/* Left Side: Large Food Image */}
-        <div className="relative w-full md:w-1/2 aspect-square md:aspect-auto overflow-hidden bg-black/60 shrink-0">
+        <div className="relative w-full md:w-1/2 aspect-[4/3] sm:aspect-square md:aspect-auto overflow-hidden bg-black/60 shrink-0">
           <Image
             src={dish.image || '/images/dishes/placeholder.jpg'}
             alt={dish.name}
@@ -87,7 +100,7 @@ export function DishQuickViewModal({ dish, isOpen, onClose }: DishQuickViewModal
           <div className="absolute inset-0 bg-gradient-to-t from-[#17100C] via-transparent to-transparent md:bg-gradient-to-r md:from-transparent md:to-[#17100C]" />
 
           {/* 3D Model Availability Badge */}
-          {dish.has3DModel && (
+          {show3D && (
             <Link
               href={`/3d/${dish.slug}`}
               className="absolute bottom-4 left-4 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[rgba(13,10,8,0.85)] backdrop-blur-md border border-[#F0C36B]/40 text-[#F0C36B] text-xs font-semibold hover:border-[#F0C36B] transition-all shadow-lg"

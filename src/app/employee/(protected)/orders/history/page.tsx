@@ -1,5 +1,5 @@
 import { requireEmployee } from '@/lib/auth/employee-auth';
-import { createClient } from '@/lib/supabase/server';
+import { createClient, isSupabaseConfigured } from '@/lib/supabase/server';
 import { HistoryFilters } from '@/components/employee/HistoryFilters';
 import { formatMoney } from '@/lib/db/types';
 import { Clock, SearchX } from 'lucide-react';
@@ -12,13 +12,11 @@ export default async function EmployeeHistoryPage(props: {
 }) {
   await requireEmployee();
   const searchParams = await props.searchParams;
-  
-  const supabase = await createClient();
-  
+
   const q = typeof searchParams.q === 'string' ? searchParams.q : '';
   const status = typeof searchParams.status === 'string' ? searchParams.status : '';
   const dateStr = typeof searchParams.date === 'string' ? searchParams.date : '';
-  const page = parseInt(typeof searchParams.page === 'string' ? searchParams.page : '1') || 1;
+  const page = Math.max(1, parseInt(typeof searchParams.page === 'string' ? searchParams.page : '1') || 1);
   const limit = 50;
   
   let orders: any[] = [];
@@ -82,8 +80,9 @@ export default async function EmployeeHistoryPage(props: {
   }
 
   // 2. Supabase Fallback Query
-  if (orders.length === 0) {
+  if (orders.length === 0 && isSupabaseConfigured()) {
     try {
+      const supabase = await createClient();
       let query = supabase
         .from('orders')
         .select(`
@@ -94,11 +93,12 @@ export default async function EmployeeHistoryPage(props: {
         `, { count: 'exact' })
         .in('status', status ? [status] : ['completed', 'cancelled']);
 
-      if (q) {
-        if (!isNaN(Number(q))) {
-          query = query.or(`id.ilike.%${q}%,table_id.eq.${q}`);
+      const safeQ = q.replace(/[,()%_]/g, '').trim();
+      if (safeQ) {
+        if (!isNaN(Number(safeQ))) {
+          query = query.or(`id.ilike.%${safeQ}%,table_id.eq.${safeQ}`);
         } else {
-          query = query.ilike('id', `%${q}%`);
+          query = query.ilike('id', `%${safeQ}%`);
         }
       }
 
@@ -188,7 +188,7 @@ export default async function EmployeeHistoryPage(props: {
                     </td>
                     <td className="px-6 py-4">
                       <span className={`font-semibold ${order.payment_status === 'paid' ? 'text-emerald-400' : 'text-yellow-500'}`}>
-                        {order.payment_status.toUpperCase()}
+                        {(order.payment_status || 'pending').toUpperCase()}
                       </span>
                     </td>
                   </tr>
@@ -205,16 +205,16 @@ export default async function EmployeeHistoryPage(props: {
               </span>
               <div className="flex gap-2">
                 {page > 1 && (
-                  <Link 
-                    href={`?page=${page - 1}${q ? `&q=${q}` : ''}${status ? `&status=${status}` : ''}${dateStr ? `&date=${dateStr}` : ''}`}
+                  <Link
+                    href={`?page=${page - 1}${q ? `&q=${encodeURIComponent(q)}` : ''}${status ? `&status=${encodeURIComponent(status)}` : ''}${dateStr ? `&date=${encodeURIComponent(dateStr)}` : ''}`}
                     className="px-3 py-1.5 rounded bg-zinc-800 text-zinc-300 text-xs font-bold uppercase tracking-wider hover:bg-zinc-700 transition-colors"
                   >
                     Previous
                   </Link>
                 )}
                 {page * limit < count && (
-                  <Link 
-                    href={`?page=${page + 1}${q ? `&q=${q}` : ''}${status ? `&status=${status}` : ''}${dateStr ? `&date=${dateStr}` : ''}`}
+                  <Link
+                    href={`?page=${page + 1}${q ? `&q=${encodeURIComponent(q)}` : ''}${status ? `&status=${encodeURIComponent(status)}` : ''}${dateStr ? `&date=${encodeURIComponent(dateStr)}` : ''}`}
                     className="px-3 py-1.5 rounded bg-zinc-800 text-zinc-300 text-xs font-bold uppercase tracking-wider hover:bg-zinc-700 transition-colors"
                   >
                     Next

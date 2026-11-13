@@ -20,14 +20,16 @@ export function CustomerCheckoutForm({ details, onChange, errors }: CustomerChec
         <input
           id="checkout-name"
           type="text"
+          autoComplete="name"
           value={details.name}
           onChange={(e) => onChange({ ...details, name: e.target.value })}
           placeholder="Your full name"
-          className={`w-full bg-[#1a1a1a] border rounded-xl px-4 py-3 text-sm text-text-primary placeholder-white/20 focus:outline-none focus:border-primary/50 transition-colors ${
+          aria-invalid={Boolean(errors.name)}
+          className={`w-full min-h-[48px] bg-[#1a1a1a] border rounded-xl px-4 py-3 text-sm text-text-primary placeholder-white/20 focus:outline-none focus:border-primary/50 transition-colors ${
             errors.name ? 'border-red-500' : 'border-border-subtle'
           }`}
         />
-        {errors.name && <p className="text-red-400 text-[10px] mt-1 ml-1">{errors.name}</p>}
+        {errors.name && <p className="text-red-400 text-[11px] mt-1 ml-1">{errors.name}</p>}
       </div>
 
       <div>
@@ -35,21 +37,24 @@ export function CustomerCheckoutForm({ details, onChange, errors }: CustomerChec
           Phone Number <span className="text-red-400">*</span>
         </label>
         <div className="flex gap-2">
-          <div className="bg-[#1a1a1a] border border-border-subtle rounded-xl px-3 py-3 text-sm text-text-primary/50 flex items-center shrink-0">
+          <div className="min-h-[48px] bg-[#1a1a1a] border border-border-subtle rounded-xl px-3.5 py-3 text-sm text-text-primary/55 flex items-center shrink-0">
             +91
           </div>
           <input
             id="checkout-phone"
             type="tel"
+            inputMode="numeric"
+            autoComplete="tel-national"
             value={details.phone}
             onChange={(e) => onChange({ ...details, phone: e.target.value.replace(/\D/g, '').slice(0, 10) })}
             placeholder="10-digit number"
-            className={`w-full bg-[#1a1a1a] border rounded-xl px-4 py-3 text-sm text-text-primary placeholder-white/20 focus:outline-none focus:border-primary/50 transition-colors ${
+            aria-invalid={Boolean(errors.phone)}
+            className={`w-full min-h-[48px] bg-[#1a1a1a] border rounded-xl px-4 py-3 text-sm text-text-primary placeholder-white/20 focus:outline-none focus:border-primary/50 transition-colors ${
               errors.phone ? 'border-red-500' : 'border-border-subtle'
             }`}
           />
         </div>
-        {errors.phone && <p className="text-red-400 text-[10px] mt-1 ml-1">{errors.phone}</p>}
+        {errors.phone && <p className="text-red-400 text-[11px] mt-1 ml-1">{errors.phone}</p>}
       </div>
 
       <div>
@@ -59,14 +64,16 @@ export function CustomerCheckoutForm({ details, onChange, errors }: CustomerChec
         <input
           id="checkout-email"
           type="email"
+          autoComplete="email"
           value={details.email}
           onChange={(e) => onChange({ ...details, email: e.target.value })}
           placeholder="For order updates"
-          className={`w-full bg-[#1a1a1a] border rounded-xl px-4 py-3 text-sm text-text-primary placeholder-white/20 focus:outline-none focus:border-primary/50 transition-colors ${
+          aria-invalid={Boolean(errors.email)}
+          className={`w-full min-h-[48px] bg-[#1a1a1a] border rounded-xl px-4 py-3 text-sm text-text-primary placeholder-white/20 focus:outline-none focus:border-primary/50 transition-colors ${
             errors.email ? 'border-red-500' : 'border-border-subtle'
           }`}
         />
-        {errors.email && <p className="text-red-400 text-[10px] mt-1 ml-1">{errors.email}</p>}
+        {errors.email && <p className="text-red-400 text-[11px] mt-1 ml-1">{errors.email}</p>}
       </div>
     </div>
   );

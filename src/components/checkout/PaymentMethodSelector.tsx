@@ -24,9 +24,11 @@ export function PaymentMethodSelector({ selected, onSelect }: PaymentMethodSelec
           const isSelected = selected === value;
           return (
             <button
+              type="button"
               key={value}
               onClick={() => onSelect(value)}
-              className={`flex items-center gap-4 p-4 rounded-xl border transition-all active:scale-[0.98] ${
+              aria-pressed={isSelected}
+              className={`min-h-[56px] flex items-center gap-4 p-4 rounded-xl border transition-all active:scale-[0.98] ${
                 isSelected
                   ? 'bg-primary/10 border-primary/50'
                   : 'bg-[#1a1a1a] border-white/5 hover:border-border-strong'
@@ -45,7 +47,7 @@ export function PaymentMethodSelector({ selected, onSelect }: PaymentMethodSelec
                   {note}
                 </span>
               )}
-              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
                 isSelected ? 'border-primary' : 'border-border-strong'
               }`}>
                 {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
@@ -54,8 +56,8 @@ export function PaymentMethodSelector({ selected, onSelect }: PaymentMethodSelec
           );
         })}
       </div>
-      <p className="text-[10px] text-text-primary/25 mt-3 text-center italic">
-        Payment gateway integration coming soon.
+      <p className="text-[11px] text-text-primary/35 mt-3 text-center">
+        Pay seamlessly on confirmation via UPI or counter settlement
       </p>
     </div>
   );

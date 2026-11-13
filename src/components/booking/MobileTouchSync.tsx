@@ -17,6 +17,8 @@ export function MobileTouchSync({ touchOrbitActive }: MobileTouchSyncProps) {
   const { gl } = useThree();
   useEffect(() => {
     if (gl?.domElement) {
+      // Intentionally updating underlying Canvas DOM CSS touchAction outside React render
+      // eslint-disable-next-line react-hooks/immutability
       gl.domElement.style.touchAction = touchOrbitActive ? 'none' : 'pan-y';
     }
   }, [gl, touchOrbitActive]);

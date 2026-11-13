@@ -217,6 +217,24 @@ export function RestaurantFloorMap({
         </div>
       </div>
 
+      {/* Subtle notice when a 3D-only table (T13-T28) is active */}
+      {selectedTableNumber && selectedTableNumber > 12 && (
+        <div className="flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-[#F0C36B]/10 border border-[#F0C36B]/30 text-[11px] font-mono text-[#FFE3A5]">
+          <span>
+            Table T{selectedTableNumber} is currently selected in the 3D dining room layout.
+          </span>
+          {onSwitchTo3D && (
+            <button
+              type="button"
+              onClick={onSwitchTo3D}
+              className="shrink-0 underline underline-offset-2 text-[#F0C36B] font-bold cursor-pointer"
+            >
+              View in 3D
+            </button>
+          )}
+        </div>
+      )}
+
       {/* Visual Architectural Map Canvas */}
       <div className="relative w-full h-[480px] sm:h-[520px] md:h-[540px] lg:h-[580px] xl:h-[620px] rounded-2xl bg-[rgba(12,9,7,0.35)] backdrop-blur-xl border border-[#F0C36B]/35 p-3 overflow-hidden select-none shadow-[inset_0_1px_1px_rgba(255,255,255,0.15),0_10px_30px_rgba(0,0,0,0.45)]">
         {/* Subtle Architectural Grid Lines */}

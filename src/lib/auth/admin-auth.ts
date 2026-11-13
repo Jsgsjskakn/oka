@@ -30,19 +30,21 @@ export async function requireAdmin(): Promise<{ userId: string; name: string; se
 
   // 2. Supabase Fallback
   try {
-    const { createClient } = await import('@/lib/supabase/server');
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { createClient, isSupabaseConfigured } = await import('@/lib/supabase/server');
+    if (isSupabaseConfigured()) {
+      const supabase = await createClient();
+      const { data: { user } } = await supabase.auth.getUser();
 
-    if (user) {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role, is_active, name')
-        .eq('id', user.id)
-        .single() as { data: { role: string; is_active: boolean; name: string | null } | null };
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role, is_active, name')
+          .eq('id', user.id)
+          .single() as { data: { role: string; is_active: boolean; name: string | null } | null };
 
-      if (profile && profile.role === 'admin' && profile.is_active) {
-        return { userId: user.id, name: profile.name ?? 'Admin' };
+        if (profile && profile.role === 'admin' && profile.is_active) {
+          return { userId: user.id, name: profile.name ?? 'Admin' };
+        }
       }
     }
   } catch {
@@ -70,19 +72,21 @@ export async function requireStaff(): Promise<{ userId: string; role: string; na
 
   // 2. Supabase Fallback
   try {
-    const { createClient } = await import('@/lib/supabase/server');
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { createClient, isSupabaseConfigured } = await import('@/lib/supabase/server');
+    if (isSupabaseConfigured()) {
+      const supabase = await createClient();
+      const { data: { user } } = await supabase.auth.getUser();
 
-    if (user) {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role, is_active, name')
-        .eq('id', user.id)
-        .single() as { data: { role: string; is_active: boolean; name: string | null } | null };
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role, is_active, name')
+          .eq('id', user.id)
+          .single() as { data: { role: string; is_active: boolean; name: string | null } | null };
 
-      if (profile && ['admin', 'employee', 'staff', 'manager', 'chef'].includes(profile.role) && profile.is_active) {
-        return { userId: user.id, role: profile.role, name: profile.name ?? 'Staff' };
+        if (profile && ['admin', 'employee', 'staff', 'manager', 'chef'].includes(profile.role) && profile.is_active) {
+          return { userId: user.id, role: profile.role, name: profile.name ?? 'Staff' };
+        }
       }
     }
   } catch {

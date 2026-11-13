@@ -12,6 +12,7 @@ import { formatMoney } from '@/lib/db/types';
 export type OrderWithDetails = Database['public']['Tables']['orders']['Row'] & {
   order_items: (Database['public']['Tables']['order_items']['Row'] & {
     dish_name: string;
+    addons?: Array<{ name: string; pricePaise?: number }>;
   })[];
 };
 
@@ -57,6 +58,15 @@ export function OrdersDashboard({
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [selectedOrder, setSelectedOrder] = useState<OrderWithDetails | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [nowMs, setNowMs] = useState<number>(() => Date.now());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setNowMs(Date.now());
+    }, 30000);
+    return () => clearInterval(timer);
+  }, []);
 
   // 1. Primary: Convex Live Realtime Query
   const convexLiveOrders = useQuery(api.orders.getActiveOrders);
@@ -70,7 +80,7 @@ export function OrdersDashboard({
         customer_phone: o.customerPhone,
         customer_email: o.customerEmail || null,
         order_type: o.orderType,
-        table_id: null,
+        table_id: o.tableNumber != null ? String(o.tableNumber) : null,
         status: o.status,
         payment_status: o.paymentStatus,
         payment_method: o.paymentMethod,
@@ -97,6 +107,7 @@ export function OrdersDashboard({
           size_name: item.sizeName || null,
           size_price_modifier_paise: item.sizePriceModifierPaise || 0,
           special_instructions: item.specialInstructions || null,
+          addons: Array.isArray(item.addons) ? item.addons : [],
           line_total_paise: item.lineTotalPaise,
           created_at: new Date(o.createdAt).toISOString(),
         })),
@@ -227,6 +238,7 @@ export function OrdersDashboard({
     if (!nextStatus) return;
 
     setUpdatingId(order.id);
+    setActionError(null);
     
     // Optimistic UI update
     const previousOrders = [...orders];
@@ -247,7 +259,7 @@ export function OrdersDashboard({
     if (res?.error) {
       setOrders(previousOrders);
       if (selectedOrder?.id === order.id) setSelectedOrder(order);
-      alert(`Error updating order: ${res.error}`);
+      setActionError(`Error updating order: ${res.error}`);
     }
     
     setUpdatingId(null);
@@ -260,7 +272,9 @@ export function OrdersDashboard({
         const s = search.toLowerCase();
         return (
           o.id.toLowerCase().includes(s) || 
-          (o.table_id && o.table_id.toLowerCase().includes(s))
+          (o.table_id && o.table_id.toLowerCase().includes(s)) ||
+          (o.customer_name && o.customer_name.toLowerCase().includes(s)) ||
+          (o.customer_phone && o.customer_phone.toLowerCase().includes(s))
         );
       }
       return true;
@@ -271,6 +285,18 @@ export function OrdersDashboard({
 
   return (
     <div className="flex flex-col h-full animate-in fade-in duration-500">
+      {actionError && (
+        <div className="mb-4 rounded-xl bg-red-950/60 border border-red-800/70 px-4 py-2.5 text-xs text-red-200 flex items-center justify-between gap-2">
+          <span>{actionError}</span>
+          <button
+            type="button"
+            onClick={() => setActionError(null)}
+            className="text-red-300 hover:text-white cursor-pointer"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
       
       {/* Controls Row */}
       <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center mb-8">
@@ -278,7 +304,7 @@ export function OrdersDashboard({
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
           <input
             type="text"
-            placeholder="Search by Order ID or Table..."
+            placeholder="Search by ID, table, guest, or phone..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 bg-zinc-900/80 border border-border-subtle rounded-xl text-sm text-platinum focus:outline-none focus:border-champagne/50 transition-colors placeholder:text-zinc-600"
@@ -315,7 +341,7 @@ export function OrdersDashboard({
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
           {filteredOrders.map(order => {
             const placedTime = new Date(order.created_at);
-            const elapsedMins = Math.floor((Date.now() - placedTime.getTime()) / 60000);
+            const elapsedMins = Math.max(0, Math.floor((nowMs - placedTime.getTime()) / 60000));
             const nextStatus = VALID_TRANSITIONS[order.status];
 
             return (
@@ -472,7 +498,15 @@ function OrderDetailsModal({
                       {item.quantity}
                     </span>
                     <div>
-                      <p className="font-medium text-platinum text-sm md:text-base">{item.dish_name || 'Item'}</p>
+                      <p className="font-medium text-platinum text-sm md:text-base">
+                        {item.dish_name || 'Item'}
+                        {item.size_name ? ` (${item.size_name})` : ''}
+                      </p>
+                      {item.addons && item.addons.length > 0 && (
+                        <p className="text-xs text-zinc-400 mt-0.5">
+                          + {item.addons.map((a) => a.name).join(', ')}
+                        </p>
+                      )}
                       {item.special_instructions && (
                         <p className="text-xs text-yellow-500/80 mt-1 italic">Note: {item.special_instructions}</p>
                       )}

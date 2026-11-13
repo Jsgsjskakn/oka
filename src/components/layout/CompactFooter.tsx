@@ -7,7 +7,7 @@ export function CompactFooter() {
   return (
     <footer className="px-4 py-8 border-t border-white/5 bg-[#0a0a0a]">
       <div className="max-w-md mx-auto flex flex-col items-center justify-center text-center">
-        <h3 className="font-heading text-lg font-semibold gold-gradient mb-1">
+        <h3 className="font-heading text-lg font-semibold bg-gradient-to-r from-[#F6D386] via-[#E2A84B] to-[#C48E2E] bg-clip-text text-transparent mb-1">
           {RESTAURANT_CONFIG.name}
         </h3>
         

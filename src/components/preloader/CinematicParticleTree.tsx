@@ -557,7 +557,9 @@ export function CinematicParticleTree({ onComplete, isReady = true }: CinematicP
     };
   }, [isReady, onComplete]);
 
-  // Support ESC keyboard shortcut for instant accessibility skip (no UI button)
+  // Support ESC keyboard shortcut and quick double-tap (touchscreens) for instant skip (no UI button)
+  const lastTapTimeRef = useRef<number>(0);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -572,7 +574,14 @@ export function CinematicParticleTree({ onComplete, isReady = true }: CinematicP
     <div
       ref={containerRef}
       onPointerMove={handlePointerMove}
-      onPointerDown={handlePointerDown}
+      onPointerDown={(e) => {
+        handlePointerDown(e);
+        const now = Date.now();
+        if (now - lastTapTimeRef.current < 350) {
+          if (onComplete) onComplete();
+        }
+        lastTapTimeRef.current = now;
+      }}
       onPointerLeave={handlePointerLeave}
       className="relative w-full h-full flex flex-col items-center justify-center select-none overflow-hidden touch-none"
       style={{ backgroundColor: '#000000' }}

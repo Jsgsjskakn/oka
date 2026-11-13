@@ -1,7 +1,7 @@
-import { mutation, query } from "./_generated/server";
+import { internalMutation, internalQuery } from "./_generated/server";
 
-// Test write mutation (no args needed for test)
-export const insertSampleData = mutation({
+// Internal test write mutation (CLI / dashboard only)
+export const insertSampleData = internalMutation({
   args: {},
   handler: async (ctx) => {
     const id = await ctx.db.insert("test_connection", {
@@ -13,8 +13,8 @@ export const insertSampleData = mutation({
   },
 });
 
-// Test read query
-export const getTestMessages = query({
+// Internal test read query
+export const getTestMessages = internalQuery({
   args: {},
   handler: async (ctx) => {
     return await ctx.db.query("test_connection").collect();

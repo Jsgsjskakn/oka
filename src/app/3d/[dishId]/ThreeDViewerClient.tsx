@@ -30,24 +30,55 @@ interface Props {
     category?: string;
     isVeg?: boolean;
     ingredients?: string[];
+    calories?: number;
+    preparationTime?: string;
+    spiceLevel?: string;
   }>;
 }
 
 export default function ThreeDViewerClient(props: Props) {
-  const [currentSlug, setCurrentSlug] = useState(props.dishSlug);
+  const [dishSelection, setDishSelection] = useState<{
+    forPropSlug: string;
+    selectedSlug: string;
+  }>(() => ({
+    forPropSlug: props.dishSlug,
+    selectedSlug: props.dishSlug,
+  }));
 
-  const activeDishData =
-    props.allModelDishes.find((d) => d.id === currentSlug || d.slug === currentSlug) || {
-      id: props.dishSlug,
-      slug: props.dishSlug,
-      name: props.dishName,
-      description: props.dishDescription,
-      price: props.dishPrice / 100,
-      image: props.dishImage,
-      category: props.dishCategory,
-      isVeg: props.dishIsVeg,
-      ingredients: props.dishIngredients,
-    };
+  const currentSlug =
+    dishSelection.forPropSlug === props.dishSlug
+      ? dishSelection.selectedSlug
+      : props.dishSlug;
+
+  const activeDishData = useMemo(
+    () =>
+      props.allModelDishes.find((d) => d.id === currentSlug || d.slug === currentSlug) || {
+        id: props.dishSlug,
+        slug: props.dishSlug,
+        name: props.dishName,
+        description: props.dishDescription,
+        price: props.dishPrice / 100,
+        image: props.dishImage,
+        category: props.dishCategory,
+        isVeg: props.dishIsVeg,
+        ingredients: props.dishIngredients,
+        calories: undefined,
+        preparationTime: undefined,
+        spiceLevel: undefined,
+      },
+    [
+      props.allModelDishes,
+      currentSlug,
+      props.dishSlug,
+      props.dishName,
+      props.dishDescription,
+      props.dishPrice,
+      props.dishImage,
+      props.dishCategory,
+      props.dishIsVeg,
+      props.dishIngredients,
+    ]
+  );
 
   const isFavorite = useFavoritesStore((s) => s.isFavorite(currentSlug));
   const toggleFavorite = useFavoritesStore((s) => s.toggleFavorite);
@@ -81,25 +112,39 @@ export default function ThreeDViewerClient(props: Props) {
   }, [currentSlug, activeDishData, addRecentDish, props.dishName, props.dishDescription, props.dishPrice, props.dishImage, props.dishCategory, props.dishIsVeg, props.dishIngredients]);
 
   // Adapt DB dish to legacy Dish type for ThreeDViewer
-  const dish: Dish = {
-    id: activeDishData.id || currentSlug,
-    slug: activeDishData.slug || currentSlug,
-    name: activeDishData.name,
-    description: activeDishData.description || props.dishDescription,
-    price:
-      activeDishData.price !== undefined
-        ? activeDishData.price
-        : props.dishPrice / 100,
-    image: activeDishData.image || props.dishImage,
-    category: (activeDishData.category || props.dishCategory) as any,
-    isVeg: activeDishData.isVeg ?? props.dishIsVeg,
-    isAvailable: true,
-    isFeatured: false,
-    isBestSeller: false,
-    spiceLevel: 'medium',
-    ingredients: activeDishData.ingredients || props.dishIngredients,
-    has3DModel: true,
-  };
+  const dish: Dish = useMemo(
+    () => ({
+      id: activeDishData.id || currentSlug,
+      slug: activeDishData.slug || currentSlug,
+      name: activeDishData.name,
+      description: activeDishData.description || props.dishDescription,
+      price:
+        activeDishData.price !== undefined
+          ? activeDishData.price
+          : props.dishPrice / 100,
+      image: activeDishData.image || props.dishImage,
+      category: (activeDishData.category || props.dishCategory) as Dish['category'],
+      isVeg: activeDishData.isVeg ?? props.dishIsVeg,
+      isAvailable: true,
+      isFeatured: false,
+      isBestSeller: false,
+      spiceLevel: (activeDishData.spiceLevel as Dish['spiceLevel']) || 'medium',
+      calories: activeDishData.calories,
+      preparationTime: activeDishData.preparationTime,
+      ingredients: activeDishData.ingredients || props.dishIngredients,
+      has3DModel: true,
+    }),
+    [
+      activeDishData,
+      currentSlug,
+      props.dishDescription,
+      props.dishPrice,
+      props.dishImage,
+      props.dishCategory,
+      props.dishIsVeg,
+      props.dishIngredients,
+    ]
+  );
 
   const activeConfig = useMemo(() => {
     return getModelConfig(activeDishData.slug || currentSlug) || props.config;
@@ -128,12 +173,15 @@ export default function ThreeDViewerClient(props: Props) {
     if (typeof window !== 'undefined' && 'vibrate' in navigator) navigator.vibrate(10);
   }, [currentSlug, toggleFavorite, isFavorite, dish.name]);
 
-  const handleSwitchDish = useCallback((dishId: string) => {
-    setCurrentSlug(dishId);
-    if (typeof window !== 'undefined') {
-      window.history.replaceState(null, '', `/3d/${dishId}`);
-    }
-  }, []);
+  const handleSwitchDish = useCallback(
+    (dishId: string) => {
+      setDishSelection({ forPropSlug: props.dishSlug, selectedSlug: dishId });
+      if (typeof window !== 'undefined') {
+        window.history.replaceState(null, '', `/3d/${dishId}`);
+      }
+    },
+    [props.dishSlug]
+  );
 
   return (
     <ThreeDViewer

@@ -22,11 +22,11 @@ export function DishInfoSection({ dish }: DishInfoSectionProps) {
           </div>
         </div>
       </div>
-      
+
       <p className="text-sm text-text-primary/70 leading-relaxed mb-4">
         {dish.description}
       </p>
-      
+
       <div className="flex flex-wrap gap-2 mb-2">
         {dish.isFeatured && (
           <span className="px-2.5 py-1 bg-[#1a1a1a] rounded-md text-[10px] font-medium text-primary border border-primary/20 uppercase tracking-wider">
@@ -38,12 +38,16 @@ export function DishInfoSection({ dish }: DishInfoSectionProps) {
             Best Seller
           </span>
         )}
-        <span className="px-2.5 py-1 bg-[#1a1a1a] rounded-md text-[10px] font-medium text-text-primary/50 border border-white/5 uppercase tracking-wider">
-          {dish.calories} kcal
-        </span>
-        <span className="px-2.5 py-1 bg-[#1a1a1a] rounded-md text-[10px] font-medium text-text-primary/50 border border-white/5 uppercase tracking-wider">
-          {dish.preparationTime}
-        </span>
+        {typeof dish.calories === 'number' && dish.calories > 0 && (
+          <span className="px-2.5 py-1 bg-[#1a1a1a] rounded-md text-[10px] font-medium text-text-primary/50 border border-white/5 uppercase tracking-wider">
+            {dish.calories} kcal
+          </span>
+        )}
+        {dish.preparationTime && (
+          <span className="px-2.5 py-1 bg-[#1a1a1a] rounded-md text-[10px] font-medium text-text-primary/50 border border-white/5 uppercase tracking-wider">
+            {dish.preparationTime}
+          </span>
+        )}
       </div>
     </div>
   );

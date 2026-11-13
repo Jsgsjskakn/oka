@@ -11,8 +11,13 @@ export async function GET(request: Request) {
       getAllDishes(),
     ]);
 
-    const dishes = category
-      ? allDishes.filter(d => d.category_id === category || d.categories?.slug === category)
+    const dishes = category && category !== 'all'
+      ? allDishes.filter(
+          d =>
+            d.category_id === category ||
+            d.categories?.slug === category ||
+            d.categories?.id === category
+        )
       : allDishes;
 
     return NextResponse.json({ categories, dishes }, {

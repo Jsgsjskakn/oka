@@ -1,4 +1,4 @@
-import { mutation, query } from "./_generated/server";
+import { mutation, query, internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 import { authenticateCaller, ADMIN_ROLES, STAFF_ROLES } from "./authUtils";
 
@@ -29,6 +29,13 @@ export const createTable = mutation({
     const auth = await authenticateCaller(ctx, args.sessionToken, ADMIN_ROLES);
     if (!auth.authorized) return { error: auth.error };
 
+    if (!Number.isInteger(args.tableNumber) || args.tableNumber < 1) {
+      return { error: "Table number must be a positive integer." };
+    }
+    if (!Number.isInteger(args.capacity) || args.capacity < 1 || args.capacity > 50) {
+      return { error: "Table capacity must be between 1 and 50." };
+    }
+
     // Check for duplicate table number
     const existing = await ctx.db
       .query("tables")
@@ -43,7 +50,7 @@ export const createTable = mutation({
       tableNumber: args.tableNumber,
       capacity: args.capacity,
       status: args.status,
-      notes: args.notes,
+      notes: args.notes?.trim() || undefined,
       createdAt: Date.now(),
     });
 
@@ -87,8 +94,15 @@ export const updateTableCapacity = mutation({
     const auth = await authenticateCaller(ctx, args.sessionToken, ADMIN_ROLES);
     if (!auth.authorized) return { error: auth.error };
 
+    if (!Number.isInteger(args.capacity) || args.capacity < 1 || args.capacity > 50) {
+      return { error: "Table capacity must be between 1 and 50." };
+    }
+
     const id = ctx.db.normalizeId("tables", args.tableId);
     if (!id) return { error: "Invalid table ID" };
+
+    const table = await ctx.db.get(id);
+    if (!table) return { error: "Table not found" };
 
     await ctx.db.patch(id, { capacity: args.capacity });
     return { success: true };
@@ -107,12 +121,15 @@ export const deleteTable = mutation({
     const id = ctx.db.normalizeId("tables", args.tableId);
     if (!id) return { error: "Invalid table ID" };
 
+    const table = await ctx.db.get(id);
+    if (!table) return { error: "Table not found" };
+
     await ctx.db.delete(id);
     return { success: true };
   },
 });
 
-export const seedAllArchitecturalTables = mutation({
+export const seedAllArchitecturalTables = internalMutation({
   args: {},
   handler: async (ctx) => {
     const existing = await ctx.db.query("tables").collect();

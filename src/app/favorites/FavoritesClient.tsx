@@ -3,7 +3,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { Heart, Sparkles, Box, Plus, ShoppingBag, ArrowRight } from 'lucide-react';
 import { useFavoritesStore } from '@/store/favorites-store';
 import { useCartStore } from '@/store/cart-store';
@@ -13,9 +12,9 @@ import { resolveDishImageUrl } from '@/lib/utils/dish-images';
 import type { Dish } from '@/types/menu';
 
 export function FavoritesClient({ allDishes }: { allDishes: Dish[] }) {
-  const router = useRouter();
   const favoriteIds = useFavoritesStore((s) => s.favoriteIds);
-  const toggleFavorite = useFavoritesStore((s) => s.toggleFavorite);
+  const toggleDishFavorite = useFavoritesStore((s) => s.toggleDishFavorite);
+  const isDishFavorite = useFavoritesStore((s) => s.isDishFavorite);
   const addItem = useCartStore((s) => s.addItem);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -24,7 +23,9 @@ export function FavoritesClient({ allDishes }: { allDishes: Dish[] }) {
   }, []);
 
   const favoriteDishes = useMemo(() => {
-    return allDishes.filter((dish) => favoriteIds.includes(dish.id));
+    return allDishes.filter(
+      (dish) => favoriteIds.includes(dish.id) || favoriteIds.includes(dish.slug)
+    );
   }, [allDishes, favoriteIds]);
 
   const totalVaultPrice = useMemo(() => {
@@ -41,16 +42,17 @@ export function FavoritesClient({ allDishes }: { allDishes: Dish[] }) {
     ];
     const found: Dish[] = [];
     for (const target of targets) {
-      const match = allDishes.find(
-        (d) =>
-          d.slug === target ||
-          d.id === target ||
-          (target === 'classic-smash-burger' && d.slug.includes('burger')) ||
-          (target === 'dynamite-chilli-potatoes' &&
-            (d.slug.includes('chilli') || d.slug.includes('potato') || d.category === 'starters'))
-      );
-      if (match && !found.some((f) => f.id === match.id)) {
-        found.push(match);
+      const exactMatch = allDishes.find((d) => d.slug === target || d.id === target);
+      const fallbackMatch =
+        exactMatch ??
+        allDishes.find(
+          (d) =>
+            (target === 'classic-smash-burger' && d.slug.includes('burger')) ||
+            (target === 'dynamite-chilli-potatoes' &&
+              (d.slug.includes('chilli') || d.slug.includes('potato') || d.category === 'starters'))
+        );
+      if (fallbackMatch && !found.some((f) => f.id === fallbackMatch.id)) {
+        found.push(fallbackMatch);
       }
     }
     for (const d of allDishes) {
@@ -85,7 +87,7 @@ export function FavoritesClient({ allDishes }: { allDishes: Dish[] }) {
     favoriteDishes.length < 10 ? `0${favoriteDishes.length}` : `${favoriteDishes.length}`;
 
   return (
-    <div className="relative min-h-screen bg-[#0D0A08] text-[#FAF5EC] overflow-x-hidden selection:bg-[#E2A84B] selection:text-[#0D0A08] pb-28">
+    <div className="relative min-h-screen bg-[#0D0A08] text-[#FAF5EC] overflow-x-hidden selection:bg-[#E2A84B] selection:text-[#0D0A08] pb-32 md:pb-16">
       {/* Background Layer 2: Dual Radial Aura (Deep Emerald & Molten Gold) */}
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-[750px] z-0"
@@ -147,7 +149,7 @@ export function FavoritesClient({ allDishes }: { allDishes: Dish[] }) {
                   <button
                     type="button"
                     onClick={handleAddAllToBag}
-                    className="px-5 py-2.5 rounded-[6px] text-xs font-bold text-[#0D0A08] transition-all hover:brightness-110 active:scale-95 shadow-md flex items-center gap-1.5 cursor-pointer"
+                    className="min-h-[44px] px-5 py-2.5 rounded-[6px] text-xs font-bold text-[#0D0A08] transition-all hover:brightness-110 active:scale-95 shadow-md flex items-center gap-1.5 cursor-pointer"
                     style={{
                       background:
                         'linear-gradient(135deg, #F6D386 0%, #D49432 50%, #9E6818 100%)',
@@ -204,7 +206,7 @@ export function FavoritesClient({ allDishes }: { allDishes: Dish[] }) {
                     {/* Primary CTA with Shimmer Sweep */}
                     <Link
                       href="/menu"
-                      className="group relative overflow-hidden w-full sm:w-auto px-7 py-3 rounded-[6px] text-xs font-extrabold text-[#0D0A08] transition-all hover:brightness-110 active:scale-95 shadow-lg flex items-center justify-center gap-2 cursor-pointer"
+                      className="group relative overflow-hidden w-full sm:w-auto min-h-[44px] px-7 py-3 rounded-[6px] text-xs font-extrabold text-[#0D0A08] transition-all hover:brightness-110 active:scale-95 shadow-lg flex items-center justify-center gap-2 cursor-pointer"
                       style={{
                         background:
                           'linear-gradient(135deg, #F6D386 0%, #D49432 50%, #9E6818 100%)',
@@ -219,7 +221,7 @@ export function FavoritesClient({ allDishes }: { allDishes: Dish[] }) {
                     {/* Secondary CTA: 3D Lounge */}
                     <Link
                       href="/ar"
-                      className="w-full sm:w-auto px-6 py-3 rounded-[6px] bg-white/[0.04] hover:bg-white/[0.08] border border-[rgba(226,168,75,0.3)] text-xs font-semibold text-[#FAF5EC] flex items-center justify-center gap-2 transition-all active:scale-95"
+                      className="w-full sm:w-auto min-h-[44px] px-6 py-3 rounded-[6px] bg-white/[0.04] hover:bg-white/[0.08] border border-[rgba(226,168,75,0.3)] text-xs font-semibold text-[#FAF5EC] flex items-center justify-center gap-2 transition-all active:scale-95"
                     >
                       <Box className="w-3.5 h-3.5 text-[#E2A84B]" />
                       <span>Launch 3D Lounge</span>
@@ -238,7 +240,7 @@ export function FavoritesClient({ allDishes }: { allDishes: Dish[] }) {
                         START YOUR COLLECTION — MOST LOVED SIGNATURES
                       </h3>
                     </div>
-                    <span className="inline-flex items-center gap-1.5 text-xs text-[#9A9286] hidden sm:inline-flex">
+                    <span className="hidden sm:inline-flex items-center gap-1.5 text-xs text-[#9A9286]">
                       <Heart className="w-3.5 h-3.5 text-[#E2A84B]" />
                       <span>Save signatures to your personal vault</span>
                     </span>
@@ -246,7 +248,7 @@ export function FavoritesClient({ allDishes }: { allDishes: Dish[] }) {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                     {recommendedDishes.map((rec) => {
-                      const isFav = favoriteIds.includes(rec.id);
+                      const isFav = isDishFavorite([rec.id, rec.slug]);
                       return (
                         <div
                           key={rec.id}
@@ -282,8 +284,8 @@ export function FavoritesClient({ allDishes }: { allDishes: Dish[] }) {
                               onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
-                                toggleFavorite(rec.id);
-                                if (!isFav) {
+                                const nowSaved = toggleDishFavorite(rec.id, [rec.slug]);
+                                if (nowSaved) {
                                   toast.success('Saved to Tasting Vault', rec.name);
                                 } else {
                                   toast.info('Removed from Vault', rec.name);
@@ -291,7 +293,7 @@ export function FavoritesClient({ allDishes }: { allDishes: Dish[] }) {
                               }}
                               aria-label="Save to Vault"
                               title={isFav ? 'Remove from Vault' : 'Save to Tasting Vault'}
-                              className="absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all active:scale-125 shadow-xl bg-[rgba(13,10,8,0.85)] backdrop-blur-md border border-[rgba(226,168,75,0.35)] hover:border-[#E2A84B]"
+                              className="absolute top-2.5 right-2.5 z-20 w-11 h-11 rounded-full flex items-center justify-center transition-all active:scale-125 shadow-xl bg-[rgba(13,10,8,0.85)] backdrop-blur-md border border-[rgba(226,168,75,0.35)] hover:border-[#E2A84B]"
                             >
                               <Heart
                                 className={`w-4 h-4 transition-colors ${
@@ -327,7 +329,7 @@ export function FavoritesClient({ allDishes }: { allDishes: Dish[] }) {
                                   addItem(rec, 1);
                                   toast.success('Added to Cart', `${rec.name} (₹${rec.price})`);
                                 }}
-                                className="px-3 py-1.5 rounded-[5px] text-[11px] font-bold text-[#0D0A08] transition-all hover:brightness-110 active:scale-95 shadow-sm"
+                                className="min-h-[40px] px-3.5 py-2 rounded-[5px] text-[11px] font-bold text-[#0D0A08] transition-all hover:brightness-110 active:scale-95 shadow-sm"
                                 style={{
                                   background:
                                     'linear-gradient(135deg, #F6D386 0%, #D49432 50%, #9E6818 100%)',
@@ -360,17 +362,17 @@ export function FavoritesClient({ allDishes }: { allDishes: Dish[] }) {
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-2.5">
+                  <div className="flex flex-wrap items-center justify-center sm:justify-end gap-2.5">
                     <Link
                       href="/menu"
-                      className="text-xs text-[#9A9286] hover:text-[#FAF5EC] transition-colors px-3 py-1.5"
+                      className="min-h-[44px] inline-flex items-center text-xs text-[#9A9286] hover:text-[#FAF5EC] transition-colors px-3 py-2"
                     >
                       Browse More Dishes →
                     </Link>
                     <button
                       type="button"
                       onClick={handleAddAllToBag}
-                      className="px-4 py-2 rounded-[6px] text-xs font-bold text-[#0D0A08] transition-all hover:brightness-110 active:scale-95 shadow-md flex items-center gap-1.5"
+                      className="min-h-[44px] px-4 py-2.5 rounded-[6px] text-xs font-bold text-[#0D0A08] transition-all hover:brightness-110 active:scale-95 shadow-md flex items-center gap-1.5"
                       style={{
                         background:
                           'linear-gradient(135deg, #F6D386 0%, #D49432 50%, #9E6818 100%)',

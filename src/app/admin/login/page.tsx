@@ -5,17 +5,29 @@ import { useRouter } from 'next/navigation';
 import { loginAction, requestPasswordResetAction } from '@/lib/auth/convex-auth-actions';
 import { Sparkles, Loader2 } from 'lucide-react';
 
+function getSafeAdminRedirect(): string {
+  if (typeof window === 'undefined') return '/admin/dashboard';
+  const raw = new URLSearchParams(window.location.search).get('redirectTo') || '';
+  if (raw.startsWith('/admin') && !raw.startsWith('//') && !raw.startsWith('/admin/login')) {
+    return raw;
+  }
+  return '/admin/dashboard';
+}
+
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setNotice(null);
     setLoading(true);
+    const redirectTarget = getSafeAdminRedirect();
 
     try {
       // 1. Primary: Convex Authentication
@@ -26,18 +38,25 @@ export default function AdminLoginPage() {
       });
 
       if (result.success) {
-        router.push('/admin/dashboard');
+        router.push(redirectTarget);
         router.refresh();
         return;
       }
 
-      // If Convex rejected with explicit error
+      // Do not fall back to Supabase if role authorization failed or Supabase isn't configured
+      const { createClient, isSupabaseConfigured } = await import('@/lib/supabase/client');
+      if (!isSupabaseConfigured()) {
+        throw new Error(result.error || 'Invalid admin credentials.');
+      }
+      if (result.error?.toLowerCase().includes('access denied') || result.error?.toLowerCase().includes('admin')) {
+        throw new Error(result.error);
+      }
+
       if (result.error) {
         console.warn('[admin-login] Convex login unsuccessful, trying Supabase fallback:', result.error);
       }
 
       // 2. Secondary: Supabase Fallback
-      const { createClient } = await import('@/lib/supabase/client');
       const supabase = createClient();
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email,
@@ -58,7 +77,7 @@ export default function AdminLoginPage() {
           throw new Error('Access denied. Admin privileges required.');
         }
 
-        router.push('/admin/dashboard');
+        router.push(redirectTarget);
         router.refresh();
       }
     } catch (err: any) {
@@ -70,15 +89,17 @@ export default function AdminLoginPage() {
 
   const handleResetPassword = async (e: React.MouseEvent) => {
     e.preventDefault();
+    setError(null);
+    setNotice(null);
     if (!email) {
       setError('Please enter your email address to reset password.');
       return;
     }
-    
+
     try {
       setLoading(true);
       await requestPasswordResetAction(email);
-      setError('Password reset link generated (if account exists).');
+      setNotice('Password reset link generated (if account exists).');
     } catch (err: any) {
       setError(err.message || 'Failed to send reset email.');
     } finally {
@@ -87,7 +108,7 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#0d0d0d] flex flex-col justify-center py-12 sm:px-6 lg:px-8 absolute inset-0 z-50">
+    <div className="min-h-screen w-full bg-[#0d0d0d] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center items-center mb-6">
           <Sparkles className="text-champagne w-8 h-8 mr-2" />
@@ -105,7 +126,12 @@ export default function AdminLoginPage() {
           <form className="space-y-6" onSubmit={handleLogin}>
             {error && (
               <div className="bg-red-500/10 border border-red-500/50 rounded p-3">
-                <p className="text-sm text-red-500">{error}</p>
+                <p className="text-sm text-red-400">{error}</p>
+              </div>
+            )}
+            {notice && (
+              <div className="bg-emerald-500/10 border border-emerald-500/40 rounded p-3">
+                <p className="text-sm text-emerald-300">{notice}</p>
               </div>
             )}
             

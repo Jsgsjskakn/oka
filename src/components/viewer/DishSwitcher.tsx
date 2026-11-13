@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, ChevronDown, Check, Sparkles } from 'lucide-
 
 export interface DishSwitcherItem {
   id: string;
+  slug?: string;
   name: string;
   image: string;
   price?: number;
@@ -56,11 +57,21 @@ export function DishSwitcher({
 
   // Dropdown open/close state
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [scrollState, setScrollState] = useState<{ canLeft: boolean; canRight: boolean }>({
+    canLeft: false,
+    canRight: false,
+  });
 
   // Active dish object
   const activeDish = useMemo(() => {
-    return dishes.find((d) => d.id === currentDishId) || dishes[0];
+    return (
+      dishes.find((d) => d.id === currentDishId || d.slug === currentDishId) ||
+      dishes[0]
+    );
   }, [dishes, currentDishId]);
+
+  const activeDishKey = activeDish?.id || currentDishId;
+  const activeDishCategory = (activeDish?.category || currentCategory || 'pizza').toLowerCase();
 
   // Derived category list with counts
   const categories = useMemo(() => {
@@ -84,20 +95,32 @@ export function DishSwitcher({
     }));
   }, [dishes]);
 
-  // Active category filter: defaults to the active dish's category
-  const [selectedCategory, setSelectedCategory] = useState<string>(() => {
-    return (activeDish?.category || currentCategory || 'pizza').toLowerCase();
-  });
+  // Derived category filter: 'all' persists across dish clicks; otherwise follows activeDish or pending manual switch
+  const [isAllMode, setIsAllMode] = useState(false);
+  const [pendingCategory, setPendingCategory] = useState<{
+    category: string;
+    fromDishKey: string;
+  } | null>(null);
 
-  // When active dish changes from outside, sync category if needed
+  const selectedCategory = isAllMode
+    ? 'all'
+    : pendingCategory && pendingCategory.fromDishKey === activeDishKey
+      ? pendingCategory.category
+      : activeDishCategory;
+
+  // Clear pending category override asynchronously once the active dish switches
   useEffect(() => {
-    if (activeDish?.category && selectedCategory !== 'all') {
-      const dishCat = activeDish.category.toLowerCase();
-      if (dishCat !== selectedCategory) {
-        setSelectedCategory(dishCat);
+    if (!pendingCategory || pendingCategory.fromDishKey === activeDishKey) return;
+    let cancelled = false;
+    queueMicrotask(() => {
+      if (!cancelled) {
+        setPendingCategory(null);
       }
-    }
-  }, [activeDish, selectedCategory]);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [pendingCategory, activeDishKey]);
 
   // Click-outside listener to close dropdown
   useEffect(() => {
@@ -163,14 +186,26 @@ export function DishSwitcher({
 
   // Select a category from dropdown
   const handleSelectCategory = (catSlug: string) => {
-    setSelectedCategory(catSlug);
     setIsDropdownOpen(false);
 
-    // If active dish is not in the newly selected category, switch to the first dish of that category
-    if (catSlug !== 'all') {
-      const firstDishInCat = dishes.find((d) => (d.category || '').toLowerCase() === catSlug);
-      if (firstDishInCat && firstDishInCat.id !== currentDishId) {
-        onSwitchDish(firstDishInCat.id);
+    if (catSlug === 'all') {
+      setIsAllMode(true);
+      setPendingCategory(null);
+    } else {
+      setIsAllMode(false);
+      // If active dish is not in the newly selected category, switch to the first dish of that category
+      if (activeDishCategory !== catSlug) {
+        setPendingCategory({ category: catSlug, fromDishKey: activeDishKey });
+        const firstDishInCat = dishes.find((d) => (d.category || '').toLowerCase() === catSlug);
+        if (
+          firstDishInCat &&
+          firstDishInCat.id !== currentDishId &&
+          firstDishInCat.slug !== currentDishId
+        ) {
+          onSwitchDish(firstDishInCat.id);
+        }
+      } else {
+        setPendingCategory(null);
       }
     }
 
@@ -179,7 +214,39 @@ export function DishSwitcher({
     }
   };
 
-  // Scroll controls for dish filmstrip
+  // Scroll controls & overflow edge detection for dish filmstrip
+  const updateScrollIndicators = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const canLeft = el.scrollLeft > 4;
+    const canRight = el.scrollLeft + el.clientWidth < el.scrollWidth - 4;
+    setScrollState((prev) =>
+      prev.canLeft === canLeft && prev.canRight === canRight ? prev : { canLeft, canRight }
+    );
+  }, []);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const rafId = requestAnimationFrame(updateScrollIndicators);
+    el.addEventListener('scroll', updateScrollIndicators, { passive: true });
+    window.addEventListener('resize', updateScrollIndicators);
+
+    let resizeObserver: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(updateScrollIndicators);
+      resizeObserver.observe(el);
+    }
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      el.removeEventListener('scroll', updateScrollIndicators);
+      window.removeEventListener('resize', updateScrollIndicators);
+      resizeObserver?.disconnect();
+    };
+  }, [updateScrollIndicators, filteredDishes.length, selectedCategory]);
+
   const scroll = (direction: 'left' | 'right') => {
     if (scrollRef.current) {
       const offset = direction === 'left' ? -260 : 260;
@@ -190,9 +257,7 @@ export function DishSwitcher({
   // Auto-scroll active dish into view
   useEffect(() => {
     if (!scrollRef.current) return;
-    const activeEl = scrollRef.current.querySelector<HTMLElement>(
-      `[data-dish-id="${currentDishId}"]`
-    );
+    const activeEl = scrollRef.current.querySelector<HTMLElement>('[data-active="true"]');
     if (activeEl) {
       activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     }
@@ -208,13 +273,15 @@ export function DishSwitcher({
     [onSwitchDish]
   );
 
+  const hasFilmstripOverflow = scrollState.canLeft || scrollState.canRight;
+
   return (
     <div
-      className="fixed bottom-[108px] sm:bottom-3.5 left-1/2 -translate-x-1/2 lg:left-[calc((100vw-420px)/2)] lg:-translate-x-1/2 z-35 pointer-events-auto select-none w-[calc(100vw-24px)] max-w-[96vw] lg:max-w-4xl xl:max-w-5xl transition-all duration-300"
+      className="fixed bottom-[calc(max(12px,env(safe-area-inset-bottom))+96px)] sm:bottom-3.5 left-3 right-3 sm:left-4 sm:right-[332px] md:left-6 md:right-[356px] lg:left-8 lg:right-[392px] xl:right-[418px] sm:mx-auto sm:max-w-4xl xl:max-w-5xl z-[45] pointer-events-auto select-none transition-all duration-300"
       aria-label="Interactive Dish & Category Dock"
     >
       {/* Luxury Glass Dock */}
-      <div className="relative flex items-center gap-2.5 p-2 sm:p-2.5 rounded-2xl sm:rounded-3xl bg-[rgba(14,10,8,0.92)] backdrop-blur-2xl border border-[#F0C36B]/40 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_12px_42px_rgba(0,0,0,0.88)]">
+      <div className="relative flex items-center gap-1.5 sm:gap-2 lg:gap-2.5 p-1.5 sm:p-2 lg:p-2.5 rounded-2xl sm:rounded-3xl bg-[rgba(14,10,8,0.92)] backdrop-blur-2xl border border-[#F0C36B]/40 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_12px_42px_rgba(0,0,0,0.88)]">
         
         {/* ========================================================================= */}
         {/* SECTION 1: Single Category Button with Direct Dropdown Selector           */}
@@ -226,16 +293,16 @@ export function DishSwitcher({
             onClick={() => setIsDropdownOpen((prev) => !prev)}
             aria-expanded={isDropdownOpen}
             aria-haspopup="listbox"
-            className="group flex items-center gap-2 px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#F0C36B] to-[#D4A346] text-[#120E0B] font-serif font-bold text-xs sm:text-[13px] shadow-[0_2px_14px_rgba(240,195,107,0.45)] hover:shadow-[0_4px_18px_rgba(240,195,107,0.6)] active:scale-97 transition-all cursor-pointer border border-[#FFE3A5]/40"
+            className="group flex items-center gap-1 sm:gap-1.5 lg:gap-2 px-2 sm:px-2.5 lg:px-3.5 py-2 min-h-[44px] max-w-[144px] sm:max-w-[156px] lg:max-w-none rounded-xl bg-gradient-to-r from-[#F0C36B] to-[#D4A346] text-[#120E0B] font-serif font-bold text-[11px] lg:text-[13px] shadow-[0_2px_14px_rgba(240,195,107,0.45)] hover:shadow-[0_4px_18px_rgba(240,195,107,0.6)] active:scale-[0.97] transition-all cursor-pointer border border-[#FFE3A5]/40 touch-manipulation"
             title="Click to change food category"
           >
-            <span className="text-sm select-none">{currentCategoryInfo.emoji}</span>
-            <span className="tracking-tight">{currentCategoryInfo.label}</span>
-            <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded-full bg-[#120E0B]/20 text-[#120E0B]">
+            <span className="text-sm select-none shrink-0">{currentCategoryInfo.emoji}</span>
+            <span className="tracking-tight whitespace-nowrap truncate">{currentCategoryInfo.label}</span>
+            <span className="hidden min-[380px]:inline-flex text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-full bg-[#120E0B]/20 text-[#120E0B] shrink-0">
               {currentCategoryInfo.count}
             </span>
             <ChevronDown
-              className={`w-3.5 h-3.5 text-[#120E0B] transition-transform duration-200 ${
+              className={`w-3.5 h-3.5 text-[#120E0B] shrink-0 transition-transform duration-200 ${
                 isDropdownOpen ? 'rotate-180' : ''
               }`}
             />
@@ -248,7 +315,7 @@ export function DishSwitcher({
             <div
               role="listbox"
               aria-label="Food Categories"
-              className="absolute bottom-full mb-3 left-0 w-56 sm:w-64 rounded-2xl bg-[rgba(18,14,11,0.96)] backdrop-blur-2xl border border-[#F0C36B]/50 shadow-[0_20px_50px_rgba(0,0,0,0.95),inset_0_1px_1px_rgba(255,255,255,0.18)] p-2 z-50 animate-in fade-in slide-in-from-bottom-2 duration-200"
+              className="absolute bottom-full mb-2.5 left-0 w-56 sm:w-64 max-w-[calc(100vw-24px)] max-h-[min(320px,max(120px,calc(100dvh-250px)))] overflow-y-auto hide-scrollbar rounded-2xl bg-[rgba(18,14,11,0.96)] backdrop-blur-2xl border border-[#F0C36B]/50 shadow-[0_20px_50px_rgba(0,0,0,0.95),inset_0_1px_1px_rgba(255,255,255,0.18)] p-2 z-[60] animate-in fade-in slide-in-from-bottom-2 duration-200"
             >
               <div className="px-3 py-1.5 text-[10px] font-mono uppercase tracking-widest text-[#F0C36B]/70 font-semibold border-b border-white/[0.08] mb-1 flex items-center justify-between">
                 <span>Select Category</span>
@@ -261,7 +328,7 @@ export function DishSwitcher({
                 role="option"
                 aria-selected={selectedCategory === 'all'}
                 onClick={() => handleSelectCategory('all')}
-                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-serif font-bold transition-all cursor-pointer ${
+                className={`w-full min-h-[44px] flex items-center justify-between px-3 py-2 rounded-xl text-xs font-serif font-bold transition-all cursor-pointer touch-manipulation ${
                   selectedCategory === 'all'
                     ? 'bg-[#F0C36B]/20 text-[#FFE3A5] border border-[#F0C36B]/40'
                     : 'text-[#D8CFBE] hover:text-white hover:bg-white/[0.07]'
@@ -272,7 +339,7 @@ export function DishSwitcher({
                   <span>All Dishes</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-white/10 text-[#F0C36B]">
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-white/10 text-[#F0C36B]">
                     {dishes.length}
                   </span>
                   {selectedCategory === 'all' && (
@@ -292,7 +359,7 @@ export function DishSwitcher({
                     role="option"
                     aria-selected={isSelected}
                     onClick={() => handleSelectCategory(cat.slug)}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-serif font-bold transition-all cursor-pointer mt-0.5 ${
+                    className={`w-full min-h-[44px] flex items-center justify-between px-3 py-2 rounded-xl text-xs font-serif font-bold transition-all cursor-pointer touch-manipulation mt-0.5 ${
                       isSelected
                         ? 'bg-[#F0C36B]/20 text-[#FFE3A5] border border-[#F0C36B]/40'
                         : 'text-[#D8CFBE] hover:text-white hover:bg-white/[0.07]'
@@ -303,7 +370,7 @@ export function DishSwitcher({
                       <span>{cat.label}</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-white/10 text-[#F0C36B]">
+                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-white/10 text-[#F0C36B]">
                         {cat.count}
                       </span>
                       {isSelected && (
@@ -325,42 +392,47 @@ export function DishSwitcher({
         {/* ========================================================================= */}
         <div className="relative flex-1 flex items-center min-w-0">
           {/* Left Scroll Chevron */}
-          <button
-            type="button"
-            onClick={() => scroll('left')}
-            className="hidden sm:flex w-7 h-7 rounded-lg items-center justify-center bg-white/[0.04] hover:bg-[#F0C36B]/20 text-[#F0C36B] border border-white/10 hover:border-[#F0C36B]/50 active:scale-90 transition-all shrink-0 cursor-pointer mr-1.5"
-            aria-label="Previous dishes"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
+          {hasFilmstripOverflow && (
+            <button
+              type="button"
+              onClick={() => scroll('left')}
+              disabled={!scrollState.canLeft}
+              className="hidden md:flex w-7 h-7 rounded-lg items-center justify-center bg-white/[0.04] hover:bg-[#F0C36B]/20 text-[#F0C36B] border border-white/10 hover:border-[#F0C36B]/50 active:scale-90 transition-all shrink-0 cursor-pointer mr-1.5 disabled:opacity-30 disabled:pointer-events-none"
+              aria-label="Previous dishes"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+          )}
 
           {/* Scrollable Filmstrip of Large, Tactile Mouse-Interactive Dish Cards */}
           <div
             ref={scrollRef}
-            className="overflow-x-auto no-scrollbar scroll-smooth flex items-center gap-2.5 py-1 px-0.5 flex-1 overflow-y-visible"
+            className="overflow-x-auto hide-scrollbar scroll-smooth flex items-center gap-2 lg:gap-2.5 py-1 px-0.5 flex-1 overflow-y-visible"
           >
             {filteredDishes.map((dishItem) => {
-              const isActive = dishItem.id === currentDishId;
+              const isActive =
+                dishItem.id === currentDishId || dishItem.slug === currentDishId;
 
               return (
                 <button
                   key={dishItem.id}
                   data-dish-id={dishItem.id}
+                  data-active={isActive ? 'true' : undefined}
                   type="button"
                   onClick={() => handleDishClick(dishItem.id)}
-                  className={`group relative flex items-center gap-2.5 p-1.5 pr-3.5 rounded-xl border text-left cursor-pointer transition-all duration-200 shrink-0 select-none ${
+                  className={`group relative flex items-center gap-2 lg:gap-2.5 p-1 lg:p-1.5 pr-2.5 lg:pr-3.5 rounded-xl border text-left cursor-pointer transition-all duration-200 shrink-0 select-none touch-manipulation ${
                     isActive
                       ? 'bg-gradient-to-r from-[#F0C36B]/25 via-[#231A13] to-[#18130F] border-[#F0C36B] shadow-[0_0_24px_rgba(240,195,107,0.45),inset_0_1px_1px_rgba(255,255,255,0.22)] ring-1 ring-[#F0C36B]/40'
-                      : 'bg-[#18130F]/90 hover:bg-[#241C16] border-white/10 hover:border-[#F0C36B]/60 shadow-[0_4px_16px_rgba(0,0,0,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.7)] hover:-translate-y-1'
+                      : 'bg-[#18130F]/90 hover:bg-[#241C16] border-white/10 hover:border-[#F0C36B]/60 shadow-[0_4px_16px_rgba(0,0,0,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.7)] sm:hover:-translate-y-1'
                   }`}
                   title={`Select ${dishItem.name}`}
                 >
                   {/* High-Resolution Close-Up Dish Thumbnail */}
-                  <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden shrink-0 bg-[#0C0907] border border-white/15">
+                  <div className="relative w-12 h-12 sm:w-11 sm:h-11 lg:w-14 lg:h-14 xl:w-16 xl:h-16 rounded-lg overflow-hidden shrink-0 bg-[#0C0907] border border-white/15">
                     <img
                       src={dishItem.image}
                       alt={dishItem.name}
-                      className="w-full h-full object-cover scale-105 group-hover:scale-120 transition-transform duration-300 pointer-events-none"
+                      className="w-full h-full object-cover scale-105 group-hover:scale-110 transition-transform duration-300 pointer-events-none"
                       loading="lazy"
                     />
                     {/* Veg / Non-Veg Indicator Dot */}
@@ -374,21 +446,21 @@ export function DishSwitcher({
                   </div>
 
                   {/* Dish Name & Price for Easy Mouse Selection */}
-                  <div className="flex flex-col min-w-[95px] max-w-[130px] sm:max-w-[160px]">
-                    <span className="text-[12px] sm:text-[13px] font-serif font-bold text-[#FAF5EC] truncate group-hover:text-[#F0C36B] transition-colors leading-tight">
+                  <div className="flex flex-col min-w-[78px] max-w-[112px] lg:min-w-[95px] lg:max-w-[160px]">
+                    <span className="text-[11.5px] lg:text-[13px] font-serif font-bold text-[#FAF5EC] truncate group-hover:text-[#F0C36B] transition-colors leading-tight">
                       {dishItem.name}
                     </span>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-[11px] font-mono font-bold text-[#F0C36B]">
+                    <div className="flex items-center gap-1.5 lg:gap-2 mt-1">
+                      <span className="text-[10.5px] lg:text-[11px] font-mono font-bold text-[#F0C36B]">
                         ₹{Math.round(dishItem.price || 0)}
                       </span>
                       {isActive ? (
-                        <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider font-bold text-[#F0C36B] bg-[#F0C36B]/15 px-1.5 py-0.2 rounded border border-[#F0C36B]/30">
+                        <span className="inline-flex items-center gap-1 text-[8.5px] lg:text-[9px] uppercase tracking-wider font-bold text-[#F0C36B] bg-[#F0C36B]/15 px-1.5 py-0.5 rounded border border-[#F0C36B]/30">
                           <span className="w-1.5 h-1.5 rounded-full bg-[#F0C36B] animate-pulse" />
                           Viewing
                         </span>
                       ) : (
-                        <span className="text-[9px] text-[#A69B8D] uppercase tracking-wider group-hover:text-[#E0D8CC]">
+                        <span className="text-[8.5px] lg:text-[9px] text-[#A69B8D] uppercase tracking-wider group-hover:text-[#E0D8CC]">
                           Select
                         </span>
                       )}
@@ -400,14 +472,17 @@ export function DishSwitcher({
           </div>
 
           {/* Right Scroll Chevron */}
-          <button
-            type="button"
-            onClick={() => scroll('right')}
-            className="hidden sm:flex w-7 h-7 rounded-lg items-center justify-center bg-white/[0.04] hover:bg-[#F0C36B]/20 text-[#F0C36B] border border-white/10 hover:border-[#F0C36B]/50 active:scale-90 transition-all shrink-0 cursor-pointer ml-1.5"
-            aria-label="Next dishes"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
+          {hasFilmstripOverflow && (
+            <button
+              type="button"
+              onClick={() => scroll('right')}
+              disabled={!scrollState.canRight}
+              className="hidden md:flex w-7 h-7 rounded-lg items-center justify-center bg-white/[0.04] hover:bg-[#F0C36B]/20 text-[#F0C36B] border border-white/10 hover:border-[#F0C36B]/50 active:scale-90 transition-all shrink-0 cursor-pointer ml-1.5 disabled:opacity-30 disabled:pointer-events-none"
+              aria-label="Next dishes"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          )}
         </div>
 
       </div>

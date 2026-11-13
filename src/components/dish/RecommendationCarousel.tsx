@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { resolveDishImageUrl } from '@/lib/utils/dish-images';
 import type { Dish } from '@/types/menu';
 
 interface RecommendationCarouselProps {
@@ -26,9 +27,10 @@ export function RecommendationCarousel({ dishes }: RecommendationCarouselProps) 
           >
             <div className="relative w-full aspect-square">
               <Image
-                src={dish.image || '/images/dishes/placeholder.jpg'}
+                src={resolveDishImageUrl(dish.slug, dish.image)}
                 alt={dish.name}
                 fill
+                sizes="160px"
                 className="object-cover transition-transform duration-700 group-hover:scale-105"
               />
             </div>

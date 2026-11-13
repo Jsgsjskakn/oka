@@ -1,24 +1,100 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { MenuHeader } from '@/components/menu/MenuHeader';
+import { useState, useMemo, useEffect } from 'react';
 import { FilterSheet, FilterState } from '@/components/menu/FilterSheet';
-import { SortSheet, SortOption } from '@/components/menu/SortSheet';
 import { DishGrid } from '@/components/menu/DishGrid';
 import { EmptyState } from '@/components/menu/EmptyState';
+import type { SortOption } from '@/components/menu/SortSheet';
+import { useCartStore } from '@/store/cart-store';
 import { Category, DishWithCategory } from '@/lib/db/types';
-import { Search, X, SlidersHorizontal, ArrowUpDown, Sparkles } from 'lucide-react';
+import { Search, X, SlidersHorizontal, Sparkles, UtensilsCrossed } from 'lucide-react';
 
 interface MenuClientProps {
   categories: Category[];
   initialDishes: DishWithCategory[];
   initialCategory?: string;
+  initialFilter?: string;
+  initialTable?: string;
+  initialSearch?: string;
 }
 
-export function MenuClient({ categories, initialDishes, initialCategory = 'all' }: MenuClientProps) {
-  const [searchQuery, setSearchQuery] = useState('');
+const EDITORIAL_CATEGORY_LABELS: Record<string, string> = {
+  pizza: 'Wood-Fired Pizzas',
+  burger: 'Artisanal Burgers',
+  chinese: 'Wok & Oriental',
+  starters: 'Small Plates',
+  desserts: 'Patisserie & Desserts',
+};
+
+function resolveCategorySlug(categories: Category[], rawCategory?: string): string {
+  if (!rawCategory || rawCategory === 'all') return 'all';
+  const matched = categories.find((c) => c.id === rawCategory || c.slug === rawCategory);
+  return matched?.slug || rawCategory;
+}
+
+function normalizeCollectionFilter(raw?: string): 'featured' | 'bestsellers' | null {
+  if (raw === 'featured') return 'featured';
+  if (raw === 'bestsellers') return 'bestsellers';
+  return null;
+}
+
+function parseValidTable(raw?: string): string {
+  const clean = String(raw || '').replace(/\D/g, '').slice(0, 2);
+  if (!clean) return '';
+  const num = Number(clean);
+  return Number.isInteger(num) && num >= 1 && num <= 30 ? String(num) : '';
+}
+
+export function MenuClient({
+  categories,
+  initialDishes,
+  initialCategory = 'all',
+  initialFilter,
+  initialTable,
+  initialSearch = '',
+}: MenuClientProps) {
+  const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [activeCategory, setActiveCategory] = useState(initialCategory);
+  const [activeCategory, setActiveCategory] = useState(() =>
+    resolveCategorySlug(categories, initialCategory)
+  );
+  const [collectionFilter, setCollectionFilter] = useState<'featured' | 'bestsellers' | null>(() =>
+    normalizeCollectionFilter(initialFilter)
+  );
+  const storedTableNumber = useCartStore((s) => s.tableNumber);
+  const setStoredTableNumber = useCartStore((s) => s.setTableNumber);
+  const [isMounted, setIsMounted] = useState(false);
+
+  const qrTableNumber = useMemo(() => parseValidTable(initialTable), [initialTable]);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    setActiveCategory(resolveCategorySlug(categories, initialCategory));
+  }, [categories, initialCategory]);
+
+  useEffect(() => {
+    setCollectionFilter(normalizeCollectionFilter(initialFilter));
+    if (initialFilter === 'popular') {
+      setFilters((prev) => ({ ...prev, popularOnly: true }));
+    }
+  }, [initialFilter]);
+
+  useEffect(() => {
+    if (initialSearch !== undefined) {
+      setSearchQuery(initialSearch);
+    }
+  }, [initialSearch]);
+
+  useEffect(() => {
+    if (qrTableNumber) {
+      setStoredTableNumber(qrTableNumber);
+    }
+  }, [qrTableNumber, setStoredTableNumber]);
+
+  const activeTableNumber = qrTableNumber || (isMounted ? storedTableNumber : '');
 
   const handleSearchChange = (val: string) => {
     setSearchQuery(val);
@@ -28,37 +104,56 @@ export function MenuClient({ categories, initialDishes, initialCategory = 'all' 
   };
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [isSortOpen, setIsSortOpen] = useState(false);
 
-  const [filters, setFilters] = useState<FilterState>({
+  const [filters, setFilters] = useState<FilterState>(() => ({
     vegOnly: false,
     nonVegOnly: false,
     priceRange: 'all',
-    popularOnly: false,
-  });
+    popularOnly: initialFilter === 'popular',
+  }));
 
   const [sort, setSort] = useState<SortOption>('recommended');
 
-  // Compute category counts
+  // Compute live category counts accurately from loaded dishes
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = { all: initialDishes.length };
     for (const d of initialDishes) {
       const catSlug = d.categories?.slug || 'other';
-      counts[catSlug] = (counts[catSlug] || 0) + 1;
+      counts[catSlug] = (counts[catSlug] ?? 0) + 1;
     }
     return counts;
   }, [initialDishes]);
 
-  // Clean Editorial Category Tabs (NO EMOJIS)
+  // Dynamic editorial category tabs (no hardcoded counts or stale defaults)
   const categoryTabs = useMemo(() => {
+    const activeSlugs = categories
+      .filter((c) => c.is_active !== false && (categoryCounts[c.slug] ?? 0) > 0)
+      .map((c) => ({
+        id: c.slug,
+        label: EDITORIAL_CATEGORY_LABELS[c.slug] || c.name,
+        count: categoryCounts[c.slug] ?? 0,
+      }));
+
+    if (activeSlugs.length === 0) {
+      const seen = new Set<string>();
+      for (const dish of initialDishes) {
+        const slug = dish.categories?.slug;
+        if (slug && !seen.has(slug)) {
+          seen.add(slug);
+          activeSlugs.push({
+            id: slug,
+            label: EDITORIAL_CATEGORY_LABELS[slug] || dish.categories?.name || slug,
+            count: categoryCounts[slug] ?? 0,
+          });
+        }
+      }
+    }
+
     return [
-      { id: 'all', label: 'All Creations', count: categoryCounts['all'] || 10 },
-      { id: 'pizza', label: 'Wood-Fired Pizzas', count: categoryCounts['pizza'] || 5 },
-      { id: 'burger', label: 'Artisanal Burgers', count: categoryCounts['burger'] || 3 },
-      { id: 'chinese', label: 'Wok & Oriental', count: categoryCounts['chinese'] || 1 },
-      { id: 'starters', label: 'Small Plates', count: categoryCounts['starters'] || 1 },
+      { id: 'all', label: 'All Creations', count: categoryCounts['all'] ?? 0 },
+      ...activeSlugs,
     ];
-  }, [categoryCounts]);
+  }, [categories, categoryCounts, initialDishes]);
 
   // Filter & Sort Logic
   const filteredAndSortedDishes = useMemo(() => {
@@ -84,7 +179,12 @@ export function MenuClient({ categories, initialDishes, initialCategory = 'all' 
       });
     }
 
-    // 3. UI Filters
+    // 3. UI & Deep-Link Filters
+    if (collectionFilter === 'featured') {
+      result = result.filter((d) => d.is_featured);
+    } else if (collectionFilter === 'bestsellers') {
+      result = result.filter((d) => d.is_best_seller);
+    }
     if (filters.vegOnly) {
       result = result.filter((d) => d.is_veg);
     }
@@ -124,10 +224,11 @@ export function MenuClient({ categories, initialDishes, initialCategory = 'all' 
     }
 
     return result;
-  }, [searchQuery, activeCategory, filters, sort, initialDishes, categories]);
+  }, [searchQuery, activeCategory, collectionFilter, filters, sort, initialDishes, categories]);
 
   const clearFilters = () => {
     setSearchQuery('');
+    setCollectionFilter(null);
     setFilters({ vegOnly: false, nonVegOnly: false, priceRange: 'all', popularOnly: false });
     setSort('recommended');
     setActiveCategory('all');
@@ -135,6 +236,7 @@ export function MenuClient({ categories, initialDishes, initialCategory = 'all' 
 
   let activeFilterCount = 0;
   if (activeCategory !== 'all') activeFilterCount++;
+  if (collectionFilter) activeFilterCount++;
   if (filters.vegOnly || filters.nonVegOnly) activeFilterCount++;
   if (filters.priceRange !== 'all') activeFilterCount++;
   if (filters.popularOnly) activeFilterCount++;
@@ -190,10 +292,10 @@ export function MenuClient({ categories, initialDishes, initialCategory = 'all' 
                     <button
                       type="button"
                       onClick={() => handleSearchChange('')}
-                      className="pr-3 text-[#9A9286] hover:text-[#FAF5EC] transition-colors"
+                      className="min-w-[36px] min-h-[36px] mr-1 flex items-center justify-center rounded-md text-[#9A9286] hover:text-[#FAF5EC] transition-colors"
                       aria-label="Clear search"
                     >
-                      <X className="w-3.5 h-3.5" />
+                      <X className="w-4 h-4" />
                     </button>
                   ) : (
                     <kbd className="hidden sm:inline mr-2 px-1 py-0.5 rounded bg-white/[0.06] border border-white/10 text-[9px] font-mono text-[#9A9286] pointer-events-none">
@@ -210,7 +312,7 @@ export function MenuClient({ categories, initialDishes, initialCategory = 'all' 
                     onClick={() =>
                       setFilters((f) => ({ ...f, vegOnly: !f.vegOnly, nonVegOnly: false }))
                     }
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] text-xs font-semibold whitespace-nowrap transition-all duration-200 active:scale-95 border ${
+                    className={`min-h-[40px] flex items-center gap-1.5 px-3 py-2 rounded-[6px] text-xs font-semibold whitespace-nowrap transition-all duration-200 active:scale-95 border ${
                       filters.vegOnly
                         ? 'bg-[#22C58B]/20 border-[#22C58B] text-[#22C58B] shadow-[0_0_12px_rgba(34,197,139,0.25)]'
                         : 'bg-[#16120E] border-white/10 text-[#9A9286] hover:text-[#FAF5EC]'
@@ -230,7 +332,7 @@ export function MenuClient({ categories, initialDishes, initialCategory = 'all' 
                     onClick={() =>
                       setFilters((f) => ({ ...f, nonVegOnly: !f.nonVegOnly, vegOnly: false }))
                     }
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] text-xs font-semibold whitespace-nowrap transition-all duration-200 active:scale-95 border ${
+                    className={`min-h-[40px] flex items-center gap-1.5 px-3 py-2 rounded-[6px] text-xs font-semibold whitespace-nowrap transition-all duration-200 active:scale-95 border ${
                       filters.nonVegOnly
                         ? 'bg-rose-500/20 border-rose-500 text-rose-300 shadow-[0_0_12px_rgba(244,63,94,0.25)]'
                         : 'bg-[#16120E] border-white/10 text-[#9A9286] hover:text-[#FAF5EC]'
@@ -250,7 +352,7 @@ export function MenuClient({ categories, initialDishes, initialCategory = 'all' 
                     onClick={() =>
                       setFilters((f) => ({ ...f, popularOnly: !f.popularOnly }))
                     }
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] text-xs font-semibold whitespace-nowrap transition-all duration-200 active:scale-95 border ${
+                    className={`min-h-[40px] flex items-center gap-1.5 px-3 py-2 rounded-[6px] text-xs font-semibold whitespace-nowrap transition-all duration-200 active:scale-95 border ${
                       filters.popularOnly
                         ? 'bg-[#E2A84B]/20 border-[#E2A84B] text-[#E2A84B] shadow-[0_0_12px_rgba(226,168,75,0.25)]'
                         : 'bg-[#16120E] border-white/10 text-[#9A9286] hover:text-[#FAF5EC]'
@@ -264,7 +366,7 @@ export function MenuClient({ categories, initialDishes, initialCategory = 'all' 
                   <button
                     type="button"
                     onClick={() => setIsFilterOpen(true)}
-                    className={`h-[31px] px-3 rounded-[6px] flex items-center justify-center gap-1.5 text-xs font-semibold whitespace-nowrap transition-all active:scale-95 border ${
+                    className={`min-h-[40px] px-3.5 rounded-[6px] flex items-center justify-center gap-1.5 text-xs font-semibold whitespace-nowrap transition-all active:scale-95 border ${
                       activeFilterCount > 0
                         ? 'bg-[#E2A84B]/20 border-[#E2A84B] text-[#FAF5EC] shadow-[0_0_12px_rgba(226,168,75,0.2)]'
                         : 'bg-[#16120E] border-white/10 hover:border-[#E2A84B]/40 text-[#FAF5EC] hover:text-[#E2A84B]'
@@ -282,14 +384,31 @@ export function MenuClient({ categories, initialDishes, initialCategory = 'all' 
               </div>
             </div>
 
+          {/* Active QR Table Dining Banner */}
+          {activeTableNumber && (
+            <div className="pt-3 px-4 sm:px-6 lg:px-8 max-w-[1360px] mx-auto">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0E1F18] border border-[#E2A84B]/35 text-xs text-[#FAF5EC]">
+                <UtensilsCrossed className="w-3.5 h-3.5 text-[#E2A84B] shrink-0" />
+                <span>
+                  Dining at <strong className="text-[#E2A84B]">Table #{activeTableNumber}</strong> · Auto-linked to checkout
+                </span>
+              </div>
+            </div>
+          )}
+
           {/* Active Filter Indicators Bar */}
-          {(searchQuery || activeCategory !== 'all' || filters.vegOnly || filters.nonVegOnly || filters.popularOnly || filters.priceRange !== 'all') && (
+          {(searchQuery || activeCategory !== 'all' || collectionFilter || filters.vegOnly || filters.nonVegOnly || filters.popularOnly || filters.priceRange !== 'all' || sort !== 'recommended') && (
             <div className="pt-3 px-4 sm:px-6 lg:px-8 max-w-[1360px] mx-auto flex flex-wrap items-center justify-between gap-2 text-xs text-[#9A9286]">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <span>
                   {activeCategory !== 'all' ? (
                     <span className="text-[#FAF5EC] font-medium">
-                      Category: <span className="text-[#E2A84B] font-semibold">{categoryTabs.find((c) => c.id === activeCategory)?.label}</span> · 
+                      Category: <span className="text-[#E2A84B] font-semibold">{categoryTabs.find((c) => c.id === activeCategory)?.label || activeCategory}</span> · 
+                    </span>
+                  ) : null}
+                  {collectionFilter ? (
+                    <span className="text-[#FAF5EC] font-medium">
+                      Collection: <span className="text-[#E2A84B] font-semibold">{collectionFilter === 'featured' ? 'Featured' : 'Best Sellers'}</span> · 
                     </span>
                   ) : null}
                   Showing results for current filters ({filteredAndSortedDishes.length} items)
@@ -298,7 +417,7 @@ export function MenuClient({ categories, initialDishes, initialCategory = 'all' 
               <button
                 type="button"
                 onClick={clearFilters}
-                className="text-[#E2A84B] hover:underline font-semibold"
+                className="min-h-[36px] px-2 -mr-2 text-[#E2A84B] hover:underline font-semibold"
               >
                 Reset All Filters
               </button>
@@ -321,7 +440,12 @@ export function MenuClient({ categories, initialDishes, initialCategory = 'all' 
         isOpen={isFilterOpen}
         onClose={() => setIsFilterOpen(false)}
         filters={filters}
-        onApply={(f) => setFilters(f)}
+        onApply={(f) => {
+          setFilters(f);
+          if (!f.vegOnly && !f.nonVegOnly && !f.popularOnly && f.priceRange === 'all') {
+            setCollectionFilter(null);
+          }
+        }}
         currentSort={sort}
         onSelectSort={(s) => setSort(s)}
         categories={categoryTabs}

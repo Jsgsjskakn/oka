@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth/convex-auth-actions';
-import { createClient } from '@/lib/supabase/server';
+import { createClient, isSupabaseConfigured } from '@/lib/supabase/server';
 
 export async function GET() {
   try {
@@ -20,29 +20,31 @@ export async function GET() {
     }
 
     // 2. Secondary: Supabase fallback
-    try {
-      const supabase = await createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: profile } = (await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .single()) as { data: any; error: any };
+    if (isSupabaseConfigured()) {
+      try {
+        const supabase = await createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: profile } = (await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', user.id)
+            .single()) as { data: any; error: any };
 
-        return NextResponse.json({
-          authenticated: true,
-          user: {
-            id: user.id,
-            name: profile?.name || user.email?.split('@')[0] || 'Customer',
-            email: user.email || '',
-            phone: profile?.phone || '',
-            role: profile?.role || 'customer',
-          },
-        });
+          return NextResponse.json({
+            authenticated: true,
+            user: {
+              id: user.id,
+              name: profile?.name || user.email?.split('@')[0] || 'Customer',
+              email: user.email || '',
+              phone: profile?.phone || '',
+              role: profile?.role || 'customer',
+            },
+          });
+        }
+      } catch {
+        // Supabase unavailable
       }
-    } catch {
-      // Supabase unavailable
     }
 
     return NextResponse.json({

@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { requireAdmin } from '@/lib/auth/admin-auth';
 import { formatMoney } from '@/lib/db/types';
-import { createClient } from '@/lib/supabase/server';
+import { createClient, isSupabaseConfigured } from '@/lib/supabase/server';
 import { getAllDishes } from '@/lib/services/menu.service';
 import {
   TrendingUp,
@@ -15,7 +15,6 @@ import {
   ClipboardList,
   ChefHat,
   ChevronDown,
-  ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
 
@@ -27,7 +26,6 @@ export const dynamic = 'force-dynamic';
 
 export default async function AdminDashboardPage() {
   await requireAdmin();
-  const supabase = await createClient();
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -35,6 +33,7 @@ export default async function AdminDashboardPage() {
   // 1. Orders (Convex Primary, Supabase Fallback)
   let totalOrdersToday = 0;
   let revenueTodayPaise = 0;
+  const dishOrderCounts = new Map<string, number>();
 
   try {
     const { fetchQuery } = await import('convex/nextjs');
@@ -47,13 +46,30 @@ export default async function AdminDashboardPage() {
       revenueTodayPaise = todaysConvexOrders
         .filter((o: any) => o.status === 'completed' || o.status === 'delivered')
         .reduce((sum: number, o: any) => sum + (o.totalPaise || 0), 0);
+
+      for (const order of convexOrders) {
+        if (order.status === 'cancelled') continue;
+        for (const item of order.items || []) {
+          const qty = Number(item.quantity) || 1;
+          if (item.dishId) {
+            dishOrderCounts.set(item.dishId, (dishOrderCounts.get(item.dishId) || 0) + qty);
+          }
+          if (item.dishName) {
+            dishOrderCounts.set(
+              item.dishName.toLowerCase(),
+              (dishOrderCounts.get(item.dishName.toLowerCase()) || 0) + qty
+            );
+          }
+        }
+      }
     }
   } catch {
     // fallback
   }
 
-  if (totalOrdersToday === 0) {
+  if (totalOrdersToday === 0 && isSupabaseConfigured()) {
     try {
+      const supabase = await createClient();
       const { data: todaysOrders } = await supabase
         .from('orders')
         .select('total_paise, status')
@@ -67,8 +83,8 @@ export default async function AdminDashboardPage() {
     }
   }
 
-  const displayRevenue = revenueTodayPaise > 0 ? formatMoney(revenueTodayPaise) : '₹ 11,256';
-  const displayOrders = totalOrdersToday > 0 ? totalOrdersToday : 248;
+  const displayRevenue = formatMoney(revenueTodayPaise);
+  const displayOrders = totalOrdersToday;
 
   // 2. Real Dishes from Database / Menu Service
   let realDishes: any[] = [];
@@ -148,10 +164,17 @@ export default async function AdminDashboardPage() {
   const trendingDishes = (realDishes && realDishes.length > 0)
     ? realDishes.slice(0, 5).map((d: any, idx: number) => ({
         name: d.name,
-        category: typeof d.category === 'string' ? d.category : (d.category?.name || 'Main Course'),
+        category:
+          typeof d.category === 'string'
+            ? d.category
+            : d.categories?.name || d.category?.name || 'Main Course',
         price_paise: d.price_paise || 44900,
         image_url: d.image_url || '/images/dishes/tandoori-paneer-pizza.webp',
-        orders: 248 - idx * 19,
+        orders:
+          dishOrderCounts.get(d.id) ??
+          dishOrderCounts.get(d.slug) ??
+          dishOrderCounts.get(String(d.name || '').toLowerCase()) ??
+          0,
         is_featured: Boolean(d.is_featured || d.is_best_seller || idx === 0 || idx === 1),
       }))
     : fallbackRealDishes.slice(0, 5);
@@ -631,22 +654,6 @@ export default async function AdminDashboardPage() {
               <span>View All</span>
               <ChevronRight className="w-3 h-3" />
             </Link>
-            <div className="flex items-center gap-1">
-              <button
-                type="button"
-                className="w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-zinc-400 hover:text-white transition-colors cursor-pointer"
-                title="Previous"
-              >
-                <ChevronLeft className="w-3 h-3" />
-              </button>
-              <button
-                type="button"
-                className="w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-zinc-400 hover:text-white transition-colors cursor-pointer"
-                title="Next"
-              >
-                <ChevronRight className="w-3 h-3" />
-              </button>
-            </div>
           </div>
         </div>
 

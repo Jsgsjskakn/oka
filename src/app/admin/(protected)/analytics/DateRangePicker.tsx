@@ -13,6 +13,13 @@ import {
   RotateCcw
 } from 'lucide-react';
 
+const PRESETS = [
+  { value: 'today', label: 'Today (Live 24h)' },
+  { value: '7d', label: 'Last 7 Days' },
+  { value: '30d', label: 'Last 30 Days' },
+  { value: '90d', label: 'Last Quarter (90d)' },
+];
+
 export default function DateRangePicker() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -23,20 +30,15 @@ export default function DateRangePicker() {
 
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'presets' | 'custom'>('presets');
+  const [dateError, setDateError] = useState<string | null>(null);
 
   // Interactive Calendar State
   const [viewDate, setViewDate] = useState<Date>(new Date());
   const [selectedStartDate, setSelectedStartDate] = useState<string>(customFrom || '');
   const [selectedEndDate, setSelectedEndDate] = useState<string>(customTo || '');
 
-  const presets = [
-    { value: 'today', label: 'Today (Live 24h)' },
-    { value: '7d', label: 'Last 7 Days' },
-    { value: '30d', label: 'Last 30 Days' },
-    { value: '90d', label: 'Last Quarter (90d)' },
-  ];
-
   const handleSelectPreset = (range: string) => {
+    setDateError(null);
     const params = new URLSearchParams();
     params.set('range', range);
     router.push(`?${params.toString()}`);
@@ -45,9 +47,10 @@ export default function DateRangePicker() {
 
   const handleApplyCustomRange = () => {
     if (!selectedStartDate || !selectedEndDate) {
-      alert('Please pick both start and end dates');
+      setDateError('Please pick both start and end dates.');
       return;
     }
+    setDateError(null);
     const params = new URLSearchParams();
     params.set('from', selectedStartDate);
     params.set('to', selectedEndDate);
@@ -92,7 +95,7 @@ export default function DateRangePicker() {
       const t = new Date(customTo).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
       return `${f} – ${t}`;
     }
-    const match = presets.find(p => p.value === currentRange);
+    const match = PRESETS.find(p => p.value === currentRange);
     return match ? match.label : 'Last 30 Days';
   }, [currentRange, customFrom, customTo]);
 
@@ -114,7 +117,7 @@ export default function DateRangePicker() {
         <>
           <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
           
-          <div className="absolute right-0 top-full mt-2 z-50 w-[330px] sm:w-[360px] bg-gradient-to-b from-zinc-900 via-zinc-900 to-zinc-950 border border-border-strong/90 rounded-2xl shadow-[0_25px_50px_rgba(0,0,0,0.9)] backdrop-blur-2xl p-5 space-y-4 animate-in fade-in zoom-in-95 duration-200">
+          <div className="absolute left-0 sm:left-auto sm:right-0 top-full mt-2 z-50 w-[min(360px,calc(100vw-2rem))] bg-gradient-to-b from-zinc-900 via-zinc-900 to-zinc-950 border border-border-strong/90 rounded-2xl shadow-[0_25px_50px_rgba(0,0,0,0.9)] backdrop-blur-2xl p-4 sm:p-5 space-y-4 animate-in fade-in zoom-in-95 duration-200">
             {/* Header / Tabs */}
             <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
               <div className="flex items-center gap-2">
@@ -152,7 +155,7 @@ export default function DateRangePicker() {
             {/* View 1: Quick Presets */}
             {activeTab === 'presets' && (
               <div className="space-y-1.5 animate-in fade-in duration-150">
-                {presets.map((preset) => {
+                {PRESETS.map((preset) => {
                   const isSelected = !customFrom && currentRange === preset.value;
 
                   return (
@@ -271,6 +274,10 @@ export default function DateRangePicker() {
                     <RotateCcw className="w-3.5 h-3.5" />
                   </button>
                 </div>
+
+                {dateError && (
+                  <p className="text-[11px] text-rose-300">{dateError}</p>
+                )}
 
                 {/* Apply Button */}
                 <button

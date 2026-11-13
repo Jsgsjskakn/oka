@@ -69,11 +69,13 @@ export function HeroSection() {
 
   useEffect(() => {
     setIsMounted(true);
+    let active = true;
 
     // Fetch customer account & past order history to link with explore dock
     fetch('/api/customer/history')
       .then((res) => res.json())
       .then((data) => {
+        if (!active) return;
         if (data?.user) {
           setCustomerAccount({
             id: data.user.id,
@@ -90,6 +92,10 @@ export function HeroSection() {
       .catch((err) => {
         console.warn('Customer account history fetch failed:', err);
       });
+
+    return () => {
+      active = false;
+    };
   }, [setAccountHistoryDishes, setCustomerAccount]);
 
   // Priority for Explore Dock:
@@ -211,10 +217,18 @@ export function HeroSection() {
           </div>
 
           {/* Right 5 Columns: Interactive Hotspot Overlay Linking to 3D Food Studio */}
-          <div className="lg:col-span-5 flex flex-col items-center justify-center relative min-h-[300px] sm:min-h-[380px]">
+          <div className="lg:col-span-5 flex flex-col items-start lg:items-center justify-center relative min-h-[72px] sm:min-h-[120px] lg:min-h-[380px]">
             <Link
               href="/3d/mushroom-truffle-pizza"
-              className="absolute inset-0 z-20 cursor-pointer flex flex-col items-center justify-center group"
+              className="lg:hidden inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs text-[#F8F2E8] border border-[#F0C36B]/55 bg-[#100C09]/85 backdrop-blur-md shadow-lg active:scale-95 transition-transform"
+            >
+              <RotateCw className="w-3.5 h-3.5 text-[#F0C36B]" />
+              <span className="font-medium tracking-wide">Inspect 360° Live 3D Dish</span>
+              <Box className="w-3.5 h-3.5 text-[#F0C36B]/90" />
+            </Link>
+            <Link
+              href="/3d/mushroom-truffle-pizza"
+              className="hidden lg:flex absolute inset-0 z-20 cursor-pointer flex-col items-center justify-center group"
               title="Click to explore Mushroom Truffle Pizza in 3D Food Lounge"
             >
               <div className="w-[300px] sm:w-[380px] h-[300px] sm:h-[380px] rounded-full border border-[#F0C36B]/0 group-hover:border-[#F0C36B]/30 group-hover:bg-[#F0C36B]/05 transition-all duration-500 pointer-events-none" />

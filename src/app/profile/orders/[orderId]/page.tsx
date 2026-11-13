@@ -81,25 +81,41 @@ export default async function OrderDetailPage({
   const taxRupees = rawOrder.tax_paise / 100;
   const totalRupees = rawOrder.total_paise / 100;
 
+  let formattedCreatedAt = rawOrder.created_at;
+  try {
+    const parsed = parseISO(rawOrder.created_at);
+    if (!isNaN(parsed.getTime())) {
+      formattedCreatedAt = format(parsed, 'MMM d, yyyy · h:mm a');
+    } else {
+      const fallback = new Date(rawOrder.created_at);
+      if (!isNaN(fallback.getTime())) {
+        formattedCreatedAt = format(fallback, 'MMM d, yyyy · h:mm a');
+      }
+    }
+  } catch {
+    // keep raw string
+  }
+
   return (
-    <div className="min-h-screen bg-obsidian text-text-primary pb-8">
-      <div className="px-4 py-5 flex items-center gap-3 border-b border-white/5 sticky top-0 bg-obsidian z-40">
+    <div className="min-h-[calc(100vh-76px)] sm:min-h-[calc(100vh-84px)] bg-obsidian text-text-primary pb-12">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-4 pb-4 flex items-center gap-3 border-b border-white/5">
         <Link
           href="/profile/orders"
-          className="w-10 h-10 flex items-center justify-center -ml-2 text-text-primary/70 hover:text-text-primary active:scale-95"
+          aria-label="Back to Orders"
+          className="w-10 h-10 flex items-center justify-center -ml-2 text-text-primary/70 hover:text-text-primary active:scale-95 rounded-full hover:bg-white/5"
         >
           <ChevronLeft className="w-6 h-6" />
         </Link>
-        <div className="flex-1">
-          <h1 className="font-heading text-lg font-bold">{rawOrder.id}</h1>
+        <div className="flex-1 min-w-0">
+          <h1 className="font-heading text-lg font-bold truncate">{rawOrder.id}</h1>
           <p className="text-[10px] text-text-primary/40">
-            {format(parseISO(rawOrder.created_at), 'MMM d, yyyy · h:mm a')}
+            {formattedCreatedAt}
           </p>
         </div>
         <OrderStatusBadge status={uiStatus} />
       </div>
 
-      <div className="max-w-md mx-auto w-full">
+      <div className="max-w-2xl mx-auto w-full px-4 sm:px-6">
         {/* Order Type */}
         <div className="px-4 py-5 border-b border-white/5">
           <p className="text-[10px] text-text-primary/40 uppercase tracking-widest mb-1">Order Type</p>

@@ -1,12 +1,18 @@
 import { mutation, query, internalMutation } from "./_generated/server";
 import { v } from "convex/values";
-import { authenticateCaller, ADMIN_ROLES } from "./authUtils";
+import {
+  authenticateCaller,
+  ADMIN_ROLES,
+  buildPhoneCandidates,
+  normalizePhone,
+} from "./authUtils";
 
 // WebCrypto PBKDF2 Password Hashing
 async function hashPassword(password: string, saltHex: string): Promise<string> {
   const enc = new TextEncoder();
+  const hexPairs = saltHex.match(/.{1,2}/g) ?? [];
   const saltBytes = new Uint8Array(
-    saltHex.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16))
+    hexPairs.map((byte) => parseInt(byte, 16))
   );
 
   const keyMaterial = await crypto.subtle.importKey(
@@ -51,7 +57,11 @@ export const signUp = mutation({
   },
   handler: async (ctx, args) => {
     const email = args.email.trim().toLowerCase();
-    if (!email || !args.password || args.password.length < 6) {
+    const trimmedName = args.name.trim();
+    if (!trimmedName || trimmedName.length < 2) {
+      return { error: "Name must be at least 2 characters." };
+    }
+    if (!email || !email.includes("@") || !args.password || args.password.length < 6) {
       return { error: "Valid email and password (minimum 6 characters) are required." };
     }
 
@@ -113,19 +123,30 @@ export const signIn = mutation({
     password: v.string(),
   },
   handler: async (ctx, args) => {
-    const ident = args.identifier.trim().toLowerCase();
-    
-    // Find user by email first, then phone
+    const rawIdent = args.identifier.trim();
+    const ident = rawIdent.toLowerCase();
+    if (!ident || !args.password) {
+      return { error: "Invalid email or password." };
+    }
+
+    // Find user by email first, then indexed phone lookup (only when identifier contains phone digits)
     let user = await ctx.db
       .query("users")
       .withIndex("by_email", (q) => q.eq("email", ident))
       .first();
 
-    if (!user) {
-      const allUsers = await ctx.db.query("users").collect();
-      user = allUsers.find(
-        (u) => u.phone && u.phone.replace(/[^0-9]/g, "") === ident.replace(/[^0-9]/g, "")
-      ) || null;
+    if (!user && normalizePhone(rawIdent)) {
+      const candidates = buildPhoneCandidates(rawIdent);
+      for (const candidate of candidates) {
+        const match = await ctx.db
+          .query("users")
+          .withIndex("by_phone", (q) => q.eq("phone", candidate))
+          .first();
+        if (match) {
+          user = match;
+          break;
+        }
+      }
     }
 
     if (!user) {
@@ -174,9 +195,12 @@ export const signOut = mutation({
     token: v.string(),
   },
   handler: async (ctx, args) => {
+    const token = args.token.trim();
+    if (!token) return { success: true };
+
     const session = await ctx.db
       .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token))
+      .withIndex("by_token", (q) => q.eq("token", token))
       .first();
 
     if (session) {
@@ -192,14 +216,15 @@ export const validateSession = query({
     token: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    if (!args.token) return null;
+    const token = args.token?.trim();
+    if (!token) return null;
 
     const session = await ctx.db
       .query("sessions")
-      .withIndex("by_token", (q) => q.eq("token", args.token!))
+      .withIndex("by_token", (q) => q.eq("token", token))
       .first();
 
-    if (!session || session.expiresAt < Date.now()) {
+    if (!session || session.expiresAt <= Date.now()) {
       return null;
     }
 
@@ -225,12 +250,16 @@ export const requestPasswordReset = mutation({
   },
   handler: async (ctx, args) => {
     const email = args.email.trim().toLowerCase();
+    if (!email) {
+      return { success: true };
+    }
+
     const user = await ctx.db
       .query("users")
       .withIndex("by_email", (q) => q.eq("email", email))
       .first();
 
-    if (!user) {
+    if (!user || !user.isActive) {
       // Return success anyway to avoid user enumeration
       return { success: true };
     }
@@ -255,16 +284,21 @@ export const resetPassword = mutation({
     newPassword: v.string(),
   },
   handler: async (ctx, args) => {
+    const token = args.token.trim();
+    if (!token) {
+      return { error: "Invalid or expired reset token." };
+    }
+
     if (args.newPassword.length < 6) {
       return { error: "Password must be at least 6 characters." };
     }
 
-    const allUsers = await ctx.db.query("users").collect();
-    const user = allUsers.find(
-      (u) => u.resetToken === args.token && (u.resetTokenExpiresAt || 0) > Date.now()
-    );
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_reset_token", (q) => q.eq("resetToken", token))
+      .first();
 
-    if (!user) {
+    if (!user || !user.isActive || (user.resetTokenExpiresAt ?? 0) <= Date.now()) {
       return { error: "Invalid or expired reset token." };
     }
 

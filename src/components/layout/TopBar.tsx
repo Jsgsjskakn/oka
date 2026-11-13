@@ -90,6 +90,24 @@ export function TopBar() {
   const openSpotlight = useSpotlightStore((s) => s.openSpotlight);
 
   useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMobileMenuOpen(false);
+    };
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [mobileMenuOpen]);
+
+  useEffect(() => {
     setIsMounted(true);
     fetch('/api/auth/me')
       .then((r) => r.json())
@@ -125,25 +143,25 @@ export function TopBar() {
           boxShadow: 'inset 0 1px 1px rgba(255, 255, 255, 0.20), 0 16px 45px rgba(0, 0, 0, 0.65)',
         }}
       >
-        <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto h-full px-3 sm:px-6 lg:px-8 flex items-center justify-between gap-2 sm:gap-4">
           {/* Left Zone: Brand Crest & Monogram */}
-          <Link href="/" className="flex items-center gap-2.5 sm:gap-3 group shrink-0">
+          <Link href="/" className="flex items-center gap-2 sm:gap-3 group min-w-0 shrink">
             {/* Ornate Golden Oak Tree Crest */}
-            <GoldenOakTreeLogo className="w-8 h-8 sm:w-9 sm:h-9 text-[#E2A84B] group-hover:scale-105 transition-transform" />
-            <div className="flex flex-col">
-              <span className="font-serif text-[19px] sm:text-[20px] font-bold tracking-tight text-[#FAF5EC] group-hover:text-[#E2A84B] transition-colors leading-none">
+            <GoldenOakTreeLogo className="w-7 h-7 sm:w-9 sm:h-9 text-[#E2A84B] group-hover:scale-105 transition-transform shrink-0" />
+            <div className="flex flex-col min-w-0">
+              <span className="font-serif text-[16px] min-[380px]:text-[18px] sm:text-[20px] font-bold tracking-tight text-[#FAF5EC] group-hover:text-[#E2A84B] transition-colors leading-none truncate">
                 The Golden Oak
               </span>
-              <span className="text-[8.5px] tracking-[0.25em] uppercase text-[#9A9286] font-medium mt-0.5 leading-none font-mono">
+              <span className="text-[7.5px] min-[380px]:text-[8.5px] tracking-[0.16em] min-[380px]:tracking-[0.25em] uppercase text-[#9A9286] font-medium mt-0.5 leading-none font-mono truncate">
                 RESTAURANT &amp; LOUNGE
               </span>
             </div>
           </Link>
 
           {/* Center Zone: Primary Editorial Nav Links */}
-          <nav className="hidden lg:flex items-center gap-6 xl:gap-8">
+          <nav className="hidden lg:flex items-center gap-6 xl:gap-8 shrink-0">
             {navLinks.map((link) => {
-              const isActive = link.href === '/' ? pathname === '/' : pathname.startsWith(link.href);
+              const isActive = link.href === '/' ? pathname === '/' : Boolean(pathname?.startsWith(link.href));
               const LinkIcon = link.icon;
               return (
                 <Link
@@ -177,7 +195,7 @@ export function TopBar() {
           </nav>
 
           {/* Right Zone: Action Cluster */}
-          <div className="flex items-center gap-2.5 sm:gap-3.5">
+          <div className="flex items-center gap-1.5 sm:gap-3.5 shrink-0">
             {/* Concierge Notification Bell (Exact Location of Red Box) */}
             <NotificationCenter />
 
@@ -186,7 +204,8 @@ export function TopBar() {
               type="button"
               onClick={() => openSpotlight()}
               title="Search Culinary Archive (⌘K)"
-              className="group flex items-center text-[#B5ADA2] hover:text-[#FAF5EC] transition-all p-1 active:scale-95 cursor-pointer shrink-0"
+              aria-label="Open culinary search"
+              className="group flex items-center justify-center text-[#B5ADA2] hover:text-[#FAF5EC] transition-all w-9 h-9 sm:w-auto sm:h-auto sm:p-1.5 rounded-full hover:bg-white/[0.05] active:scale-95 cursor-pointer shrink-0 touch-manipulation"
             >
               <Search className="w-4 h-4 transition-colors group-hover:text-[#F0C36B]" />
             </button>
@@ -204,12 +223,15 @@ export function TopBar() {
             <Link
               href="/cart"
               title="Your Dining Cart"
-              className="relative p-1 text-[#B5ADA2] hover:text-[#FAF5EC] transition-all flex items-center shrink-0"
+              aria-label="Your Dining Cart"
+              className="relative w-9 h-9 sm:w-auto sm:h-auto sm:p-1.5 rounded-full hover:bg-white/[0.05] text-[#B5ADA2] hover:text-[#FAF5EC] transition-all flex items-center justify-center shrink-0 touch-manipulation"
             >
               <ShoppingBag className="w-4 h-4 transition-transform hover:scale-105" />
-              <span className="absolute -top-1 -right-1.5 min-w-[15px] h-[15px] px-0.5 rounded-full bg-[#E0532B] text-white text-[8.5px] font-mono font-bold flex items-center justify-center shadow-[0_2px_6px_rgba(224,83,43,0.5)]">
-                {isMounted && totalCartItems > 0 ? (totalCartItems > 99 ? '99+' : totalCartItems) : '2'}
-              </span>
+              {isMounted && totalCartItems > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1.5 min-w-[15px] h-[15px] px-0.5 rounded-full bg-[#E0532B] text-white text-[8.5px] font-mono font-bold flex items-center justify-center shadow-[0_2px_6px_rgba(224,83,43,0.5)]">
+                  {totalCartItems > 99 ? '99+' : totalCartItems}
+                </span>
+              )}
             </Link>
 
             {/* Mobile Hamburger Button */}
@@ -217,7 +239,8 @@ export function TopBar() {
               type="button"
               onClick={() => setMobileMenuOpen(true)}
               aria-label="Open navigation drawer"
-              className="lg:hidden text-[#FAF5EC] hover:text-[#F0C36B] transition-colors p-1 shrink-0"
+              aria-expanded={mobileMenuOpen}
+              className="lg:hidden text-[#FAF5EC] hover:text-[#F0C36B] transition-colors w-9 h-9 rounded-full hover:bg-white/[0.05] flex items-center justify-center shrink-0 cursor-pointer touch-manipulation"
             >
               <MenuIcon className="w-5 h-5" />
             </button>
@@ -227,12 +250,12 @@ export function TopBar() {
 
       {/* Mobile Drawer Overlay */}
       {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-[100] flex">
+        <div role="dialog" aria-modal="true" aria-label="Mobile Navigation Drawer" className="lg:hidden fixed inset-0 z-[100] flex">
           <div
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
+            className="fixed inset-0 z-0 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
             onClick={() => setMobileMenuOpen(false)}
           />
-          <div className="relative ml-auto w-[280px] sm:w-[320px] h-full bg-[#0D0A08] border-l border-[#E2A84B]/20 p-6 flex flex-col justify-between shadow-2xl animate-in slide-in-from-right duration-200">
+          <div className="relative z-10 ml-auto w-[min(85vw,320px)] h-full max-h-[100dvh] overflow-y-auto overscroll-contain bg-[#0D0A08] border-l border-[#E2A84B]/20 p-5 sm:p-6 flex flex-col justify-between gap-6 shadow-2xl animate-in slide-in-from-right duration-200 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
             <div className="space-y-6">
               {/* Header inside drawer */}
               <div className="flex items-center justify-between pb-4 border-b border-white/[0.08]">
@@ -313,21 +336,21 @@ export function TopBar() {
                 {navLinks
                   .filter((link) => link.label !== 'Our Story')
                   .map((link) => {
-                  const isActive = pathname.startsWith(link.href);
+                  const isActive = link.href === '/' ? pathname === '/' : Boolean(pathname?.startsWith(link.href));
                   return (
                     <Link
                       key={link.href}
                       href={link.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className={`flex items-center justify-between px-3 py-2.5 rounded-md text-xs font-medium transition-colors ${
+                      className={`flex items-center justify-between px-3 py-3 min-h-[44px] rounded-md text-xs font-medium transition-colors ${
                         isActive
                           ? 'bg-[#E2A84B]/10 text-[#E2A84B] border-l-2 border-[#E2A84B]'
                           : 'text-white/75 hover:text-white hover:bg-white/[0.04]'
                       }`}
                     >
                       <span>{link.label}</span>
-                      {link.href === '/ar' && (
-                        <span className="px-1.5 py-0.2 rounded-full bg-[#E2A84B]/20 text-[#E2A84B] text-[9px] font-bold">
+                      {(link.href.startsWith('/3d') || link.href === '/ar') && (
+                        <span className="px-1.5 py-0.5 rounded-full bg-[#E2A84B]/20 text-[#E2A84B] text-[9px] font-bold">
                           3D
                         </span>
                       )}
@@ -344,7 +367,7 @@ export function TopBar() {
                     setMobileMenuOpen(false);
                     openSpotlight();
                   }}
-                  className="flex items-center gap-2.5 w-full px-3.5 py-2.5 rounded-[6px] bg-[#17120E] border border-[#E2A84B]/25 text-xs font-medium text-[#FAF5EC] active:scale-95 transition-all text-left"
+                  className="flex items-center gap-2.5 w-full px-3.5 py-2.5 min-h-[44px] rounded-[6px] bg-[#17120E] border border-[#E2A84B]/25 text-xs font-medium text-[#FAF5EC] active:scale-95 transition-all text-left"
                 >
                   <Search className="w-3.5 h-3.5 text-[#E2A84B]" />
                   <span>Search Dishes (Spotlight)</span>
@@ -354,7 +377,7 @@ export function TopBar() {
                 <Link
                   href="/booking"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center gap-2 w-full py-2.5 text-[#0D0A08] font-bold text-xs shadow-md"
+                  className="flex items-center justify-center gap-2 w-full py-2.5 min-h-[44px] text-[#0D0A08] font-bold text-xs shadow-md"
                   style={{
                     background: 'linear-gradient(135deg, #F6D386 0%, #D49432 50%, #9E6818 100%)',
                     borderRadius: '6px',
@@ -367,14 +390,14 @@ export function TopBar() {
                 <Link
                   href="/cart"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-between px-4 py-2.5 rounded-[6px] bg-white/[0.05] border border-white/[0.08] text-xs font-medium text-white/90"
+                  className="flex items-center justify-between px-4 py-2.5 min-h-[44px] rounded-[6px] bg-white/[0.05] border border-white/[0.08] text-xs font-medium text-white/90"
                 >
                   <div className="flex items-center gap-2">
                     <ShoppingBag className="w-3.5 h-3.5 text-[#E0532B]" />
                     <span>View Cart</span>
                   </div>
                   <span className="px-2 py-0.5 rounded-full bg-[#E0532B] text-white font-bold text-[10px]">
-                    {totalCartItems}
+                    {isMounted ? totalCartItems : 0}
                   </span>
                 </Link>
               </div>

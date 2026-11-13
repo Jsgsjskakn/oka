@@ -9,6 +9,7 @@ import Link from 'next/link';
 export function EditCategoryForm({ category, isNew = false }: any) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   
   const [name, setName] = useState(category?.name || '');
   const [slug, setSlug] = useState(category?.slug || '');
@@ -17,25 +18,33 @@ export function EditCategoryForm({ category, isNew = false }: any) {
   const [sortOrder, setSortOrder] = useState(category?.sort_order || 0);
 
   const handleSave = async () => {
+    setErrorMsg(null);
+    if (!name.trim() || !slug.trim()) {
+      setErrorMsg('Category name and URL slug are required.');
+      return;
+    }
     setLoading(true);
     try {
       const payload = {
-        name,
-        slug,
+        name: name.trim(),
+        slug: slug.trim(),
         icon,
         is_active: isActive,
         sort_order: sortOrder
       };
       
-      if (isNew) {
-        await createCategory(payload);
-      } else {
-        await updateCategoryDetails(category.id, payload);
+      const res = isNew
+        ? await createCategory(payload)
+        : await updateCategoryDetails(category.id, payload);
+      if (res?.error) {
+        setErrorMsg(res.error);
+        return;
       }
       router.push('/admin/menu');
-    } catch (err) {
+      router.refresh();
+    } catch (err: any) {
       console.error(err);
-      alert('Failed to save category');
+      setErrorMsg(err?.message || 'Failed to save category');
     } finally {
       setLoading(false);
     }
@@ -43,7 +52,7 @@ export function EditCategoryForm({ category, isNew = false }: any) {
 
   return (
     <div className="space-y-8 pb-20 max-w-2xl mx-auto animate-in fade-in duration-500">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-wrap justify-between items-center gap-3">
         <Link 
           href="/admin/menu" 
           className="group inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-text-secondary hover:text-text-primary transition-colors"
@@ -52,14 +61,21 @@ export function EditCategoryForm({ category, isNew = false }: any) {
           <span>Back to Menu</span>
         </Link>
         <button 
+          type="button"
           onClick={handleSave}
           disabled={loading}
-          className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-champagne to-platinum hover:from-[#d8b85b] hover:to-[#f0db99] text-zinc-950 rounded-xl font-bold text-sm transition-all duration-300 shadow-lg shadow-[#c9a84c]/20 hover:shadow-[#c9a84c]/30 hover:-translate-y-0.5 disabled:opacity-50"
+          className="flex items-center gap-2 px-5 sm:px-6 py-2.5 bg-gradient-to-r from-champagne to-platinum hover:from-[#d8b85b] hover:to-[#f0db99] text-zinc-950 rounded-xl font-bold text-sm transition-all duration-300 shadow-lg shadow-[#c9a84c]/20 hover:shadow-[#c9a84c]/30 hover:-translate-y-0.5 disabled:opacity-50"
         >
           <Save className="w-4 h-4 text-zinc-950 stroke-[2.5]" /> 
           <span>{loading ? 'Saving...' : isNew ? 'Create Category' : 'Save Changes'}</span>
         </button>
       </div>
+
+      {errorMsg && (
+        <div className="px-4 py-3 rounded-xl bg-rose-500/15 border border-rose-500/40 text-rose-200 text-xs font-medium">
+          {errorMsg}
+        </div>
+      )}
 
       <div className="bg-gradient-to-b from-zinc-900/80 via-zinc-900/60 to-zinc-950/90 backdrop-blur-2xl border border-border-subtle/80 p-8 rounded-2xl shadow-2xl shadow-black/50 space-y-6">
         <div className="flex items-center gap-3 pb-4 border-b border-border-subtle/80">

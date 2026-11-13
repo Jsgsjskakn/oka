@@ -21,25 +21,25 @@ export function ARHotspotLabel({
 }: ARHotspotLabelProps) {
   return (
     <div
-      className="absolute z-25 pointer-events-auto"
+      className="absolute z-[25] pointer-events-auto"
       style={{
-        left: position.x,
-        top: position.y,
+        left: `clamp(64px, ${Math.round(position.x)}px, calc(100vw - 84px))`,
+        top: `clamp(88px, ${Math.round(position.y)}px, calc(100dvh - 110px))`,
         transform: 'translate(-50%, -100%)',
       }}
     >
       <div className="relative flex flex-col items-center">
         {/* Expanded State */}
         <div
-          className={`absolute bottom-4 min-w-[120px] bg-obsidian/80 backdrop-blur-lg border border-champagne/20 rounded-xl p-3 shadow-lg transform transition-all duration-300 origin-bottom ${
+          className={`absolute bottom-4 min-w-[132px] max-w-[190px] bg-obsidian/85 backdrop-blur-lg border border-champagne/30 rounded-xl p-3 shadow-lg transform transition-all duration-300 origin-bottom ${
             isActive ? 'scale-100 opacity-100 pointer-events-auto' : 'scale-75 opacity-0 pointer-events-none'
           }`}
           onClick={isActive ? onDismiss : undefined}
         >
-          <div className="text-xs font-semibold text-text-primary whitespace-nowrap">{name}</div>
-          <div className="text-[10px] text-text-primary/50 mt-1 line-clamp-2">{description}</div>
+          <div className="text-xs font-semibold text-text-primary truncate">{name}</div>
+          <div className="text-[10px] text-text-primary/60 mt-1 line-clamp-2">{description}</div>
           {/* Downward pointing arrow */}
-          <div className="absolute -bottom-[6px] left-1/2 transform -translate-x-1/2 w-3 h-3 bg-obsidian/80 border-b border-r border-champagne/20 rotate-45" />
+          <div className="absolute -bottom-[6px] left-1/2 transform -translate-x-1/2 w-3 h-3 bg-obsidian/85 border-b border-r border-champagne/30 rotate-45" />
         </div>
 
         {/* Collapsed State */}

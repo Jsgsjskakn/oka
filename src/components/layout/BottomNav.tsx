@@ -17,13 +17,13 @@ export function BottomNav() {
   }, []);
 
   // Hide bottom nav on dish detail, checkout, and order success pages
-  const isDishDetailPage = pathname.match(/^\/menu\/[^\/]+\/[^\/]+$/);
-  const isCheckoutPage = pathname.startsWith('/checkout');
-  const isOrderSuccessPage = pathname.startsWith('/order/success');
-  const isBookingSuccessPage = pathname.startsWith('/booking/success');
-  const isOrderDetailPage = pathname.match(/^\/profile\/orders\/[^\/]+$/);
-  const is3DViewerPage = pathname.startsWith('/3d');
-  const isARViewerPage = pathname.match(/^\/ar\/[^\/]+$/);
+  const isDishDetailPage = pathname?.match(/^\/menu\/[^\/]+\/[^\/]+$/);
+  const isCheckoutPage = pathname?.startsWith('/checkout');
+  const isOrderSuccessPage = pathname?.startsWith('/order/success');
+  const isBookingSuccessPage = pathname?.startsWith('/booking/success');
+  const isOrderDetailPage = pathname?.match(/^\/profile\/orders\/[^\/]+$/);
+  const is3DViewerPage = pathname?.startsWith('/3d');
+  const isARViewerPage = pathname?.match(/^\/ar\/[^\/]+$/);
   
   if (isDishDetailPage || isCheckoutPage || isOrderSuccessPage || isBookingSuccessPage || isOrderDetailPage || is3DViewerPage || isARViewerPage) {
     return null;
@@ -40,12 +40,12 @@ export function BottomNav() {
   ];
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-obsidian/90 backdrop-blur-lg border-t border-white/5 z-50 pb-safe">
+    <nav aria-label="Mobile Bottom Navigation" className="md:hidden fixed bottom-0 left-0 right-0 bg-obsidian/90 backdrop-blur-lg border-t border-white/5 z-50 pb-safe">
       <div className="flex items-center justify-around h-[72px] px-2 relative">
         {navItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive = item.href === '/' ? pathname === '/' : Boolean(pathname?.startsWith(item.href));
           return (
-            <Link key={item.href} href={item.href} className={`flex flex-col items-center justify-center w-16 h-full gap-1 transition-colors ${isActive ? 'text-primary' : 'text-muted-foreground hover:text-text-primary'}`}>
+            <Link key={item.href} href={item.href} className={`flex flex-col items-center justify-center flex-1 max-w-[68px] h-full min-h-[48px] gap-1 transition-colors relative touch-manipulation ${isActive ? 'text-primary' : 'text-muted-foreground hover:text-text-primary'}`}>
               <item.icon className="w-5 h-5" />
               <span className="text-[10px]">{item.label}</span>
               {isActive && <div className="absolute bottom-2 w-1 h-1 rounded-full bg-primary" />}
@@ -54,17 +54,17 @@ export function BottomNav() {
         })}
 
         {/* Center 3D Button */}
-        <div className="relative -top-5 flex flex-col items-center justify-center w-20">
-          <Link href="/ar" className="w-14 h-14 rounded-full bg-gradient-to-tr from-champagne to-[#e8c547] flex items-center justify-center text-black shadow-[0_0_15px_rgba(201,168,76,0.4)] transition-transform hover:scale-105 active:scale-95">
+        <div className="relative -top-5 flex flex-col items-center justify-center w-20 shrink-0">
+          <Link href="/ar" aria-label="Open 3D Food Lounge" className="w-14 h-14 rounded-full bg-gradient-to-tr from-champagne to-[#e8c547] flex items-center justify-center text-black shadow-[0_0_15px_rgba(201,168,76,0.4)] transition-transform hover:scale-105 active:scale-95 touch-manipulation">
             <Box className="w-6 h-6" />
           </Link>
           <span className="text-[10px] text-primary mt-1 font-medium">View 3D</span>
         </div>
 
         {rightItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive = Boolean(pathname?.startsWith(item.href));
           return (
-            <Link key={item.href} href={item.href} className={`flex flex-col items-center justify-center w-16 h-full gap-1 transition-colors relative ${isActive ? 'text-primary' : 'text-muted-foreground hover:text-text-primary'}`}>
+            <Link key={item.href} href={item.href} className={`flex flex-col items-center justify-center flex-1 max-w-[68px] h-full min-h-[48px] gap-1 transition-colors relative touch-manipulation ${isActive ? 'text-primary' : 'text-muted-foreground hover:text-text-primary'}`}>
               <div className="relative">
                 <item.icon className="w-5 h-5" />
                 {item.label === 'Cart' && isMounted && totalItems > 0 && (

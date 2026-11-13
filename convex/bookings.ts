@@ -1,13 +1,37 @@
-import { query, mutation } from "./_generated/server";
+import { query, mutation, type MutationCtx } from "./_generated/server";
+import type { Doc } from "./_generated/dataModel";
 import { v } from "convex/values";
-import { authenticateCaller, STAFF_ROLES } from "./authUtils";
+import {
+  authenticateCaller,
+  buildPhoneCandidates,
+  normalizePhone,
+  phonesMatch,
+  type Role,
+  STAFF_ROLES,
+} from "./authUtils";
 
-// Helper: Convert "HH:MM" or "HH:MM:SS" to minutes from midnight
+// Helper: Convert "HH:MM", "HH:MM:SS", or "h:mm AM/PM" to minutes from midnight
 function timeToMinutes(t: string): number {
-  const parts = t.split(":").map(Number);
-  const h = parts[0] || 0;
-  const m = parts[1] || 0;
+  const trimmed = t.trim().toUpperCase();
+  const isPM = trimmed.endsWith("PM");
+  const isAM = trimmed.endsWith("AM");
+  const numericPart = trimmed.replace(/\s*(AM|PM)$/i, "");
+  const parts = numericPart.split(":").map((p) => Number(p));
+  let h = Number.isFinite(parts[0]) ? parts[0] : 0;
+  const m = Number.isFinite(parts[1]) ? parts[1] : 0;
+  if (isPM && h < 12) h += 12;
+  if (isAM && h === 12) h = 0;
   return h * 60 + m;
+}
+
+function normalizeInterval(
+  bookingTime: string,
+  bookingEndTime?: string
+): { startMin: number; endMin: number } {
+  const startMin = timeToMinutes(bookingTime);
+  let endMin = bookingEndTime ? timeToMinutes(bookingEndTime) : startMin + 120;
+  if (endMin <= startMin) endMin += 1440;
+  return { startMin, endMin };
 }
 
 // Overlap condition: startA < endB && endA > startB
@@ -20,6 +44,87 @@ function doIntervalsOverlap(
   return startA < endB && endA > startB;
 }
 
+function filterActiveBookings(
+  dateBookings: Doc<"bookings">[],
+  now: number
+): Doc<"bookings">[] {
+  return dateBookings.filter((b) => {
+    if (b.status === "cancelled" || b.status === "completed") return false;
+    // Pending bookings expire after hold window
+    if (b.status === "pending" && b.holdExpiresAt && b.holdExpiresAt <= now) {
+      return false;
+    }
+    return b.tableNumber !== undefined;
+  });
+}
+
+function hasTableConflict(
+  activeBookings: Doc<"bookings">[],
+  tableNumber: number,
+  startMin: number,
+  endMin: number
+): boolean {
+  return activeBookings.some((b) => {
+    if (b.tableNumber !== tableNumber) return false;
+    const { startMin: bStart, endMin: bEnd } = normalizeInterval(
+      b.bookingTime,
+      b.bookingEndTime
+    );
+    return doIntervalsOverlap(startMin, endMin, bStart, bEnd);
+  });
+}
+
+function phonesMatchStrict10(
+  a: string | undefined | null,
+  b: string | undefined | null
+): boolean {
+  if (!a || !b) return false;
+  const digitsA = a.replace(/\D/g, "").slice(-10);
+  const digitsB = b.replace(/\D/g, "").slice(-10);
+  return digitsA.length === 10 && digitsA === digitsB;
+}
+
+async function authorizeBookingActor(
+  ctx: MutationCtx,
+  booking: Doc<"bookings">,
+  sessionToken: string | undefined,
+  customerPhone: string | undefined
+): Promise<{ isAuthorized: boolean; isStaff: boolean }> {
+  if (sessionToken) {
+    const auth = await authenticateCaller(ctx, sessionToken, [
+      ...STAFF_ROLES,
+      "customer",
+    ]);
+    if (auth.authorized) {
+      if (STAFF_ROLES.includes(auth.user.role as Role)) {
+        return { isAuthorized: true, isStaff: true };
+      }
+      if (phonesMatchStrict10(auth.user.phone, booking.customerPhone)) {
+        return { isAuthorized: true, isStaff: false };
+      }
+    }
+  }
+
+  if (phonesMatchStrict10(customerPhone, booking.customerPhone)) {
+    return { isAuthorized: true, isStaff: false };
+  }
+
+  return { isAuthorized: false, isStaff: false };
+}
+
+async function syncPhysicalTableStatus(
+  ctx: MutationCtx,
+  tableId: string | undefined,
+  nextStatus: "available" | "occupied"
+): Promise<void> {
+  if (!tableId) return;
+  const normalizedTableId = ctx.db.normalizeId("tables", tableId);
+  if (!normalizedTableId) return;
+  const tableDoc = await ctx.db.get(normalizedTableId);
+  if (!tableDoc || tableDoc.status === "maintenance") return;
+  await ctx.db.patch(normalizedTableId, { status: nextStatus });
+}
+
 // Check availability for a specific party size and time window
 export const checkAvailability = query({
   args: {
@@ -29,11 +134,14 @@ export const checkAvailability = query({
     guests: v.number(),
   },
   handler: async (ctx, args) => {
-    const startMin = timeToMinutes(args.bookingTime);
-    let endMin = args.bookingEndTime
-      ? timeToMinutes(args.bookingEndTime)
-      : startMin + 120; // 2 hour default slot
-    if (endMin <= startMin) endMin += 1440;
+    if (!Number.isInteger(args.guests) || args.guests < 1 || args.guests > 50) {
+      return { available: false, tablesCount: 0, availableTables: [] };
+    }
+
+    const { startMin, endMin } = normalizeInterval(
+      args.bookingTime,
+      args.bookingEndTime
+    );
 
     // Get all dining tables that fit the party
     const candidateTables = await ctx.db
@@ -56,33 +164,9 @@ export const checkAvailability = query({
       .withIndex("by_date", (q) => q.eq("bookingDate", args.bookingDate))
       .collect();
 
-    const now = Date.now();
-    const activeBookings = dateBookings.filter((b) => {
-      if (b.status === "cancelled" || b.status === "completed") return false;
-      // Pending bookings expire after hold window
-      if (b.status === "pending" && b.holdExpiresAt && b.holdExpiresAt <= now) {
-        return false;
-      }
-      return b.tableNumber !== undefined;
-    });
-
-    const bookedTableNumbers = new Set<number>();
-    for (const b of activeBookings) {
-      const bStart = timeToMinutes(b.bookingTime);
-      let bEnd = b.bookingEndTime
-        ? timeToMinutes(b.bookingEndTime)
-        : bStart + 120;
-      if (bEnd <= bStart) bEnd += 1440;
-
-      if (doIntervalsOverlap(startMin, endMin, bStart, bEnd)) {
-        if (b.tableNumber !== undefined) {
-          bookedTableNumbers.add(b.tableNumber);
-        }
-      }
-    }
-
+    const activeBookings = filterActiveBookings(dateBookings, Date.now());
     const freeTables = candidateTables.filter(
-      (t) => !bookedTableNumbers.has(t.tableNumber)
+      (t) => !hasTableConflict(activeBookings, t.tableNumber, startMin, endMin)
     );
 
     return {
@@ -114,18 +198,19 @@ export const createBooking = mutation({
   },
   handler: async (ctx, args) => {
     // 1. Basic validation
-    if (!args.customerName.trim() || !args.customerPhone.trim()) {
+    const trimmedName = args.customerName.trim();
+    const trimmedPhone = args.customerPhone.trim();
+    if (!trimmedName || !trimmedPhone) {
       return { error: "Customer name and phone are required" };
     }
-    if (args.guests < 1 || args.guests > 50) {
+    if (!Number.isInteger(args.guests) || args.guests < 1 || args.guests > 50) {
       return { error: "Guests must be between 1 and 50" };
     }
 
-    const startMin = timeToMinutes(args.bookingTime);
-    let endMin = args.bookingEndTime
-      ? timeToMinutes(args.bookingEndTime)
-      : startMin + 120;
-    if (endMin <= startMin) endMin += 1440;
+    const { startMin, endMin } = normalizeInterval(
+      args.bookingTime,
+      args.bookingEndTime
+    );
 
     // 2. Fetch candidate tables with capacity >= guests
     const candidateTables = await ctx.db
@@ -153,81 +238,64 @@ export const createBooking = mutation({
       .collect();
 
     const now = Date.now();
-    const activeBookings = dateBookings.filter((b) => {
-      if (b.status === "cancelled" || b.status === "completed") return false;
-      if (b.status === "pending" && b.holdExpiresAt && b.holdExpiresAt <= now) {
-        return false;
-      }
-      return b.tableNumber !== undefined;
-    });
+    const activeBookings = filterActiveBookings(dateBookings, now);
 
-    // 4. Match or allocate a table
-    let assignedTable: (typeof candidateTables)[0] | null = null;
+    // 4. Match requested table or allocate best-fit available table
+    let assignedTable: Doc<"tables"> | null = null;
 
-    if (candidateTables.length > 0) {
-      // If customer requested a specific tableNumber
-      if (args.tableNumber) {
-        const requested = candidateTables.find(
-          (t) => t.tableNumber === args.tableNumber
-        );
-        if (requested) {
-          const hasConflict = activeBookings.some((b) => {
-            if (b.tableNumber !== requested.tableNumber) return false;
-            const bStart = timeToMinutes(b.bookingTime);
-            let bEnd = b.bookingEndTime
-              ? timeToMinutes(b.bookingEndTime)
-              : bStart + 120;
-            if (bEnd <= bStart) bEnd += 1440;
-            return doIntervalsOverlap(startMin, endMin, bStart, bEnd);
-          });
-          if (!hasConflict) {
-            assignedTable = requested;
-          }
-        }
-      }
-
-      // If no specific table requested or requested table unavailable, find best fit
-      if (!assignedTable) {
-        for (const table of candidateTables) {
-          const hasConflict = activeBookings.some((b) => {
-            if (b.tableNumber !== table.tableNumber) return false;
-            const bStart = timeToMinutes(b.bookingTime);
-            let bEnd = b.bookingEndTime
-              ? timeToMinutes(b.bookingEndTime)
-              : bStart + 120;
-            if (bEnd <= bStart) bEnd += 1440;
-            return doIntervalsOverlap(startMin, endMin, bStart, bEnd);
-          });
-
-          if (!hasConflict) {
-            assignedTable = table;
-            break;
-          }
-        }
-      }
-
-      if (!assignedTable) {
-        return {
-          error: "All tables for this party size are reserved during this time slot.",
-        };
+    if (args.tableNumber !== undefined) {
+      const requested = candidateTables.find(
+        (t) => t.tableNumber === args.tableNumber
+      );
+      if (
+        requested &&
+        !hasTableConflict(activeBookings, requested.tableNumber, startMin, endMin)
+      ) {
+        assignedTable = requested;
       }
     }
 
-    // 5. Default advance fee from settings
-    const advanceSetting = await ctx.db
-      .query("restaurant_settings")
-      .withIndex("by_key", (q) => q.eq("key", "advance_booking_amount_paise"))
-      .first();
-    const advanceAmountPaise = advanceSetting
-      ? Number(advanceSetting.value) || 50000
-      : 50000;
+    if (!assignedTable) {
+      for (const table of candidateTables) {
+        if (!hasTableConflict(activeBookings, table.tableNumber, startMin, endMin)) {
+          assignedTable = table;
+          break;
+        }
+      }
+    }
 
-    const holdExpiresAt = now + 10 * 60 * 1000; // 10 minute payment hold
+    if (!assignedTable) {
+      return {
+        error: "All tables for this party size are reserved during this time slot.",
+      };
+    }
+
+    // 5. Advance fee & hold window from settings (defaults: ₹500 and 5 minutes)
+    const [advanceSetting, holdSetting] = await Promise.all([
+      ctx.db
+        .query("restaurant_settings")
+        .withIndex("by_key", (q) => q.eq("key", "advance_booking_amount_paise"))
+        .first(),
+      ctx.db
+        .query("restaurant_settings")
+        .withIndex("by_key", (q) => q.eq("key", "booking_hold_minutes"))
+        .first(),
+    ]);
+
+    const parsedAdvance = advanceSetting ? Number(advanceSetting.value) : NaN;
+    const advanceAmountPaise =
+      Number.isFinite(parsedAdvance) && parsedAdvance >= 0 ? parsedAdvance : 50000;
+
+    const parsedHold = holdSetting ? Number(holdSetting.value) : NaN;
+    const holdMinutes = Number.isFinite(parsedHold) && parsedHold > 0 ? parsedHold : 5;
+    const holdExpiresAt = now + holdMinutes * 60 * 1000;
+
+    const normalizedEmail = args.customerEmail?.trim().toLowerCase() || undefined;
 
     const bookingId = await ctx.db.insert("bookings", {
-      customerName: args.customerName,
-      customerPhone: args.customerPhone,
-      customerEmail: args.customerEmail,
+      customerName: trimmedName,
+      customerPhone: trimmedPhone,
+      customerEmail: normalizedEmail,
       bookingDate: args.bookingDate,
       bookingTime: args.bookingTime,
       bookingEndTime: args.bookingEndTime,
@@ -235,8 +303,8 @@ export const createBooking = mutation({
       occasion: args.occasion,
       tablePreference: args.tablePreference,
       specialRequests: args.specialRequests,
-      tableNumber: assignedTable ? assignedTable.tableNumber : args.tableNumber,
-      tableId: assignedTable ? assignedTable._id : undefined,
+      tableNumber: assignedTable.tableNumber,
+      tableId: assignedTable._id,
       holdExpiresAt,
       status: "pending",
       paymentStatus: "pending",
@@ -246,7 +314,7 @@ export const createBooking = mutation({
 
     return {
       bookingId,
-      tableNumber: assignedTable ? assignedTable.tableNumber : args.tableNumber,
+      tableNumber: assignedTable.tableNumber,
       holdExpiresAt,
       success: true,
     };
@@ -271,18 +339,52 @@ export const getAllBookings = query({
 export const getBookingsByPhone = query({
   args: { phone: v.optional(v.string()), email: v.optional(v.string()) },
   handler: async (ctx, args) => {
-    if (args.phone) {
-      return await ctx.db
-        .query("bookings")
-        .withIndex("by_phone", (q) => q.eq("customerPhone", args.phone!))
-        .order("desc")
-        .take(20);
+    const seen = new Map<string, Doc<"bookings">>();
+
+    if (args.phone && args.phone.trim()) {
+      const candidates = buildPhoneCandidates(args.phone);
+      const exactList = candidates.length > 0 ? candidates : [args.phone.trim()];
+      for (const candidate of exactList) {
+        const matches = await ctx.db
+          .query("bookings")
+          .withIndex("by_phone", (q) => q.eq("customerPhone", candidate))
+          .order("desc")
+          .take(25);
+        for (const b of matches) {
+          seen.set(b._id, b);
+        }
+      }
+      // Also catch formatting edge cases on recent bookings when few exact matches found
+      if (normalizePhone(args.phone) && seen.size === 0) {
+        const recent = await ctx.db.query("bookings").order("desc").take(100);
+        for (const b of recent) {
+          if (phonesMatch(b.customerPhone, args.phone)) {
+            seen.set(b._id, b);
+          }
+        }
+      }
     }
-    if (args.email) {
-      const all = await ctx.db.query("bookings").order("desc").take(50);
-      return all.filter((b) => b.customerEmail?.toLowerCase() === args.email!.toLowerCase());
+
+    if (args.email && args.email.trim()) {
+      const trimmedEmail = args.email.trim();
+      const lowerEmail = trimmedEmail.toLowerCase();
+      const emailCandidates =
+        trimmedEmail === lowerEmail ? [lowerEmail] : [lowerEmail, trimmedEmail];
+      for (const emailVal of emailCandidates) {
+        const matches = await ctx.db
+          .query("bookings")
+          .withIndex("by_email", (q) => q.eq("customerEmail", emailVal))
+          .order("desc")
+          .take(25);
+        for (const b of matches) {
+          seen.set(b._id, b);
+        }
+      }
     }
-    return [];
+
+    return Array.from(seen.values())
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .slice(0, 50);
   },
 });
 
@@ -347,16 +449,11 @@ export const updateBookingStatus = mutation({
 
     await ctx.db.patch(args.bookingId, updates);
 
-    // Sync physical table status if assigned
-    if (booking.tableId) {
-      const normalizedTableId = ctx.db.normalizeId("tables", booking.tableId);
-      if (normalizedTableId) {
-        if (args.status === "seated") {
-          await ctx.db.patch(normalizedTableId, { status: "occupied" });
-        } else if (args.status === "completed" || args.status === "cancelled") {
-          await ctx.db.patch(normalizedTableId, { status: "available" });
-        }
-      }
+    // Sync physical table status if assigned (without overriding maintenance)
+    if (args.status === "seated") {
+      await syncPhysicalTableStatus(ctx, booking.tableId, "occupied");
+    } else if (args.status === "completed" || args.status === "cancelled") {
+      await syncPhysicalTableStatus(ctx, booking.tableId, "available");
     }
 
     return { success: true };
@@ -378,33 +475,12 @@ export const confirmBookingPayment = mutation({
     if (!booking) return { error: "Booking not found" };
 
     // Authorization: Staff session OR verified customer phone
-    let isAuthorized = false;
-    if (args.sessionToken) {
-      const auth = await authenticateCaller(ctx, args.sessionToken, [
-        ...STAFF_ROLES,
-        "customer",
-      ]);
-      if (auth.authorized) {
-        if (STAFF_ROLES.includes(auth.user.role as any)) {
-          isAuthorized = true;
-        } else if (
-          auth.user.phone &&
-          booking.customerPhone &&
-          auth.user.phone.replace(/\D/g, "").slice(-10) ===
-            booking.customerPhone.replace(/\D/g, "").slice(-10)
-        ) {
-          isAuthorized = true;
-        }
-      }
-    }
-
-    if (!isAuthorized && args.customerPhone) {
-      const inputDigits = args.customerPhone.replace(/\D/g, "").slice(-10);
-      const bookingDigits = booking.customerPhone.replace(/\D/g, "").slice(-10);
-      if (inputDigits.length === 10 && inputDigits === bookingDigits) {
-        isAuthorized = true;
-      }
-    }
+    const { isAuthorized } = await authorizeBookingActor(
+      ctx,
+      booking,
+      args.sessionToken,
+      args.customerPhone
+    );
 
     if (!isAuthorized) {
       return {
@@ -416,14 +492,14 @@ export const confirmBookingPayment = mutation({
     if (booking.status !== "pending") {
       return { error: `Booking is not pending (current status: ${booking.status})` };
     }
-    if (booking.holdExpiresAt && booking.holdExpiresAt < Date.now()) {
+    if (booking.holdExpiresAt && booking.holdExpiresAt <= Date.now()) {
       return { error: "Reservation hold has expired. Please create a new booking." };
     }
 
     await ctx.db.patch(id, {
       status: "confirmed",
       paymentStatus: "paid",
-      paymentReference: args.reference || undefined,
+      paymentReference: args.reference?.trim() || undefined,
     });
     return { success: true };
   },
@@ -444,36 +520,12 @@ export const cancelBooking = mutation({
     const booking = await ctx.db.get(id);
     if (!booking) return { error: "Booking not found" };
 
-    let isStaff = false;
-    let isAuthorized = false;
-
-    if (args.sessionToken) {
-      const auth = await authenticateCaller(ctx, args.sessionToken, [
-        ...STAFF_ROLES,
-        "customer",
-      ]);
-      if (auth.authorized) {
-        if (STAFF_ROLES.includes(auth.user.role as any)) {
-          isStaff = true;
-          isAuthorized = true;
-        } else if (
-          auth.user.phone &&
-          booking.customerPhone &&
-          auth.user.phone.replace(/\D/g, "").slice(-10) ===
-            booking.customerPhone.replace(/\D/g, "").slice(-10)
-        ) {
-          isAuthorized = true;
-        }
-      }
-    }
-
-    if (!isAuthorized && args.customerPhone) {
-      const inputDigits = args.customerPhone.replace(/\D/g, "").slice(-10);
-      const bookingDigits = booking.customerPhone.replace(/\D/g, "").slice(-10);
-      if (inputDigits.length === 10 && inputDigits === bookingDigits) {
-        isAuthorized = true;
-      }
-    }
+    const { isAuthorized, isStaff } = await authorizeBookingActor(
+      ctx,
+      booking,
+      args.sessionToken,
+      args.customerPhone
+    );
 
     if (!isAuthorized) {
       return {
@@ -493,12 +545,7 @@ export const cancelBooking = mutation({
       cancellationReason: args.reason || undefined,
     });
 
-    if (booking.tableId) {
-      const normalizedTableId = ctx.db.normalizeId("tables", booking.tableId);
-      if (normalizedTableId) {
-        await ctx.db.patch(normalizedTableId, { status: "available" });
-      }
-    }
+    await syncPhysicalTableStatus(ctx, booking.tableId, "available");
 
     return { success: true };
   },

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import {
   MapPin,
@@ -24,10 +24,11 @@ import {
   Hand,
 } from 'lucide-react';
 
+const GOLDEN_OAK_COORDS = { lat: 12.9716, lng: 77.6416 };
+
 export function RestaurantInfo() {
   const address = '45 Golden Oak Boulevard, 100 Feet Road, Indiranagar, Bengaluru, Karnataka 560038';
   const phone = '+91 99907 74565';
-  const goldenOakCoords = { lat: 12.9716, lng: 77.6416 };
 
   // Google Maps Turn-by-Turn Navigation & Distance URL
   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=The+Golden+Oak,+100+Feet+Road,+Indiranagar,+Bengaluru&destination_place_id=ChIJwWv3fT8UrjsRNsFk4JgO7z8&travelmode=driving`;
@@ -82,7 +83,7 @@ export function RestaurantInfo() {
   }, []);
 
   // Interactive Live Distance Calculation
-  const handleCalculateDistance = () => {
+  const handleCalculateDistance = useCallback(() => {
     if (typeof window === 'undefined' || !navigator.geolocation) {
       setUserDistance('Indiranagar, Bengaluru · Central Prime Hub');
       return;
@@ -94,12 +95,12 @@ export function RestaurantInfo() {
         const lat1 = pos.coords.latitude;
         const lon1 = pos.coords.longitude;
         const R = 6371; // Earth radius in km
-        const dLat = ((goldenOakCoords.lat - lat1) * Math.PI) / 180;
-        const dLon = ((goldenOakCoords.lng - lon1) * Math.PI) / 180;
+        const dLat = ((GOLDEN_OAK_COORDS.lat - lat1) * Math.PI) / 180;
+        const dLon = ((GOLDEN_OAK_COORDS.lng - lon1) * Math.PI) / 180;
         const a =
           Math.sin(dLat / 2) * Math.sin(dLat / 2) +
           Math.cos((lat1 * Math.PI) / 180) *
-            Math.cos((goldenOakCoords.lat * Math.PI) / 180) *
+            Math.cos((GOLDEN_OAK_COORDS.lat * Math.PI) / 180) *
             Math.sin(dLon / 2) *
             Math.sin(dLon / 2);
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
@@ -116,11 +117,11 @@ export function RestaurantInfo() {
       },
       { timeout: 8000 }
     );
-  };
+  }, []);
 
   useEffect(() => {
     handleCalculateDistance();
-  }, []);
+  }, [handleCalculateDistance]);
 
   const handleRecenterMap = () => {
     setZoomLevel(16);
@@ -301,7 +302,8 @@ export function RestaurantInfo() {
                 type="button"
                 onClick={() => setZoomLevel((z) => Math.max(12, z - 1))}
                 title="Zoom Out Map"
-                className="p-1.5 rounded-md text-[#FAF5EC] hover:text-[#D4AF37] border border-white/20 transition-all shadow-md active:scale-95"
+                aria-label="Zoom Out Map"
+                className="min-w-[36px] min-h-[36px] sm:min-w-0 sm:min-h-0 p-2 sm:p-1.5 rounded-md text-[#FAF5EC] hover:text-[#D4AF37] border border-white/20 transition-all shadow-md active:scale-95 flex items-center justify-center cursor-pointer"
                 style={{
                   background: 'rgba(14, 11, 9, 0.90)',
                   backdropFilter: 'blur(8px)',
@@ -315,7 +317,8 @@ export function RestaurantInfo() {
                 type="button"
                 onClick={() => setZoomLevel((z) => Math.min(19, z + 1))}
                 title="Zoom In Map"
-                className="p-1.5 rounded-md text-[#FAF5EC] hover:text-[#D4AF37] border border-white/20 transition-all shadow-md active:scale-95"
+                aria-label="Zoom In Map"
+                className="min-w-[36px] min-h-[36px] sm:min-w-0 sm:min-h-0 p-2 sm:p-1.5 rounded-md text-[#FAF5EC] hover:text-[#D4AF37] border border-white/20 transition-all shadow-md active:scale-95 flex items-center justify-center cursor-pointer"
                 style={{
                   background: 'rgba(14, 11, 9, 0.90)',
                   backdropFilter: 'blur(8px)',
@@ -329,7 +332,8 @@ export function RestaurantInfo() {
                 type="button"
                 onClick={handleRecenterMap}
                 title="Recenter Map on The Golden Oak Flagship"
-                className="p-1.5 rounded-md text-[#FAF5EC] hover:text-[#D4AF37] border border-white/20 transition-all shadow-md active:scale-95"
+                aria-label="Recenter Map"
+                className="min-w-[36px] min-h-[36px] sm:min-w-0 sm:min-h-0 p-2 sm:p-1.5 rounded-md text-[#FAF5EC] hover:text-[#D4AF37] border border-white/20 transition-all shadow-md active:scale-95 flex items-center justify-center cursor-pointer"
                 style={{
                   background: 'rgba(14, 11, 9, 0.90)',
                   backdropFilter: 'blur(8px)',
@@ -435,7 +439,16 @@ export function RestaurantInfo() {
             {/* Interactive Mode Prompt Pill (Shown when hovering over locked map) */}
             {!isMapInteractive && (
               <div
+                role="button"
+                tabIndex={0}
+                aria-label="Enable interactive map dragging and panning"
                 onClick={() => setIsMapInteractive(true)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setIsMapInteractive(true);
+                  }
+                }}
                 className="absolute inset-0 z-20 cursor-pointer flex items-center justify-center group/overlay bg-transparent"
               >
                 <div className="opacity-0 group-hover/overlay:opacity-100 transition-opacity duration-300 px-4 py-2 rounded-full bg-[#0D0A08]/92 border border-[#D4AF37]/50 shadow-[0_4px_24px_rgba(0,0,0,0.8)] backdrop-blur-md flex items-center gap-2 text-xs font-semibold text-[#FAF5EC]">

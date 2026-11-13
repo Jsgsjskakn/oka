@@ -300,10 +300,17 @@ export default async function BookingsPage({
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white/10 border border-white/10 text-[11px] text-white">
-                      <Users className="w-3 h-3 text-zinc-300" />
-                      {booking.guests ?? booking.number_of_guests ?? 1} Guests
-                    </span>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white/10 border border-white/10 text-[11px] text-white">
+                        <Users className="w-3 h-3 text-zinc-300" />
+                        {booking.guests ?? booking.number_of_guests ?? 1} Guests
+                      </span>
+                      {(booking.tables?.table_number ?? booking.table_id) && (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-amber-500/15 border border-amber-500/30 text-[10px] font-mono font-bold text-amber-300">
+                          T{booking.tables?.table_number ?? booking.table_id}
+                        </span>
+                      )}
+                    </div>
                   </td>
                   <td className="px-4 py-3">
                     {booking.special_requests ? (

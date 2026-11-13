@@ -137,6 +137,7 @@ interface FoodModelProps {
   simplifyTransmission: boolean;
   onLoaded?: () => void;
   onProgress?: (progress: number) => void;
+  onBoundsComputed?: (bounds: { centerY: number }) => void;
 }
 
 function FoodModel({
@@ -147,6 +148,7 @@ function FoodModel({
   simplifyTransmission,
   onLoaded,
   onProgress,
+  onBoundsComputed,
 }: FoodModelProps) {
   const { scene } = useGLTF(modelPath, '/draco/');
   const { invalidate } = useThree();
@@ -158,6 +160,40 @@ function FoodModel({
     enhanceWarriorMaterials(clone);
     return clone;
   }, [scene]);
+
+  // Normalize arbitrary GLB sizes (from 0.14m drinks/bowls to 2.4m pizzas) onto a uniform platter footprint resting at y=0
+  const normalizedTransform = useMemo(() => {
+    clonedScene.updateMatrixWorld(true);
+    const box = new THREE.Box3().setFromObject(clonedScene);
+    if (box.isEmpty()) {
+      return {
+        scale: config.initialScale,
+        position: [0, 0, 0] as [number, number, number],
+        centerY: 0.45,
+      };
+    }
+
+    const sizeVec = new THREE.Vector3();
+    const centerVec = new THREE.Vector3();
+    box.getSize(sizeVec);
+    box.getCenter(centerVec);
+
+    const maxHoriz = Math.max(sizeVec.x, sizeVec.z, 0.001);
+    const maxDim = Math.max(maxHoriz, sizeVec.y, 0.001);
+    const targetExtent = 1.65;
+    const scale = targetExtent / maxDim;
+
+    const posX = -centerVec.x * scale;
+    const posY = -box.min.y * scale;
+    const posZ = -centerVec.z * scale;
+    const normalizedHeight = sizeVec.y * scale;
+
+    return {
+      scale,
+      position: [posX, posY, posZ] as [number, number, number],
+      centerY: Math.max(0.16, Math.min(0.85, normalizedHeight * 0.5)),
+    };
+  }, [clonedScene, config.initialScale]);
 
   // Apply tier-calibrated material properties to isolated instance materials
   useEffect(() => {
@@ -202,17 +238,18 @@ function FoodModel({
     if (groupRef.current) {
       groupRef.current.rotation.set(...config.initialRotation);
     }
+    onBoundsComputed?.({ centerY: normalizedTransform.centerY });
     onProgress?.(100);
     onLoaded?.();
     invalidate();
-  }, [clonedScene, config.initialRotation, onLoaded, onProgress, invalidate]);
+  }, [clonedScene, normalizedTransform.centerY, config.initialRotation, onBoundsComputed, onLoaded, onProgress, invalidate]);
 
   return (
     <group ref={groupRef} position={[0, 0, 0]}>
       <primitive
         object={clonedScene}
-        scale={config.initialScale}
-        position={[0, 0, 0]}
+        scale={normalizedTransform.scale}
+        position={normalizedTransform.position}
         dispose={null}
       />
     </group>
@@ -326,6 +363,7 @@ function StudioEnvironmentAndToneManager({
 function ViewerCameraRigBridge({
   cameraDistance,
   dishSlug,
+  modelCenterY,
   cameraPreset,
   prefersReducedMotion,
   zoomSignal,
@@ -336,6 +374,7 @@ function ViewerCameraRigBridge({
 }: {
   cameraDistance: number;
   dishSlug: string;
+  modelCenterY: number;
   cameraPreset: 'side' | 'top';
   prefersReducedMotion: boolean;
   zoomSignal?: { id: number; factor: number } | null;
@@ -346,25 +385,41 @@ function ViewerCameraRigBridge({
 }) {
   const demandCtx = useDemandFrameloopContext();
   const transitionTo = demandCtx?.transitionTo;
+  const size = useThree((state) => state.size);
+
+  const framing = useMemo(() => {
+    const aspect = size.height > 0 ? size.width / size.height : 1.5;
+    const isPortraitPhone = size.width < 640 && aspect < 0.95;
+    const aspectFactor =
+      aspect < 0.95 ? Math.min(1.52, Math.max(1.0, 0.82 / aspect)) : 1.0;
+    const effectiveDistance = cameraDistance * aspectFactor;
+    const targetX = size.width >= 1024 ? 0.34 : size.width >= 640 ? 0.24 : 0;
+    const targetY = isPortraitPhone
+      ? modelCenterY - 0.42
+      : Math.max(0.35, Math.min(0.68, modelCenterY * 0.65 + 0.25));
+
+    return { effectiveDistance, targetX, targetY };
+  }, [size.width, size.height, cameraDistance, modelCenterY]);
 
   // Smooth on-demand camera preset glide ('side' <-> 'top') & dish framing updates
   useEffect(() => {
     if (!transitionTo) return;
     const lambda = prefersReducedMotion ? 999 : 6.0;
+    const { effectiveDistance, targetX, targetY } = framing;
     if (cameraPreset === 'top') {
       transitionTo({
-        position: [0, cameraDistance * 1.15, 0.001],
-        target: [0, 0.8, 0],
+        position: [targetX, effectiveDistance * 1.12, 0.001],
+        target: [targetX, targetY, 0],
         dampingLambda: lambda,
       });
     } else {
       transitionTo({
-        position: [0, cameraDistance * 0.35, cameraDistance],
-        target: [0, 0.8, 0],
+        position: [targetX, effectiveDistance * 0.35, effectiveDistance],
+        target: [targetX, targetY, 0],
         dampingLambda: lambda,
       });
     }
-  }, [transitionTo, cameraPreset, cameraDistance, dishSlug, prefersReducedMotion]);
+  }, [transitionTo, cameraPreset, framing, dishSlug, prefersReducedMotion]);
 
   // Smooth on-demand Zoom In / Zoom Out handler
   useEffect(() => {
@@ -374,13 +429,13 @@ function ViewerCameraRigBridge({
 
     const cam = controls.object;
     const offset = cam.position.clone().sub(controls.target);
-    const currentDist = offset.length() || cameraDistance;
-    const minDist = controls.minDistance || 2;
-    const maxDist = controls.maxDistance || 12;
+    const currentDist = offset.length() || framing.effectiveDistance;
+    const minDist = controls.minDistance || 1.8;
+    const maxDist = controls.maxDistance || 14;
     const nextDist = Math.min(maxDist, Math.max(minDist, currentDist * zoomSignal.factor));
 
     if (offset.lengthSq() < 0.00001) {
-      offset.set(0, cameraDistance * 0.35, cameraDistance);
+      offset.set(0, framing.effectiveDistance * 0.35, framing.effectiveDistance);
     }
     offset.setLength(nextDist);
     const nextPos = controls.target.clone().add(offset);
@@ -390,7 +445,7 @@ function ViewerCameraRigBridge({
       target: [controls.target.x, controls.target.y, controls.target.z],
       dampingLambda: prefersReducedMotion ? 999 : 8.5,
     });
-  }, [transitionTo, zoomSignal, cameraDistance, prefersReducedMotion, controlsRef]);
+  }, [transitionTo, zoomSignal, framing.effectiveDistance, prefersReducedMotion, controlsRef]);
 
   // Smooth Reset handler
   useEffect(() => {
@@ -398,15 +453,16 @@ function ViewerCameraRigBridge({
     if (turntableRef.current) {
       turntableRef.current.rotation.y = 0;
     }
+    const { effectiveDistance, targetX, targetY } = framing;
     transitionTo(
       {
-        position: [0, cameraDistance * 0.35, cameraDistance],
-        target: [0, 0.8, 0],
+        position: [targetX, effectiveDistance * 0.35, effectiveDistance],
+        target: [targetX, targetY, 0],
         dampingLambda: prefersReducedMotion ? 999 : 7.0,
       },
       onResetComplete
     );
-  }, [transitionTo, resetSignal, cameraDistance, prefersReducedMotion, turntableRef, onResetComplete]);
+  }, [transitionTo, resetSignal, framing, prefersReducedMotion, turntableRef, onResetComplete]);
 
   return null;
 }
@@ -653,6 +709,21 @@ export function ViewerScene({
   // Clean React state for initial 3s presentation turntable (replaces broken presentationRef)
   const [presentationActive, setPresentationActive] = useState<boolean>(true);
   const [shadowKey, setShadowKey] = useState(0);
+  const [modelCenterY, setModelCenterY] = useState<number>(0.45);
+
+  const handleBoundsComputed = useCallback((bounds: { centerY: number }) => {
+    setModelCenterY((prev) =>
+      Math.abs(prev - bounds.centerY) > 0.01 ? bounds.centerY : prev
+    );
+  }, []);
+
+  const assignControlsRef = useCallback(
+    (ref: OrbitControlsType | null) => {
+      internalControlsRef.current = ref;
+      onControlsRef(ref);
+    },
+    [onControlsRef]
+  );
 
   // Lifecycle suspension states: Page Visibility API + Viewport IntersectionObserver
   const [isDocumentVisible, setIsDocumentVisible] = useState<boolean>(() =>
@@ -835,6 +906,7 @@ export function ViewerScene({
             <ViewerCameraRigBridge
               cameraDistance={config.cameraDistance}
               dishSlug={config.dishSlug}
+              modelCenterY={modelCenterY}
               cameraPreset={cameraPreset}
               prefersReducedMotion={prefersReducedMotion}
               zoomSignal={zoomSignal}
@@ -875,13 +947,14 @@ export function ViewerScene({
                   simplifyTransmission={quality.simplifyTransmission}
                   onLoaded={handleModelLoaded}
                   onProgress={onProgress}
+                  onBoundsComputed={handleBoundsComputed}
                 />
               )}
             </group>
 
             {/* Contact Shadows: 0-RenderTarget static disc on low tier, 1-frame baked on medium/high */}
             <SafeContactShadows
-              position={[0, -0.05, 0]}
+              position={[0, -0.02, 0]}
               opacity={activeTier === 'low' ? 0.45 : 0.5}
               scale={10}
               blur={2.4}
@@ -895,17 +968,14 @@ export function ViewerScene({
           </Suspense>
 
           <OrbitControls
-            ref={(ref) => {
-              internalControlsRef.current = ref;
-              onControlsRef(ref);
-            }}
+            ref={assignControlsRef}
             autoRotate={shouldAutoRotate && isRenderAllowed}
             autoRotateSpeed={1.5}
             enablePan={true}
             enableZoom={true}
             enableRotate={true}
-            minDistance={2}
-            maxDistance={12}
+            minDistance={1.8}
+            maxDistance={14}
             maxPolarAngle={Math.PI / 1.8}
             minPolarAngle={Math.PI / 12}
             panSpeed={0.5}
@@ -913,7 +983,7 @@ export function ViewerScene({
             zoomSpeed={1.0}
             enableDamping={!prefersReducedMotion}
             dampingFactor={0.08}
-            target={[0, 0.8, 0]}
+            target={[0, 0.45, 0]}
             makeDefault
           />
 

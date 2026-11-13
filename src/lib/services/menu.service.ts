@@ -1,7 +1,8 @@
 import { getHotspots } from '@/data/ar-config';
+import { getModelConfig, hasInteractive3DModel } from '@/data/model-config';
 import { fetchQuery } from 'convex/nextjs';
 import { api } from '@/../convex/_generated/api';
-import { createClient } from '@/lib/supabase/server';
+import { createClient, isSupabaseConfigured } from '@/lib/supabase/server';
 import type { Category, DishWithCategory, DishSize, DishAddon, DishModel, DishHotspot } from '@/lib/db/types';
 import { categories as mockCategories, dishes as mockDishes } from '@/data/mock-menu';
 import { resolveDishImageUrl, DISH_IMAGE_MAP } from '@/lib/utils/dish-images';
@@ -79,8 +80,8 @@ function mapConvexDish(d: any, category?: Category): DishWithCategory {
     name: d.name,
     slug: d.slug,
     description: d.description || null,
-    price_paise: d.pricePaise || (d.price ? Math.round(d.price * 100) : 0),
-    original_price_paise: d.originalPrice ? Math.round(d.originalPrice * 100) : null,
+    price_paise: d.pricePaise ?? (typeof d.price === 'number' ? Math.round(d.price * 100) : 0),
+    original_price_paise: d.originalPricePaise ?? (typeof d.originalPrice === 'number' ? Math.round(d.originalPrice * 100) : null),
     image_url: resolveDishImageUrl(d.slug, d.image || d.imageUrl),
     thumbnail_url: resolveDishImageUrl(d.slug, d.thumbnailUrl || d.image),
     is_veg: d.isVeg ?? true,
@@ -106,6 +107,25 @@ function withTimeout<T>(promise: Promise<T>, ms = 3500): Promise<T> {
       setTimeout(() => reject(new Error(`Operation timed out after ${ms}ms`)), ms)
     ),
   ]);
+}
+
+async function resolveConvexDishByIdOrSlug(dishId: string): Promise<any | null> {
+  try {
+    const bySlug = await withTimeout(fetchQuery(api.menu.getDishBySlug, { slug: dishId }), 3500);
+    if (bySlug) return bySlug;
+
+    const all = await withTimeout(fetchQuery(api.menu.getAllDishes, {}), 3500);
+    if (Array.isArray(all)) {
+      const matched = all.find((d: any) => d.id === dishId || d._id === dishId || d.slug === dishId);
+      if (matched) {
+        const detailed = await withTimeout(fetchQuery(api.menu.getDishBySlug, { slug: matched.slug }), 3500);
+        return detailed || matched;
+      }
+    }
+  } catch {
+    // Let callers fall back cleanly
+  }
+  return null;
 }
 
 export {
@@ -142,16 +162,18 @@ export async function getCategories(): Promise<Category[]> {
     }
 
     // 2. Secondary Fallback: Supabase
-    try {
-      const supabase = await createClient();
-      const { data, error } = await supabase
-        .from('categories')
-        .select('*')
-        .eq('is_active', true)
-        .order('sort_order');
-      if (!error && data && data.length > 0) return data;
-    } catch (supabaseError) {
-      console.warn('[menu.service] Supabase categories query failed:', supabaseError);
+    if (isSupabaseConfigured()) {
+      try {
+        const supabase = await createClient();
+        const { data, error } = await supabase
+          .from('categories')
+          .select('*')
+          .eq('is_active', true)
+          .order('sort_order');
+        if (!error && data && data.length > 0) return data;
+      } catch (supabaseError) {
+        console.warn('[menu.service] Supabase categories query failed:', supabaseError);
+      }
     }
 
     // 3. Final Fallback: Local Data
@@ -162,31 +184,37 @@ export async function getCategories(): Promise<Category[]> {
 export async function getDishesByCategory(categorySlug: string): Promise<DishWithCategory[]> {
   // 1. Primary: Try Convex
   try {
-    const data = await withTimeout(fetchQuery(api.menu.getDishesByCategory, { categorySlug }), 3500);
+    const [data, cats] = await Promise.all([
+      withTimeout(fetchQuery(api.menu.getDishesByCategory, { categorySlug }), 3500),
+      getCategories().catch(() => [] as Category[]),
+    ]);
     if (data && data.length > 0) {
-      return data.map((d: any) => mapConvexDish(d));
+      const catBySlug = new Map(cats.map((c) => [c.slug, c]));
+      return data.map((d: any) => mapConvexDish(d, catBySlug.get(d.categorySlug || d.category)));
     }
   } catch (convexError) {
     console.warn('[menu.service] Convex getDishesByCategory failed, trying Supabase:', convexError);
   }
 
   // 2. Secondary Fallback: Supabase
-  try {
-    const supabase = await createClient();
-    const { data, error } = await supabase
-      .from('dishes')
-      .select('*, categories(*)')
-      .eq('categories.slug', categorySlug)
-      .eq('is_available', true);
-    if (!error && data && data.length > 0) {
-      return (data as any[]).map((d) => ({
-        ...d,
-        image_url: resolveDishImageUrl(d.slug, d.image_url),
-        thumbnail_url: resolveDishImageUrl(d.slug, d.thumbnail_url || d.image_url),
-      })) as DishWithCategory[];
+  if (isSupabaseConfigured()) {
+    try {
+      const supabase = await createClient();
+      const { data, error } = await supabase
+        .from('dishes')
+        .select('*, categories(*)')
+        .eq('categories.slug', categorySlug)
+        .eq('is_available', true);
+      if (!error && data && data.length > 0) {
+        return (data as any[]).map((d) => ({
+          ...d,
+          image_url: resolveDishImageUrl(d.slug, d.image_url),
+          thumbnail_url: resolveDishImageUrl(d.slug, d.thumbnail_url || d.image_url),
+        })) as DishWithCategory[];
+      }
+    } catch (supabaseError) {
+      console.warn('[menu.service] Supabase dishes query failed:', supabaseError);
     }
-  } catch (supabaseError) {
-    console.warn('[menu.service] Supabase dishes query failed:', supabaseError);
   }
 
   // 3. Final Fallback: Local Data
@@ -196,34 +224,40 @@ export async function getDishesByCategory(categorySlug: string): Promise<DishWit
 export async function getDishBySlug(categorySlug: string, dishSlug: string): Promise<DishWithCategory | null> {
   // 1. Primary: Try Convex
   try {
-    const dish = await fetchQuery(api.menu.getDishBySlug, { slug: dishSlug });
+    const [dish, cats] = await Promise.all([
+      fetchQuery(api.menu.getDishBySlug, { slug: dishSlug }),
+      getCategories().catch(() => [] as Category[]),
+    ]);
     if (dish) {
-      return mapConvexDish(dish);
+      const matchedCat = cats.find((c) => c.slug === ((dish as any).categorySlug || dish.category));
+      return mapConvexDish(dish, matchedCat);
     }
   } catch (convexError) {
     console.warn('[menu.service] Convex getDishBySlug failed, trying Supabase:', convexError);
   }
 
   // 2. Secondary Fallback: Supabase
-  try {
-    const supabase = await createClient();
-    const { data, error } = await supabase
-      .from('dishes')
-      .select('*, categories(*)')
-      .eq('categories.slug', categorySlug)
-      .eq('slug', dishSlug)
-      .eq('is_available', true)
-      .single();
-    if (!error && data) {
-      const d = data as any;
-      return {
-        ...d,
-        image_url: resolveDishImageUrl(d.slug, d.image_url),
-        thumbnail_url: resolveDishImageUrl(d.slug, d.thumbnail_url || d.image_url),
-      } as DishWithCategory;
+  if (isSupabaseConfigured()) {
+    try {
+      const supabase = await createClient();
+      const { data, error } = await supabase
+        .from('dishes')
+        .select('*, categories(*)')
+        .eq('categories.slug', categorySlug)
+        .eq('slug', dishSlug)
+        .eq('is_available', true)
+        .single();
+      if (!error && data) {
+        const d = data as any;
+        return {
+          ...d,
+          image_url: resolveDishImageUrl(d.slug, d.image_url),
+          thumbnail_url: resolveDishImageUrl(d.slug, d.thumbnail_url || d.image_url),
+        } as DishWithCategory;
+      }
+    } catch {
+      // continue to fallback
     }
-  } catch (supabaseError) {
-    // continue to fallback
   }
 
   return getFallbackDishes().find((d) => d.slug === dishSlug && (categorySlug === 'all' || d.categories?.slug === categorySlug)) || null;
@@ -232,30 +266,38 @@ export async function getDishBySlug(categorySlug: string, dishSlug: string): Pro
 export async function getDishById(dishId: string): Promise<DishWithCategory | null> {
   // 1. Try matching slug or ID in Convex
   try {
-    const dish = await withTimeout(fetchQuery(api.menu.getDishBySlug, { slug: dishId }), 3500);
-    if (dish) return mapConvexDish(dish);
+    const [dish, cats] = await Promise.all([
+      resolveConvexDishByIdOrSlug(dishId),
+      getCategories().catch(() => [] as Category[]),
+    ]);
+    if (dish) {
+      const matchedCat = cats.find((c) => c.slug === (dish.categorySlug || dish.category));
+      return mapConvexDish(dish, matchedCat);
+    }
   } catch {
     // continue to Supabase
   }
 
   // 2. Supabase Fallback
-  try {
-    const supabase = await createClient();
-    const { data, error } = await supabase
-      .from('dishes')
-      .select('*, categories(*)')
-      .eq('id', dishId)
-      .single();
-    if (!error && data) {
-      const d = data as any;
-      return {
-        ...d,
-        image_url: resolveDishImageUrl(d.slug, d.image_url),
-        thumbnail_url: resolveDishImageUrl(d.slug, d.thumbnail_url || d.image_url),
-      } as DishWithCategory;
+  if (isSupabaseConfigured()) {
+    try {
+      const supabase = await createClient();
+      const { data, error } = await supabase
+        .from('dishes')
+        .select('*, categories(*)')
+        .eq('id', dishId)
+        .single();
+      if (!error && data) {
+        const d = data as any;
+        return {
+          ...d,
+          image_url: resolveDishImageUrl(d.slug, d.image_url),
+          thumbnail_url: resolveDishImageUrl(d.slug, d.thumbnail_url || d.image_url),
+        } as DishWithCategory;
+      }
+    } catch {
+      // fallback to mock
     }
-  } catch {
-    // fallback to mock
   }
 
   return getFallbackDishes().find((d) => d.id === dishId || d.slug === dishId) || null;
@@ -266,30 +308,36 @@ export async function getAllDishes(): Promise<DishWithCategory[]> {
   return getCachedOrFetch(cacheKey, async () => {
     // 1. Primary: Try Convex
     try {
-      const data = await withTimeout(fetchQuery(api.menu.getAllDishes, {}), 3500);
+      const [data, cats] = await Promise.all([
+        withTimeout(fetchQuery(api.menu.getAllDishes, {}), 3500),
+        getCategories().catch(() => [] as Category[]),
+      ]);
       if (data && data.length > 0) {
-        return data.map((d: any) => mapConvexDish(d));
+        const catBySlug = new Map(cats.map((c) => [c.slug, c]));
+        return data.map((d: any) => mapConvexDish(d, catBySlug.get(d.categorySlug || d.category)));
       }
     } catch (convexError) {
       console.warn('[menu.service] Convex getAllDishes failed, trying Supabase:', convexError);
     }
 
     // 2. Secondary: Supabase
-    try {
-      const supabase = await createClient();
-      const { data, error } = await supabase
-        .from('dishes')
-        .select('*, categories(*)')
-        .eq('is_available', true);
-      if (!error && data && data.length > 0) {
-        return (data as any[]).map((d) => ({
-          ...d,
-          image_url: resolveDishImageUrl(d.slug, d.image_url),
-          thumbnail_url: resolveDishImageUrl(d.slug, d.thumbnail_url || d.image_url),
-        })) as DishWithCategory[];
+    if (isSupabaseConfigured()) {
+      try {
+        const supabase = await createClient();
+        const { data, error } = await supabase
+          .from('dishes')
+          .select('*, categories(*)')
+          .eq('is_available', true);
+        if (!error && data && data.length > 0) {
+          return (data as any[]).map((d) => ({
+            ...d,
+            image_url: resolveDishImageUrl(d.slug, d.image_url),
+            thumbnail_url: resolveDishImageUrl(d.slug, d.thumbnail_url || d.image_url),
+          })) as DishWithCategory[];
+        }
+      } catch {
+        // fallback to mock
       }
-    } catch {
-      // fallback to mock
     }
 
     return getFallbackDishes();
@@ -308,13 +356,13 @@ export async function getCategoryById(categoryId: string): Promise<any> {
 
 export async function getDishSizes(dishId: string): Promise<DishSize[]> {
   try {
-    const dish = await fetchQuery(api.menu.getDishBySlug, { slug: dishId });
+    const dish = await resolveConvexDishByIdOrSlug(dishId);
     if (dish?.sizes && dish.sizes.length > 0) {
       return dish.sizes.map((s: any, idx: number) => ({
         id: s.id,
         dish_id: dishId,
         name: s.name,
-        price_modifier_paise: Math.round(s.priceModifier * 100),
+        price_modifier_paise: s.priceModifierPaise ?? Math.round((s.priceModifier || 0) * 100),
         sort_order: idx + 1,
       }));
     }
@@ -337,13 +385,13 @@ export async function getDishSizes(dishId: string): Promise<DishSize[]> {
 
 export async function getDishAddons(dishId: string): Promise<DishAddon[]> {
   try {
-    const dish = await fetchQuery(api.menu.getDishBySlug, { slug: dishId });
+    const dish = await resolveConvexDishByIdOrSlug(dishId);
     if (dish?.addOns && dish.addOns.length > 0) {
       return dish.addOns.map((a: any) => ({
         id: a.id,
         dish_id: dishId,
         name: a.name,
-        price_paise: Math.round(a.price * 100),
+        price_paise: a.pricePaise ?? Math.round((a.price || 0) * 100),
         is_available: true,
       }));
     }
@@ -353,7 +401,7 @@ export async function getDishAddons(dishId: string): Promise<DishAddon[]> {
 
   const mockDish = mockDishes.find((d) => d.id === dishId || d.slug === dishId);
   if (mockDish?.addOns) {
-    return mockDish.addOns.map((a, idx) => ({
+    return mockDish.addOns.map((a) => ({
       id: `${dishId}-${a.id}`,
       dish_id: dishId,
       name: a.name,
@@ -366,17 +414,21 @@ export async function getDishAddons(dishId: string): Promise<DishAddon[]> {
 
 export async function getDishModel(dishId: string): Promise<DishModel | null> {
   try {
-    const dish = await fetchQuery(api.menu.getDishBySlug, { slug: dishId });
+    const dish = await resolveConvexDishByIdOrSlug(dishId);
     if (dish?.has3DModel) {
+      const hasConfig = hasInteractive3DModel(dish.slug);
+      const modelCfg = hasConfig ? getModelConfig(dish.slug) : null;
+      const modelPath = dish.modelUrl || modelCfg?.modelPath;
+      if (!modelPath) return null;
       return {
         id: `model-${dishId}`,
         dish_id: dishId,
-        model_path: dish.modelUrl || `/models/${dish.slug}.glb`,
-        initial_scale: 1,
-        initial_rotation_x: 0,
-        initial_rotation_y: 0,
-        initial_rotation_z: 0,
-        camera_distance: 1.5,
+        model_path: modelPath,
+        initial_scale: modelCfg?.initialScale ?? 1,
+        initial_rotation_x: modelCfg?.initialRotation?.[0] ?? 0,
+        initial_rotation_y: modelCfg?.initialRotation?.[1] ?? 0,
+        initial_rotation_z: modelCfg?.initialRotation?.[2] ?? 0,
+        camera_distance: modelCfg?.cameraDistance ?? 1.5,
         is_active: true,
         version: 1,
         created_at: '2026-01-01T00:00:00Z',
@@ -389,15 +441,19 @@ export async function getDishModel(dishId: string): Promise<DishModel | null> {
 
   const mockDish = mockDishes.find((d) => d.id === dishId || d.slug === dishId);
   if (mockDish?.has3DModel) {
+    const hasConfig = hasInteractive3DModel(mockDish.slug);
+    const modelCfg = hasConfig ? getModelConfig(mockDish.slug) : null;
+    const modelPath = mockDish.modelUrl || modelCfg?.modelPath;
+    if (!modelPath) return null;
     return {
       id: `model-${dishId}`,
       dish_id: dishId,
-      model_path: mockDish.modelUrl || `/models/${mockDish.slug}.glb`,
-      initial_scale: 1,
-      initial_rotation_x: 0,
-      initial_rotation_y: 0,
-      initial_rotation_z: 0,
-      camera_distance: 1.5,
+      model_path: modelPath,
+      initial_scale: modelCfg?.initialScale ?? 1,
+      initial_rotation_x: modelCfg?.initialRotation?.[0] ?? 0,
+      initial_rotation_y: modelCfg?.initialRotation?.[1] ?? 0,
+      initial_rotation_z: modelCfg?.initialRotation?.[2] ?? 0,
+      camera_distance: modelCfg?.cameraDistance ?? 1.5,
       is_active: true,
       version: 1,
       created_at: '2026-01-01T00:00:00Z',
@@ -408,15 +464,17 @@ export async function getDishModel(dishId: string): Promise<DishModel | null> {
 }
 
 export async function getDishHotspots(dishId: string): Promise<DishHotspot[]> {
-  try {
-    const supabase = await createClient();
-    const { data, error } = await supabase
-      .from('dish_hotspots')
-      .select('*')
-      .eq('dish_id', dishId);
-    if (!error && data && data.length > 0) return data;
-  } catch {
-    // continue
+  if (isSupabaseConfigured()) {
+    try {
+      const supabase = await createClient();
+      const { data, error } = await supabase
+        .from('dish_hotspots')
+        .select('*')
+        .eq('dish_id', dishId);
+      if (!error && data && data.length > 0) return data;
+    } catch {
+      // continue
+    }
   }
 
   // Fallback to curated 3D AR Hotspots in ar-config.ts

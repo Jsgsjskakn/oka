@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     'Experience luxury dining with The Golden Oak. Explore our premium menu, view dishes in 3D & AR, and book your table for an unforgettable culinary journey.',
   manifest: '/manifest.json',
   icons: {
-    icon: '/favicon.ico',
+    icon: '/icons/icon-192.png',
     apple: '/icons/apple-touch-icon.png',
   },
   openGraph: {
@@ -63,8 +63,8 @@ export const viewport: Viewport = {
   themeColor: '#0d0d0d',
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  maximumScale: 5,
+  viewportFit: 'cover',
 };
 
 const restaurantJsonLd = {

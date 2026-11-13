@@ -2,11 +2,19 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createBrowserClient } from '@supabase/ssr';
 import { setupEmployeePassword } from '@/lib/actions/employee-actions';
 import { loginAction } from '@/lib/auth/convex-auth-actions';
 import { UtensilsCrossed, ShieldCheck, Eye, EyeOff, Loader2, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+
+function getSafeEmployeeRedirect(): string {
+  if (typeof window === 'undefined') return '/employee/orders';
+  const raw = new URLSearchParams(window.location.search).get('redirectTo') || '';
+  if (raw.startsWith('/employee') && !raw.startsWith('//') && !raw.startsWith('/employee/login')) {
+    return raw;
+  }
+  return '/employee/orders';
+}
 
 export default function EmployeeLoginPage() {
   const [viewMode, setViewMode] = useState<'login' | 'setup' | 'forgot'>('login');
@@ -18,16 +26,12 @@ export default function EmployeeLoginPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccessMsg(null);
     setLoading(true);
+    const redirectTarget = getSafeEmployeeRedirect();
 
     try {
       // 1. Primary: Convex Authentication
@@ -38,9 +42,20 @@ export default function EmployeeLoginPage() {
       });
 
       if (convexResult.success) {
-        router.push('/employee/orders');
+        router.push(redirectTarget);
         router.refresh();
         return;
+      }
+
+      const { createClient, isSupabaseConfigured } = await import('@/lib/supabase/client');
+      if (!isSupabaseConfigured()) {
+        throw new Error(convexResult.error || 'Invalid employee credentials.');
+      }
+      if (
+        convexResult.error?.toLowerCase().includes('access denied') ||
+        convexResult.error?.toLowerCase().includes('deactivated')
+      ) {
+        throw new Error(convexResult.error);
       }
 
       if (convexResult.error) {
@@ -51,6 +66,7 @@ export default function EmployeeLoginPage() {
       }
 
       // 2. Secondary: Supabase Fallback
+      const supabase = createClient();
       const isEmail = identifier.includes('@');
       let phoneIdentifier = identifier.trim();
 
@@ -73,11 +89,11 @@ export default function EmployeeLoginPage() {
         throw new Error('Login failed. Please try again.');
       }
 
-      const { data: employeeData, error: employeeError } = await supabase
+      const { data: employeeData, error: employeeError } = (await supabase
         .from('employees')
         .select('role, is_active')
         .eq('auth_id', data.user.id)
-        .single();
+        .single()) as { data: { role: string; is_active: boolean } | null; error: unknown };
 
       if (employeeError || !employeeData) {
         await supabase.auth.signOut();
@@ -100,7 +116,7 @@ export default function EmployeeLoginPage() {
         throw new Error('Your account has been deactivated. Contact admin.');
       }
 
-      router.push('/employee/orders');
+      router.push(redirectTarget);
       router.refresh();
     } catch (err: any) {
       setError(err.message || 'An error occurred during staff login.');

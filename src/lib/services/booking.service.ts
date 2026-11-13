@@ -33,15 +33,21 @@ export interface BookingFilters {
   dateTo?: string;
 }
 
-export async function getBookingById(bookingId: string): Promise<Booking | null> {
+export async function getBookingById(bookingId: string): Promise<BookingWithTable | null> {
   // 1. Primary: Convex Query
   try {
     const booking = await fetchQuery(api.bookings.getBookingById, { bookingId });
     if (booking) {
+      const createdAtIso = new Date(booking.createdAt).toISOString();
+      const tableNumber =
+        typeof booking.tableNumber === 'number' && !Number.isNaN(booking.tableNumber)
+          ? booking.tableNumber
+          : null;
+      const restaurantId = 'a1b2c3d4-0000-0000-0000-000000000001';
       return {
         id: booking._id,
-        restaurant_id: 'a1b2c3d4-0000-0000-0000-000000000001',
-        table_id: null,
+        restaurant_id: restaurantId,
+        table_id: tableNumber !== null ? String(tableNumber) : null,
         customer_name: booking.customerName,
         customer_phone: booking.customerPhone,
         customer_email: booking.customerEmail || null,
@@ -58,8 +64,21 @@ export async function getBookingById(bookingId: string): Promise<Booking | null>
         cancelled_at: null,
         cancelled_by: null,
         cancellation_reason: null,
-        created_at: new Date(booking.createdAt).toISOString(),
-        updated_at: new Date(booking.createdAt).toISOString(),
+        created_at: createdAtIso,
+        updated_at: createdAtIso,
+        tables:
+          tableNumber !== null
+            ? {
+                id: String(tableNumber),
+                restaurant_id: restaurantId,
+                table_number: tableNumber,
+                capacity: Math.max(booking.guests || 2, 2),
+                status: 'booked',
+                notes: null,
+                created_at: createdAtIso,
+                updated_at: createdAtIso,
+              }
+            : null,
       };
     }
   } catch (err) {
@@ -68,8 +87,10 @@ export async function getBookingById(bookingId: string): Promise<Booking | null>
 
   // 2. Supabase Fallback
   try {
+    const { isSupabaseConfigured } = await import('@/lib/supabase/server');
+    if (!isSupabaseConfigured()) return null;
     const db = sb(await createClient());
-    const { data }: QR<Booking> = await db.from('bookings').select('*').eq('id', bookingId).single();
+    const { data }: QR<BookingWithTable> = await db.from('bookings').select('*, tables(*)').eq('id', bookingId).single();
     return data ?? null;
   } catch {
     return null;
@@ -126,7 +147,7 @@ export async function getBookingsByPhone(phone?: string, email?: string): Promis
       return bookings.map((b: any) => ({
         id: b._id,
         restaurant_id: 'a1b2c3d4-0000-0000-0000-000000000001',
-        table_id: null,
+        table_id: typeof b.tableNumber === 'number' ? String(b.tableNumber) : null,
         customer_name: b.customerName,
         customer_phone: b.customerPhone,
         customer_email: b.customerEmail || null,
@@ -153,6 +174,8 @@ export async function getBookingsByPhone(phone?: string, email?: string): Promis
 
   // 2. Supabase Fallback
   try {
+    const { isSupabaseConfigured } = await import('@/lib/supabase/server');
+    if (!isSupabaseConfigured()) return [];
     const db = sb(await createClient());
     let query = db.from('bookings').select('*').order('created_at', { ascending: false });
     if (phone) {
@@ -169,31 +192,69 @@ export async function getAllBookings(restaurantId: string, filters?: BookingFilt
   // 1. Primary: Convex Query
   try {
     const bookings = await fetchQuery(api.bookings.getAllBookings, {});
-    if (bookings && bookings.length > 0) {
-      return bookings.map((b: any) => ({
-        id: b._id,
-        restaurant_id: restaurantId,
-        table_id: null,
-        customer_name: b.customerName,
-        customer_phone: b.customerPhone,
-        customer_email: b.customerEmail || null,
-        booking_date: b.bookingDate,
-        booking_time: b.bookingTime,
-        booking_end_time: b.bookingEndTime || null,
-        guests: b.guests,
-        occasion: b.occasion || null,
-        table_preference: b.tablePreference || null,
-        special_requests: b.specialRequests || null,
-        status: b.status,
-        payment_status: b.paymentStatus,
-        advance_amount_paise: b.advanceAmountPaise,
-        cancelled_at: null,
-        cancelled_by: null,
-        cancellation_reason: null,
-        created_at: new Date(b.createdAt).toISOString(),
-        updated_at: new Date(b.createdAt).toISOString(),
-        tables: null,
-      }));
+    if (Array.isArray(bookings) && bookings.length > 0) {
+      let mapped: BookingWithTable[] = bookings.map((b: any) => {
+        const createdAtIso = new Date(b.createdAt).toISOString();
+        const hasTableNumber = typeof b.tableNumber === 'number' && !Number.isNaN(b.tableNumber);
+        return {
+          id: b._id,
+          restaurant_id: restaurantId,
+          table_id: hasTableNumber ? String(b.tableNumber) : null,
+          customer_name: b.customerName,
+          customer_phone: b.customerPhone,
+          customer_email: b.customerEmail || null,
+          booking_date: b.bookingDate,
+          booking_time: b.bookingTime,
+          booking_end_time: b.bookingEndTime || null,
+          guests: b.guests,
+          occasion: b.occasion || null,
+          table_preference: b.tablePreference || null,
+          special_requests: b.specialRequests || null,
+          status: b.status,
+          payment_status: b.paymentStatus,
+          advance_amount_paise: b.advanceAmountPaise,
+          cancelled_at: null,
+          cancelled_by: null,
+          cancellation_reason: null,
+          created_at: createdAtIso,
+          updated_at: createdAtIso,
+          tables: hasTableNumber
+            ? {
+                id: String(b.tableNumber),
+                restaurant_id: restaurantId,
+                table_number: b.tableNumber,
+                capacity: Math.max(b.guests || 2, 2),
+                status: 'booked',
+                notes: null,
+                created_at: createdAtIso,
+                updated_at: createdAtIso,
+              }
+            : null,
+        };
+      });
+
+      if (filters?.status) {
+        mapped = mapped.filter((b) => b.status === filters.status);
+      }
+      if (filters?.phone) {
+        const queryPhone = filters.phone.trim();
+        const queryDigits = queryPhone.replace(/\D/g, '').slice(-10);
+        mapped = mapped.filter((b) => {
+          const digits = (b.customer_phone || '').replace(/\D/g, '').slice(-10);
+          return (
+            (b.customer_phone || '').includes(queryPhone) ||
+            (queryDigits.length > 0 && digits.includes(queryDigits))
+          );
+        });
+      }
+      if (filters?.dateFrom) {
+        mapped = mapped.filter((b) => b.booking_date >= filters.dateFrom!);
+      }
+      if (filters?.dateTo) {
+        mapped = mapped.filter((b) => b.booking_date <= filters.dateTo!);
+      }
+
+      return mapped;
     }
   } catch {
     // continue to Supabase
@@ -201,6 +262,8 @@ export async function getAllBookings(restaurantId: string, filters?: BookingFilt
 
   // 2. Supabase Fallback
   try {
+    const { isSupabaseConfigured } = await import('@/lib/supabase/server');
+    if (!isSupabaseConfigured()) return [];
     const db = sb(await createClient());
     let q = db.from('bookings').select('*, tables(*)').eq('restaurant_id', restaurantId);
     if (filters?.status) q = q.eq('status', filters.status);

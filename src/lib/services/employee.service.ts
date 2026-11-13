@@ -1,6 +1,6 @@
 import { fetchQuery, fetchMutation } from 'convex/nextjs';
 import { api } from '@/../convex/_generated/api';
-import { createClient } from '@/lib/supabase/server';
+import { createClient, isSupabaseConfigured } from '@/lib/supabase/server';
 import { getSessionToken } from '@/lib/auth/admin-auth';
 
 export interface Employee {
@@ -35,6 +35,7 @@ export async function getEmployees(): Promise<Employee[]> {
   }
 
   // 2. Supabase Fallback
+  if (!isSupabaseConfigured()) return [];
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
@@ -55,6 +56,7 @@ export async function addEmployee(
   const token = sessionToken || (await getSessionToken());
 
   // 1. Primary: Convex Mutation
+  let convexError: string | null = null;
   try {
     const res = await fetchMutation(api.employees.addEmployee, {
       name: employee.name,
@@ -77,11 +79,21 @@ export async function addEmployee(
         created_at: new Date().toISOString(),
       };
     }
+    if (res && res.error) {
+      convexError = res.error;
+    }
   } catch (err) {
     console.warn('[employee.service] Convex addEmployee failed, trying Supabase:', err);
   }
 
+  if (convexError) {
+    throw new Error(convexError);
+  }
+
   // 2. Supabase Fallback
+  if (!isSupabaseConfigured()) {
+    throw new Error('Failed to add employee in Convex and Supabase is not configured.');
+  }
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('employees')
@@ -96,17 +108,28 @@ export async function removeEmployee(id: string, sessionToken?: string): Promise
   const token = sessionToken || (await getSessionToken());
 
   // 1. Primary: Convex Mutation
+  let convexError: string | null = null;
   try {
     const res = await fetchMutation(api.employees.removeEmployee, {
       employeeId: id,
       sessionToken: token,
     });
     if (res && res.success) return;
+    if (res && res.error) {
+      convexError = res.error;
+    }
   } catch (err) {
     console.warn('[employee.service] Convex removeEmployee failed, trying Supabase:', err);
   }
 
+  if (convexError) {
+    throw new Error(convexError);
+  }
+
   // 2. Supabase Fallback
+  if (!isSupabaseConfigured()) {
+    throw new Error('Failed to remove employee in Convex and Supabase is not configured.');
+  }
   const supabase = await createClient();
   const { error } = await supabase
     .from('employees')

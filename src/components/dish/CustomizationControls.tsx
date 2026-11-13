@@ -45,9 +45,11 @@ export function CustomizationControls({
               const isSelected = selectedSize?.id === size.id;
               return (
                 <button
+                  type="button"
                   key={size.id}
                   onClick={() => onSizeSelect(size)}
-                  className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${
+                  aria-pressed={isSelected}
+                  className={`min-h-[44px] flex items-center justify-between p-3 rounded-lg border transition-colors ${
                     isSelected 
                       ? 'bg-primary/10 border-primary' 
                       : 'bg-[#1a1a1a] border-white/5'
@@ -77,9 +79,11 @@ export function CustomizationControls({
               const isSelected = selectedAddOns.has(addon.id);
               return (
                 <button
+                  type="button"
                   key={addon.id}
                   onClick={() => onAddOnToggle(addon.id)}
-                  className="flex items-center justify-between p-3 rounded-lg bg-[#1a1a1a] border border-white/5 active:scale-[0.99] transition-transform"
+                  aria-pressed={isSelected}
+                  className="min-h-[44px] flex items-center justify-between p-3 rounded-lg bg-[#1a1a1a] border border-white/5 active:scale-[0.99] transition-transform"
                 >
                   <div className="flex items-center gap-3">
                     <div className={`w-5 h-5 rounded flex items-center justify-center border ${
@@ -112,9 +116,11 @@ export function CustomizationControls({
               const isRemoved = removedIngredients.has(item);
               return (
                 <button
+                  type="button"
                   key={item}
                   onClick={() => onRemoveToggle(item)}
-                  className={`px-4 py-2 rounded-full border text-sm font-medium transition-colors ${
+                  aria-pressed={isRemoved}
+                  className={`min-h-[44px] px-4 py-2 rounded-full border text-sm font-medium transition-colors ${
                     isRemoved 
                       ? 'bg-red-500/10 border-red-500/50 text-red-400 line-through decoration-red-400/50' 
                       : 'bg-[#1a1a1a] border-border-subtle text-text-primary/80'

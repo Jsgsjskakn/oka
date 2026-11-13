@@ -1,6 +1,6 @@
 import { fetchQuery, fetchMutation } from 'convex/nextjs';
 import { api } from '@/../convex/_generated/api';
-import { createClient } from '@/lib/supabase/server';
+import { createClient, isSupabaseConfigured } from '@/lib/supabase/server';
 import { sb, type QR } from '@/lib/supabase/typed';
 import { getSessionToken } from '@/lib/auth/admin-auth';
 
@@ -15,6 +15,7 @@ export async function getSetting(restaurantId: string, key: string): Promise<unk
 
   // 2. Supabase fallback
   try {
+    if (!isSupabaseConfigured()) return null;
     const db = sb(await createClient());
     const { data }: QR<{ value: unknown }> = await db.from('restaurant_settings').select('value').eq('restaurant_id', restaurantId).eq('key', key).single();
     return data?.value ?? null;
@@ -38,6 +39,7 @@ export async function getSettings(restaurantId: string, keys: string[]): Promise
 
   // 2. Supabase fallback
   try {
+    if (!isSupabaseConfigured()) return {};
     const db = sb(await createClient());
     const { data }: QR<Array<{ key: string; value: unknown }>> = await db.from('restaurant_settings').select('key, value').eq('restaurant_id', restaurantId).in('key', keys);
     const result: Record<string, unknown> = {};
@@ -65,6 +67,9 @@ export async function updateSetting(
 
   // 2. Supabase fallback
   try {
+    if (!isSupabaseConfigured()) {
+      return { error: 'Settings service unavailable. Check Convex configuration.' };
+    }
     const db = sb(await createClient());
     const { error }: QR<null> = await db.from('restaurant_settings').upsert({ restaurant_id: restaurantId, key, value }, { onConflict: 'restaurant_id,key' });
     if (error) throw error;

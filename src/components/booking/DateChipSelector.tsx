@@ -161,7 +161,7 @@ export function DateChipSelector({ selectedDate, onSelect }: DateChipSelectorPro
             {/* LUXURY CALENDAR POPOVER: Strictly Single Date Selection */}
             {isCalendarOpen && (
               <div
-                className="absolute right-0 top-full mt-2 w-[310px] sm:w-[330px] p-4 rounded-2xl border border-[#F0C36B]/50 z-[100] animate-in fade-in zoom-in-95 duration-200 select-none"
+                className="absolute right-0 top-full mt-2 w-[300px] sm:w-[330px] p-4 rounded-2xl border border-[#F0C36B]/50 z-40 animate-in fade-in zoom-in-95 duration-200 select-none"
                 style={{
                   backgroundColor: '#120D0A',
                   boxShadow: '0 25px 60px -10px rgba(0,0,0,0.95), 0 0 0 1px rgba(240,195,107,0.45), inset 0 1px 1px rgba(255,255,255,0.15)',

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -10,10 +10,6 @@ import {
   Sparkles,
   UtensilsCrossed,
   Calendar,
-  Plus,
-  Clock,
-  ShieldCheck,
-  CreditCard,
 } from 'lucide-react';
 import { useCartStore } from '@/store/cart-store';
 import { CartItemCard } from '@/components/cart/CartItemCard';
@@ -23,15 +19,13 @@ import { toast } from '@/store/toast-store';
 
 import type { Dish } from '@/types/menu';
 
-type DiningMode = 'dine-in' | 'pre-order' | 'takeaway';
-
 const PAIRING_SUGGESTIONS: Dish[] = [
   {
     id: 'dynamite-chilli-potatoes',
     slug: 'dynamite-chilli-potatoes',
     name: 'Dynamite Chilli Potatoes',
     description: 'Crisp hand-cut potatoes wok-tossed in fiery chili glaze & spring greens.',
-    price: 279,
+    price: 249,
     image: resolveDishImageUrl('dynamite-chilli-potatoes'),
     category: 'starters',
     isVeg: true,
@@ -64,17 +58,31 @@ const PAIRING_SUGGESTIONS: Dish[] = [
     sizes: [],
     addOns: [],
     removableIngredients: [],
-    has3DModel: false,
+    has3DModel: true,
   },
 ];
 
+function formatRupees(amount: number): string {
+  return Number.isInteger(amount)
+    ? amount.toLocaleString('en-IN')
+    : amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
 export default function CartPage() {
   const router = useRouter();
-  const { items, updateQuantity, removeItem, getTotalPrice, getTotalItems, addItem } =
-    useCartStore();
+  const {
+    items,
+    diningMode,
+    setDiningMode,
+    updateQuantity,
+    updateItemInstructions,
+    removeItem,
+    getTotalPrice,
+    getTotalItems,
+    addItem,
+  } = useCartStore();
   const [taxRate, setTaxRate] = useState(0.05);
   const [isMounted, setIsMounted] = useState(false);
-  const [diningMode, setDiningMode] = useState<DiningMode>('dine-in');
 
   useEffect(() => {
     setIsMounted(true);
@@ -91,8 +99,9 @@ export default function CartPage() {
 
   const subtotal = getTotalPrice();
   const totalItems = getTotalItems();
-  const taxes = Math.round(subtotal * taxRate);
-  const totalPayable = subtotal + taxes;
+  const subtotalPaise = Math.round(subtotal * 100);
+  const taxPaise = Math.round(subtotalPaise * taxRate);
+  const totalPayable = (subtotalPaise + taxPaise) / 100;
 
   if (!isMounted) {
     return (
@@ -105,7 +114,7 @@ export default function CartPage() {
   // Empty Cart State
   if (items.length === 0) {
     return (
-      <div className="relative min-h-screen bg-[#0D0A08] text-[#FAF5EC] overflow-x-hidden flex items-center justify-center px-4 py-20">
+      <div className="relative min-h-screen bg-[#0D0A08] text-[#FAF5EC] overflow-x-hidden flex items-center justify-center px-4 py-20 pb-32 md:pb-20">
         <div
           className="pointer-events-none absolute inset-0 z-0"
           style={{
@@ -157,7 +166,7 @@ export default function CartPage() {
     totalItems < 10 ? `0${totalItems}` : `${totalItems}`;
 
   return (
-    <div className="relative min-h-screen bg-[#0D0A08] text-[#FAF5EC] overflow-x-hidden selection:bg-[#E2A84B] selection:text-[#0D0A08] pb-28">
+    <div className="relative min-h-screen bg-[#0D0A08] text-[#FAF5EC] overflow-x-hidden selection:bg-[#E2A84B] selection:text-[#0D0A08] pb-32 md:pb-16">
       {/* Background Layer 2: Dual Radial Aura */}
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-[700px] z-0"
@@ -211,7 +220,7 @@ export default function CartPage() {
                 <button
                   type="button"
                   onClick={() => setDiningMode('dine-in')}
-                  className={`px-3.5 py-1.5 rounded-md text-xs font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
+                  className={`min-h-[40px] px-3.5 py-2 rounded-md text-xs font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
                     diningMode === 'dine-in'
                       ? 'bg-[#0E1F18] border border-[#E2A84B] text-[#FAF5EC] shadow-md'
                       : 'text-[#9A9286] hover:text-[#FAF5EC]'
@@ -224,7 +233,7 @@ export default function CartPage() {
                 <button
                   type="button"
                   onClick={() => setDiningMode('pre-order')}
-                  className={`px-3.5 py-1.5 rounded-md text-xs font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
+                  className={`min-h-[40px] px-3.5 py-2 rounded-md text-xs font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
                     diningMode === 'pre-order'
                       ? 'bg-[#0E1F18] border border-[#E2A84B] text-[#FAF5EC] shadow-md'
                       : 'text-[#9A9286] hover:text-[#FAF5EC]'
@@ -237,7 +246,7 @@ export default function CartPage() {
                 <button
                   type="button"
                   onClick={() => setDiningMode('takeaway')}
-                  className={`px-3.5 py-1.5 rounded-md text-xs font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
+                  className={`min-h-[40px] px-3.5 py-2 rounded-md text-xs font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
                     diningMode === 'takeaway'
                       ? 'bg-[#0E1F18] border border-[#E2A84B] text-[#FAF5EC] shadow-md'
                       : 'text-[#9A9286] hover:text-[#FAF5EC]'
@@ -265,6 +274,7 @@ export default function CartPage() {
                       item={item}
                       onUpdateQuantity={updateQuantity}
                       onRemove={removeItem}
+                      onUpdateInstructions={updateItemInstructions}
                     />
                   ))}
                 </div>
@@ -335,7 +345,7 @@ export default function CartPage() {
                             addItem(rec, 1);
                             toast.success('Pairing Added', `${rec.name} (₹${rec.price})`);
                           }}
-                          className="px-3 py-1.5 rounded-[5px] text-[11px] font-bold text-[#0D0A08] transition-all hover:brightness-110 active:scale-95 shadow-sm shrink-0 cursor-pointer"
+                          className="min-h-[40px] px-3.5 py-2 rounded-[5px] text-[11px] font-bold text-[#0D0A08] transition-all hover:brightness-110 active:scale-95 shadow-sm shrink-0 cursor-pointer"
                           style={{
                             background:
                               'linear-gradient(135deg, #F6D386 0%, #D49432 50%, #9E6818 100%)',
@@ -361,7 +371,7 @@ export default function CartPage() {
                 <button
                   type="button"
                   onClick={() => router.push('/checkout')}
-                  className="group relative overflow-hidden w-full h-14 rounded-[6px] text-xs sm:text-[13px] font-extrabold tracking-[0.14em] text-[#0D0A08] transition-all duration-300 hover:brightness-110 active:scale-[0.98] shadow-2xl flex items-center justify-center gap-2 cursor-pointer uppercase"
+                  className="group relative overflow-hidden w-full min-h-[56px] px-4 py-3 rounded-[6px] text-[11px] sm:text-[13px] font-extrabold tracking-[0.12em] text-[#0D0A08] transition-all duration-300 hover:brightness-110 active:scale-[0.98] shadow-2xl flex items-center justify-center gap-2 cursor-pointer uppercase text-center"
                   style={{
                     background:
                       'linear-gradient(135deg, #F6D386 0%, #D49432 50%, #9E6818 100%)',
@@ -369,9 +379,9 @@ export default function CartPage() {
                 >
                   <span className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/40 to-transparent pointer-events-none animate-shimmer" />
                   <span className="relative z-10 font-bold">
-                    PROCEED TO SECURE CHECKOUT · ₹{totalPayable}
+                    PROCEED TO SECURE CHECKOUT · ₹{formatRupees(totalPayable)}
                   </span>
-                  <ArrowRight className="w-4 h-4 relative z-10 transition-transform duration-300 group-hover:translate-x-1.5 stroke-[2.5]" />
+                  <ArrowRight className="w-4 h-4 relative z-10 shrink-0 transition-transform duration-300 group-hover:translate-x-1.5 stroke-[2.5]" />
                 </button>
 
                 {/* Monochrome Payment Trust Badges */}

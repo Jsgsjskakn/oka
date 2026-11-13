@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Smartphone, Camera, Box, ArrowLeft, QrCode, Copy, Check } from 'lucide-react';
 import Link from 'next/link';
 
@@ -12,27 +12,61 @@ interface ARUnsupportedProps {
 
 export function ARUnsupported({ dishId, dishName = 'Dish', onGoBack }: ARUnsupportedProps) {
   const [copied, setCopied] = useState(false);
-  const [currentUrl, setCurrentUrl] = useState('');
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setCurrentUrl(window.location.href);
-    }
+    return () => {
+      if (copyTimerRef.current) {
+        clearTimeout(copyTimerRef.current);
+        copyTimerRef.current = null;
+      }
+    };
   }, []);
 
-  const handleCopyLink = () => {
-    if (typeof window !== 'undefined' && navigator.clipboard) {
-      navigator.clipboard.writeText(currentUrl || window.location.href);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+  const markCopied = () => {
+    setCopied(true);
+    if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+    copyTimerRef.current = setTimeout(() => {
+      setCopied(false);
+      copyTimerRef.current = null;
+    }, 2000);
+  };
+
+  const handleCopyLink = async () => {
+    if (typeof window === 'undefined') return;
+    const href = window.location.href;
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(href);
+        markCopied();
+        return;
+      }
+    } catch {
+      // Fall through to execCommand fallback
+    }
+
+    try {
+      const textarea = document.createElement('textarea');
+      textarea.value = href;
+      textarea.setAttribute('readonly', '');
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      if (document.execCommand('copy')) {
+        markCopied();
+      }
+      document.body.removeChild(textarea);
+    } catch {
+      // Ignore restricted clipboard failures
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0A0705] px-4 sm:px-6 select-none overflow-y-auto py-8">
+    <div className="fixed inset-0 z-50 flex flex-col items-center bg-[#0A0705] px-4 sm:px-6 select-none overflow-y-auto py-6 sm:py-8">
       {/* Background Ambient Warm Spotlight */}
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="fixed inset-0 pointer-events-none"
         style={{
           background:
             'radial-gradient(circle at 50% 30%, rgba(240, 195, 107, 0.15) 0%, rgba(10, 7, 5, 0.95) 60%)',
@@ -40,7 +74,12 @@ export function ARUnsupported({ dishId, dishName = 'Dish', onGoBack }: ARUnsuppo
       />
 
       {/* Main Glassmorphic Dialog Card */}
-      <div className="relative z-10 w-full max-w-md p-6 sm:p-8 rounded-3xl bg-[rgba(18,14,11,0.85)] backdrop-blur-2xl border border-[#F0C36B]/50 shadow-[0_24px_60px_rgba(0,0,0,0.88),inset_0_1px_1px_rgba(255,255,255,0.18)] flex flex-col items-center text-center animate-in fade-in zoom-in-95 duration-300">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={`AR view unavailable for ${dishName}`}
+        className="relative z-10 my-auto w-full max-w-md p-6 sm:p-8 rounded-3xl bg-[rgba(18,14,11,0.85)] backdrop-blur-2xl border border-[#F0C36B]/50 shadow-[0_24px_60px_rgba(0,0,0,0.88),inset_0_1px_1px_rgba(255,255,255,0.18)] flex flex-col items-center text-center animate-in fade-in zoom-in-95 duration-300"
+      >
         {/* Glowing Device Icon with Rear Camera Indicator */}
         <div className="relative mb-5">
           <div className="w-20 h-20 rounded-2xl flex items-center justify-center bg-gradient-to-br from-[#1C1612] to-[#2B1F16] border border-[#F0C36B]/60 shadow-[0_0_30px_rgba(240,195,107,0.3)] text-[#F0C36B]">
@@ -75,7 +114,7 @@ export function ARUnsupported({ dishId, dishName = 'Dish', onGoBack }: ARUnsuppo
           <button
             type="button"
             onClick={handleCopyLink}
-            className="w-full py-2.5 px-3 rounded-xl bg-white/[0.05] hover:bg-[#F0C36B]/15 border border-[#F0C36B]/40 hover:border-[#F0C36B] text-xs font-mono font-medium text-[#FAF5EC] flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer"
+            className="w-full min-h-[44px] py-2.5 px-3 rounded-xl bg-white/[0.05] hover:bg-[#F0C36B]/15 border border-[#F0C36B]/40 hover:border-[#F0C36B] text-xs font-mono font-medium text-[#FAF5EC] flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer touch-manipulation"
           >
             {copied ? (
               <>
@@ -95,7 +134,7 @@ export function ARUnsupported({ dishId, dishName = 'Dish', onGoBack }: ARUnsuppo
         <div className="w-full space-y-2.5">
           <Link
             href={`/3d/${dishId}`}
-            className="w-full py-3.5 rounded-xl font-bold text-xs sm:text-sm tracking-wide text-[#17100C] shadow-[0_8px_25px_rgba(240,195,107,0.45)] hover:-translate-y-0.5 active:translate-y-0 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full min-h-[48px] py-3.5 rounded-xl font-bold text-xs sm:text-sm tracking-wide text-[#17100C] shadow-[0_8px_25px_rgba(240,195,107,0.45)] hover:-translate-y-0.5 active:translate-y-0 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer touch-manipulation"
             style={{
               background: 'linear-gradient(135deg, #F0C36B 0%, #DDA33E 50%, #A8792A 100%)',
             }}
@@ -107,7 +146,7 @@ export function ARUnsupported({ dishId, dishName = 'Dish', onGoBack }: ARUnsuppo
           <button
             type="button"
             onClick={onGoBack}
-            className="w-full py-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-[#FAF5EC] font-medium text-xs border border-white/10 active:scale-98 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+            className="w-full min-h-[44px] py-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-[#FAF5EC] font-medium text-xs border border-white/10 active:scale-98 transition-all flex items-center justify-center gap-1.5 cursor-pointer touch-manipulation"
           >
             <ArrowLeft className="w-3.5 h-3.5 text-[#A99A88]" />
             <span>Return to Menu</span>

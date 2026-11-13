@@ -1,6 +1,13 @@
 import { query, mutation } from "./_generated/server";
+import type { Doc } from "./_generated/dataModel";
 import { v } from "convex/values";
-import { authenticateCaller, STAFF_ROLES } from "./authUtils";
+import {
+  authenticateCaller,
+  buildPhoneCandidates,
+  normalizePhone,
+  phonesMatch,
+  STAFF_ROLES,
+} from "./authUtils";
 
 // Place a new order (Dine-in or Takeaway)
 export const placeOrder = mutation({
@@ -39,7 +46,22 @@ export const placeOrder = mutation({
     ),
   },
   handler: async (ctx, args) => {
-    // 1. Idempotency check with index
+    // 1. Basic validation & Idempotency check with index
+    const trimmedName = args.customerName.trim();
+    const trimmedPhone = args.customerPhone.trim();
+    if (!trimmedName || !trimmedPhone) {
+      return { error: "Customer name and phone are required" };
+    }
+    if (args.items.length === 0) {
+      return { error: "Order must contain at least one item" };
+    }
+    if (
+      args.tableNumber !== undefined &&
+      (!Number.isInteger(args.tableNumber) || args.tableNumber < 1)
+    ) {
+      return { error: "Invalid table number" };
+    }
+
     if (args.idempotencyKey) {
       const existing = await ctx.db
         .query("orders")
@@ -59,7 +81,7 @@ export const placeOrder = mutation({
         return { error: `Invalid quantity ${item.quantity} for item "${item.dishName || item.dishId}"` };
       }
 
-      // Find dish by ID, slug, or name
+      // Find dish by ID, slug, legacyId, or name
       let dish = null;
       const normalizedId = ctx.db.normalizeId("dishes", item.dishId);
       if (normalizedId) {
@@ -72,6 +94,12 @@ export const placeOrder = mutation({
           .first();
       }
       if (!dish) {
+        dish = await ctx.db
+          .query("dishes")
+          .withIndex("by_legacy_id", (q) => q.eq("legacyId", item.dishId))
+          .first();
+      }
+      if (!dish && item.dishName.trim()) {
         dish = await ctx.db
           .query("dishes")
           .filter((q) => q.eq(q.field("name"), item.dishName))
@@ -142,24 +170,29 @@ export const placeOrder = mutation({
       });
     }
 
-    // 3. Tax calculation from settings (default 5%)
+    // 3. Tax calculation from settings (default 5%, honoring 0%)
     const taxSetting = await ctx.db
       .query("restaurant_settings")
       .withIndex("by_key", (q) => q.eq("key", "tax_rate_percent"))
       .first();
-    const taxPercent = taxSetting ? Number(taxSetting.value) || 5 : 5;
+    const parsedTax = taxSetting ? Number(taxSetting.value) : NaN;
+    const taxPercent = Number.isFinite(parsedTax) && parsedTax >= 0 ? parsedTax : 5;
     const calculatedTaxPaise = Math.round(
       calculatedSubtotalPaise * (taxPercent / 100)
     );
-    const sanitizedTipPaise = Math.max(0, Math.round(args.tipPaise || 0));
+    const sanitizedTipPaise = Number.isFinite(args.tipPaise)
+      ? Math.max(0, Math.round(args.tipPaise))
+      : 0;
     const calculatedTotalPaise =
       calculatedSubtotalPaise + calculatedTaxPaise + sanitizedTipPaise;
 
+    const normalizedEmail = args.customerEmail?.trim().toLowerCase() || undefined;
+
     // 4. Insert order
     const orderId = await ctx.db.insert("orders", {
-      customerName: args.customerName,
-      customerPhone: args.customerPhone,
-      customerEmail: args.customerEmail,
+      customerName: trimmedName,
+      customerPhone: trimmedPhone,
+      customerEmail: normalizedEmail,
       orderType: args.orderType,
       tableNumber: args.tableNumber,
       status: "pending",
@@ -181,49 +214,99 @@ export const placeOrder = mutation({
   },
 });
 
-// Get single order by ID
+// Get single order by ID (handles non-Convex IDs gracefully)
 export const getOrderById = query({
-  args: { orderId: v.id("orders") },
+  args: { orderId: v.string() },
   handler: async (ctx, args) => {
-    return await ctx.db.get(args.orderId);
+    const id = ctx.db.normalizeId("orders", args.orderId);
+    if (!id) return null;
+    return await ctx.db.get(id);
   },
 });
 
-// Realtime Active Orders feed for kitchen & employee dashboard
+// Realtime Active Orders feed for kitchen & employee dashboard (indexed by status)
 export const getActiveOrders = query({
   args: {},
   handler: async (ctx) => {
-    const orders = await ctx.db
-      .query("orders")
-      .withIndex("by_created_at")
-      .order("asc")
-      .collect();
-
-    // Active orders are pending, confirmed, preparing, or ready
-    return orders.filter((o) =>
-      ["pending", "confirmed", "preparing", "ready"].includes(o.status)
+    const activeStatuses = ["pending", "confirmed", "preparing", "ready"] as const;
+    const buckets = await Promise.all(
+      activeStatuses.map((status) =>
+        ctx.db
+          .query("orders")
+          .withIndex("by_status_created", (q) => q.eq("status", status))
+          .order("asc")
+          .take(100)
+      )
     );
+
+    return buckets.flat().sort((a, b) => a.createdAt - b.createdAt);
   },
 });
 
-// Get order history (completed / cancelled or customer past orders)
+// Get order history (completed / cancelled or customer past orders via indexes)
 export const getOrderHistory = query({
   args: { phone: v.optional(v.string()), email: v.optional(v.string()) },
   handler: async (ctx, args) => {
-    const orders = await ctx.db
-      .query("orders")
-      .withIndex("by_created_at")
-      .order("desc")
-      .take(100);
+    const hasPhone = Boolean(args.phone && args.phone.trim());
+    const hasEmail = Boolean(args.email && args.email.trim());
 
-    if (args.phone || args.email) {
-      return orders.filter(
-        (o) =>
-          (args.phone && o.customerPhone === args.phone) ||
-          (args.email && o.customerEmail && o.customerEmail.toLowerCase() === args.email.toLowerCase())
-      );
+    if (!hasPhone && !hasEmail) {
+      return await ctx.db
+        .query("orders")
+        .withIndex("by_created_at")
+        .order("desc")
+        .take(100);
     }
-    return orders;
+
+    const seen = new Map<string, Doc<"orders">>();
+
+    if (hasPhone && args.phone) {
+      const candidates = buildPhoneCandidates(args.phone);
+      const exactList = candidates.length > 0 ? candidates : [args.phone.trim()];
+      for (const candidate of exactList) {
+        const matches = await ctx.db
+          .query("orders")
+          .withIndex("by_phone", (q) => q.eq("customerPhone", candidate))
+          .order("desc")
+          .take(50);
+        for (const o of matches) {
+          seen.set(o._id, o);
+        }
+      }
+      if (normalizePhone(args.phone) && seen.size === 0) {
+        const recent = await ctx.db
+          .query("orders")
+          .withIndex("by_created_at")
+          .order("desc")
+          .take(100);
+        for (const o of recent) {
+          if (phonesMatch(o.customerPhone, args.phone)) {
+            seen.set(o._id, o);
+          }
+        }
+      }
+    }
+
+    if (hasEmail && args.email) {
+      const trimmedEmail = args.email.trim();
+      const lowerEmail = trimmedEmail.toLowerCase();
+      const emailCandidates =
+        trimmedEmail === lowerEmail ? [lowerEmail] : [lowerEmail, trimmedEmail];
+      for (const emailVal of emailCandidates) {
+        const matches = await ctx.db
+          .query("orders")
+          .withIndex("by_email", (q) => q.eq("customerEmail", emailVal))
+          .order("desc")
+          .take(50);
+        for (const o of matches) {
+          seen.set(o._id, o);
+        }
+      }
+    }
+
+    return Array.from(seen.values())
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .slice(0, 100);
   },
 });
 
@@ -271,7 +354,19 @@ export const updateOrderStatus = mutation({
       };
     }
 
-    await ctx.db.patch(id, { status: args.status });
+    const patch: {
+      status: typeof args.status;
+      cancelledAt?: number;
+      cancelledBy?: string;
+      cancellationReason?: string;
+    } = { status: args.status };
+    if (args.status === "cancelled") {
+      patch.cancelledAt = Date.now();
+      patch.cancelledBy = auth.user.name || auth.user.role || "staff";
+      patch.cancellationReason = "Cancelled by staff";
+    }
+
+    await ctx.db.patch(id, patch);
     return { success: true };
   },
 });
@@ -288,20 +383,38 @@ export const cancelOrderByCustomer = mutation({
     const order = await ctx.db.get(id);
     if (!order) return { error: "Order not found" };
 
-    if (order.customerPhone !== args.phone) {
+    const trimmedPhone = args.phone.trim();
+    const isPhoneAuthorized =
+      Boolean(trimmedPhone) &&
+      (phonesMatch(order.customerPhone, trimmedPhone) ||
+        order.customerPhone.trim() === trimmedPhone);
+    if (!isPhoneAuthorized) {
       return { error: "Unauthorized" };
+    }
+
+    const enabledSetting = await ctx.db
+      .query("restaurant_settings")
+      .withIndex("by_key", (q) => q.eq("key", "customer_cancellation_enabled"))
+      .first();
+    if (
+      enabledSetting &&
+      (enabledSetting.value === false || String(enabledSetting.value) === "false")
+    ) {
+      return { error: "Customer order cancellation is currently disabled." };
     }
 
     if (["preparing", "ready", "completed", "cancelled"].includes(order.status)) {
       return { error: "Order is already in preparation or completed and cannot be cancelled" };
     }
 
-    // Check cancellation window
+    // Check cancellation window (honor 0 explicitly)
     const windowSetting = await ctx.db
       .query("restaurant_settings")
       .withIndex("by_key", (q) => q.eq("key", "cancellation_window_minutes"))
       .first();
-    const windowMinutes = windowSetting ? Number(windowSetting.value) || 10 : 10;
+    const parsedWindow = windowSetting ? Number(windowSetting.value) : NaN;
+    const windowMinutes =
+      Number.isFinite(parsedWindow) && parsedWindow >= 0 ? parsedWindow : 10;
 
     const diffMinutes = (Date.now() - order.createdAt) / 60000;
     if (diffMinutes > windowMinutes) {

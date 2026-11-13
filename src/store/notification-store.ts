@@ -1,7 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage, type StateStorage } from 'zustand/middleware';
 import { toast } from '@/store/toast-store';
 
 export type NotificationType =
@@ -45,6 +45,133 @@ interface NotificationStore {
   simulateNotification: (type: NotificationType) => void;
 }
 
+export const MAX_NOTIFICATIONS = 50;
+
+// Deterministic baseline for SSR/client hydration consistency; avoids Date.now()
+// skew between server pre-render and browser module evaluation.
+const INITIAL_SEED_TIMESTAMP = Date.UTC(2026, 9, 29, 14, 30, 0);
+
+const VALID_NOTIFICATION_TYPES = new Set<NotificationType>([
+  'payment_success',
+  'payment_failed',
+  'table_confirmed',
+  'order_preparing',
+  'order_delivered',
+  'general',
+]);
+
+const VALID_NOTIFICATION_CATEGORIES = new Set<NotificationItem['category']>([
+  'payment',
+  'table',
+  'order',
+  'general',
+]);
+
+let notificationSequence = 0;
+
+function createNotificationId(prefix: string): string {
+  notificationSequence += 1;
+  if (typeof globalThis !== 'undefined' && typeof globalThis.crypto?.randomUUID === 'function') {
+    return `${prefix}-${notificationSequence}-${globalThis.crypto.randomUUID()}`;
+  }
+  return `${prefix}-${notificationSequence}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function sanitizeNotificationText(value: unknown, maxLength = 500, fallback = ''): string {
+  if (value === null || value === undefined) return fallback;
+  const raw = typeof value === 'string' ? value : String(value);
+  const cleaned = raw
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!cleaned) return fallback;
+  return cleaned.length > maxLength ? `${cleaned.slice(0, maxLength - 1)}…` : cleaned;
+}
+
+function sanitizeSafeActionHref(href: unknown): string | undefined {
+  if (typeof href !== 'string') return undefined;
+  const trimmed = href.replace(/[\u0000-\u001F\u007F]/g, '').trim();
+  // Only allow safe internal app routes (reject protocol-relative '//' and scripts like 'javascript:')
+  if (!trimmed.startsWith('/') || trimmed.startsWith('//') || trimmed.startsWith('/\\')) {
+    return undefined;
+  }
+  return trimmed;
+}
+
+function normalizeNotificationItem(raw: unknown): NotificationItem | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const candidate = raw as Record<string, unknown>;
+  const id = sanitizeNotificationText(candidate.id, 120);
+  const title = sanitizeNotificationText(candidate.title, 200);
+  const message = sanitizeNotificationText(candidate.message, 500);
+  if (!id || (!title && !message)) return null;
+
+  const type = VALID_NOTIFICATION_TYPES.has(candidate.type as NotificationType)
+    ? (candidate.type as NotificationType)
+    : 'general';
+  const category = VALID_NOTIFICATION_CATEGORIES.has(candidate.category as NotificationItem['category'])
+    ? (candidate.category as NotificationItem['category'])
+    : 'general';
+
+  const actionType =
+    candidate.actionType === 'navigate' ||
+    candidate.actionType === 'retry_payment' ||
+    candidate.actionType === 'track_order'
+      ? candidate.actionType
+      : undefined;
+
+  return {
+    id,
+    title: title || 'Concierge Update',
+    message: message || title,
+    type,
+    category,
+    timestamp: sanitizeNotificationText(candidate.timestamp, 40, 'Just now'),
+    createdAt:
+      typeof candidate.createdAt === 'number' && Number.isFinite(candidate.createdAt)
+        ? candidate.createdAt
+        : INITIAL_SEED_TIMESTAMP,
+    isRead: Boolean(candidate.isRead),
+    actionLabel:
+      candidate.actionLabel !== undefined
+        ? sanitizeNotificationText(candidate.actionLabel, 80) || undefined
+        : undefined,
+    actionHref: sanitizeSafeActionHref(candidate.actionHref),
+    actionType,
+    metadata:
+      candidate.metadata && typeof candidate.metadata === 'object'
+        ? (candidate.metadata as NotificationItem['metadata'])
+        : undefined,
+  };
+}
+
+const safeLocalStorage: StateStorage = {
+  getItem: (name: string) => {
+    if (typeof window === 'undefined') return null;
+    try {
+      return window.localStorage.getItem(name);
+    } catch {
+      return null;
+    }
+  },
+  setItem: (name: string, value: string) => {
+    if (typeof window === 'undefined') return;
+    try {
+      window.localStorage.setItem(name, value);
+    } catch {
+      // Ignore storage quota or private-mode restriction errors
+    }
+  },
+  removeItem: (name: string) => {
+    if (typeof window === 'undefined') return;
+    try {
+      window.localStorage.removeItem(name);
+    } catch {
+      // Ignore storage errors
+    }
+  },
+};
+
 const INITIAL_NOTIFICATIONS: NotificationItem[] = [
   {
     id: 'notif-pay-succ-1',
@@ -53,7 +180,7 @@ const INITIAL_NOTIFICATIONS: NotificationItem[] = [
     type: 'payment_success',
     category: 'payment',
     timestamp: 'Just now',
-    createdAt: Date.now() - 1000 * 60 * 2, // 2 mins ago
+    createdAt: INITIAL_SEED_TIMESTAMP - 1000 * 60 * 2, // 2 mins ago
     isRead: false,
     actionLabel: 'View Booking Receipt →',
     actionHref: '/booking',
@@ -67,7 +194,7 @@ const INITIAL_NOTIFICATIONS: NotificationItem[] = [
     type: 'payment_failed',
     category: 'payment',
     timestamp: '12m ago',
-    createdAt: Date.now() - 1000 * 60 * 12, // 12 mins ago
+    createdAt: INITIAL_SEED_TIMESTAMP - 1000 * 60 * 12, // 12 mins ago
     isRead: false,
     actionLabel: 'Retry UPI Payment ↺',
     actionType: 'retry_payment',
@@ -80,7 +207,7 @@ const INITIAL_NOTIFICATIONS: NotificationItem[] = [
     type: 'table_confirmed',
     category: 'table',
     timestamp: '25m ago',
-    createdAt: Date.now() - 1000 * 60 * 25, // 25 mins ago
+    createdAt: INITIAL_SEED_TIMESTAMP - 1000 * 60 * 25, // 25 mins ago
     isRead: false,
     actionLabel: 'Open 3D Floorplan →',
     actionHref: '/booking',
@@ -94,7 +221,7 @@ const INITIAL_NOTIFICATIONS: NotificationItem[] = [
     type: 'order_preparing',
     category: 'order',
     timestamp: '42m ago',
-    createdAt: Date.now() - 1000 * 60 * 42,
+    createdAt: INITIAL_SEED_TIMESTAMP - 1000 * 60 * 42,
     isRead: true,
     actionLabel: 'Track Live Preparation',
     actionType: 'track_order',
@@ -107,7 +234,7 @@ const INITIAL_NOTIFICATIONS: NotificationItem[] = [
     type: 'order_delivered',
     category: 'order',
     timestamp: '1h ago',
-    createdAt: Date.now() - 1000 * 60 * 65,
+    createdAt: INITIAL_SEED_TIMESTAMP - 1000 * 60 * 65,
     isRead: true,
     actionLabel: 'Explore Menu for Dessert →',
     actionHref: '/menu',
@@ -126,25 +253,42 @@ export const useNotificationStore = create<NotificationStore>()(
       },
 
       addNotification: (item) => {
-        const id = `notif-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+        const title = sanitizeNotificationText(item?.title, 200, 'Concierge Update');
+        const message = sanitizeNotificationText(item?.message, 500);
+        const type = VALID_NOTIFICATION_TYPES.has(item?.type) ? item.type : 'general';
+        const category = VALID_NOTIFICATION_CATEGORIES.has(item?.category)
+          ? item.category
+          : 'general';
+        const id = createNotificationId('notif');
+
         const newItem: NotificationItem = {
           ...item,
           id,
+          title,
+          message,
+          type,
+          category,
+          timestamp: sanitizeNotificationText(item?.timestamp, 40, 'Just now'),
+          actionLabel:
+            item?.actionLabel !== undefined
+              ? sanitizeNotificationText(item.actionLabel, 80) || undefined
+              : undefined,
+          actionHref: sanitizeSafeActionHref(item?.actionHref),
           createdAt: Date.now(),
           isRead: false,
         };
 
         set((state) => ({
-          notifications: [newItem, ...state.notifications],
+          notifications: [newItem, ...state.notifications].slice(0, MAX_NOTIFICATIONS),
         }));
 
         // Trigger corresponding toast notification
-        if (item.type === 'payment_success') {
-          toast.success(item.title, item.message);
-        } else if (item.type === 'payment_failed') {
-          toast.error(item.title, item.message);
+        if (type === 'payment_success') {
+          toast.success(newItem.title, newItem.message);
+        } else if (type === 'payment_failed') {
+          toast.error(newItem.title, newItem.message);
         } else {
-          toast.info(item.title, item.message);
+          toast.info(newItem.title, newItem.message);
         }
 
         return id;
@@ -177,7 +321,7 @@ export const useNotificationStore = create<NotificationStore>()(
       },
 
       simulateNotification: (type) => {
-        const id = `sim-${Date.now()}`;
+        const id = createNotificationId('sim');
         let newItem: NotificationItem;
 
         switch (type) {
@@ -212,7 +356,7 @@ export const useNotificationStore = create<NotificationStore>()(
             };
             break;
 
-          case 'table_confirmed':
+          case 'table_confirmed': {
             const tableNum = [3, 7, 12, 18, 25][Math.floor(Math.random() * 5)];
             newItem = {
               id,
@@ -228,8 +372,9 @@ export const useNotificationStore = create<NotificationStore>()(
               actionType: 'navigate',
             };
             break;
+          }
 
-          case 'order_preparing':
+          case 'order_preparing': {
             const orderNum = `GO-${Math.floor(1000 + Math.random() * 9000)}`;
             newItem = {
               id,
@@ -244,6 +389,7 @@ export const useNotificationStore = create<NotificationStore>()(
               actionType: 'track_order',
             };
             break;
+          }
 
           case 'order_delivered':
             newItem = {
@@ -275,7 +421,7 @@ export const useNotificationStore = create<NotificationStore>()(
         }
 
         set((state) => ({
-          notifications: [newItem, ...state.notifications],
+          notifications: [newItem, ...state.notifications].slice(0, MAX_NOTIFICATIONS),
         }));
 
         if (newItem.type === 'payment_success') {
@@ -289,7 +435,26 @@ export const useNotificationStore = create<NotificationStore>()(
     }),
     {
       name: 'golden-oak-concierge-notifications',
+      version: 1,
+      storage: createJSONStorage(() => safeLocalStorage),
       partialize: (state) => ({ notifications: state.notifications }),
+      merge: (persistedState, currentState) => {
+        if (!persistedState || typeof persistedState !== 'object') {
+          return currentState;
+        }
+        const candidateList = (persistedState as { notifications?: unknown }).notifications;
+        if (!Array.isArray(candidateList)) {
+          return currentState;
+        }
+        const sanitized = candidateList
+          .map(normalizeNotificationItem)
+          .filter((item): item is NotificationItem => item !== null)
+          .slice(0, MAX_NOTIFICATIONS);
+        return {
+          ...currentState,
+          notifications: sanitized,
+        };
+      },
     }
   )
 );

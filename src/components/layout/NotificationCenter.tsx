@@ -126,7 +126,7 @@ export function NotificationCenter() {
         <div
           role="dialog"
           aria-label="Concierge Notifications Panel"
-          className="absolute right-0 sm:right-[-40px] md:right-[-10px] top-[calc(100%+12px)] w-[340px] sm:w-[420px] max-w-[94vw] z-50 rounded-2xl border border-[#D6B77A]/25 shadow-[0_24px_60px_rgba(0,0,0,0.95),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_25px_rgba(214,183,122,0.06)] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+          className="fixed inset-x-3 top-[72px] sm:inset-x-auto sm:absolute sm:right-[-40px] md:right-[-10px] sm:top-[calc(100%+12px)] w-auto sm:w-[420px] max-h-[calc(100dvh-96px)] z-50 rounded-2xl border border-[#D6B77A]/25 shadow-[0_24px_60px_rgba(0,0,0,0.95),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_25px_rgba(214,183,122,0.06)] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200"
           style={{
             background: 'linear-gradient(180deg, rgba(14, 12, 10, 0.98) 0%, rgba(8, 7, 6, 0.98) 100%)',
             backdropFilter: 'blur(32px) saturate(190%)',

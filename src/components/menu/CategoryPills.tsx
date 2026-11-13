@@ -11,7 +11,7 @@ interface CategoryPillsProps {
 
 export function CategoryPills({ categories, activeCategory, onSelectCategory }: CategoryPillsProps) {
   return (
-    <div className="sticky top-16 z-40 bg-[#060e08]/90 backdrop-blur-xl py-3 border-b border-white/[0.08] transition-all">
+    <div className="sticky top-[72px] sm:top-[84px] z-40 bg-[#060e08]/92 backdrop-blur-xl py-3 border-b border-white/[0.08] transition-all">
       <div className="max-w-7xl mx-auto flex overflow-x-auto hide-scrollbar gap-2.5 sm:gap-3 px-4 sm:px-6 lg:px-8 pb-1 snap-x">
         <div className="snap-start shrink-0">
           <CategoryChip
@@ -26,7 +26,7 @@ export function CategoryPills({ categories, activeCategory, onSelectCategory }: 
             <CategoryChip
               icon={category.slug || 'utensils'}
               label={category.name}
-              isActive={activeCategory === category.id}
+              isActive={activeCategory === category.id || activeCategory === category.slug}
               onClick={() => onSelectCategory(category.id)}
             />
           </div>

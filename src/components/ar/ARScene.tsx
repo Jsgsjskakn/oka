@@ -3,7 +3,7 @@
 import { Suspense, useRef, useEffect, useMemo, useCallback, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useGLTF, useProgress, AdaptiveDpr } from '@react-three/drei';
-import { CanvasTexture, Vector3 } from 'three';
+import { Box3, CanvasTexture, Vector3 } from 'three';
 import type { Group, Mesh, Material } from 'three';
 import type { ModelConfig } from '@/data/model-config';
 import type { IngredientHotspot } from '@/data/ar-config';
@@ -164,7 +164,7 @@ function ARFoodModel({
   const { scene } = useGLTF(modelPath, '/draco/');
   const { invalidate } = useThree();
   const groupRef = useRef<Group>(null);
-  const animRef = useRef(placed ? 0 : 0);
+  const animRef = useRef(0);
 
   // Clone hierarchy AND per-instance materials so dish switches never leak or mutate shared glTF materials
   const clonedScene = useMemo(() => {
@@ -182,6 +182,31 @@ function ARFoodModel({
     enhanceWarriorMaterials(clone);
     return clone;
   }, [scene]);
+
+  // Normalize dish footprint inside AR group so miniature models (wok bowls, mocktails) and wide pizzas
+  // occupy a consistent tabletop presentation scale grounded strictly at y = 0.
+  const normalizedARTransform = useMemo(() => {
+    clonedScene.updateMatrixWorld(true);
+    const box = new Box3().setFromObject(clonedScene);
+    if (box.isEmpty()) {
+      return { scale: 1, position: [0, 0, 0] as [number, number, number] };
+    }
+    const size = new Vector3();
+    const center = new Vector3();
+    box.getSize(size);
+    box.getCenter(center);
+    const maxDim = Math.max(size.x, size.y, size.z, 0.001);
+    const targetExtent = 1.4;
+    const normScale = targetExtent / maxDim;
+    return {
+      scale: normScale,
+      position: [
+        -center.x * normScale,
+        -box.min.y * normScale,
+        -center.z * normScale,
+      ] as [number, number, number],
+    };
+  }, [clonedScene]);
 
   // Dispose ONLY per-instance cloned materials on dish switch or AR exit; shared BufferGeometries remain intact
   useEffect(() => {
@@ -247,7 +272,12 @@ function ARFoodModel({
 
   return (
     <group ref={groupRef} position={[offsetXZ[0], 0, offsetXZ[1]]}>
-      <primitive object={clonedScene} dispose={null} />
+      <primitive
+        object={clonedScene}
+        scale={normalizedARTransform.scale}
+        position={normalizedARTransform.position}
+        dispose={null}
+      />
     </group>
   );
 }
@@ -524,7 +554,9 @@ export function ARScene({
   const [isPageHidden, setIsPageHidden] = useState<boolean>(() =>
     typeof document !== 'undefined' ? document.visibilityState === 'hidden' : false
   );
-  const [isAnimatingPlacement, setIsAnimatingPlacement] = useState(false);
+  const settleKey = placed ? `${config.dishSlug}:${recenterTrigger}` : null;
+  const [settledKey, setSettledKey] = useState<string | null>(null);
+  const isAnimatingPlacement = Boolean(settleKey && settledKey !== settleKey);
   const settleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const resolvedModelPath = useMemo(
@@ -549,21 +581,27 @@ export function ARScene({
 
   // Run 'always' ONLY during the brief 400ms placement/dish-switch/recenter settle animation, then drop to 'demand' (0 FPS idle!)
   useEffect(() => {
-    if (!placed) {
-      setIsAnimatingPlacement(false);
+    if (!settleKey) {
       if (settleTimerRef.current) {
         clearTimeout(settleTimerRef.current);
         settleTimerRef.current = null;
       }
-      return;
+      let cancelled = false;
+      queueMicrotask(() => {
+        if (!cancelled) {
+          setSettledKey((prev) => (prev !== null ? null : prev));
+        }
+      });
+      return () => {
+        cancelled = true;
+      };
     }
 
-    setIsAnimatingPlacement(true);
     if (settleTimerRef.current) {
       clearTimeout(settleTimerRef.current);
     }
     settleTimerRef.current = setTimeout(() => {
-      setIsAnimatingPlacement(false);
+      setSettledKey(settleKey);
       settleTimerRef.current = null;
     }, 430);
 
@@ -573,7 +611,7 @@ export function ARScene({
         settleTimerRef.current = null;
       }
     };
-  }, [placed, config.dishSlug, recenterTrigger]);
+  }, [settleKey]);
 
   const activeFrameloop = isPageHidden
     ? 'never'
@@ -657,6 +695,7 @@ export function ARScene({
 
         <Suspense fallback={null}>
           <ARFoodModel
+            key={config.dishSlug}
             modelPath={resolvedModelPath}
             initialScale={config.initialScale}
             placed={placed}

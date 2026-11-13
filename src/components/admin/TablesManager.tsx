@@ -29,6 +29,7 @@ export function TablesManager({ initialTables }: TablesManagerProps) {
   const [filter, setFilter] = useState<'all' | 'available' | 'booked' | 'unavailable' | '2-seats' | '4-seats' | '6+-seats'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [updatingTableId, setUpdatingTableId] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
   
   // QR & Share Modal state
   const [activeQrTable, setActiveQrTable] = useState<RestaurantTable | null>(null);
@@ -67,31 +68,46 @@ export function TablesManager({ initialTables }: TablesManagerProps) {
 
   const handleStatusChange = async (tableId: string, nextStatus: TableStatus) => {
     setUpdatingTableId(tableId);
-    
+    setStatusMessage(null);
+    const snapshot = tables;
+
     // Optimistic Update
     setTables(prev => prev.map(t => t.id === tableId ? { ...t, status: nextStatus } : t));
 
     try {
       const res = await updateTableStatus(tableId, nextStatus);
       if (res?.error) {
-        // Revert on error
-        setTables(initialTables);
-        alert('Failed to update table status');
+        setTables(snapshot);
+        setStatusMessage(res.error);
       }
     } catch (e) {
       console.error(e);
-      setTables(initialTables);
+      setTables(snapshot);
+      setStatusMessage('Failed to update table status.');
     } finally {
       setUpdatingTableId(null);
     }
   };
 
-  const handleCopyLink = (tableNum: number) => {
+  const handleCopyLink = async (tableNum: number) => {
     const origin = typeof window !== 'undefined' ? window.location.origin : '';
     const tableUrl = `${origin}/menu?table=${tableNum}`;
-    navigator.clipboard.writeText(tableUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(tableUrl);
+      } else {
+        const input = document.createElement('input');
+        input.value = tableUrl;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+      }
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setStatusMessage(`Could not auto-copy. Share link: ${tableUrl}`);
+    }
   };
 
   const handleAddTable = async (e: React.FormEvent) => {
@@ -99,6 +115,7 @@ export function TablesManager({ initialTables }: TablesManagerProps) {
     if (!newTableNum || isSubmitting) return;
 
     setIsSubmitting(true);
+    setStatusMessage(null);
     try {
       const num = parseInt(newTableNum);
       const cap = parseInt(newCapacity) || 4;
@@ -110,7 +127,7 @@ export function TablesManager({ initialTables }: TablesManagerProps) {
       });
 
       if (res?.error) {
-        alert(res.error);
+        setStatusMessage(res.error);
       } else {
         // Optimistic addition
         const newEntry: RestaurantTable = {
@@ -129,7 +146,7 @@ export function TablesManager({ initialTables }: TablesManagerProps) {
       }
     } catch (err) {
       console.error(err);
-      alert('Error creating table');
+      setStatusMessage('Error creating table. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -137,6 +154,14 @@ export function TablesManager({ initialTables }: TablesManagerProps) {
 
   return (
     <div className="space-y-10">
+      {statusMessage && (
+        <div className="rounded-xl bg-rose-500/15 border border-rose-500/40 px-4 py-2.5 text-xs text-rose-200 flex items-center justify-between gap-2">
+          <span>{statusMessage}</span>
+          <button type="button" onClick={() => setStatusMessage(null)} className="text-rose-300 hover:text-white cursor-pointer">
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
       {/* Top Header */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 pb-2 border-b border-border-subtle/60">
         <div className="space-y-2">
@@ -354,8 +379,14 @@ export function TablesManager({ initialTables }: TablesManagerProps) {
 
       {/* QR Code & Link Modal */}
       {activeQrTable && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-obsidian/80 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="relative w-full max-w-md bg-gradient-to-b from-zinc-900 via-zinc-900 to-zinc-950 border border-border-subtle rounded-2xl p-7 shadow-2xl shadow-black space-y-6">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-obsidian/80 backdrop-blur-md animate-in fade-in duration-300"
+          onClick={() => setActiveQrTable(null)}
+        >
+          <div
+            className="relative w-full max-w-md max-h-[90vh] overflow-y-auto bg-gradient-to-b from-zinc-900 via-zinc-900 to-zinc-950 border border-border-subtle rounded-2xl p-6 sm:p-7 shadow-2xl shadow-black space-y-6"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               onClick={() => setActiveQrTable(null)}
               className="absolute top-5 right-5 p-2 text-text-secondary hover:text-text-primary bg-elevated/60 hover:bg-elevated rounded-xl transition-colors"
@@ -426,8 +457,14 @@ export function TablesManager({ initialTables }: TablesManagerProps) {
 
       {/* Add Table Modal */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-obsidian/80 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="relative w-full max-w-md bg-gradient-to-b from-zinc-900 via-zinc-900 to-zinc-950 border border-border-subtle rounded-2xl p-7 shadow-2xl shadow-black space-y-6">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-obsidian/80 backdrop-blur-md animate-in fade-in duration-300"
+          onClick={() => setIsAddModalOpen(false)}
+        >
+          <div
+            className="relative w-full max-w-md max-h-[90vh] overflow-y-auto bg-gradient-to-b from-zinc-900 via-zinc-900 to-zinc-950 border border-border-subtle rounded-2xl p-6 sm:p-7 shadow-2xl shadow-black space-y-6"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               onClick={() => setIsAddModalOpen(false)}
               className="absolute top-5 right-5 p-2 text-text-secondary hover:text-text-primary bg-elevated/60 hover:bg-elevated rounded-xl transition-colors"

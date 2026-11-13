@@ -42,7 +42,7 @@ export function EmptyState({ onClearFilters, searchQuery }: EmptyStateProps) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center py-12 px-4 max-w-3xl mx-auto text-center">
+    <div className="flex flex-col items-center justify-center py-12 pb-32 md:pb-16 px-4 max-w-3xl mx-auto text-center">
       {/* Overline & Heading */}
       <div className="space-y-2 mb-8">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E2A84B]/10 border border-[#E2A84B]/20 text-[#E2A84B] text-[10px] tracking-[0.25em] uppercase font-bold">
@@ -141,10 +141,10 @@ export function EmptyState({ onClearFilters, searchQuery }: EmptyStateProps) {
       <button
         type="button"
         onClick={onClearFilters}
-        className="mt-8 inline-flex items-center gap-2 px-5 py-2.5 rounded-[6px] text-xs font-medium text-[#FAF5EC] hover:text-[#E2A84B] border border-white/10 hover:border-[#E2A84B]/40 bg-[#16120E] transition-all active:scale-95 shadow-md"
+        className="mt-8 min-h-[44px] inline-flex items-center gap-2 px-5 py-2.5 rounded-[6px] text-xs font-medium text-[#FAF5EC] hover:text-[#E2A84B] border border-white/10 hover:border-[#E2A84B]/40 bg-[#16120E] transition-all active:scale-95 shadow-md"
       >
         <RotateCcw className="w-3.5 h-3.5 text-[#E2A84B]" />
-        <span>Reset Search &amp; Display All 10 Creations</span>
+        <span>Reset Filters &amp; View All Dishes</span>
       </button>
     </div>
   );

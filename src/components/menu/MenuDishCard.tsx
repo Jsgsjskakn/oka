@@ -3,11 +3,10 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { Heart, Box, Plus, Minus, Trash2 } from 'lucide-react';
 import { DishWithCategory, formatMoney } from '@/lib/db/types';
 import { useFavoritesStore } from '@/store/favorites-store';
-import { useCartStore } from '@/store/cart-store';
+import { useCartStore, MAX_ITEM_QUANTITY } from '@/store/cart-store';
 import { useRecentlyViewedStore } from '@/store/recently-viewed-store';
 import { toast } from '@/store/toast-store';
 import { resolveDishImageUrl } from '@/lib/utils/dish-images';
@@ -20,9 +19,8 @@ interface MenuDishCardProps {
 }
 
 export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
-  const router = useRouter();
-  const isFav = useFavoritesStore((s) => s.isFavorite(dish.id));
-  const toggleFav = useFavoritesStore((s) => s.toggleFavorite);
+  const isFavStore = useFavoritesStore((s) => s.isDishFavorite([dish.id, dish.slug]));
+  const toggleDishFav = useFavoritesStore((s) => s.toggleDishFavorite);
   const cartItems = useCartStore((s) => s.items);
   const addItem = useCartStore((s) => s.addItem);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
@@ -33,6 +31,8 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  const isFav = isMounted && isFavStore;
 
   const dishForCart: Dish = {
     id: dish.id,
@@ -70,8 +70,20 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
   const handleIncrement = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const targetItem = matchingItems.find((i) => i.cartItemId === dish.id) || matchingItems[0];
+    const targetItem =
+      matchingItems.find(
+        (i) =>
+          !i.size &&
+          !i.selectedAddOns?.length &&
+          !i.removedIngredients?.length &&
+          !i.specialInstructions
+      ) || matchingItems[0];
+
     if (targetItem) {
+      if (targetItem.quantity >= MAX_ITEM_QUANTITY) {
+        toast.info('Maximum Quantity Reached', `${dish.name} (max ${MAX_ITEM_QUANTITY})`);
+        return;
+      }
       updateQuantity(targetItem.cartItemId, targetItem.quantity + 1);
       toast.success('Added More to Bag', `${dish.name} (×${cartQuantity + 1})`);
     } else {
@@ -84,7 +96,14 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
   const handleDecrement = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const targetItem = matchingItems.find((i) => i.cartItemId === dish.id) || matchingItems[matchingItems.length - 1];
+    const targetItem =
+      matchingItems.find(
+        (i) =>
+          !i.size &&
+          !i.selectedAddOns?.length &&
+          !i.removedIngredients?.length &&
+          !i.specialInstructions
+      ) || matchingItems[matchingItems.length - 1];
     if (!targetItem) return;
 
     if (targetItem.quantity > 1) {
@@ -100,8 +119,8 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
   const handleToggleFav = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    toggleFav(dish.id);
-    if (!isFav) {
+    const added = toggleDishFav(dish.id, [dish.slug]);
+    if (added) {
       toast.info('Added to Favorites', dish.name);
     } else {
       toast.info('Removed from Favorites', dish.name);
@@ -131,7 +150,7 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
 
   return (
     <div
-      className="group relative flex flex-col justify-between overflow-hidden transition-all duration-500 hover:-translate-y-2.5 w-full rounded-2xl sm:rounded-3xl border cursor-pointer"
+      className="group relative flex flex-col justify-between overflow-hidden transition-all duration-500 hover:-translate-y-2 w-full rounded-2xl sm:rounded-3xl border"
       style={{
         background: 'rgba(20, 15, 11, 0.45)',
         backdropFilter: 'blur(24px) saturate(160%)',
@@ -181,7 +200,7 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
 
         {/* Top-Left: Single Clean Frosted Glass Badge */}
         <div
-          className={`absolute top-2 left-2 sm:top-3 sm:left-3 z-20 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[8.5px] sm:text-[10px] font-serif font-bold tracking-wider flex items-center gap-1 pointer-events-none border ${badgeColor}`}
+          className={`absolute top-2 left-2 sm:top-3 sm:left-3 z-20 max-w-[58%] sm:max-w-[62%] truncate px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[8.5px] sm:text-[10px] font-serif font-bold tracking-wider flex items-center gap-1 pointer-events-none border ${badgeColor}`}
           style={{
             background: 'rgba(16, 12, 9, 0.55)',
             backdropFilter: 'blur(16px)',
@@ -189,36 +208,38 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
             boxShadow: 'inset 0 1px 1px rgba(255, 255, 255, 0.18), 0 4px 14px rgba(0, 0, 0, 0.4)',
           }}
         >
-          <span>{badgeText}</span>
+          <span className="truncate">{badgeText}</span>
         </div>
 
         {/* Top-Right: View in AR Button */}
-        <Link
-          href={`/ar/${dish.slug}`}
-          onClick={(e) => e.stopPropagation()}
-          title="Place on Table (AR)"
-          className="absolute top-2 right-2 sm:top-3 sm:right-3 z-20 flex items-center gap-1 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[8.5px] sm:text-[10.5px] font-bold text-[#FAF5EC] hover:text-[#FFE1A0] active:scale-95 transition-all group/ar"
-          style={{
-            background: 'rgba(16, 12, 9, 0.55)',
-            backdropFilter: 'blur(16px)',
-            WebkitBackdropFilter: 'blur(16px)',
-            border: '1px solid rgba(240, 195, 107, 0.45)',
-            boxShadow: 'inset 0 1px 1px rgba(255, 255, 255, 0.20), 0 4px 14px rgba(0, 0, 0, 0.4)',
-          }}
-        >
-          <Box className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#F0C36B] group-hover/ar:rotate-45 transition-transform duration-300" />
-          <span className="hidden xs:inline">VIEW IN AR</span>
-          <span className="xs:hidden">AR</span>
-        </Link>
+        {show3D && (
+          <Link
+            href={`/ar/${dish.slug}`}
+            onClick={(e) => e.stopPropagation()}
+            title="Place on Table (AR)"
+            className="absolute top-2 right-2 sm:top-3 sm:right-3 z-20 min-h-[32px] sm:min-h-[36px] flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-full text-[9px] sm:text-[10.5px] font-bold text-[#FAF5EC] hover:text-[#FFE1A0] active:scale-95 transition-all group/ar"
+            style={{
+              background: 'rgba(16, 12, 9, 0.65)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              border: '1px solid rgba(240, 195, 107, 0.45)',
+              boxShadow: 'inset 0 1px 1px rgba(255, 255, 255, 0.20), 0 4px 14px rgba(0, 0, 0, 0.4)',
+            }}
+          >
+            <Box className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#F0C36B] group-hover/ar:rotate-45 transition-transform duration-300" />
+            <span className="hidden sm:inline">VIEW IN AR</span>
+            <span className="sm:hidden">AR</span>
+          </Link>
+        )}
 
         {/* Bottom-Right: Heart Favorite Button */}
         <button
           type="button"
           onClick={handleToggleFav}
           aria-label={isFav ? 'Remove favorite' : 'Add favorite'}
-          className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 z-20 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-white/80 hover:text-white active:scale-90 transition-all"
+          className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-white/80 hover:text-white active:scale-90 transition-all"
           style={{
-            background: 'rgba(16, 12, 9, 0.55)',
+            background: 'rgba(16, 12, 9, 0.65)',
             backdropFilter: 'blur(16px)',
             WebkitBackdropFilter: 'blur(16px)',
             border: '1px solid rgba(255, 255, 255, 0.22)',
@@ -226,7 +247,7 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
           }}
         >
           <Heart
-            className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-colors ${
+            className={`w-4 h-4 transition-colors ${
               isFav ? 'text-rose-500 fill-rose-500 scale-110' : 'text-[#FAF5EC]'
             }`}
           />
@@ -283,8 +304,8 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
           </p>
         </div>
 
-        {/* Card Footer: Price (Monospace Bold) + View in AR + Tactile ADD + Button */}
-        <div className="pt-2.5 sm:pt-4 mt-2 sm:mt-3 flex items-center justify-between border-t border-white/[0.08] gap-1 sm:gap-2">
+        {/* Card Footer: Price (Monospace Bold) + View in AR (sm+) + Tactile ADD + Button */}
+        <div className="pt-2.5 sm:pt-4 mt-2 sm:mt-3 flex flex-wrap items-center justify-between border-t border-white/[0.08] gap-1.5 sm:gap-2">
           <div className="flex flex-col shrink-0">
             <span className="text-[8.5px] sm:text-[10px] uppercase tracking-wider text-[#9A9286] font-medium">
               PRICE
@@ -294,25 +315,26 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
             </span>
           </div>
 
-          <div className="flex items-center gap-1 sm:gap-2">
-            {/* View in AR Button (compact on mobile, full on desktop) */}
-            <Link
-              href={`/ar/${dish.slug}`}
-              onClick={(e) => e.stopPropagation()}
-              title={`View ${dish.name} in AR`}
-              className="px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-semibold text-[#FFE1A0] hover:text-[#0D0A08] hover:bg-[#F0C36B] rounded-lg sm:rounded-xl border border-[#F0C36B]/40 hover:border-[#F0C36B] transition-all active:scale-95 shadow-sm flex items-center gap-1 bg-white/[0.05] backdrop-blur-md group/arbtn cursor-pointer shrink-0"
-            >
-              <Box className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#F0C36B] group-hover/arbtn:text-[#0D0A08] transition-colors" />
-              <span className="whitespace-nowrap hidden sm:inline">View in AR</span>
-              <span className="whitespace-nowrap sm:hidden">AR</span>
-            </Link>
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            {/* View in AR Button (shown on sm+ where card has room; mobile uses image AR pill) */}
+            {show3D && (
+              <Link
+                href={`/ar/${dish.slug}`}
+                onClick={(e) => e.stopPropagation()}
+                title={`View ${dish.name} in AR`}
+                className="hidden sm:flex min-h-[38px] px-3 py-2 text-xs font-semibold text-[#FFE1A0] hover:text-[#0D0A08] hover:bg-[#F0C36B] rounded-xl border border-[#F0C36B]/40 hover:border-[#F0C36B] transition-all active:scale-95 shadow-sm items-center gap-1.5 bg-white/[0.05] backdrop-blur-md group/arbtn cursor-pointer shrink-0"
+              >
+                <Box className="w-3.5 h-3.5 text-[#F0C36B] group-hover/arbtn:text-[#0D0A08] transition-colors" />
+                <span className="whitespace-nowrap">View in AR</span>
+              </Link>
+            )}
 
             {cartQuantity === 0 ? (
               <button
                 type="button"
                 onClick={handleAddToCart}
                 aria-label={`Add ${dish.name} to dining order`}
-                className="px-2.5 sm:px-5 py-1.5 sm:py-2 text-[10.5px] sm:text-xs font-extrabold transition-all duration-300 active:scale-95 shadow-md flex items-center gap-1 rounded-lg sm:rounded-xl cursor-pointer text-[#17100C] hover:brightness-110 shadow-lg shrink-0"
+                className="min-h-[36px] sm:min-h-[38px] px-3 sm:px-5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-extrabold transition-all duration-300 active:scale-95 shadow-md flex items-center gap-1 rounded-lg sm:rounded-xl cursor-pointer text-[#17100C] hover:brightness-110 shrink-0"
                 style={{
                   background: 'linear-gradient(135deg, #F0C36B 0%, #DDA33E 50%, #A8792A 100%)',
                 }}
@@ -321,7 +343,7 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
               </button>
             ) : (
               <div
-                className="flex items-center rounded-lg sm:rounded-xl overflow-hidden border shadow-lg backdrop-blur-md transition-all duration-300 h-7 sm:h-9 shrink-0"
+                className="flex items-center rounded-lg sm:rounded-xl overflow-hidden border shadow-lg backdrop-blur-md transition-all duration-300 h-9 sm:h-[38px] shrink-0"
                 style={{
                   background:
                     'linear-gradient(135deg, rgba(240, 195, 107, 0.22) 0%, rgba(221, 163, 62, 0.12) 100%)',
@@ -340,18 +362,18 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
                   onClick={handleDecrement}
                   aria-label={`Decrease ${dish.name} quantity`}
                   title={cartQuantity === 1 ? 'Remove from order' : 'Decrease quantity'}
-                  className="w-6 sm:w-8 h-full flex items-center justify-center text-[#F0C36B] hover:text-[#17100C] hover:bg-[#F0C36B] active:scale-90 transition-all cursor-pointer group/dec"
+                  className="w-8 sm:w-9 h-full flex items-center justify-center text-[#F0C36B] hover:text-[#17100C] hover:bg-[#F0C36B] active:scale-90 transition-all cursor-pointer group/dec"
                 >
                   {cartQuantity === 1 ? (
-                    <Trash2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-rose-400 group-hover/dec:text-[#17100C] transition-colors" />
+                    <Trash2 className="w-3.5 h-3.5 text-rose-400 group-hover/dec:text-[#17100C] transition-colors" />
                   ) : (
-                    <Minus className="w-3 h-3 sm:w-3.5 sm:h-3.5 stroke-[2.5]" />
+                    <Minus className="w-3.5 h-3.5 stroke-[2.5]" />
                   )}
                 </button>
 
                 {/* Display Current Added Quantity (Kitna Add Hua) */}
                 <div
-                  className="flex items-center justify-center gap-0.5 sm:gap-1 px-1.5 sm:px-2.5 font-mono select-none border-x border-[#F0C36B]/30 h-full bg-black/30"
+                  className="flex items-center justify-center gap-0.5 sm:gap-1 px-2 sm:px-2.5 font-mono select-none border-x border-[#F0C36B]/30 h-full bg-black/30"
                   title={`${cartQuantity} in your order`}
                 >
                   <span className="text-[11px] sm:text-xs font-black text-[#FAF5EC]">
@@ -368,9 +390,9 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
                   onClick={handleIncrement}
                   aria-label={`Add more ${dish.name} to order`}
                   title="Add more"
-                  className="w-6 sm:w-8 h-full flex items-center justify-center text-[#F0C36B] hover:text-[#17100C] hover:bg-[#F0C36B] active:scale-90 transition-all cursor-pointer group/inc"
+                  className="w-8 sm:w-9 h-full flex items-center justify-center text-[#F0C36B] hover:text-[#17100C] hover:bg-[#F0C36B] active:scale-90 transition-all cursor-pointer group/inc"
                 >
-                  <Plus className="w-3 h-3 sm:w-3.5 sm:h-3.5 stroke-[2.5]" />
+                  <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
                 </button>
               </div>
             )}

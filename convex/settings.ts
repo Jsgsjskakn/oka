@@ -46,16 +46,19 @@ export const updateSetting = mutation({
     const auth = await authenticateCaller(ctx, args.sessionToken, ADMIN_ROLES);
     if (!auth.authorized) return { error: auth.error };
 
+    const key = args.key.trim();
+    if (!key) return { error: "Setting key is required" };
+
     const existing = await ctx.db
       .query("restaurant_settings")
-      .withIndex("by_key", (q) => q.eq("key", args.key))
+      .withIndex("by_key", (q) => q.eq("key", key))
       .first();
 
     if (existing) {
       await ctx.db.patch(existing._id, { value: args.value });
     } else {
       await ctx.db.insert("restaurant_settings", {
-        key: args.key,
+        key,
         value: args.value,
       });
     }

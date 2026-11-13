@@ -45,6 +45,7 @@ import { ARControls } from './ARControls';
 import { ARDishInfo } from './ARDishInfo';
 import { ARHotspotLayer } from './ARHotspotLayer';
 import { ARShareSheet } from './ARShareSheet';
+import { ARQRCodeModal } from './ARQRCodeModal';
 
 // Lazy load the R3F AR scene
 const ARScene = dynamic(
@@ -89,15 +90,24 @@ export function ARViewer({
   const router = useRouter();
 
   // Active dish & model config (supports seamless zero-reload dish switching inside AR)
-  const [selectedDish, setSelectedDish] = useState<Dish>(dish);
-  const [selectedConfig, setSelectedConfig] = useState<ModelConfig>(config);
+  const [overrideSelection, setOverrideSelection] = useState<{
+    forPropSlug: string;
+    dish: Dish;
+    config: ModelConfig;
+  } | null>(null);
   const [isDishSelectorOpen, setIsDishSelectorOpen] = useState(false);
 
-  // Sync if parent route props change
-  useEffect(() => {
-    setSelectedDish(dish);
-    setSelectedConfig(config);
-  }, [dish, config]);
+  const selectedDish =
+    overrideSelection && overrideSelection.forPropSlug === dish.slug
+      ? overrideSelection.dish
+      : dish;
+  const selectedConfig =
+    overrideSelection && overrideSelection.forPropSlug === dish.slug
+      ? overrideSelection.config
+      : config;
+
+  const copyLinkTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const captureFlashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const addCartItem = useCartStore((s) => s.addItem);
   const storeIsFavorite = useFavoritesStore((s) => s.isFavorite(selectedDish.slug));
@@ -108,8 +118,16 @@ export function ARViewer({
 
   const [state, setState] = useState<ARState>('loading');
   const [webcamPreviewEnabled, setWebcamPreviewEnabled] = useState(false);
+  const [capabilityChecked, setCapabilityChecked] = useState(false);
   const [capabilities, setCapabilities] = useState<ARCapabilityMatrix | null>(null);
   const [copiedLink, setCopiedLink] = useState(false);
+  const [showQRModal, setShowQRModal] = useState(false);
+
+  const mouseDragRef = useRef<{ active: boolean; lastX: number; lastY: number }>({
+    active: false,
+    lastX: 0,
+    lastY: 0,
+  });
 
   const [modelProgress, setModelProgress] = useState(0);
   const [modelLoaded, setModelLoaded] = useState(false);
@@ -191,7 +209,7 @@ export function ARViewer({
     let isMounted = true;
     const usdzPath = extractUsdzPath(selectedConfig);
     const glbPath =
-      (selectedConfig.culinaryAssetLodPaths as any)?.balanced ||
+      selectedConfig.culinaryAssetLodPaths?.balanced ||
       selectedConfig.modelPath;
 
     detectARCapabilityMatrix({
@@ -202,6 +220,7 @@ export function ARViewer({
       .then((matrix) => {
         if (!isMounted) return;
         setCapabilities(matrix);
+        setCapabilityChecked(true);
 
         if ((matrix.platform.isDesktop || !matrix.canRunInBrowserCameraAR) && !webcamPreviewEnabled) {
           setState('capability_gate');
@@ -209,6 +228,7 @@ export function ARViewer({
       })
       .catch(() => {
         if (!isMounted) return;
+        setCapabilityChecked(true);
         setState('capability_gate');
       });
 
@@ -216,6 +236,23 @@ export function ARViewer({
       isMounted = false;
     };
   }, [selectedConfig, selectedDish.name, webcamPreviewEnabled]);
+
+  // Ensure transient timers and offscreen canvas/stream refs release cleanly on unmount
+  useEffect(() => {
+    return () => {
+      if (copyLinkTimerRef.current) {
+        clearTimeout(copyLinkTimerRef.current);
+        copyLinkTimerRef.current = null;
+      }
+      if (captureFlashTimerRef.current) {
+        clearTimeout(captureFlashTimerRef.current);
+        captureFlashTimerRef.current = null;
+      }
+      lightSamplerCanvasRef.current = null;
+      videoElementRef.current = null;
+      snapshotProviderRef.current = null;
+    };
+  }, []);
 
   // Real-World Lighting Estimator: sample 16x16 offscreen canvas every 1500ms while visible
   useEffect(() => {
@@ -372,8 +409,24 @@ export function ARViewer({
       if (nextDish.slug === selectedDish.slug) return;
 
       const nextConfig = getModelConfig(nextDish.slug);
-      setSelectedDish(nextDish);
-      setSelectedConfig(nextConfig);
+      const currentAssetPath =
+        selectedConfig.culinaryAssetLodPaths?.balanced ||
+        selectedConfig.modelPath;
+      const nextAssetPath =
+        nextConfig.culinaryAssetLodPaths?.balanced ||
+        nextConfig.modelPath;
+
+      if (nextAssetPath !== currentAssetPath) {
+        setModelLoaded(false);
+        setModelProgress(15);
+      }
+
+      setProjectedHotspots([]);
+      setOverrideSelection(
+        nextDish.slug === dish.slug
+          ? null
+          : { forPropSlug: dish.slug, dish: nextDish, config: nextConfig }
+      );
       setModelOffsetXZ([0, 0]);
       setRecenterTrigger((n) => n + 1);
 
@@ -384,7 +437,7 @@ export function ARViewer({
         navigator.vibrate(12);
       }
     },
-    [selectedDish.slug]
+    [dish.slug, selectedDish.slug, selectedConfig]
   );
 
   const handleEffectiveToggleFavorite = useCallback(() => {
@@ -406,7 +459,13 @@ export function ARViewer({
     }
   }, [selectedDish, dish.slug, onAddToCart, addCartItem]);
 
-  const handleExit = useCallback(() => router.back(), [router]);
+  const handleExit = useCallback(() => {
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push('/menu');
+    }
+  }, [router]);
   const handleContinue3D = useCallback(
     () => router.push(`/3d/${selectedDish.slug}`),
     [router, selectedDish.slug]
@@ -422,11 +481,39 @@ export function ARViewer({
   }, []);
 
   const handleCopyMobileLink = useCallback(() => {
-    if (typeof window !== 'undefined' && navigator.clipboard) {
-      const shareHref = `${window.location.origin}/ar/${selectedDish.slug}`;
-      navigator.clipboard.writeText(shareHref).catch(() => {});
+    if (typeof window === 'undefined') return;
+    const shareHref = `${window.location.origin}/ar/${selectedDish.slug}`;
+    const markLinkCopied = () => {
       setCopiedLink(true);
-      setTimeout(() => setCopiedLink(false), 2200);
+      if (copyLinkTimerRef.current) clearTimeout(copyLinkTimerRef.current);
+      copyLinkTimerRef.current = setTimeout(() => {
+        setCopiedLink(false);
+        copyLinkTimerRef.current = null;
+      }, 2200);
+    };
+
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard
+        .writeText(shareHref)
+        .then(markLinkCopied)
+        .catch(() => {});
+      return;
+    }
+
+    try {
+      const textarea = document.createElement('textarea');
+      textarea.value = shareHref;
+      textarea.setAttribute('readonly', '');
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      if (document.execCommand('copy')) {
+        markLinkCopied();
+      }
+      document.body.removeChild(textarea);
+    } catch {
+      // Ignore restricted clipboard failures
     }
   }, [selectedDish.slug]);
 
@@ -509,7 +596,11 @@ export function ARViewer({
       link.click();
 
       setCaptureFlash(true);
-      setTimeout(() => setCaptureFlash(false), 260);
+      if (captureFlashTimerRef.current) clearTimeout(captureFlashTimerRef.current);
+      captureFlashTimerRef.current = setTimeout(() => {
+        setCaptureFlash(false);
+        captureFlashTimerRef.current = null;
+      }, 260);
       if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
         navigator.vibrate(20);
       }
@@ -567,11 +658,52 @@ export function ARViewer({
     touchRef.current.isScaling = false;
   }, []);
 
+  // Mouse pointer drag + wheel scale support for desktop webcam AR preview
+  const handlePointerDown = useCallback((e: React.PointerEvent) => {
+    if (e.pointerType === 'touch' || e.button !== 0) return;
+    touchRef.current.moved = false;
+    mouseDragRef.current = { active: true, lastX: e.clientX, lastY: e.clientY };
+  }, []);
+
+  const handlePointerMove = useCallback(
+    (e: React.PointerEvent) => {
+      if (e.pointerType === 'touch' || !mouseDragRef.current.active || !placed) return;
+      const deltaX = e.clientX - mouseDragRef.current.lastX;
+      const deltaY = e.clientY - mouseDragRef.current.lastY;
+      if (Math.abs(deltaX) > 2 || Math.abs(deltaY) > 2) {
+        touchRef.current.moved = true;
+      }
+      setModelRotation((r) => r + deltaX * 0.008);
+      setModelOffsetXZ(([ox, oz]) => [
+        ox,
+        Math.max(-0.65, Math.min(0.65, oz + deltaY * 0.002)),
+      ]);
+      mouseDragRef.current.lastX = e.clientX;
+      mouseDragRef.current.lastY = e.clientY;
+    },
+    [placed]
+  );
+
+  const handlePointerUp = useCallback((e: React.PointerEvent) => {
+    if (e.pointerType === 'touch') return;
+    mouseDragRef.current.active = false;
+  }, []);
+
+  const handleWheel = useCallback(
+    (e: React.WheelEvent) => {
+      if (!placed) return;
+      const factor = e.deltaY > 0 ? 0.94 : 1.06;
+      setModelScale((s) => Math.max(0.5, Math.min(2.5, s * factor)));
+    },
+    [placed]
+  );
+
   const handleSingleTouch = useCallback(() => {
+    if (showShareSheet || isDishSelectorOpen) return;
     if (state === 'placing' && modelLoaded && !touchRef.current.moved) {
       handleTapToPlace();
     }
-  }, [state, modelLoaded, handleTapToPlace]);
+  }, [state, modelLoaded, handleTapToPlace, showShareSheet, isDishSelectorOpen]);
 
   if (state === 'permission_denied') {
     return <ARPermissionDenied onGoBack={handleExit} onContinue3D={handleContinue3D} />;
@@ -586,17 +718,17 @@ export function ARViewer({
     return (
       <div
         data-testid="ar-capability-screen"
-        className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0A0705] px-4 sm:px-6 select-none overflow-y-auto py-8"
+        className="fixed inset-0 z-50 flex flex-col items-center bg-[#0A0705] px-4 sm:px-6 select-none overflow-y-auto py-6 sm:py-8"
       >
         <div
-          className="absolute inset-0 pointer-events-none"
+          className="fixed inset-0 pointer-events-none"
           style={{
             background:
               'radial-gradient(circle at 50% 28%, rgba(240, 195, 107, 0.16) 0%, rgba(10, 7, 5, 0.96) 62%)',
           }}
         />
 
-        <div className="relative z-10 w-full max-w-md p-6 sm:p-7 rounded-3xl bg-[rgba(18,14,11,0.88)] backdrop-blur-2xl border border-[#F0C36B]/45 shadow-[0_24px_60px_rgba(0,0,0,0.88)] flex flex-col items-center text-center">
+        <div className="relative z-10 my-auto w-full max-w-md p-5 sm:p-7 rounded-3xl bg-[rgba(18,14,11,0.88)] backdrop-blur-2xl border border-[#F0C36B]/45 shadow-[0_24px_60px_rgba(0,0,0,0.88)] flex flex-col items-center text-center">
           <div className="relative mb-4">
             <div className="w-16 h-16 rounded-2xl flex items-center justify-center bg-gradient-to-br from-[#1C1612] to-[#2B1F16] border border-[#F0C36B]/60 shadow-[0_0_24px_rgba(240,195,107,0.25)] text-[#F0C36B]">
               <Smartphone className="w-8 h-8 text-[#F0C36B]" />
@@ -626,7 +758,7 @@ export function ARViewer({
             <Link
               href={`/3d/${selectedDish.slug}`}
               data-testid="ar-fallback-3d-studio-link"
-              className="w-full py-3.5 px-4 rounded-xl font-bold text-xs sm:text-sm tracking-wide text-[#17100C] shadow-[0_8px_25px_rgba(240,195,107,0.4)] hover:brightness-105 active:scale-98 transition-all flex items-center justify-center gap-2"
+              className="w-full min-h-[48px] py-3.5 px-4 rounded-xl font-bold text-xs sm:text-sm tracking-wide text-[#17100C] shadow-[0_8px_25px_rgba(240,195,107,0.4)] hover:brightness-105 active:scale-[0.98] transition-all flex items-center justify-center gap-2 touch-manipulation"
               style={{
                 background: 'linear-gradient(135deg, #F0C36B 0%, #DDA33E 50%, #A8792A 100%)',
               }}
@@ -640,7 +772,7 @@ export function ARViewer({
                 type="button"
                 data-testid="ar-optional-webcam-preview-btn"
                 onClick={handleStartWebcamPreview}
-                className="w-full py-3 px-4 rounded-xl bg-[#F0C36B]/12 hover:bg-[#F0C36B]/20 text-[#F6D386] font-semibold text-xs border border-[#F0C36B]/35 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full min-h-[48px] py-3 px-4 rounded-xl bg-[#F0C36B]/12 hover:bg-[#F0C36B]/20 text-[#F6D386] font-semibold text-xs border border-[#F0C36B]/35 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer touch-manipulation"
               >
                 <Camera className="w-3.5 h-3.5" />
                 <span>Optional Webcam Table Preview</span>
@@ -654,23 +786,34 @@ export function ARViewer({
               <QrCode className="w-3.5 h-3.5" />
               <span>Switch to Mobile AR (Android / iOS)</span>
             </div>
-            <button
-              type="button"
-              onClick={handleCopyMobileLink}
-              className="w-full py-2 px-3 rounded-xl bg-white/[0.05] hover:bg-[#F0C36B]/15 border border-[#F0C36B]/35 text-xs font-mono text-[#FAF5EC] flex items-center justify-center gap-2 transition-all cursor-pointer"
-            >
-              {copiedLink ? (
-                <>
-                  <Check className="w-3.5 h-3.5 text-[#36D6A0]" />
-                  <span className="text-[#36D6A0] font-semibold">AR Link Copied!</span>
-                </>
-              ) : (
-                <>
-                  <Copy className="w-3.5 h-3.5 text-[#F0C36B]" />
-                  <span>Copy AR Link for Phone</span>
-                </>
-              )}
-            </button>
+            <div className="grid grid-cols-2 gap-2 w-full">
+              <button
+                type="button"
+                data-testid="ar-scan-qr-modal-btn"
+                onClick={() => setShowQRModal(true)}
+                className="py-2.5 px-3 rounded-xl bg-[#F0C36B]/20 hover:bg-[#F0C36B]/30 border border-[#F0C36B]/50 text-xs font-semibold text-[#FFE1A0] flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm active:scale-[0.98]"
+              >
+                <QrCode className="w-3.5 h-3.5 text-[#F0C36B]" />
+                <span>Scan QR Code</span>
+              </button>
+              <button
+                type="button"
+                onClick={handleCopyMobileLink}
+                className="py-2.5 px-3 rounded-xl bg-white/[0.05] hover:bg-[#F0C36B]/15 border border-[#F0C36B]/35 text-xs font-mono text-[#FAF5EC] flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-[0.98]"
+              >
+                {copiedLink ? (
+                  <>
+                    <Check className="w-3.5 h-3.5 text-[#36D6A0]" />
+                    <span className="text-[#36D6A0] font-semibold">Copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3.5 h-3.5 text-[#F0C36B]" />
+                    <span>Copy Link</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
 
           <button
@@ -682,35 +825,47 @@ export function ARViewer({
             <span>Return to Menu</span>
           </button>
         </div>
+
+        {/* Dedicated QR Code Desktop Modal */}
+        <ARQRCodeModal
+          isOpen={showQRModal}
+          onClose={() => setShowQRModal(false)}
+          dishName={selectedDish.name}
+          dishSlug={selectedDish.slug}
+          dishImage={selectedDish.image}
+          dishPrice={selectedDish.price}
+        />
       </div>
     );
   }
 
   if (state === 'error') {
     return (
-      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-obsidian px-6 text-center">
-        <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-5">
-          <AlertCircle className="w-7 h-7 text-red-400" />
-        </div>
-        <h2 className="text-lg font-semibold text-text-primary mb-2">Camera Unavailable</h2>
-        <p className="text-sm text-text-secondary max-w-xs mb-8">
-          The camera device could not be initialized or is being used by another application.
-        </p>
-        <div className="w-full max-w-xs space-y-3">
-          <button
-            type="button"
-            onClick={handleContinue3D}
-            className="w-full py-3.5 rounded-full bg-primary text-black font-semibold text-sm active:scale-95 transition-transform"
-          >
-            View in 3D Mode Instead
-          </button>
-          <button
-            type="button"
-            onClick={handleExit}
-            className="flex justify-center items-center w-full py-3.5 rounded-full bg-white/10 text-text-primary font-medium text-sm border border-white/5 active:scale-95 transition-transform"
-          >
-            Return to Menu
-          </button>
+      <div className="fixed inset-0 z-50 flex flex-col items-center bg-obsidian px-6 text-center overflow-y-auto py-8">
+        <div className="my-auto flex flex-col items-center w-full max-w-xs">
+          <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-5">
+            <AlertCircle className="w-7 h-7 text-red-400" />
+          </div>
+          <h2 className="text-lg font-semibold text-text-primary mb-2">Camera Unavailable</h2>
+          <p className="text-sm text-text-secondary mb-8">
+            The camera device could not be initialized or is being used by another application.
+          </p>
+          <div className="w-full space-y-3">
+            <button
+              type="button"
+              onClick={handleContinue3D}
+              className="w-full min-h-[48px] py-3.5 rounded-full bg-primary text-black font-semibold text-sm active:scale-95 transition-transform cursor-pointer touch-manipulation"
+            >
+              View in 3D Mode Instead
+            </button>
+            <button
+              type="button"
+              onClick={handleExit}
+              className="flex justify-center items-center w-full min-h-[48px] py-3.5 rounded-full bg-white/10 text-text-primary font-medium text-sm border border-white/5 active:scale-95 transition-transform cursor-pointer touch-manipulation"
+            >
+              Return to Menu
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -726,20 +881,17 @@ export function ARViewer({
     Math.abs(modelOffsetXZ[0]) > 0.05 || Math.abs(modelOffsetXZ[1]) > 0.05;
 
   return (
-    <div
-      className="fixed inset-0 bg-obsidian z-50 overflow-hidden"
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-    >
-      {/* Live hardware-composited Camera Feed (suspends automatically on background tab) */}
-      <CameraFeed
-        onReady={handleCameraReady}
-        onError={handleCameraError}
-        onVideoElement={handleVideoElement}
-        preferEnvironmentCamera={!webcamPreviewEnabled}
-        allowCameraFallback={true}
-      />
+    <div className="fixed inset-0 bg-obsidian z-50 overflow-hidden">
+      {/* Live hardware-composited Camera Feed (deferred until capability probe prevents desktop camera prompts) */}
+      {(capabilityChecked || webcamPreviewEnabled) && (
+        <CameraFeed
+          onReady={handleCameraReady}
+          onError={handleCameraError}
+          onVideoElement={handleVideoElement}
+          preferEnvironmentCamera={!webcamPreviewEnabled}
+          allowCameraFallback={true}
+        />
+      )}
 
       {/* Brief white shutter flash on AR photo capture */}
       {captureFlash && (
@@ -752,12 +904,25 @@ export function ARViewer({
           dishName={selectedDish.name}
           dishImage={selectedDish.image}
           progress={modelProgress}
+          onCancel={handleExit}
         />
       )}
 
       {/* AR 3D scene overlay (frameloop="demand" at 0 WebGL FPS once settled!) */}
       {(state === 'placing' || state === 'placed') && (
-        <div className="absolute inset-0 z-10" id="ar-canvas" onClick={handleSingleTouch}>
+        <div
+          className="absolute inset-0 z-10 touch-none"
+          data-testid="ar-canvas-wrapper"
+          onClick={handleSingleTouch}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
+          onWheel={handleWheel}
+        >
           <ARScene
             config={selectedConfig}
             category={selectedDish.category}
@@ -779,8 +944,8 @@ export function ARViewer({
 
       {/* Top Surface Stability & Real-World Ambient Light Pill */}
       {(state === 'placing' || state === 'placed') && modelLoaded && (
-        <div className="pointer-events-none absolute top-16 left-0 right-0 z-25 flex flex-col items-center gap-2 px-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-obsidian/65 backdrop-blur-md border border-white/10 text-[10px] text-text-primary/80 shadow-md">
+        <div className="pointer-events-none absolute top-[calc(4.5rem+env(safe-area-inset-top))] left-3 right-16 sm:left-20 sm:right-20 z-[25] flex flex-col items-center gap-2 px-1">
+          <div className="inline-flex max-w-full flex-wrap items-center justify-center gap-x-2 gap-y-0.5 px-3 py-1 rounded-full bg-obsidian/65 backdrop-blur-md border border-white/10 text-[10px] text-text-primary/80 shadow-md text-center">
             <span
               className={`w-1.5 h-1.5 rounded-full ${
                 motionStability.level === 'stable'
@@ -818,11 +983,11 @@ export function ARViewer({
         <ARHotspotLayer hotspots={projectedHotspots} isVisible={showHotspots} />
       )}
 
-      {/* Placement hint + Native SLAM AR upgrade pill (Android ARCore / iOS Quick Look) */}
-      {state === 'placing' && modelLoaded && (
-        <div className="absolute bottom-36 left-0 right-0 z-20 flex flex-col items-center gap-2.5 px-4 text-center pointer-events-none">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-obsidian/70 backdrop-blur-md border border-primary/25 shadow-lg">
-            <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+      {/* Placement hint + Native SLAM AR upgrade pill (hidden while dish selector drawer is open) */}
+      {state === 'placing' && modelLoaded && !isDishSelectorOpen && (
+        <div className="absolute bottom-[calc(88px+env(safe-area-inset-bottom))] left-3 right-16 sm:left-0 sm:right-0 sm:px-4 z-20 flex flex-col items-center gap-2 text-center pointer-events-none">
+          <div className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-obsidian/75 backdrop-blur-md border border-primary/25 shadow-lg">
+            <div className="w-2 h-2 rounded-full bg-primary animate-pulse shrink-0" />
             <span className="text-xs text-text-primary/90 font-medium">
               Tap anywhere on table to place dish
             </span>
@@ -831,9 +996,9 @@ export function ARViewer({
           {sceneViewerIntentUrl && (
             <a
               href={sceneViewerIntentUrl}
-              className="pointer-events-auto inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#181310]/85 backdrop-blur-md border border-[#E2A84B]/45 text-[#F6D386] text-[11px] font-medium shadow-md active:scale-95 transition-transform"
+              className="pointer-events-auto inline-flex items-center gap-1.5 px-3.5 min-h-[38px] rounded-full bg-[#181310]/90 backdrop-blur-md border border-[#E2A84B]/45 text-[#F6D386] text-[11px] font-medium shadow-md active:scale-95 transition-transform touch-manipulation"
             >
-              <Sparkles className="w-3.5 h-3.5" />
+              <Sparkles className="w-3.5 h-3.5 shrink-0" />
               <span>Launch Native ARCore Plane Tracking</span>
             </a>
           )}
@@ -842,14 +1007,14 @@ export function ARViewer({
             <a
               rel="ar"
               href={quickLookUsdzUrl}
-              className="pointer-events-auto inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#181310]/85 backdrop-blur-md border border-[#E2A84B]/45 text-[#F6D386] text-[11px] font-medium shadow-md active:scale-95 transition-transform"
+              className="pointer-events-auto inline-flex items-center gap-1.5 px-3.5 min-h-[38px] rounded-full bg-[#181310]/90 backdrop-blur-md border border-[#E2A84B]/45 text-[#F6D386] text-[11px] font-medium shadow-md active:scale-95 transition-transform touch-manipulation"
             >
               <img
                 src={selectedDish.image || '/images/dishes/placeholder.jpg'}
                 alt=""
                 className="w-px h-px opacity-0 absolute pointer-events-none"
               />
-              <Sparkles className="w-3.5 h-3.5" />
+              <Sparkles className="w-3.5 h-3.5 shrink-0" />
               <span>Launch Apple AR Quick Look</span>
             </a>
           )}
@@ -888,7 +1053,7 @@ export function ARViewer({
       {isDishSelectorOpen && (state === 'placing' || state === 'placed') && (
         <div
           data-testid="ar-dish-selector-drawer"
-          className="absolute bottom-24 left-3 right-16 z-30 p-2.5 rounded-2xl bg-[rgba(14,10,8,0.92)] backdrop-blur-xl border border-[#F0C36B]/35 shadow-2xl"
+          className="absolute bottom-[calc(88px+env(safe-area-inset-bottom))] left-3 right-16 sm:right-20 sm:max-w-lg sm:mx-auto z-30 p-2.5 rounded-2xl bg-[rgba(14,10,8,0.94)] backdrop-blur-xl border border-[#F0C36B]/35 shadow-2xl"
         >
           <div className="flex items-center justify-between px-1.5 pb-2 mb-1.5 border-b border-white/10">
             <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#F0C36B]">
@@ -898,13 +1063,13 @@ export function ARViewer({
             <button
               type="button"
               onClick={() => setIsDishSelectorOpen(false)}
-              className="p-1 rounded-full text-white/60 hover:text-white"
+              className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full text-white/60 hover:text-white cursor-pointer touch-manipulation"
               aria-label="Close dish switcher"
             >
-              <X className="w-3.5 h-3.5" />
+              <X className="w-4 h-4" />
             </button>
           </div>
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
+          <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar py-0.5">
             {selectableDishes.map((item) => {
               const active = item.slug === selectedDish.slug;
               return (
@@ -961,6 +1126,7 @@ export function ARViewer({
         <ARDishInfo
           dish={selectedDish}
           isFavorite={effectiveIsFavorite}
+          isSharedPlaceholder={Boolean(selectedConfig.isSharedPlaceholder)}
           onToggleFavorite={handleEffectiveToggleFavorite}
           onAddToCart={handleEffectiveAddToCart}
           onViewDetails={handleViewDetails}
@@ -973,6 +1139,16 @@ export function ARViewer({
         onClose={() => setShowShareSheet(false)}
         dishName={selectedDish.name}
         dishId={selectedDish.slug}
+      />
+
+      {/* QR Code Desktop Modal */}
+      <ARQRCodeModal
+        isOpen={showQRModal}
+        onClose={() => setShowQRModal(false)}
+        dishName={selectedDish.name}
+        dishSlug={selectedDish.slug}
+        dishImage={selectedDish.image}
+        dishPrice={selectedDish.price}
       />
     </div>
   );

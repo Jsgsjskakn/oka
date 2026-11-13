@@ -155,6 +155,17 @@ function syncSceneMaterialBudget(
   });
 }
 
+function applyRendererPixelRatio(gl: THREE.WebGLRenderer, effectiveDpr: number): void {
+  gl.setPixelRatio(effectiveDpr);
+}
+
+function applyRendererShadowMap(gl: THREE.WebGLRenderer, enabled: boolean): void {
+  if (gl.shadowMap) {
+    gl.shadowMap.enabled = enabled;
+    gl.shadowMap.needsUpdate = true;
+  }
+}
+
 /**
  * AdaptiveQualityController
  *
@@ -181,11 +192,15 @@ export function AdaptiveQualityController({
   const { gl, scene, invalidate } = useThree();
   const manager = qualityManager ?? getGlobalQualityManager();
 
+  const glRef = useRef(gl);
   const onQualityChangeRef = useRef(onQualityChange);
-  onQualityChangeRef.current = onQualityChange;
-
   const onTelemetrySnapshotRef = useRef(onTelemetrySnapshot);
-  onTelemetrySnapshotRef.current = onTelemetrySnapshot;
+
+  useEffect(() => {
+    glRef.current = gl;
+    onQualityChangeRef.current = onQualityChange;
+    onTelemetrySnapshotRef.current = onTelemetrySnapshot;
+  }, [gl, onQualityChange, onTelemetrySnapshot]);
 
   const isDocumentHiddenRef = useRef(false);
   const lastTelemetryPublishMsRef = useRef(0);
@@ -272,7 +287,7 @@ export function AdaptiveQualityController({
       if (Math.abs(appliedDprRef.current - effective.effectiveDpr) > 0.01) {
         appliedDprRef.current = effective.effectiveDpr;
         try {
-          gl.setPixelRatio(effective.effectiveDpr);
+          applyRendererPixelRatio(glRef.current, effective.effectiveDpr);
           needsFrame = true;
         } catch {
           // Safe fallback for mock renderers
@@ -281,10 +296,7 @@ export function AdaptiveQualityController({
 
       if (appliedShadowsRef.current !== effective.shadowsEnabled) {
         appliedShadowsRef.current = effective.shadowsEnabled;
-        if (gl.shadowMap) {
-          gl.shadowMap.enabled = effective.shadowsEnabled;
-          gl.shadowMap.needsUpdate = true;
-        }
+        applyRendererShadowMap(glRef.current, effective.shadowsEnabled);
         if (typeof window !== 'undefined') {
           window.dispatchEvent(new CustomEvent('golden-oak:refresh-shadow'));
         }

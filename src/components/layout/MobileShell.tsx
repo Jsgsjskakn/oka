@@ -28,13 +28,27 @@ export function MobileShell({ children }: MobileShellProps) {
   const isImmersiveViewer =
     pathname?.startsWith('/3d') || pathname?.startsWith('/ar');
 
+  const isBottomNavHidden = Boolean(
+    pathname?.startsWith('/3d') ||
+      pathname?.match(/^\/ar\/[^/]+$/) ||
+      pathname?.match(/^\/menu\/[^/]+\/[^/]+$/) ||
+      pathname?.startsWith('/checkout') ||
+      pathname?.startsWith('/order/success') ||
+      pathname?.startsWith('/booking/success') ||
+      pathname?.match(/^\/profile\/orders\/[^/]+$/)
+  );
+
   return (
-    <div className="flex flex-col min-h-screen bg-[#0D0A08] text-[#FAF5EC] antialiased selection:bg-[#E2A84B]/30 selection:text-white">
+    <div className="flex flex-col min-h-screen bg-[#0D0A08] text-[#FAF5EC] antialiased selection:bg-[#E2A84B]/30 selection:text-white overflow-x-hidden">
       {!isImmersiveViewer && <CinematicPreloader />}
       {!isImmersiveViewer && <TopBar />}
       <main
         className={`flex-1 ${
           !isImmersiveViewer && pathname !== '/' ? 'pt-[76px] sm:pt-[84px]' : ''
+        } ${
+          pathname !== '/' && !isBottomNavHidden
+            ? 'pb-[calc(6rem+env(safe-area-inset-bottom,0px))] md:pb-0'
+            : ''
         }`}
       >
         {children}

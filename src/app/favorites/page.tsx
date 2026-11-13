@@ -1,6 +1,9 @@
 import { getAllDishes } from '@/lib/services/menu.service';
+import { resolveDishImageUrl } from '@/lib/utils/dish-images';
 import { FavoritesClient } from './FavoritesClient';
 import type { Dish as MockDish } from '@/types/menu';
+
+export const dynamic = 'force-dynamic';
 
 export default async function FavoritesPage() {
   const allDbDishes = await getAllDishes();
@@ -12,7 +15,7 @@ export default async function FavoritesPage() {
     description: d.description || '',
     price: d.price_paise / 100,
     originalPrice: d.original_price_paise ? d.original_price_paise / 100 : undefined,
-    image: d.image_url || '/images/dishes/placeholder.jpg',
+    image: resolveDishImageUrl(d.slug, d.image_url),
     category: d.categories?.slug as any,
     isVeg: d.is_veg,
     isAvailable: d.is_available,

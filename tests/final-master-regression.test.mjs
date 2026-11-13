@@ -530,7 +530,7 @@ describe('Suite 2: Concurrent Table Overlap & Double-Booking Protection', () => 
     assert.equal(hasConflict, false, 'Overlapping bookings on distinct tables must never conflict');
   });
 
-  it('releases table allocation when hold expires (> 10 minutes) but retains active holds', () => {
+  it('releases table allocation when hold expires (> 5 minute default hold) but retains active holds', () => {
     const now = Date.now();
     const expiredHoldBooking = {
       tableNumber: 1,
@@ -540,7 +540,7 @@ describe('Suite 2: Concurrent Table Overlap & Double-Booking Protection', () => 
     const activeHoldBooking = {
       tableNumber: 1,
       status: 'pending',
-      holdExpiresAt: now + 5 * 60 * 1000, // Valid for 5 more mins
+      holdExpiresAt: now + 3 * 60 * 1000, // Valid for 3 more mins (within 5-min hold)
     };
 
     function isBookingActive(b, currentTime = Date.now()) {
@@ -754,11 +754,11 @@ describe('Suite 3: Auth & Session Security', () => {
 // ============================================================================
 
 describe('Suite 4: 3D Model Slug & Centralized Asset Validation', () => {
-  const verified10LiveDishes = [
+  // Matches the 9 seeded dishes in convex/seed.ts (peri-peri-fiesta-pizza intentionally removed in f5cd324)
+  const verified9LiveDishes = [
     'tandoori-paneer-pizza',
     'chicken-tikka-pizza',
     'mushroom-truffle-pizza',
-    'peri-peri-fiesta-pizza',
     'bbq-chicken-overload',
     'classic-smash-burger',
     'golden-oak-signature-burger',
@@ -767,8 +767,9 @@ describe('Suite 4: 3D Model Slug & Centralized Asset Validation', () => {
     'dynamite-chilli-potatoes',
   ];
 
-  it('hasModel accepts all 10 live Convex production dishes', () => {
-    for (const slug of verified10LiveDishes) {
+  it('hasModel accepts all 9 live Convex seeded dishes', () => {
+    assert.equal(verified9LiveDishes.length, 9);
+    for (const slug of verified9LiveDishes) {
       assert.equal(hasModel(slug), true, `Dish "${slug}" must be accepted by hasModel`);
     }
   });

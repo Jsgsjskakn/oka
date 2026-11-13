@@ -24,6 +24,7 @@ interface BookingSummaryDossierProps {
   advanceAmountPaise: number;
   holdExpiresAt?: number | null;
   preOrderCartItemsCount?: number;
+  onViewDetails?: () => void;
 }
 
 export function BookingSummaryDossier({
@@ -37,6 +38,7 @@ export function BookingSummaryDossier({
   advanceAmountPaise,
   holdExpiresAt,
   preOrderCartItemsCount = 0,
+  onViewDetails,
 }: BookingSummaryDossierProps) {
   const [secondsRemaining, setSecondsRemaining] = useState<number>(300); // 5 mins
 
@@ -65,10 +67,10 @@ export function BookingSummaryDossier({
   const m = durationMinutes % 60;
   const durationLabel = `${hours}h${m > 0 ? ` ${m}m` : ''}`;
 
-  const resolvedTableName =
-    tableNumber
-      ? `T${tableNumber} - ${zone || tableName || "The Hearth Chef's Counter"}`
-      : tableName || "T7 - The Hearth Chef's Counter";
+  const resolvedTableName = tableNumber
+    ? `T${tableNumber} - ${zone || tableName || "The Hearth Chef's Counter"}`
+    : tableName || 'Select a table from the floorplan';
+  const isHoldExpired = secondsRemaining <= 0;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 w-full">
@@ -93,11 +95,20 @@ export function BookingSummaryDossier({
               <span className="text-[10px] tracking-wider uppercase text-[#9A9286] font-mono block leading-none mb-1">
                 Selected Table
               </span>
-              <h4 className="text-sm font-semibold text-[#FAF5EC] truncate leading-tight">
+              <h4 className="text-sm font-semibold text-[#FAF5EC] line-clamp-2 sm:truncate leading-tight">
                 {resolvedTableName}
               </h4>
               <button
                 type="button"
+                onClick={() => {
+                  if (onViewDetails) {
+                    onViewDetails();
+                  } else {
+                    document
+                      .getElementById('floorplan-card')
+                      ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }
+                }}
                 className="text-[11px] text-[#F0C36B] hover:text-[#FFE3A5] font-medium transition-colors flex items-center gap-1 mt-1 cursor-pointer"
               >
                 <span>View Details</span>
@@ -115,15 +126,27 @@ export function BookingSummaryDossier({
               <Clock className="w-3.5 h-3.5" />
               <span>{timeFormatted}</span>
             </div>
-            <div className="flex items-center gap-1.5 text-[10.5px] font-mono text-[#36D6A0] mt-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#36D6A0] shadow-[0_0_8px_#36D6A0] animate-pulse" />
-              <span>Active</span>
-            </div>
+            {!tableNumber ? (
+              <div className="flex items-center gap-1.5 text-[10.5px] font-mono text-[#9A9286] mt-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#9A9286]" />
+                <span>Standby</span>
+              </div>
+            ) : isHoldExpired ? (
+              <div className="flex items-center gap-1.5 text-[10.5px] font-mono text-[#F0A04B] mt-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#F0A04B]" />
+                <span>Expired</span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1.5 text-[10.5px] font-mono text-[#36D6A0] mt-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#36D6A0] shadow-[0_0_8px_#36D6A0] animate-pulse" />
+                <span>Active</span>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Hold Guarantee Subtitle */}
-        <p className="text-[10.5px] text-[#9A9286] font-light leading-relaxed hidden sm:block">
+        <p className="text-[10.5px] text-[#9A9286] font-light leading-relaxed">
           Your table is held for 5 minutes while you finalize your details.
         </p>
 

@@ -1,6 +1,6 @@
 import { fetchMutation, fetchQuery } from 'convex/nextjs';
 import { api } from '@/../convex/_generated/api';
-import { createClient } from '@/lib/supabase/server';
+import { createClient, isSupabaseConfigured } from '@/lib/supabase/server';
 import { sb, type QR } from '@/lib/supabase/typed';
 import type { OrderWithItems, OrderStatus } from '@/lib/db/types';
 import { getSessionToken } from '@/lib/auth/admin-auth';
@@ -49,7 +49,7 @@ function mapConvexOrder(order: any): OrderWithItems {
     customer_phone: order.customerPhone,
     customer_email: order.customerEmail || null,
     order_type: order.orderType,
-    table_id: null,
+    table_id: order.tableNumber != null ? String(order.tableNumber) : null,
     status: order.status,
     payment_status: order.paymentStatus,
     payment_method: order.paymentMethod,
@@ -78,7 +78,13 @@ function mapConvexOrder(order: any): OrderWithItems {
       special_instructions: item.specialInstructions || null,
       line_total_paise: item.lineTotalPaise,
       created_at: new Date(order.createdAt).toISOString(),
-      order_item_customizations: [],
+      order_item_customizations: item.addons?.map((a: any, aIdx: number) => ({
+        id: `custom-${idx}-${aIdx}`,
+        order_item_id: `item-${idx}`,
+        type: 'addon',
+        name: a.name,
+        price_paise: a.pricePaise,
+      })) || [],
     })),
   };
 }
@@ -113,11 +119,19 @@ export async function createOrder(data: CreateOrderInput): Promise<{ orderId: st
       })),
     });
 
+    if (result?.error) {
+      return { orderId: '', error: result.error };
+    }
+
     if (result?.orderId) {
       return { orderId: result.orderId };
     }
   } catch (convexError) {
     console.warn('[order.service] Convex placeOrder failed, falling back to Supabase:', convexError);
+  }
+
+  if (!isSupabaseConfigured()) {
+    return { orderId: '', error: 'Unable to place order right now. Please try again.' };
   }
 
   // 2. Secondary Fallback: Supabase
@@ -268,57 +282,14 @@ export async function getOrderById(orderId: string): Promise<OrderWithItems | nu
   try {
     const order = await fetchQuery(api.orders.getOrderById, { orderId: orderId as any });
     if (order) {
-      return {
-        id: order._id,
-        restaurant_id: RESTAURANT_ID,
-        customer_name: order.customerName,
-        customer_phone: order.customerPhone,
-        customer_email: order.customerEmail || null,
-        order_type: order.orderType,
-        table_id: null,
-        status: order.status,
-        payment_status: order.paymentStatus,
-        payment_method: order.paymentMethod,
-        pickup_time: order.pickupTime || null,
-        notes: order.notes || null,
-        subtotal_paise: order.subtotalPaise,
-        tax_paise: order.taxPaise,
-        tip_paise: order.tipPaise,
-        total_paise: order.totalPaise,
-        idempotency_key: order.idempotencyKey || null,
-        cancelled_at: null,
-        cancelled_by: null,
-        cancellation_reason: null,
-        processed_by: null,
-        created_at: new Date(order.createdAt).toISOString(),
-        updated_at: new Date(order.createdAt).toISOString(),
-        order_items: order.items.map((item: any, idx: number) => ({
-          id: `item-${idx}`,
-          order_id: order._id,
-          dish_id: item.dishId,
-          dish_name: item.dishName,
-          dish_price_paise: item.dishPricePaise,
-          quantity: item.quantity,
-          size_name: item.sizeName || null,
-          size_price_modifier_paise: item.sizePriceModifierPaise || 0,
-          special_instructions: item.specialInstructions || null,
-          line_total_paise: item.lineTotalPaise,
-          created_at: new Date(order.createdAt).toISOString(),
-          order_item_customizations: item.addons?.map((a: any, aIdx: number) => ({
-            id: `custom-${idx}-${aIdx}`,
-            order_item_id: `item-${idx}`,
-            type: 'addon',
-            name: a.name,
-            price_paise: a.pricePaise,
-          })) || [],
-        })),
-      };
+      return mapConvexOrder(order);
     }
   } catch {
     // continue to Supabase
   }
 
   // 2. Supabase Fallback
+  if (!isSupabaseConfigured()) return null;
   try {
     const db = sb(await createClient());
     const { data }: QR<OrderWithItems> = await db.from('orders').select('*, order_items(*, order_item_customizations(*))').eq('id', orderId).single();
@@ -330,52 +301,44 @@ export async function getAllOrders(restaurantId: string, filters?: OrderFilters)
   // 1. Try Convex
   try {
     const orders = await fetchQuery(api.orders.getOrderHistory, {});
-    if (orders && orders.length > 0) {
-      return orders.map((order: any) => ({
-        id: order._id,
-        restaurant_id: RESTAURANT_ID,
-        customer_name: order.customerName,
-        customer_phone: order.customerPhone,
-        customer_email: order.customerEmail || null,
-        order_type: order.orderType,
-        table_id: null,
-        status: order.status,
-        payment_status: order.paymentStatus,
-        payment_method: order.paymentMethod,
-        pickup_time: order.pickupTime || null,
-        notes: order.notes || null,
-        subtotal_paise: order.subtotalPaise,
-        tax_paise: order.taxPaise,
-        tip_paise: order.tipPaise,
-        total_paise: order.totalPaise,
-        idempotency_key: order.idempotencyKey || null,
-        cancelled_at: null,
-        cancelled_by: null,
-        cancellation_reason: null,
-        processed_by: null,
-        created_at: new Date(order.createdAt).toISOString(),
-        updated_at: new Date(order.createdAt).toISOString(),
-        order_items: order.items.map((item: any, idx: number) => ({
-          id: `item-${idx}`,
-          order_id: order._id,
-          dish_id: item.dishId,
-          dish_name: item.dishName,
-          dish_price_paise: item.dishPricePaise,
-          quantity: item.quantity,
-          size_name: item.sizeName || null,
-          size_price_modifier_paise: item.sizePriceModifierPaise || 0,
-          special_instructions: item.specialInstructions || null,
-          line_total_paise: item.lineTotalPaise,
-          created_at: new Date(order.createdAt).toISOString(),
-          order_item_customizations: [],
-        })),
-      }));
+    if (Array.isArray(orders) && (orders.length > 0 || !isSupabaseConfigured())) {
+      let mapped = orders.map((order: any) => mapConvexOrder(order));
+
+      if (filters?.status) {
+        mapped = mapped.filter((o) => o.status === filters.status);
+      }
+      if (filters?.phone) {
+        const queryPhone = filters.phone.trim();
+        const queryDigits = queryPhone.replace(/\D/g, '').slice(-10);
+        mapped = mapped.filter((o) => {
+          const orderDigits = (o.customer_phone || '').replace(/\D/g, '').slice(-10);
+          return (
+            (o.customer_phone || '').includes(queryPhone) ||
+            (queryDigits.length > 0 && orderDigits.includes(queryDigits))
+          );
+        });
+      }
+      if (filters?.dateFrom) {
+        const fromMs = new Date(filters.dateFrom).getTime();
+        if (!Number.isNaN(fromMs)) {
+          mapped = mapped.filter((o) => new Date(o.created_at).getTime() >= fromMs);
+        }
+      }
+      if (filters?.dateTo) {
+        const toMs = new Date(filters.dateTo).getTime();
+        if (!Number.isNaN(toMs)) {
+          mapped = mapped.filter((o) => new Date(o.created_at).getTime() <= toMs);
+        }
+      }
+
+      return mapped;
     }
   } catch {
     // continue to Supabase
   }
 
   // 2. Supabase Fallback
+  if (!isSupabaseConfigured()) return [];
   try {
     const db = sb(await createClient());
     let q = db.from('orders').select('*, order_items(*, order_item_customizations(*))').eq('restaurant_id', restaurantId);

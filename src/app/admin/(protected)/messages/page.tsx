@@ -189,24 +189,24 @@ export default async function AdminMessagesPage() {
       <div className="rounded-[18px] bg-black/35 backdrop-blur-xl border border-white/10 p-4 shadow-lg space-y-3.5">
         <div className="flex items-center justify-between pb-2 border-b border-white/10">
           <div className="space-y-0.5">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-sm md:text-base font-bold text-white tracking-wide">
                 Concierge Live Desk
               </h2>
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                Live Messaging
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                Preview Layout
               </span>
             </div>
             <p className="text-[11px] text-zinc-400">
-              Direct guest communication, live table requests, and VIP dining support.
+              Sample concierge messaging preview — live two-way guest chat sync coming soon.
             </p>
           </div>
         </div>
 
         {/* Chat Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 h-[420px]">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 lg:h-[420px]">
           {/* Left Column: Conversations List */}
-          <div className="lg:col-span-5 xl:col-span-4 rounded-xl bg-black/40 border border-white/10 p-3 flex flex-col overflow-hidden">
+          <div className="lg:col-span-5 xl:col-span-4 max-h-[260px] lg:max-h-none rounded-xl bg-black/40 border border-white/10 p-3 flex flex-col overflow-hidden">
             <div className="relative mb-2.5">
               <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
@@ -251,7 +251,7 @@ export default async function AdminMessagesPage() {
           </div>
 
           {/* Right Column: Chat View */}
-          <div className="lg:col-span-7 xl:col-span-8 rounded-xl bg-black/40 border border-white/10 flex flex-col overflow-hidden">
+          <div className="lg:col-span-7 xl:col-span-8 min-h-[340px] lg:min-h-0 rounded-xl bg-black/40 border border-white/10 flex flex-col overflow-hidden">
             {/* Header */}
             <div className="p-3 border-b border-white/10 flex items-center justify-between bg-white/5">
               <div className="flex items-center gap-2.5">

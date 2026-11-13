@@ -25,24 +25,29 @@ export async function requireEmployee(): Promise<{ userId: string; role: 'admin'
 
   // 2. Supabase Fallback
   try {
-    const { createClient } = await import('@/lib/supabase/server');
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { createClient, isSupabaseConfigured } = await import('@/lib/supabase/server');
+    if (isSupabaseConfigured()) {
+      const supabase = await createClient();
+      const { data: { user } } = await supabase.auth.getUser();
 
-    if (user) {
-      const adminSupabase = (await import('@/lib/supabase/admin')).createAdminClient();
-      const { data: profile } = await (adminSupabase as any)
-        .from('employees')
-        .select('role, is_active, name')
-        .eq('auth_id', user.id)
-        .single();
+      if (user) {
+        const { createAdminClient, isSupabaseAdminConfigured } = await import('@/lib/supabase/admin');
+        if (isSupabaseAdminConfigured()) {
+          const adminSupabase = createAdminClient();
+          const { data: profile } = await (adminSupabase as any)
+            .from('employees')
+            .select('role, is_active, name')
+            .eq('auth_id', user.id)
+            .single();
 
-      if (profile && profile.is_active && ['admin', 'employee', 'staff', 'manager', 'chef'].includes(profile.role)) {
-        return {
-          userId: user.id,
-          role: profile.role === 'admin' ? 'admin' : 'employee',
-          name: profile.name ?? 'Staff',
-        };
+          if (profile && profile.is_active && ['admin', 'employee', 'staff', 'manager', 'chef'].includes(profile.role)) {
+            return {
+              userId: user.id,
+              role: profile.role === 'admin' ? 'admin' : 'employee',
+              name: profile.name ?? 'Staff',
+            };
+          }
+        }
       }
     }
   } catch {
@@ -74,13 +79,16 @@ export async function getCurrentEmployee(): Promise<{ userId: string; role: stri
 
   // 2. Supabase Fallback
   try {
-    const { createClient } = await import('@/lib/supabase/server');
+    const { createClient, isSupabaseConfigured } = await import('@/lib/supabase/server');
+    if (!isSupabaseConfigured()) return null;
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) return null;
 
-    const adminSupabase = (await import('@/lib/supabase/admin')).createAdminClient();
+    const { createAdminClient, isSupabaseAdminConfigured } = await import('@/lib/supabase/admin');
+    if (!isSupabaseAdminConfigured()) return null;
+    const adminSupabase = createAdminClient();
     const { data: profile } = await (adminSupabase as any)
       .from('employees')
       .select('role, is_active, name')

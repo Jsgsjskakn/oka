@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Droplet, Sparkles, Flame, Leaf, UtensilsCrossed } from 'lucide-react';
+import { UtensilsCrossed } from 'lucide-react';
 import type { Dish } from '@/types/menu';
 
 interface FloatingIngredientAnnotationsProps {
@@ -20,30 +20,38 @@ export function FloatingIngredientAnnotations({ dish, visible }: FloatingIngredi
   if (!visible) return null;
 
   const slug = (dish.slug || '').toLowerCase();
-  const category = (dish.category as string || '').toLowerCase();
+  const category = ((dish.category as string) || '').toLowerCase();
+  const ing = dish.ingredients && dish.ingredients.length >= 4 ? dish.ingredients : null;
 
   let pins: IngredientPin[];
 
   if (slug.includes('pizza') || category.includes('pizza')) {
     pins = [
-      { id: 'truffle', name: 'Black Truffle Oil', position: 'top-left', iconType: 'droplet' },
-      { id: 'parmesan', name: 'Aged Parmesan', position: 'top-right', iconType: 'sparkles' },
-      { id: 'mushrooms', name: 'Wild Mushrooms', position: 'bottom-left', iconType: 'leaf' },
-      { id: 'thyme', name: 'Fresh Thyme', position: 'bottom-right', iconType: 'flame' },
+      { id: 'truffle', name: ing?.[0] || 'Black Truffle Oil', position: 'top-left', iconType: 'droplet' },
+      { id: 'parmesan', name: ing?.[1] || 'Aged Parmesan', position: 'top-right', iconType: 'sparkles' },
+      { id: 'mushrooms', name: ing?.[2] || 'Wild Mushrooms', position: 'bottom-left', iconType: 'leaf' },
+      { id: 'thyme', name: ing?.[3] || 'Fresh Thyme', position: 'bottom-right', iconType: 'flame' },
     ];
   } else if (slug.includes('burger') || category.includes('burger')) {
     pins = [
-      { id: 'patty', name: 'Double Smash Patty', position: 'top-left', iconType: 'flame' },
-      { id: 'cheddar', name: 'Aged Cheddar', position: 'top-right', iconType: 'sparkles' },
-      { id: 'brioche', name: 'Toasted Brioche', position: 'bottom-left', iconType: 'utensils' },
-      { id: 'aioli', name: 'Truffle Aioli', position: 'bottom-right', iconType: 'droplet' },
+      { id: 'patty', name: ing?.[0] || 'Double Smash Patty', position: 'top-left', iconType: 'flame' },
+      { id: 'cheddar', name: ing?.[1] || 'Aged Cheddar', position: 'top-right', iconType: 'sparkles' },
+      { id: 'brioche', name: ing?.[2] || 'Toasted Brioche', position: 'bottom-left', iconType: 'utensils' },
+      { id: 'aioli', name: ing?.[3] || 'Truffle Aioli', position: 'bottom-right', iconType: 'droplet' },
+    ];
+  } else if (slug.includes('mocktail') || category.includes('drink') || category.includes('beverage')) {
+    pins = [
+      { id: 'citrus', name: ing?.[0] || 'Kaffir Lime Leaf', position: 'top-left', iconType: 'leaf' },
+      { id: 'zest', name: ing?.[1] || 'Chilled Botanicals', position: 'top-right', iconType: 'sparkles' },
+      { id: 'tonic', name: ing?.[2] || 'Craft Citrus Tonic', position: 'bottom-left', iconType: 'droplet' },
+      { id: 'ice', name: ing?.[3] || 'Crystal Ice Serve', position: 'bottom-right', iconType: 'utensils' },
     ];
   } else {
     pins = [
-      { id: 'char', name: 'Flame Charred', position: 'top-left', iconType: 'flame' },
-      { id: 'spice', name: 'Birds Eye Chilli', position: 'top-right', iconType: 'sparkles' },
-      { id: 'garlic', name: 'Garlic Butter Glaze', position: 'bottom-left', iconType: 'droplet' },
-      { id: 'scallion', name: 'Crispy Herbs', position: 'bottom-right', iconType: 'leaf' },
+      { id: 'char', name: ing?.[0] || 'Chef Signature', position: 'top-left', iconType: 'flame' },
+      { id: 'spice', name: ing?.[1] || 'Aromatic Spices', position: 'top-right', iconType: 'sparkles' },
+      { id: 'garlic', name: ing?.[2] || 'Artisan Glaze', position: 'bottom-left', iconType: 'droplet' },
+      { id: 'scallion', name: ing?.[3] || 'Crispy Herbs', position: 'bottom-right', iconType: 'leaf' },
     ];
   }
 
@@ -86,18 +94,18 @@ export function FloatingIngredientAnnotations({ dish, visible }: FloatingIngredi
   };
 
   return (
-    <div className="absolute inset-0 pointer-events-none z-20 flex items-center justify-center overflow-hidden -translate-y-6 sm:-translate-y-10">
-      <div className="relative w-full max-w-4xl h-[420px] sm:h-[480px]">
-        {/* Top-Left Pin: Black Truffle Oil */}
-        <div className="absolute top-10 left-[26%] sm:left-[32%] flex flex-col items-center group pointer-events-auto cursor-pointer animate-in fade-in duration-300">
-          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/75 backdrop-blur-xl border border-[#F0C36B]/50 shadow-[0_0_16px_rgba(240,195,107,0.35)] hover:border-[#F0C36B] hover:scale-105 transition-all">
+    <div className="absolute inset-0 pointer-events-none z-20 flex items-center justify-center overflow-hidden pt-16 pb-[215px] px-3 sm:pt-16 sm:pb-28 sm:pl-20 sm:pr-[344px] md:pr-[368px] lg:pr-[392px] xl:pr-[418px]">
+      <div className="relative w-full max-w-[360px] sm:max-w-[560px] lg:max-w-[680px] h-full max-h-[340px] sm:max-h-[440px]">
+        {/* Top-Left Pin */}
+        <div className="absolute top-2 sm:top-6 left-1 sm:left-[6%] lg:left-[12%] flex flex-col items-start sm:items-center animate-in fade-in duration-300 max-w-[168px] sm:max-w-none">
+          <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-black/75 backdrop-blur-xl border border-[#F0C36B]/50 shadow-[0_0_16px_rgba(240,195,107,0.35)]">
             {renderIcon(pins[0].iconType)}
-            <span className="text-xs font-semibold text-[#F8F2E8] tracking-wide whitespace-nowrap">
+            <span className="text-[11px] sm:text-xs font-semibold text-[#F8F2E8] tracking-wide truncate max-w-[125px] sm:max-w-none">
               {pins[0].name}
             </span>
           </div>
           {/* Fine Gold Leader Line */}
-          <svg className="w-16 h-12 overflow-visible -mt-0.5 pointer-events-none">
+          <svg className="hidden sm:block w-16 h-12 overflow-visible -mt-0.5 pointer-events-none">
             <path
               d="M 32 0 L 32 16 L 50 36"
               fill="none"
@@ -109,16 +117,16 @@ export function FloatingIngredientAnnotations({ dish, visible }: FloatingIngredi
           </svg>
         </div>
 
-        {/* Top-Right Pin: Aged Parmesan */}
-        <div className="absolute top-10 right-[26%] sm:right-[32%] flex flex-col items-center group pointer-events-auto cursor-pointer animate-in fade-in duration-300">
-          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/75 backdrop-blur-xl border border-[#F0C36B]/50 shadow-[0_0_16px_rgba(240,195,107,0.35)] hover:border-[#F0C36B] hover:scale-105 transition-all">
+        {/* Top-Right Pin (staggered vertically below Top-Left on small phones to prevent overlap) */}
+        <div className="absolute top-12 sm:top-6 right-1 sm:right-[6%] lg:right-[12%] flex flex-col items-end sm:items-center animate-in fade-in duration-300 max-w-[168px] sm:max-w-none">
+          <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-black/75 backdrop-blur-xl border border-[#F0C36B]/50 shadow-[0_0_16px_rgba(240,195,107,0.35)]">
             {renderIcon(pins[1].iconType)}
-            <span className="text-xs font-semibold text-[#F8F2E8] tracking-wide whitespace-nowrap">
+            <span className="text-[11px] sm:text-xs font-semibold text-[#F8F2E8] tracking-wide truncate max-w-[125px] sm:max-w-none">
               {pins[1].name}
             </span>
           </div>
           {/* Fine Gold Leader Line */}
-          <svg className="w-16 h-12 overflow-visible -mt-0.5 pointer-events-none">
+          <svg className="hidden sm:block w-16 h-12 overflow-visible -mt-0.5 pointer-events-none">
             <path
               d="M 32 0 L 32 16 L 14 36"
               fill="none"
@@ -130,16 +138,16 @@ export function FloatingIngredientAnnotations({ dish, visible }: FloatingIngredi
           </svg>
         </div>
 
-        {/* Mid-Left Pin: Wild Mushrooms */}
-        <div className="absolute top-[38%] left-[12%] sm:left-[22%] flex flex-col items-center group pointer-events-auto cursor-pointer animate-in fade-in duration-300">
-          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/75 backdrop-blur-xl border border-[#F0C36B]/50 shadow-[0_0_16px_rgba(240,195,107,0.35)] hover:border-[#F0C36B] hover:scale-105 transition-all">
+        {/* Bottom-Left Pin */}
+        <div className="absolute bottom-12 sm:bottom-[18%] left-1 sm:left-[2%] lg:left-[6%] flex flex-col items-start sm:items-center animate-in fade-in duration-300 max-w-[168px] sm:max-w-none">
+          <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-black/75 backdrop-blur-xl border border-[#F0C36B]/50 shadow-[0_0_16px_rgba(240,195,107,0.35)]">
             {renderIcon(pins[2].iconType)}
-            <span className="text-xs font-semibold text-[#F8F2E8] tracking-wide whitespace-nowrap">
+            <span className="text-[11px] sm:text-xs font-semibold text-[#F8F2E8] tracking-wide truncate max-w-[125px] sm:max-w-none">
               {pins[2].name}
             </span>
           </div>
           {/* Fine Gold Leader Line */}
-          <svg className="w-16 h-12 overflow-visible -mt-0.5 pointer-events-none">
+          <svg className="hidden sm:block w-16 h-12 overflow-visible -mt-0.5 pointer-events-none">
             <path
               d="M 32 0 L 32 16 L 54 34"
               fill="none"
@@ -151,16 +159,16 @@ export function FloatingIngredientAnnotations({ dish, visible }: FloatingIngredi
           </svg>
         </div>
 
-        {/* Mid-Right Pin: Fresh Thyme */}
-        <div className="absolute top-[42%] right-[12%] sm:right-[22%] flex flex-col items-center group pointer-events-auto cursor-pointer animate-in fade-in duration-300">
-          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/75 backdrop-blur-xl border border-[#F0C36B]/50 shadow-[0_0_16px_rgba(240,195,107,0.35)] hover:border-[#F0C36B] hover:scale-105 transition-all">
+        {/* Bottom-Right Pin */}
+        <div className="absolute bottom-2 sm:bottom-[14%] right-1 sm:right-[2%] lg:right-[6%] flex flex-col items-end sm:items-center animate-in fade-in duration-300 max-w-[168px] sm:max-w-none">
+          <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-black/75 backdrop-blur-xl border border-[#F0C36B]/50 shadow-[0_0_16px_rgba(240,195,107,0.35)]">
             {renderIcon(pins[3].iconType)}
-            <span className="text-xs font-semibold text-[#F8F2E8] tracking-wide whitespace-nowrap">
+            <span className="text-[11px] sm:text-xs font-semibold text-[#F8F2E8] tracking-wide truncate max-w-[125px] sm:max-w-none">
               {pins[3].name}
             </span>
           </div>
           {/* Fine Gold Leader Line */}
-          <svg className="w-16 h-12 overflow-visible -mt-0.5 pointer-events-none">
+          <svg className="hidden sm:block w-16 h-12 overflow-visible -mt-0.5 pointer-events-none">
             <path
               d="M 32 0 L 32 16 L 10 34"
               fill="none"

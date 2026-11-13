@@ -23,6 +23,7 @@ import Link from 'next/link';
 export function EditDishForm({ dish, categories, initialSizes, initialAddOns }: any) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   
   // Basic info state
   const [name, setName] = useState(dish.name);
@@ -36,18 +37,41 @@ export function EditDishForm({ dish, categories, initialSizes, initialAddOns }: 
   const [isFeatured, setIsFeatured] = useState(dish.is_featured);
   const [isBestSeller, setIsBestSeller] = useState(dish.is_best_seller);
 
-  // Lists state
-  const [sizes, setSizes] = useState<{name: string, price_modifier: number}[]>(
-    initialSizes.map((s: any) => ({ name: s.name, price_modifier: s.price_modifier }))
+  // Lists state (stored consistently in paise)
+  const [sizes, setSizes] = useState<{ id?: string; name: string; price_modifier_paise: number }[]>(
+    (initialSizes || []).map((s: any) => ({
+      id: s.id,
+      name: s.name,
+      price_modifier_paise:
+        typeof s.price_modifier_paise === 'number'
+          ? s.price_modifier_paise
+          : typeof s.price_modifier === 'number'
+            ? s.price_modifier
+            : 0,
+    }))
   );
-  const [addOns, setAddOns] = useState<{name: string, price: number}[]>(
-    initialAddOns.map((a: any) => ({ name: a.name, price: a.price }))
+  const [addOns, setAddOns] = useState<{ id?: string; name: string; price_paise: number }[]>(
+    (initialAddOns || []).map((a: any) => ({
+      id: a.id,
+      name: a.name,
+      price_paise:
+        typeof a.price_paise === 'number'
+          ? a.price_paise
+          : typeof a.price === 'number'
+            ? a.price
+            : 0,
+    }))
   );
 
   const handleSave = async () => {
+    setErrorMsg(null);
+    if (!name.trim()) {
+      setErrorMsg('Dish title is required.');
+      return;
+    }
     setLoading(true);
     try {
-      await updateFullDishDetails(dish.id, {
+      const res = await updateFullDishDetails(dish.id, {
         name,
         description,
         price_paise: pricePaise,
@@ -59,12 +83,17 @@ export function EditDishForm({ dish, categories, initialSizes, initialAddOns }: 
         is_featured: isFeatured,
         is_best_seller: isBestSeller,
         sizes,
-        addOns
+        addOns,
       });
+      if (res?.error) {
+        setErrorMsg(res.error);
+        return;
+      }
       router.push('/admin/menu');
-    } catch (err) {
+      router.refresh();
+    } catch (err: any) {
       console.error(err);
-      alert('Failed to save dish');
+      setErrorMsg(err?.message || 'Failed to save dish');
     } finally {
       setLoading(false);
     }
@@ -72,7 +101,7 @@ export function EditDishForm({ dish, categories, initialSizes, initialAddOns }: 
 
   return (
     <div className="space-y-8 pb-20 max-w-5xl mx-auto animate-in fade-in duration-500">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-wrap justify-between items-center gap-3">
         <Link 
           href="/admin/menu" 
           className="group inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-text-secondary hover:text-text-primary transition-colors"
@@ -81,14 +110,21 @@ export function EditDishForm({ dish, categories, initialSizes, initialAddOns }: 
           <span>Back to Menu</span>
         </Link>
         <button 
+          type="button"
           onClick={handleSave}
           disabled={loading}
-          className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-champagne to-platinum hover:from-[#d8b85b] hover:to-[#f0db99] text-zinc-950 rounded-xl font-bold text-sm transition-all duration-300 shadow-lg shadow-[#c9a84c]/20 hover:shadow-[#c9a84c]/30 hover:-translate-y-0.5 disabled:opacity-50"
+          className="flex items-center gap-2 px-5 sm:px-6 py-2.5 bg-gradient-to-r from-champagne to-platinum hover:from-[#d8b85b] hover:to-[#f0db99] text-zinc-950 rounded-xl font-bold text-sm transition-all duration-300 shadow-lg shadow-[#c9a84c]/20 hover:shadow-[#c9a84c]/30 hover:-translate-y-0.5 disabled:opacity-50"
         >
           <Save className="w-4 h-4 text-zinc-950 stroke-[2.5]" /> 
           <span>{loading ? 'Saving Changes...' : 'Save Dish Specs'}</span>
         </button>
       </div>
+
+      {errorMsg && (
+        <div className="px-4 py-3 rounded-xl bg-rose-500/15 border border-rose-500/40 text-rose-200 text-xs font-medium">
+          {errorMsg}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Basic Details Panel */}
@@ -207,7 +243,8 @@ export function EditDishForm({ dish, categories, initialSizes, initialAddOns }: 
               <p className="text-xs text-text-secondary">Alternative size modifiers</p>
             </div>
             <button 
-              onClick={() => setSizes([...sizes, { name: 'Large', price_modifier: 5000 }])}
+              type="button"
+              onClick={() => setSizes([...sizes, { name: 'Large', price_modifier_paise: 5000 }])}
               className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border border-border-subtle bg-champagne/10 text-platinum hover:bg-champagne/20 transition-all"
             >
               <Plus className="w-3.5 h-3.5" /> 
@@ -220,7 +257,7 @@ export function EditDishForm({ dish, categories, initialSizes, initialAddOns }: 
               <p className="text-xs text-text-secondary/70 italic py-4 text-center">No portion sizes configured.</p>
             )}
             {sizes.map((size, idx) => (
-              <div key={idx} className="flex gap-2.5 items-center p-2.5 bg-obsidian/50 border border-border-subtle rounded-xl">
+              <div key={idx} className="flex flex-wrap sm:flex-nowrap gap-2.5 items-center p-2.5 bg-obsidian/50 border border-border-subtle rounded-xl">
                 <input 
                   type="text" 
                   value={size.name} 
@@ -229,24 +266,29 @@ export function EditDishForm({ dish, categories, initialSizes, initialAddOns }: 
                     newSizes[idx].name = e.target.value;
                     setSizes(newSizes);
                   }}
-                  className="flex-1 bg-obsidian/80 border border-border-subtle rounded-lg px-3 py-2 text-xs text-text-primary outline-none focus:border-champagne/50 focus:ring-1 focus:ring-[#c9a84c]/50 transition-all shadow-inner"
+                  className="flex-1 min-w-[120px] bg-obsidian/80 border border-border-subtle rounded-lg px-3 py-2 text-xs text-text-primary outline-none focus:border-champagne/50 focus:ring-1 focus:ring-[#c9a84c]/50 transition-all shadow-inner"
                   placeholder="e.g. Regular / Large"
                 />
                 <div className="relative w-32">
-                  <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] text-text-secondary/70 font-mono">+₹</span>
+                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-text-secondary/70 font-mono">p</span>
                   <input 
                     type="number" 
-                    value={size.price_modifier} 
+                    value={size.price_modifier_paise} 
                     onChange={e => {
                       const newSizes = [...sizes];
-                      newSizes[idx].price_modifier = parseInt(e.target.value) || 0;
+                      newSizes[idx].price_modifier_paise = parseInt(e.target.value, 10) || 0;
                       setSizes(newSizes);
                     }}
-                    className="w-full bg-obsidian/80 border border-border-subtle rounded-lg pl-7 pr-2 py-2 text-xs text-text-primary font-mono outline-none focus:border-champagne/50 focus:ring-1 focus:ring-[#c9a84c]/50 transition-all shadow-inner"
-                    placeholder="Modifier"
+                    className="w-full bg-obsidian/80 border border-border-subtle rounded-lg pl-5 pr-2 py-2 text-xs text-text-primary font-mono outline-none focus:border-champagne/50 focus:ring-1 focus:ring-[#c9a84c]/50 transition-all shadow-inner"
+                    placeholder="Paise (+/-)"
+                    title="Price modifier in paise (e.g. 5000 = ₹50)"
                   />
                 </div>
+                <span className="text-[10px] font-mono text-text-secondary/80 w-16 text-right">
+                  {size.price_modifier_paise >= 0 ? `+₹${(size.price_modifier_paise / 100).toFixed(0)}` : `-₹${(Math.abs(size.price_modifier_paise) / 100).toFixed(0)}`}
+                </span>
                 <button 
+                  type="button"
                   onClick={() => setSizes(sizes.filter((_, i) => i !== idx))}
                   className="p-2 text-text-secondary/70 hover:text-danger hover:bg-rose-500/10 rounded-lg transition-colors"
                 >
@@ -262,10 +304,11 @@ export function EditDishForm({ dish, categories, initialSizes, initialAddOns }: 
           <div className="flex justify-between items-center pb-3 border-b border-border-subtle/80">
             <div>
               <h2 className="text-base font-serif text-text-primary tracking-wide">Culinary Add-ons</h2>
-              <p className="text-xs text-text-secondary">Customizations & extra toppings</p>
+              <p className="text-xs text-text-secondary">Customizations & extra toppings (in paise)</p>
             </div>
             <button 
-              onClick={() => setAddOns([...addOns, { name: 'Extra Cheese', price: 4900 }])}
+              type="button"
+              onClick={() => setAddOns([...addOns, { name: 'Extra Cheese', price_paise: 4900 }])}
               className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border border-border-subtle bg-champagne/10 text-platinum hover:bg-champagne/20 transition-all"
             >
               <Plus className="w-3.5 h-3.5" /> 
@@ -278,7 +321,7 @@ export function EditDishForm({ dish, categories, initialSizes, initialAddOns }: 
               <p className="text-xs text-text-secondary/70 italic py-4 text-center">No culinary add-ons configured.</p>
             )}
             {addOns.map((addon, idx) => (
-              <div key={idx} className="flex gap-2.5 items-center p-2.5 bg-obsidian/50 border border-border-subtle rounded-xl">
+              <div key={idx} className="flex flex-wrap sm:flex-nowrap gap-2.5 items-center p-2.5 bg-obsidian/50 border border-border-subtle rounded-xl">
                 <input 
                   type="text" 
                   value={addon.name} 
@@ -287,24 +330,29 @@ export function EditDishForm({ dish, categories, initialSizes, initialAddOns }: 
                     newAddons[idx].name = e.target.value;
                     setAddOns(newAddons);
                   }}
-                  className="flex-1 bg-obsidian/80 border border-border-subtle rounded-lg px-3 py-2 text-xs text-text-primary outline-none focus:border-champagne/50 focus:ring-1 focus:ring-[#c9a84c]/50 transition-all shadow-inner"
+                  className="flex-1 min-w-[120px] bg-obsidian/80 border border-border-subtle rounded-lg px-3 py-2 text-xs text-text-primary outline-none focus:border-champagne/50 focus:ring-1 focus:ring-[#c9a84c]/50 transition-all shadow-inner"
                   placeholder="e.g. Truffle Drizzle"
                 />
                 <div className="relative w-32">
-                  <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] text-text-secondary/70 font-mono">+₹</span>
+                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-text-secondary/70 font-mono">p</span>
                   <input 
                     type="number" 
-                    value={addon.price} 
+                    value={addon.price_paise} 
                     onChange={e => {
                       const newAddons = [...addOns];
-                      newAddons[idx].price = parseInt(e.target.value) || 0;
+                      newAddons[idx].price_paise = parseInt(e.target.value, 10) || 0;
                       setAddOns(newAddons);
                     }}
-                    className="w-full bg-obsidian/80 border border-border-subtle rounded-lg pl-7 pr-2 py-2 text-xs text-text-primary font-mono outline-none focus:border-champagne/50 focus:ring-1 focus:ring-[#c9a84c]/50 transition-all shadow-inner"
-                    placeholder="Price"
+                    className="w-full bg-obsidian/80 border border-border-subtle rounded-lg pl-5 pr-2 py-2 text-xs text-text-primary font-mono outline-none focus:border-champagne/50 focus:ring-1 focus:ring-[#c9a84c]/50 transition-all shadow-inner"
+                    placeholder="Price (paise)"
+                    title="Price in paise (e.g. 4900 = ₹49)"
                   />
                 </div>
+                <span className="text-[10px] font-mono text-text-secondary/80 w-16 text-right">
+                  +₹{(addon.price_paise / 100).toFixed(0)}
+                </span>
                 <button 
+                  type="button"
                   onClick={() => setAddOns(addOns.filter((_, i) => i !== idx))}
                   className="p-2 text-text-secondary/70 hover:text-danger hover:bg-rose-500/10 rounded-lg transition-colors"
                 >

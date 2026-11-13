@@ -232,6 +232,11 @@ export function StationaryOakTreeBackground({
 
     resize();
     window.addEventListener('resize', resize, { passive: true });
+    let resizeObserver: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined' && containerRef.current) {
+      resizeObserver = new ResizeObserver(() => resize());
+      resizeObserver.observe(containerRef.current);
+    }
 
     const render = (now: number) => {
       if (!startTimeRef.current) {
@@ -441,6 +446,7 @@ export function StationaryOakTreeBackground({
 
     return () => {
       window.removeEventListener('resize', resize);
+      if (resizeObserver) resizeObserver.disconnect();
       if (animFrameRef.current) {
         cancelAnimationFrame(animFrameRef.current);
         animFrameRef.current = null;

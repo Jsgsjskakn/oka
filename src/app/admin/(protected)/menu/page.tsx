@@ -165,7 +165,7 @@ export default async function MenuAdminPage() {
       {/* 2. CATEGORIES SECTION                                                 */}
       {/* ===================================================================== */}
       <div className="rounded-[18px] bg-black/35 backdrop-blur-xl border border-white/10 p-4 shadow-lg space-y-3.5">
-        <div className="flex items-center justify-between pb-2 border-b border-white/10">
+        <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-white/10">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_#fbbf24]" />
             <h2 className="text-sm md:text-base font-bold text-white tracking-wide">
@@ -196,7 +196,10 @@ export default async function MenuAdminPage() {
             </thead>
             <tbody className="divide-y divide-white/5 text-zinc-300">
               {categories?.map((cat: any) => {
-                const dishCount = menuItems?.filter((m: any) => m.category_id === cat.id)?.length ?? 0;
+                const dishCount =
+                  menuItems?.filter(
+                    (m: any) => m.category_id === cat.id || m.categories?.slug === cat.slug
+                  )?.length ?? 0;
                 return (
                   <tr key={cat.id} className="hover:bg-white/5 transition-colors">
                     <td className="px-4 py-3">
@@ -242,10 +245,10 @@ export default async function MenuAdminPage() {
       </div>
 
       {/* ===================================================================== */}
-      {/* 3. DISHES SECTION                                                     */}
+      {/* 3. DISHES & INVENTORY SECTION                                         */}
       {/* ===================================================================== */}
-      <div className="rounded-[18px] bg-black/35 backdrop-blur-xl border border-white/10 p-4 shadow-lg space-y-3.5">
-        <div className="flex items-center justify-between pb-2 border-b border-white/10">
+      <div id="inventory" className="rounded-[18px] bg-black/35 backdrop-blur-xl border border-white/10 p-4 shadow-lg space-y-3.5">
+        <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-white/10">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" />
             <h2 className="text-sm md:text-base font-bold text-white tracking-wide">
@@ -271,7 +274,9 @@ export default async function MenuAdminPage() {
             </thead>
             <tbody className="divide-y divide-white/5 text-zinc-300">
               {menuItems?.map((dish: any) => {
-                const category = categories?.find((c: any) => c.id === dish.category_id);
+                const category = categories?.find(
+                  (c: any) => c.id === dish.category_id || c.slug === dish.categories?.slug
+                );
                 return (
                   <tr key={dish.id} className="hover:bg-white/5 transition-colors">
                     <td className="px-4 py-3">

@@ -9,7 +9,7 @@ const preferences = ['No preference', 'Indoor', 'Outdoor'];
 
 export function TablePreferenceSelector({ selected, onSelect }: TablePreferenceSelectorProps) {
   return (
-    <div className="px-4 py-6 border-b border-white/5 pb-32">
+    <div className="px-4 py-6 border-b border-white/5 pb-6">
       <h3 className="text-xs font-semibold text-text-primary/40 uppercase tracking-widest mb-4">
         Table Preference
       </h3>

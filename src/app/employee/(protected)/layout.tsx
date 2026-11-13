@@ -1,8 +1,8 @@
 import { requireEmployee } from '@/lib/auth/employee-auth';
-import { createClient } from '@/lib/supabase/server';
+import { createClient, isSupabaseConfigured } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { LogOut, Activity } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import { EmployeeRealtimeStatus } from '@/components/employee/EmployeeRealtimeStatus';
 
 export default async function EmployeeLayout({
@@ -37,11 +37,13 @@ export default async function EmployeeLayout({
             'use server';
             const { signoutAction } = await import('@/lib/auth/convex-auth-actions');
             await signoutAction();
-            try {
-              const supabase = await createClient();
-              await supabase.auth.signOut();
-            } catch {
-              // ignore
+            if (isSupabaseConfigured()) {
+              try {
+                const supabase = await createClient();
+                await supabase.auth.signOut();
+              } catch {
+                // ignore
+              }
             }
             redirect('/employee/login');
           }}>

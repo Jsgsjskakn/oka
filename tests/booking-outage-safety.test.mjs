@@ -93,9 +93,9 @@ function executeCheckAvailability({ tables, bookings, date, startTime, endTime, 
 }
 
 /**
- * Emulates createBooking mutation matching convex/bookings.ts createBooking
+ * Emulates createBooking mutation matching convex/bookings.ts createBooking (default 5-minute hold)
  */
-function executeCreateBooking({ tables, bookings, newBooking, now = Date.now() }) {
+function executeCreateBooking({ tables, bookings, newBooking, now = Date.now(), holdMinutes = 5 }) {
   if (!newBooking.customerName?.trim() || !newBooking.customerPhone?.trim()) {
     return { error: 'Customer name and phone are required' };
   }
@@ -149,7 +149,7 @@ function executeCreateBooking({ tables, bookings, newBooking, now = Date.now() }
     return { error: 'All tables for this party size are reserved during this time slot.' };
   }
 
-  const holdExpiresAt = now + 10 * 60 * 1000;
+  const holdExpiresAt = now + holdMinutes * 60 * 1000;
   const createdRecord = {
     _id: `bk_${bookings.length + 1}`,
     customerName: newBooking.customerName,
@@ -626,18 +626,18 @@ describe('Suite 3: Mathematical Interval Overlap Condition (startA < endB && end
 });
 
 describe('Suite 4: Expired Hold Rejection & Active Hold Protection', () => {
-  it('active hold (<10 minutes elapsed) protects table allocation and causes conflict', () => {
+  it('active hold (<5 minutes elapsed) protects table allocation and causes conflict', () => {
     const now = Date.now();
     const activeHold = {
       tableNumber: 1,
       status: 'pending',
-      holdExpiresAt: now + 5 * 60 * 1000, // Valid for 5 more minutes
+      holdExpiresAt: now + 3 * 60 * 1000, // Valid for 3 more minutes (5-min default hold)
     };
 
     assert.strictEqual(isBookingActive(activeHold, now), true, 'Active hold must protect the table reservation');
   });
 
-  it('expired hold (>10 minutes elapsed) releases table allocation and permits new reservation', () => {
+  it('expired hold (>5 minutes elapsed) releases table allocation and permits new reservation', () => {
     const now = Date.now();
     const expiredHold = {
       tableNumber: 1,
@@ -676,24 +676,24 @@ describe('Suite 4: Expired Hold Rejection & Active Hold Protection', () => {
     const cancelledBooking = {
       tableNumber: 1,
       status: 'cancelled',
-      holdExpiresAt: now + 10 * 60 * 1000,
+      holdExpiresAt: now + 5 * 60 * 1000,
     };
     const completedBooking = {
       tableNumber: 1,
       status: 'completed',
-      holdExpiresAt: now + 10 * 60 * 1000,
+      holdExpiresAt: now + 5 * 60 * 1000,
     };
 
     assert.strictEqual(isBookingActive(cancelledBooking, now), false, 'Cancelled booking must release table immediately');
     assert.strictEqual(isBookingActive(completedBooking, now), false, 'Completed booking must release table immediately');
   });
 
-  it('end-to-end hold lifecycle: re-allocates table after pending hold expires', () => {
+  it('end-to-end hold lifecycle: re-allocates table after 5-minute pending hold expires', () => {
     const now = Date.now();
     const tables = [{ _id: 't1', tableNumber: 1, capacity: 4, status: 'available' }];
     const bookings = [];
 
-    // 1. Customer A reserves Table 1 (pending with 10 min hold)
+    // 1. Customer A reserves Table 1 (pending with default 5 min hold)
     const resA = executeCreateBooking({
       tables,
       bookings,
@@ -709,6 +709,7 @@ describe('Suite 4: Expired Hold Rejection & Active Hold Protection', () => {
     });
     assert.ok(resA.bookingId);
     assert.strictEqual(resA.tableNumber, 1);
+    assert.strictEqual(resA.holdExpiresAt, now + 5 * 60 * 1000, 'Default booking hold duration must match 5 minutes');
 
     // 2. While hold is active (e.g. at now + 2 mins), Customer B cannot book Table 1
     const resB_active = executeCreateBooking({
@@ -727,7 +728,7 @@ describe('Suite 4: Expired Hold Rejection & Active Hold Protection', () => {
     assert.strictEqual(resB_active.bookingId, undefined);
     assert.match(resB_active.error, /All tables for this party size are reserved/i);
 
-    // 3. After hold expires (e.g. at now + 11 mins), Customer B can now successfully book Table 1!
+    // 3. After 5-minute hold expires (e.g. at now + 6 mins), Customer B can now successfully book Table 1!
     const resB_after_expiry = executeCreateBooking({
       tables,
       bookings,
@@ -739,7 +740,7 @@ describe('Suite 4: Expired Hold Rejection & Active Hold Protection', () => {
         bookingEndTime: '21:30',
         guests: 4,
       },
-      now: now + 11 * 60 * 1000,
+      now: now + 6 * 60 * 1000,
     });
     assert.ok(resB_after_expiry.bookingId);
     assert.strictEqual(resB_after_expiry.tableNumber, 1);

@@ -1,29 +1,29 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { createBrowserClient } from '@supabase/ssr';
-import { Activity } from 'lucide-react';
+import { useQuery } from 'convex/react';
+import { api } from '@/../convex/_generated/api';
+import { isSupabaseConfigured, createClient } from '@/lib/supabase/client';
 
 export function EmployeeRealtimeStatus() {
-  const [status, setStatus] = useState<'LIVE' | 'RECONNECTING' | 'DISCONNECTED'>('RECONNECTING');
+  const convexOrders = useQuery(api.orders.getActiveOrders);
+  const [supabaseStatus, setSupabaseStatus] = useState<'LIVE' | 'RECONNECTING' | 'DISCONNECTED'>('RECONNECTING');
 
   useEffect(() => {
-    const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+    if (!isSupabaseConfigured()) return;
 
+    const supabase = createClient();
     const channel = supabase.channel('system_ping');
 
     channel
-      .on('system', { event: '*' }, () => {}) // Dummy listener just to keep channel active
-      .subscribe((status, err) => {
-        if (status === 'SUBSCRIBED') {
-          setStatus('LIVE');
-        } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
-          setStatus('DISCONNECTED');
+      .on('system', { event: '*' }, () => {})
+      .subscribe((nextStatus) => {
+        if (nextStatus === 'SUBSCRIBED') {
+          setSupabaseStatus('LIVE');
+        } else if (nextStatus === 'CHANNEL_ERROR' || nextStatus === 'TIMED_OUT') {
+          setSupabaseStatus('DISCONNECTED');
         } else {
-          setStatus('RECONNECTING');
+          setSupabaseStatus('RECONNECTING');
         }
       });
 
@@ -31,6 +31,13 @@ export function EmployeeRealtimeStatus() {
       supabase.removeChannel(channel);
     };
   }, []);
+
+  const status: 'LIVE' | 'RECONNECTING' | 'DISCONNECTED' =
+    convexOrders !== undefined
+      ? 'LIVE'
+      : isSupabaseConfigured()
+      ? supabaseStatus
+      : 'RECONNECTING';
 
   return (
     <div className="flex items-center gap-2">
@@ -48,10 +55,15 @@ export function EmployeeRealtimeStatus() {
           <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
         )}
       </div>
-      <span className={`text-[10px] uppercase font-bold tracking-widest ${
-        status === 'LIVE' ? 'text-emerald-500' : 
-        status === 'RECONNECTING' ? 'text-yellow-500' : 'text-red-500'
-      }`}>
+      <span
+        className={`text-[10px] uppercase font-bold tracking-widest ${
+          status === 'LIVE'
+            ? 'text-emerald-500'
+            : status === 'RECONNECTING'
+            ? 'text-yellow-500'
+            : 'text-red-500'
+        }`}
+      >
         {status}
       </span>
     </div>

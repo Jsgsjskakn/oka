@@ -36,7 +36,7 @@ export function CustomerFooter() {
         style={{ background: 'rgba(226, 168, 75, 0.04)' }}
       />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 pt-20 pb-28 md:pb-16">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 pt-20 pb-[calc(7rem+env(safe-area-inset-bottom,0px))] md:pb-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 pb-16 border-b border-white/[0.08]">
           {/* Column 1: Brand & Philosophy */}
           <div className="space-y-4">
@@ -185,7 +185,7 @@ export function CustomerFooter() {
 
         {/* Bottom Bar: Copyright & Staff Gateway */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#9A9286]">
-          <p>© {new Date().getFullYear()} The Golden Oak. All rights reserved.</p>
+          <p suppressHydrationWarning>© {new Date().getFullYear()} The Golden Oak. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <Link href="/privacy" className="hover:text-[#FAF5EC] transition-colors">
               Privacy Policy

@@ -1,6 +1,6 @@
 import { fetchQuery } from 'convex/nextjs';
 import { api } from '@/../convex/_generated/api';
-import { createClient } from '@/lib/supabase/server';
+import { createClient, isSupabaseConfigured } from '@/lib/supabase/server';
 
 export interface AnalyticsFilters {
   restaurantId: string;
@@ -98,6 +98,7 @@ export async function getAnalyticsSummary(filters: AnalyticsFilters): Promise<An
 
   // 2. Supabase Fallback
   try {
+    if (!isSupabaseConfigured()) return empty;
     const supabase = await createClient();
 
     const { data: rawOrders, error } = await supabase

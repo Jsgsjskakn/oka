@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server';
 import { getOrderById } from '@/lib/services/order.service';
 
+function normalizePhoneDigits(phone: string): string {
+  const digits = phone.replace(/\D/g, '');
+  return digits.length > 10 ? digits.slice(-10) : digits;
+}
+
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -16,7 +21,10 @@ export async function GET(
 
     const order = await getOrderById(id);
 
-    if (!order || order.customer_phone !== phone) {
+    const requestDigits = normalizePhoneDigits(phone);
+    const orderDigits = order?.customer_phone ? normalizePhoneDigits(order.customer_phone) : '';
+
+    if (!order || !requestDigits || orderDigits !== requestDigits) {
       return NextResponse.json({ error: 'Order not found' }, { status: 404 });
     }
 

@@ -225,12 +225,17 @@ export function CulinarySpotlightModal() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, toggleSpotlight, closeSpotlight]);
 
-  // Focus input when opened
+  // Focus input & lock background scroll when opened
   useEffect(() => {
-    if (isOpen) {
-      setTimeout(() => inputRef.current?.focus(), 50);
-      setSelectedIndex(0);
-    }
+    if (!isOpen) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const focusTimer = setTimeout(() => inputRef.current?.focus(), 50);
+    setSelectedIndex(0);
+    return () => {
+      clearTimeout(focusTimer);
+      document.body.style.overflow = prevOverflow;
+    };
   }, [isOpen]);
 
   // Top Category Tabs with Live Counts
@@ -392,6 +397,14 @@ export function CulinarySpotlightModal() {
     }
   };
 
+  const addedFeedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (addedFeedbackTimerRef.current) clearTimeout(addedFeedbackTimerRef.current);
+    };
+  }, []);
+
   const handleAddToCart = (dishItem: SpotlightDish, e?: React.MouseEvent) => {
     e?.stopPropagation();
     const legacyDish: Dish = {
@@ -418,7 +431,8 @@ export function CulinarySpotlightModal() {
       navigator.vibrate(15);
     }
     toast.success('Added to Bag', `${dishItem.name} (Save ₹${dishItem.originalPrice - dishItem.price}) added.`);
-    setTimeout(() => setAddedSlug(null), 1800);
+    if (addedFeedbackTimerRef.current) clearTimeout(addedFeedbackTimerRef.current);
+    addedFeedbackTimerRef.current = setTimeout(() => setAddedSlug(null), 1800);
   };
 
   const handleDecrementActiveDish = (dishItem: SpotlightDish, e: React.MouseEvent) => {
@@ -439,14 +453,16 @@ export function CulinarySpotlightModal() {
     }
   };
 
-  // Matched Text Highlighter Helper
+  // Matched Text Highlighter Helper (escapes regex metacharacters cleanly)
   const renderHighlightedName = (name: string, highlight: string) => {
-    if (!highlight.trim()) return name;
-    const parts = name.split(new RegExp(`(${highlight})`, 'gi'));
+    const trimmed = highlight.trim();
+    if (!trimmed) return name;
+    const escaped = trimmed.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const parts = name.split(new RegExp(`(${escaped})`, 'gi'));
     return (
       <>
         {parts.map((part, i) =>
-          part.toLowerCase() === highlight.toLowerCase() ? (
+          part.toLowerCase() === trimmed.toLowerCase() ? (
             <mark
               key={i}
               className="bg-[rgba(226,168,75,0.3)] text-[#FAF5EC] rounded-sm px-0.5"
@@ -480,7 +496,7 @@ export function CulinarySpotlightModal() {
     >
       {/* Floating Luxury Glass Search Modal */}
       <div
-        className="w-full max-w-[880px] rounded-2xl border border-[rgba(226,168,75,0.38)] shadow-[0_30px_90px_rgba(0,0,0,0.92)] overflow-hidden flex flex-col relative animate-in zoom-in-95 duration-200"
+        className="w-full max-w-[880px] max-h-[88dvh] rounded-2xl border border-[rgba(226,168,75,0.38)] shadow-[0_30px_90px_rgba(0,0,0,0.92)] overflow-hidden flex flex-col relative animate-in zoom-in-95 duration-200"
         style={{
           backgroundColor: '#130E0B',
           backgroundImage:
@@ -491,7 +507,7 @@ export function CulinarySpotlightModal() {
         {/* ========================================================= */}
         {/* ZONE 1: Oversized Editorial Input Bar (Height: 70px)       */}
         {/* ========================================================= */}
-        <div className="h-[68px] sm:h-[72px] px-5 sm:px-6 flex items-center gap-3.5 border-b border-[rgba(226,168,75,0.18)] bg-[#130E0B]/95">
+        <div className="h-[60px] sm:h-[72px] px-4 sm:px-6 flex items-center gap-3 sm:gap-3.5 border-b border-[rgba(226,168,75,0.18)] bg-[#130E0B]/95 shrink-0">
           <Search className="w-5 h-5 sm:w-6 sm:h-6 text-[#E2A84B] shrink-0" />
 
           <input
@@ -534,7 +550,7 @@ export function CulinarySpotlightModal() {
         {/* ========================================================= */}
         {/* ZONE 1.5: CATEGORIES SELECTOR BAR (Requested by User)     */}
         {/* ========================================================= */}
-        <div className="px-4 sm:px-6 py-2.5 bg-[#17110D] border-b border-white/[0.06] flex items-center gap-2 overflow-x-auto no-scrollbar">
+        <div className="px-4 sm:px-6 py-2.5 bg-[#17110D] border-b border-white/[0.06] flex items-center gap-2 overflow-x-auto no-scrollbar shrink-0">
           <span className="text-[10px] font-mono font-bold text-[#E2A84B] tracking-[0.2em] uppercase shrink-0 mr-1 flex items-center gap-1">
             <UtensilsCrossed className="w-3 h-3 text-[#E2A84B]" />
             <span>CATEGORIES:</span>
@@ -575,7 +591,7 @@ export function CulinarySpotlightModal() {
         {/* ========================================================= */}
         {/* ZONE 2: POPULAR CRAVINGS & DISCOUNTS (Bigger & Redesigned)*/}
         {/* ========================================================= */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 bg-[#0E0B09] border-b border-white/[0.06] flex items-center gap-2 overflow-x-auto no-scrollbar">
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 bg-[#0E0B09] border-b border-white/[0.06] flex items-center gap-2 overflow-x-auto no-scrollbar shrink-0">
           <span className="text-[10px] font-mono font-bold text-[#A69F94] tracking-[0.2em] uppercase shrink-0 mr-1">
             POPULAR CRAVINGS:
           </span>
@@ -628,7 +644,7 @@ export function CulinarySpotlightModal() {
         {/* ========================================================= */}
         {/* ZONE 3: Split-Screen Live Results & 3D Preview             */}
         {/* ========================================================= */}
-        <div className="grid grid-cols-1 md:grid-cols-12 h-[450px] sm:h-[490px] max-h-[58vh] overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-12 flex-1 min-h-0 h-[420px] sm:h-[490px] overflow-hidden">
           {/* Left Column (58% Width — Smoothly Scrollable Dish List) */}
           <div
             ref={listContainerRef}
@@ -936,8 +952,8 @@ export function CulinarySpotlightModal() {
         {/* ========================================================= */}
         {/* ZONE 4: Concierge Command Footer (Height: 42px)           */}
         {/* ========================================================= */}
-        <div className="h-[44px] px-5 sm:px-6 bg-[#0A0806] border-t border-[rgba(226,168,75,0.15)] flex items-center justify-between text-[11px]">
-          <div className="flex items-center gap-3 text-[#9A9286]">
+        <div className="min-h-[42px] px-4 sm:px-6 py-2 bg-[#0A0806] border-t border-[rgba(226,168,75,0.15)] flex items-center justify-between gap-2 text-[11px] shrink-0">
+          <div className="hidden sm:flex items-center gap-3 text-[#9A9286]">
             <span>
               <kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] border border-white/10 text-[10px] font-mono">
                 ↑↓

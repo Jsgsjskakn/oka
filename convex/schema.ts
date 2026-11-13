@@ -77,7 +77,8 @@ export default defineSchema({
     .index("by_slug", ["slug"])
     .index("by_category", ["categorySlug"])
     .index("by_featured", ["isFeatured"])
-    .index("by_availability", ["isAvailable"]),
+    .index("by_availability", ["isAvailable"])
+    .index("by_legacy_id", ["legacyId"]),
 
   // Realtime Orders
   orders: defineTable({
@@ -137,8 +138,10 @@ export default defineSchema({
     legacyId: v.optional(v.string()),
   })
     .index("by_status", ["status"])
+    .index("by_status_created", ["status", "createdAt"])
     .index("by_created_at", ["createdAt"])
     .index("by_phone", ["customerPhone"])
+    .index("by_email", ["customerEmail"])
     .index("by_idempotency", ["idempotencyKey"]),
 
   // Table Bookings
@@ -179,6 +182,7 @@ export default defineSchema({
     .index("by_date", ["bookingDate"])
     .index("by_status", ["status"])
     .index("by_phone", ["customerPhone"])
+    .index("by_email", ["customerEmail"])
     .index("by_table_and_date", ["tableNumber", "bookingDate"]),
 
   // Restaurant Settings (Key-Value)
@@ -232,7 +236,9 @@ export default defineSchema({
     createdAt: v.number(),
   })
     .index("by_email", ["email"])
-    .index("by_role", ["role"]),
+    .index("by_phone", ["phone"])
+    .index("by_role", ["role"])
+    .index("by_reset_token", ["resetToken"]),
 
   // Authenticated Sessions
   sessions: defineTable({

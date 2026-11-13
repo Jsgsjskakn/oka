@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import {
   Minus,
@@ -14,6 +14,7 @@ import {
   Box,
   Wine,
   ShoppingCart,
+  ChevronRight,
 } from 'lucide-react';
 import type { Dish, AddOn } from '@/types/menu';
 
@@ -30,8 +31,26 @@ export function DishInfoBar({
   onAddToCart,
   onViewDetails,
 }: DishInfoBarProps) {
-  const [quantity, setQuantity] = useState(1);
-  const [added, setAdded] = useState(false);
+  const dishKey = dish.slug || dish.id;
+  const [stepperState, setStepperState] = useState<{ key: string; quantity: number }>({
+    key: dishKey,
+    quantity: 1,
+  });
+  const [addedForKey, setAddedForKey] = useState<string | null>(null);
+  const addedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const quantity = stepperState.key === dishKey ? stepperState.quantity : 1;
+  const added = addedForKey === dishKey;
+
+  // Clean up Added feedback timer on dish switch or unmount
+  useEffect(() => {
+    return () => {
+      if (addedTimerRef.current) {
+        clearTimeout(addedTimerRef.current);
+        addedTimerRef.current = null;
+      }
+    };
+  }, [dishKey]);
 
   const baseUnitPrice = dish.price || 0;
   const grandTotal = Math.round(baseUnitPrice * quantity);
@@ -39,7 +58,10 @@ export function DishInfoBar({
   const handleMinus = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (quantity > 1) {
-      setQuantity((q) => q - 1);
+      setStepperState((prev) => ({
+        key: dishKey,
+        quantity: Math.max(1, (prev.key === dishKey ? prev.quantity : 1) - 1),
+      }));
       if (typeof window !== 'undefined' && 'vibrate' in navigator) navigator.vibrate(8);
     }
   };
@@ -47,7 +69,10 @@ export function DishInfoBar({
   const handlePlus = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (quantity < 20) {
-      setQuantity((q) => q + 1);
+      setStepperState((prev) => ({
+        key: dishKey,
+        quantity: Math.min(20, (prev.key === dishKey ? prev.quantity : 1) + 1),
+      }));
       if (typeof window !== 'undefined' && 'vibrate' in navigator) navigator.vibrate(8);
     }
   };
@@ -55,44 +80,66 @@ export function DishInfoBar({
   const handleAdd = (e: React.MouseEvent) => {
     e.stopPropagation();
     onAddToCart(quantity, []);
-    setAdded(true);
+    setAddedForKey(dishKey);
     if (typeof window !== 'undefined' && 'vibrate' in navigator) navigator.vibrate(20);
-    setTimeout(() => setAdded(false), 2200);
+    if (addedTimerRef.current) clearTimeout(addedTimerRef.current);
+    addedTimerRef.current = setTimeout(() => setAddedForKey(null), 2200);
   };
 
   // Determine authentic culinary specs by dish type
   const getCulinarySpecs = () => {
     const slug = (dish.slug || '').toLowerCase();
     const cat = ((dish.category as string) || '').toLowerCase();
+    const prepLabel = dish.preparationTime || '15 Mins Prep';
     if (slug.includes('pizza') || cat.includes('pizza')) {
       return [
         { label: 'Wood-Fired', icon: Flame },
         { label: '12" Artisan Crust', icon: Ruler },
-        { label: '15 Mins Prep', icon: Clock },
+        { label: prepLabel, icon: Clock },
       ];
     }
     if (slug.includes('burger') || cat.includes('burger')) {
       return [
         { label: 'Charcoal Grilled', icon: Flame },
         { label: 'Toasted Brioche', icon: Sparkles },
-        { label: '12 Mins Prep', icon: Clock },
+        { label: dish.preparationTime || '12 Mins Prep', icon: Clock },
+      ];
+    }
+    if (slug.includes('mocktail') || cat.includes('drink') || cat.includes('beverage')) {
+      return [
+        { label: 'Hand-Muddled', icon: Sparkles },
+        { label: 'Botanical Infusion', icon: Leaf },
+        { label: dish.preparationTime || '5 Mins Prep', icon: Clock },
+      ];
+    }
+    if (cat.includes('dessert')) {
+      return [
+        { label: 'Pastry Craft', icon: Sparkles },
+        { label: 'Artisan Plating', icon: Leaf },
+        { label: dish.preparationTime || '10 Mins Prep', icon: Clock },
       ];
     }
     return [
-      { label: 'Flame Wok', icon: Flame },
+      { label: 'Chef Crafted', icon: Flame },
       { label: 'Farm Fresh Herbs', icon: Leaf },
-      { label: '10 Mins Prep', icon: Clock },
+      { label: dish.preparationTime || '12 Mins Prep', icon: Clock },
     ];
   };
 
   const culinarySpecs = getCulinarySpecs();
 
   // Curated ingredients fallback if not provided
+  const slugLower = (dish.slug || '').toLowerCase();
+  const catLower = ((dish.category as string) || '').toLowerCase();
   const displayIngredients =
     dish.ingredients && dish.ingredients.length > 0
       ? dish.ingredients
-      : (dish.slug || '').includes('pizza')
+      : slugLower.includes('pizza')
       ? ['Black Truffle Oil', 'Wild Porcini', 'Aged Parmesan', 'Fresh Thyme', 'Buffalo Mozzarella', 'Fermented Sourdough']
+      : slugLower.includes('mocktail') || catLower.includes('drink') || catLower.includes('beverage')
+      ? ['Kaffir Lime Leaf', 'Cold-Pressed Citrus', 'Botanical Tonic', 'Crushed Ice']
+      : slugLower.includes('chow') || slugLower.includes('wok') || slugLower.includes('dim-sum') || catLower.includes('chinese')
+      ? ['Artisan Noodles', 'Roasted Sesame Oil', 'Crisp Pok Choy', 'Aged Soy Glaze', 'Spring Scallions']
       : ['Artisan Brioche', 'Aged Cheddar', 'Crisp Butterhead', 'Smoked Glaze', 'Organic Microgreens'];
 
   return (
@@ -101,7 +148,7 @@ export function DishInfoBar({
       {/* DESKTOP VIEW (sm:flex): Original 2-Zone Extended Luxury Glass Box         */}
       {/* ========================================================================= */}
       <aside
-        className="hidden sm:flex fixed bottom-3 sm:bottom-4 lg:bottom-4 xl:bottom-5 right-3 sm:right-5 lg:right-6 xl:right-8 top-auto w-[calc(100vw-24px)] sm:w-[340px] lg:w-[350px] xl:w-[370px] z-40 pointer-events-auto select-none flex-col gap-2 sm:gap-2.5 animate-in fade-in slide-in-from-right-4 duration-300 max-h-[calc(100vh-40px)] overflow-y-auto no-scrollbar"
+        className="hidden sm:flex fixed bottom-3 sm:bottom-3.5 lg:bottom-4 xl:bottom-5 right-3 sm:right-4 lg:right-6 xl:right-8 top-auto sm:w-[308px] md:w-[328px] lg:w-[350px] xl:w-[370px] z-40 pointer-events-auto select-none flex-col gap-2 sm:gap-2.5 animate-in fade-in slide-in-from-right-4 duration-300 max-h-[calc(100dvh-92px)] overflow-y-auto hide-scrollbar"
         aria-label="Dish Dossier & Order Console"
       >
         {/* ZONE 1 (Top Box): High-Resolution Dish Photography, Name & Description */}
@@ -144,7 +191,7 @@ export function DishInfoBar({
           </p>
 
           {/* Culinary Specs Tags */}
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+          <div className="flex items-center gap-1.5 overflow-x-auto hide-scrollbar py-0.5">
             {culinarySpecs.map((spec, i) => {
               const Icon = spec.icon;
               return (
@@ -203,7 +250,7 @@ export function DishInfoBar({
           {/* View in AR Button */}
           <Link
             href={`/ar/${dish.slug || dish.id}`}
-            className="relative group w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-gradient-to-r from-[rgba(240,195,107,0.18)] via-[rgba(240,195,107,0.30)] to-[rgba(240,195,107,0.18)] hover:from-[rgba(240,195,107,0.30)] hover:to-[rgba(240,195,107,0.45)] border border-[#F0C36B]/80 hover:border-[#F0C36B] text-[#FFE3A5] hover:text-white transition-all shadow-[0_4px_16px_rgba(0,0,0,0.5),0_0_15px_rgba(240,195,107,0.25)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.6),0_0_25px_rgba(240,195,107,0.45)] active:scale-98 cursor-pointer backdrop-blur-md"
+            className="relative group w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-gradient-to-r from-[rgba(240,195,107,0.18)] via-[rgba(240,195,107,0.30)] to-[rgba(240,195,107,0.18)] hover:from-[rgba(240,195,107,0.30)] hover:to-[rgba(240,195,107,0.45)] border border-[#F0C36B]/80 hover:border-[#F0C36B] text-[#FFE3A5] hover:text-white transition-all shadow-[0_4px_16px_rgba(0,0,0,0.5),0_0_15px_rgba(240,195,107,0.25)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.6),0_0_25px_rgba(240,195,107,0.45)] active:scale-[0.98] cursor-pointer backdrop-blur-md"
             title="Place on My Table in Augmented Reality"
           >
             <Box className="w-3.5 h-3.5 text-[#F0C36B] group-hover:scale-110 transition-transform shrink-0" />
@@ -230,7 +277,7 @@ export function DishInfoBar({
                   type="button"
                   onClick={handleMinus}
                   disabled={quantity <= 1}
-                  className="w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-[#F0C36B] hover:bg-[#F0C36B]/15 active:scale-95 transition-all disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+                  className="w-6 h-6 rounded-full flex items-center justify-center text-[#F0C36B] hover:bg-[#F0C36B]/15 active:scale-95 transition-all disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
                   aria-label="Decrease quantity"
                 >
                   <Minus className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
@@ -242,7 +289,7 @@ export function DishInfoBar({
                   type="button"
                   onClick={handlePlus}
                   disabled={quantity >= 20}
-                  className="w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-[#F0C36B] hover:bg-[#F0C36B]/15 active:scale-95 transition-all disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+                  className="w-6 h-6 rounded-full flex items-center justify-center text-[#F0C36B] hover:bg-[#F0C36B]/15 active:scale-95 transition-all disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
                   aria-label="Increase quantity"
                 >
                   <Plus className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
@@ -258,7 +305,7 @@ export function DishInfoBar({
                 <button
                   type="button"
                   onClick={handleAdd}
-                  className="relative group rounded-xl px-3 sm:px-3.5 py-1.5 sm:py-2 bg-gradient-to-r from-[#F0C36B] to-[#D4A346] text-[#120E0B] font-bold text-xs sm:text-[13px] flex items-center gap-1.5 shadow-[0_2px_14px_rgba(240,195,107,0.4)] hover:shadow-[0_4px_20px_rgba(240,195,107,0.6)] active:scale-97 transition-all cursor-pointer border border-[#FFE3A5]/40"
+                  className="relative group rounded-xl px-3 sm:px-3.5 py-1.5 sm:py-2 bg-gradient-to-r from-[#F0C36B] to-[#D4A346] text-[#120E0B] font-bold text-xs sm:text-[13px] flex items-center gap-1.5 shadow-[0_2px_14px_rgba(240,195,107,0.4)] hover:shadow-[0_4px_20px_rgba(240,195,107,0.6)] active:scale-[0.97] transition-all cursor-pointer border border-[#FFE3A5]/40"
                 >
                   <span>Add to Order</span>
                   <span className="group-hover:translate-x-0.5 transition-transform">→</span>
@@ -273,27 +320,35 @@ export function DishInfoBar({
       {/* MOBILE VIEW (sm:hidden): Compact Bottom Console for Phones                */}
       {/* ========================================================================= */}
       <aside
-        className="flex sm:hidden fixed bottom-3 left-1/2 -translate-x-1/2 w-[calc(100vw-36px)] max-w-[340px] z-40 pointer-events-auto select-none flex-col animate-in fade-in slide-in-from-bottom-2 duration-300"
+        className="flex sm:hidden fixed bottom-[max(12px,env(safe-area-inset-bottom))] left-3 right-3 mx-auto max-w-[380px] z-40 pointer-events-auto select-none flex-col animate-in fade-in slide-in-from-bottom-2 duration-300"
         aria-label="Dish Order Console"
       >
         <div className="rounded-2xl py-2 px-3 bg-[rgba(16,12,9,0.92)] backdrop-blur-2xl border border-[#F0C36B]/40 shadow-[0_10px_28px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.15)] flex flex-col gap-1.5">
-          {/* Row 1: Veg Dot, Dish Name, Category Tag & Price */}
+          {/* Row 1: Veg Dot, Dish Name, Category Tag, Details Trigger & Price */}
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-1.5 min-w-0">
+            <button
+              type="button"
+              onClick={onViewDetails}
+              className="flex items-center gap-1.5 min-w-0 flex-1 text-left cursor-pointer group touch-manipulation"
+              title="Tap to inspect full ingredients"
+            >
               <span
                 className={`w-2 h-2 rounded-full shrink-0 ${
                   dish.isVeg ? 'bg-emerald-400' : 'bg-red-500'
                 }`}
               />
-              <h2 className="font-serif text-xs font-bold text-[#F8F2E8] truncate">
+              <h2 className="font-serif text-xs font-bold text-[#F8F2E8] group-hover:text-[#F0C36B] truncate">
                 {dish.name}
               </h2>
               {dish.category && (
-                <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-black/60 text-[#FFE3A5] border border-[#F0C36B]/30 shrink-0">
+                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-black/60 text-[#FFE3A5] border border-[#F0C36B]/30 shrink-0 max-w-[96px] truncate">
                   {dish.category}
                 </span>
               )}
-            </div>
+              {onViewDetails && (
+                <ChevronRight className="w-3 h-3 text-[#F0C36B]/70 shrink-0" />
+              )}
+            </button>
             <span className="font-mono text-xs font-bold text-[#F0C36B] shrink-0">
               ₹{grandTotal}
             </span>
@@ -306,10 +361,10 @@ export function DishInfoBar({
                 type="button"
                 onClick={handleMinus}
                 disabled={quantity <= 1}
-                className="w-5.5 h-5.5 rounded-full flex items-center justify-center text-[#F0C36B] hover:bg-[#F0C36B]/15 active:scale-95 transition-all disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+                className="relative w-7 h-7 rounded-full flex items-center justify-center text-[#F0C36B] hover:bg-[#F0C36B]/15 active:scale-95 transition-all disabled:opacity-30 disabled:pointer-events-none cursor-pointer touch-manipulation before:content-[''] before:absolute before:-inset-2"
                 aria-label="Decrease quantity"
               >
-                <Minus className="w-2.5 h-2.5" />
+                <Minus className="w-3 h-3" />
               </button>
               <span className="w-5 text-center font-mono text-[11px] font-bold text-[#F8F2E8]">
                 {quantity}
@@ -318,15 +373,15 @@ export function DishInfoBar({
                 type="button"
                 onClick={handlePlus}
                 disabled={quantity >= 20}
-                className="w-5.5 h-5.5 rounded-full flex items-center justify-center text-[#F0C36B] hover:bg-[#F0C36B]/15 active:scale-95 transition-all disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+                className="relative w-7 h-7 rounded-full flex items-center justify-center text-[#F0C36B] hover:bg-[#F0C36B]/15 active:scale-95 transition-all disabled:opacity-30 disabled:pointer-events-none cursor-pointer touch-manipulation before:content-[''] before:absolute before:-inset-2"
                 aria-label="Increase quantity"
               >
-                <Plus className="w-2.5 h-2.5" />
+                <Plus className="w-3 h-3" />
               </button>
             </div>
 
             {added ? (
-              <div className="rounded-lg px-3 py-1 bg-[#0A261C] border border-[#36D6A0]/50 text-[#36D6A0] font-bold text-[11px] flex items-center gap-1 shadow-[0_0_12px_rgba(54,214,160,0.3)]">
+              <div className="min-h-[34px] rounded-lg px-3.5 py-1.5 bg-[#0A261C] border border-[#36D6A0]/50 text-[#36D6A0] font-bold text-[11px] flex items-center gap-1 shadow-[0_0_12px_rgba(54,214,160,0.3)]">
                 <Check className="w-3 h-3 text-[#36D6A0]" />
                 <span>Added</span>
               </div>
@@ -334,7 +389,7 @@ export function DishInfoBar({
               <button
                 type="button"
                 onClick={handleAdd}
-                className="rounded-lg px-3 py-1 bg-gradient-to-r from-[#F0C36B] to-[#D4A346] text-[#120E0B] font-bold text-[11px] flex items-center gap-1 shadow-[0_2px_10px_rgba(240,195,107,0.35)] hover:shadow-[0_4px_14px_rgba(240,195,107,0.5)] active:scale-95 transition-all cursor-pointer border border-[#FFE3A5]/40"
+                className="min-h-[34px] rounded-lg px-3.5 py-1.5 bg-gradient-to-r from-[#F0C36B] to-[#D4A346] text-[#120E0B] font-bold text-[11px] flex items-center gap-1 shadow-[0_2px_10px_rgba(240,195,107,0.35)] hover:shadow-[0_4px_14px_rgba(240,195,107,0.5)] active:scale-95 transition-all cursor-pointer border border-[#FFE3A5]/40 touch-manipulation"
               >
                 <ShoppingCart className="w-3 h-3 text-[#120E0B]" />
                 <span className="whitespace-nowrap">Add to Cart</span>

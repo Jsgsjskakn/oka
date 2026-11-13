@@ -17,12 +17,26 @@ import {
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { loginAction, requestPasswordResetAction } from '@/lib/auth/convex-auth-actions';
+import { useAuthStore } from '@/store/user-store';
 import { toast } from '@/store/toast-store';
+
+function sanitizeRedirect(raw: string | null, fallback = '/booking'): string {
+  if (!raw || typeof raw !== 'string') return fallback;
+  const trimmed = raw.trim();
+  if (!trimmed.startsWith('/') || trimmed.startsWith('//') || trimmed.startsWith('/\\')) {
+    return fallback;
+  }
+  return trimmed;
+}
 
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get('redirectTo') || '/booking';
+  const redirectTo = sanitizeRedirect(
+    searchParams.get('redirectTo') || searchParams.get('returnUrl'),
+    '/booking'
+  );
+  const isSwitchAccount = searchParams.get('switch') === '1';
   const supabase = createClient();
 
   const [email, setEmail] = useState('');
@@ -34,17 +48,46 @@ function LoginContent() {
   const [passwordFocused, setPasswordFocused] = useState(false);
 
   useEffect(() => {
-    // Check if user is already logged in
+    if (isSwitchAccount) return;
+
+    let cancelled = false;
     const checkUser = async () => {
+      try {
+        const res = await fetch('/api/auth/me', { cache: 'no-store' });
+        if (!cancelled && res.ok) {
+          const data = await res.json();
+          if (data?.authenticated && data?.user) {
+            useAuthStore.getState().setAuth(
+              String(data.user.id || ''),
+              data.user.name || 'Guest',
+              data.user.email || '',
+              data.user.phone || null
+            );
+            router.replace(redirectTo);
+            return;
+          }
+        }
+      } catch {
+        // Fallback to Supabase check below
+      }
+
       const {
         data: { session },
       } = await supabase.auth.getSession();
-      if (session) {
-        router.push(redirectTo);
+      if (!cancelled && session) {
+        useAuthStore.getState().setAuth(
+          session.user.id,
+          session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Guest',
+          session.user.email || ''
+        );
+        router.replace(redirectTo);
       }
     };
     checkUser();
-  }, [router, redirectTo, supabase.auth]);
+    return () => {
+      cancelled = true;
+    };
+  }, [router, redirectTo, isSwitchAccount, supabase.auth]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,36 +97,44 @@ function LoginContent() {
     try {
       // 1. Convex Authentication Primary
       const res = await loginAction({
-        identifier: email,
+        identifier: email.trim(),
         password,
       });
 
       if (res.success) {
+        if (res.user) {
+          useAuthStore.getState().setAuth(
+            String(res.user._id || res.user.userId || ''),
+            res.user.name || email.trim().split('@')[0],
+            res.user.email || email.trim(),
+            res.user.phone || null
+          );
+        }
         toast.success('Welcome Back', 'Authorized into The Golden Oak Privé Lounge.');
         router.push(redirectTo);
         router.refresh();
         return;
       }
 
-      if (res.error && !res.error.includes('failed')) {
-        throw new Error(res.error);
-      }
-
       // 2. Supabase Fallback
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
+      const { data, error: sbError } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
         password,
       });
 
-      if (error) {
-        throw error;
-      }
-
-      if (data.session) {
+      if (data?.session) {
+        useAuthStore.getState().setAuth(
+          data.session.user.id,
+          data.session.user.user_metadata?.full_name || email.trim().split('@')[0],
+          data.session.user.email || email.trim()
+        );
         toast.success('Welcome Back', 'Authorized into The Golden Oak Privé Lounge.');
         router.push(redirectTo);
         router.refresh();
+        return;
       }
+
+      throw new Error(res.error || sbError?.message || 'Authentication credentials not recognized.');
     } catch (err: any) {
       setError(err.message || 'Authentication credentials not recognized.');
     } finally {
@@ -92,24 +143,24 @@ function LoginContent() {
   };
 
   const handleResetPassword = async () => {
-    if (!email) {
+    if (!email.trim()) {
       setError('Please enter your email address above to receive your reset link.');
       return;
     }
+    setError(null);
 
     try {
-      await requestPasswordResetAction(email);
-      toast.info('Reset Link Dispatched', 'Password recovery link sent to your email.');
-    } catch {
+      await requestPasswordResetAction(email.trim());
       try {
-        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        await supabase.auth.resetPasswordForEmail(email.trim(), {
           redirectTo: `${window.location.origin}/auth/update-password`,
         });
-        if (error) throw error;
-        toast.info('Reset Link Dispatched', 'Password recovery link sent to your email.');
-      } catch (err: any) {
-        setError(err.message || 'Unable to dispatch recovery link.');
+      } catch {
+        // Best-effort secondary reset trigger
       }
+      toast.info('Reset Link Dispatched', 'If an account matches that email, recovery instructions have been sent.');
+    } catch (err: any) {
+      setError(err.message || 'Unable to dispatch recovery link.');
     }
   };
 
@@ -121,11 +172,11 @@ function LoginContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0D0A08] text-[#FAF5EC] flex flex-col lg:flex-row overflow-x-hidden selection:bg-[#E2A84B] selection:text-[#0D0A08]">
+    <div className="min-h-[calc(100vh-76px)] sm:min-h-[calc(100vh-84px)] bg-[#0D0A08] text-[#FAF5EC] flex flex-col lg:flex-row overflow-x-hidden selection:bg-[#E2A84B] selection:text-[#0D0A08]">
       {/* ========================================================= */}
       {/* LEFT 6 COLUMNS: Visual Atmosphere & Quote Stage           */}
       {/* ========================================================= */}
-      <div className="lg:w-1/2 relative min-h-[460px] lg:min-h-screen flex flex-col justify-between p-8 sm:p-12 lg:p-16 overflow-hidden">
+      <div className="lg:w-1/2 relative min-h-[140px] sm:min-h-[260px] lg:min-h-[calc(100vh-84px)] flex flex-col justify-between p-5 sm:p-10 lg:p-16 overflow-hidden">
         {/* Background Dining Image */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -148,19 +199,19 @@ function LoginContent() {
         {/* Top Header Crest */}
         <div className="relative z-10">
           <Link href="/" className="inline-flex flex-col group">
-            <span className="font-serif text-2xl sm:text-3xl font-bold tracking-[0.18em] text-[#FAF5EC] group-hover:text-[#E2A84B] transition-colors">
+            <span className="font-serif text-xl sm:text-3xl font-bold tracking-[0.18em] text-[#FAF5EC] group-hover:text-[#E2A84B] transition-colors">
               THE GOLDEN OAK
             </span>
-            <span className="text-[10px] font-mono tracking-[0.3em] text-[#E2A84B] uppercase">
+            <span className="text-[10px] font-mono tracking-[0.26em] sm:tracking-[0.3em] text-[#E2A84B] uppercase">
               ARTISANAL DINING · PRIVÉ LOUNGE
             </span>
           </Link>
         </div>
 
-        {/* Center Quote Stage */}
-        <div className="relative z-10 my-auto py-10 max-w-lg space-y-4">
+        {/* Center Quote Stage (compact/hidden on small phones so login form stays above the fold) */}
+        <div className="hidden sm:block relative z-10 my-auto py-8 lg:py-10 max-w-lg space-y-4">
           <div className="w-10 h-0.5 bg-[#E2A84B]" />
-          <p className="font-serif text-2xl sm:text-3xl lg:text-[32px] font-medium text-[#FAF5EC] leading-snug italic">
+          <p className="font-serif text-2xl lg:text-[32px] font-medium text-[#FAF5EC] leading-snug italic">
             &ldquo;Enter our private digital lounge to reserve bespoke tables, curate your 3D tasting menu, and track live kitchen craft.&rdquo;
           </p>
           <p className="text-[11px] font-mono uppercase tracking-[0.25em] text-[#E2A84B] font-bold">
@@ -169,14 +220,14 @@ function LoginContent() {
         </div>
 
         {/* Bottom 3 Luxury Privilege Badges */}
-        <div className="relative z-10 pt-6 border-t border-white/10 flex flex-wrap items-center gap-3 text-[11px] font-mono text-[#E2A84B]">
-          <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.04] border border-[#E2A84B]/30">
+        <div className="relative z-10 pt-3 sm:pt-6 sm:border-t sm:border-white/10 flex flex-wrap items-center gap-2 sm:gap-3 text-[10px] sm:text-[11px] font-mono text-[#E2A84B]">
+          <span className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-white/[0.04] border border-[#E2A84B]/30">
             <Sparkles className="w-3 h-3 text-[#E2A84B]" /> Instant Table Lock
           </span>
-          <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.04] border border-[#E2A84B]/30">
+          <span className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-white/[0.04] border border-[#E2A84B]/30">
             <Sparkles className="w-3 h-3 text-[#E2A84B]" /> 1-Click Reordering
           </span>
-          <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.04] border border-[#E2A84B]/30">
+          <span className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.04] border border-[#E2A84B]/30">
             <Sparkles className="w-3 h-3 text-[#E2A84B]" /> Priority Seating
           </span>
         </div>
@@ -185,7 +236,7 @@ function LoginContent() {
       {/* ========================================================= */}
       {/* RIGHT 6 COLUMNS: The Velvet Auth Form Card                */}
       {/* ========================================================= */}
-      <div className="lg:w-1/2 min-h-screen flex flex-col justify-between p-6 sm:p-12 lg:p-16 relative bg-[#0D0A08] border-l border-[#E2A84B]/[0.08]">
+      <div className="flex-1 lg:w-1/2 lg:min-h-[calc(100vh-84px)] flex flex-col justify-between p-4 sm:p-10 lg:p-16 pb-24 md:pb-12 relative bg-[#0D0A08] lg:border-l border-[#E2A84B]/[0.08]">
         {/* Top ambient chandelier glow */}
         <div
           className="pointer-events-none absolute -top-24 right-0 w-80 h-80 z-0"
@@ -359,17 +410,17 @@ function LoginContent() {
         </div>
 
         {/* Bottom Bar: Staff & Kitchen KDS Access */}
-        <div className="pt-6 border-t border-white/[0.06] flex items-center justify-between text-xs text-[#9A9286] relative z-10">
+        <div className="pt-5 border-t border-white/[0.06] flex flex-wrap items-center justify-between gap-3 text-xs text-[#9A9286] relative z-10">
           <Link
             href="/"
-            className="hover:text-[#FAF5EC] transition-colors"
+            className="hover:text-[#FAF5EC] transition-colors py-1"
           >
             ← Return to Home
           </Link>
 
           <Link
             href="/employee/login"
-            className="hover:text-[#E2A84B] transition-colors flex items-center gap-1.5 font-medium"
+            className="hover:text-[#E2A84B] transition-colors flex items-center gap-1.5 font-medium py-1"
           >
             <ChefHat className="w-3.5 h-3.5 text-[#E2A84B]" />
             <span>Staff &amp; Kitchen KDS Access →</span>

@@ -29,13 +29,16 @@ export default function AdminSettingsClient({ initialSettings, restaurantId }: P
   const [activeTab, setActiveTab] = useState<'operations' | 'finance' | 'reservations' | 'identity'>('operations');
   const [savingKey, setSavingKey] = useState<string | null>(null);
   const [successKeys, setSuccessKeys] = useState<Record<string, boolean>>({});
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const handleChange = (key: string, value: unknown) => {
+    setErrorMsg(null);
     setSettings(prev => ({ ...prev, [key]: value }));
   };
 
   const handleSave = async (key: string) => {
     setSavingKey(key);
+    setErrorMsg(null);
     try {
       const result = await updateSettingAction(key, settings[key]);
       if (result.error) throw new Error(result.error);
@@ -46,7 +49,7 @@ export default function AdminSettingsClient({ initialSettings, restaurantId }: P
       }, 2500);
     } catch (err) {
       console.error(err);
-      alert('Failed to save setting');
+      setErrorMsg(err instanceof Error ? err.message : 'Failed to save setting.');
     } finally {
       setSavingKey(null);
     }
@@ -61,6 +64,12 @@ export default function AdminSettingsClient({ initialSettings, restaurantId }: P
 
   return (
     <div className="space-y-8">
+      {errorMsg && (
+        <div className="rounded-xl bg-rose-500/15 border border-rose-500/40 px-4 py-2.5 text-xs text-rose-200 flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+          <span>{errorMsg}</span>
+        </div>
+      )}
       {/* Category Navigation Tabs */}
       <div className="flex flex-wrap items-center gap-2 pb-2 border-b border-border-subtle">
         {tabs.map((tab) => {
@@ -505,11 +514,23 @@ export default function AdminSettingsClient({ initialSettings, restaurantId }: P
 
               <div className="flex justify-end pt-1">
                 <button
+                  type="button"
                   onClick={() => handleSave('support_phone')}
                   disabled={savingKey === 'support_phone'}
-                  className="px-4 py-1.5 bg-elevated hover:bg-zinc-700 text-text-primary rounded-xl text-xs font-semibold transition-all"
+                  className="flex items-center gap-1.5 px-4 py-1.5 bg-elevated hover:bg-zinc-700 text-text-primary rounded-xl text-xs font-semibold transition-all cursor-pointer"
                 >
-                  Save Phone
+                  {successKeys['support_phone'] ? (
+                    <Check className="w-3.5 h-3.5 text-success" />
+                  ) : (
+                    <Save className="w-3.5 h-3.5 text-platinum" />
+                  )}
+                  <span>
+                    {savingKey === 'support_phone'
+                      ? 'Saving...'
+                      : successKeys['support_phone']
+                      ? 'Updated'
+                      : 'Save Phone'}
+                  </span>
                 </button>
               </div>
             </div>
@@ -532,11 +553,23 @@ export default function AdminSettingsClient({ initialSettings, restaurantId }: P
 
               <div className="flex justify-end pt-1">
                 <button
+                  type="button"
                   onClick={() => handleSave('support_email')}
                   disabled={savingKey === 'support_email'}
-                  className="px-4 py-1.5 bg-elevated hover:bg-zinc-700 text-text-primary rounded-xl text-xs font-semibold transition-all"
+                  className="flex items-center gap-1.5 px-4 py-1.5 bg-elevated hover:bg-zinc-700 text-text-primary rounded-xl text-xs font-semibold transition-all cursor-pointer"
                 >
-                  Save Email
+                  {successKeys['support_email'] ? (
+                    <Check className="w-3.5 h-3.5 text-success" />
+                  ) : (
+                    <Save className="w-3.5 h-3.5 text-platinum" />
+                  )}
+                  <span>
+                    {savingKey === 'support_email'
+                      ? 'Saving...'
+                      : successKeys['support_email']
+                      ? 'Updated'
+                      : 'Save Email'}
+                  </span>
                 </button>
               </div>
             </div>

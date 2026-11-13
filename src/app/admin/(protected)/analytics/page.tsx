@@ -1,9 +1,8 @@
-import { 
-  Download, 
-  TrendingUp, 
-  DollarSign, 
-  ShoppingBag, 
-  UtensilsCrossed, 
+import {
+  TrendingUp,
+  DollarSign,
+  ShoppingBag,
+  UtensilsCrossed,
 } from 'lucide-react';
 import { formatMoney } from '@/lib/db/types';
 import { getAnalyticsSummary } from '@/lib/services/analytics.service';
@@ -11,6 +10,7 @@ import { RESTAURANT_ID } from '@/lib/config';
 import { requireAdmin } from '@/lib/auth/admin-auth';
 import AnalyticsCharts from './AnalyticsCharts';
 import DateRangePicker from './DateRangePicker';
+import { ExportCsvButton } from './ExportCsvButton';
 
 export const metadata = {
   title: 'Analytics | Admin | The Golden Oak',
@@ -202,10 +202,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <DateRangePicker />
-            <button className="flex items-center justify-center gap-1.5 px-3 py-1 bg-white/10 hover:bg-white/20 text-white font-medium rounded-lg text-[11px] transition-colors border border-white/15 cursor-pointer">
-              <Download className="w-3 h-3" />
-              <span>Export CSV</span>
-            </button>
+            <ExportCsvButton summary={summary} rangeLabel={range} />
           </div>
         </div>
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Circle, CheckCircle2 } from 'lucide-react';
+import { Circle, CheckCircle2, XCircle } from 'lucide-react';
 import type { OrderStatus } from '@/types/order';
 import { createBrowserClient } from '@supabase/ssr';
 import { useQuery } from 'convex/react';
@@ -9,18 +9,27 @@ import { api } from '@/../convex/_generated/api';
 
 interface OrderStatusSummaryProps {
   orderId?: string;
-  currentStatus: OrderStatus;
+  currentStatus: OrderStatus | 'completed' | 'cancelled' | string;
 }
 
-const steps: { key: OrderStatus | string; label: string }[] = [
+const steps: { key: string; label: string }[] = [
   { key: 'received', label: 'Order Received' },
   { key: 'preparing', label: 'Preparing' },
   { key: 'ready', label: 'Ready' },
   { key: 'completed', label: 'Completed' },
 ];
 
+function mapOrderStatus(rawStatus: string): string {
+  if (rawStatus === 'pending' || rawStatus === 'confirmed') return 'received';
+  return rawStatus;
+}
+
 export function OrderStatusSummary({ currentStatus, orderId }: OrderStatusSummaryProps) {
-  const [status, setStatus] = useState<OrderStatus | string>(currentStatus);
+  const [status, setStatus] = useState<string>(() => mapOrderStatus(currentStatus));
+
+  useEffect(() => {
+    setStatus(mapOrderStatus(currentStatus));
+  }, [currentStatus]);
 
   // 1. Primary Realtime: Convex Query
   const isConvexId = !!orderId && orderId.length > 25 && !orderId.includes('-');
@@ -30,36 +39,35 @@ export function OrderStatusSummary({ currentStatus, orderId }: OrderStatusSummar
   );
 
   useEffect(() => {
-    if (convexOrder) {
-      const newStatus = convexOrder.status;
-      const mappedStatus = (newStatus === 'pending' || newStatus === 'confirmed' ? 'received' : newStatus);
-      setStatus(mappedStatus);
+    if (convexOrder?.status) {
+      setStatus(mapOrderStatus(convexOrder.status));
     }
   }, [convexOrder]);
 
   // 2. Secondary Realtime: Supabase Fallback (for legacy UUID orders)
   useEffect(() => {
     if (!orderId || isConvexId) return;
-    
+
     try {
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
       const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
       if (!supabaseUrl || !supabaseKey) return;
 
       const supabase = createBrowserClient(supabaseUrl, supabaseKey);
-      
-      const channel = supabase.channel(`public:orders:status:${orderId}`)
+
+      const channel = supabase
+        .channel(`public:orders:status:${orderId}`)
         .on(
           'postgres_changes',
           { event: 'UPDATE', schema: 'public', table: 'orders', filter: `id=eq.${orderId}` },
           (payload) => {
-            const newStatus = payload.new.status;
-            const mappedStatus = (newStatus === 'pending' || newStatus === 'confirmed' ? 'received' : newStatus);
-            setStatus(mappedStatus);
+            if (payload.new?.status) {
+              setStatus(mapOrderStatus(payload.new.status));
+            }
           }
         )
         .subscribe();
-        
+
       return () => {
         supabase.removeChannel(channel);
       };
@@ -68,23 +76,40 @@ export function OrderStatusSummary({ currentStatus, orderId }: OrderStatusSummar
     }
   }, [orderId, isConvexId]);
 
-  const currentIndex = steps.findIndex((s) => s.key === status);
+  if (status === 'cancelled') {
+    return (
+      <div className="px-4 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
+        <div className="bg-[#1a1a1a] border border-rose-500/30 rounded-2xl p-5 flex items-center gap-4">
+          <XCircle className="w-6 h-6 text-rose-400 shrink-0" />
+          <div>
+            <h3 className="text-sm font-semibold text-rose-200">Order Cancelled</h3>
+            <p className="text-xs text-text-primary/50 mt-0.5">
+              This order has been cancelled. Please reach out to our concierge if you need assistance.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const currentIndex = Math.max(0, steps.findIndex((s) => s.key === status));
 
   return (
-    <div className="px-4 pb-8 max-w-md mx-auto w-full">
-      <div className="bg-[#1a1a1a] border border-white/5 rounded-2xl p-5">
-        <h3 className="text-xs font-semibold text-text-primary/40 uppercase tracking-widest mb-5">
+    <div className="px-4 pb-8 max-w-md lg:max-w-2xl mx-auto w-full">
+      <div className="bg-[#1a1a1a] border border-white/10 rounded-2xl p-5 sm:p-6">
+        <h3 className="text-xs font-semibold text-text-primary/45 uppercase tracking-widest mb-5">
           Order Status
         </h3>
         <div className="flex flex-col gap-0">
           {steps.map((step, index) => {
             const isComplete = index <= currentIndex;
             const isLast = index === steps.length - 1;
+            const isActiveInProgress = status === step.key && step.key !== 'completed';
             return (
               <div key={step.key} className="flex items-start gap-4 relative">
                 {!isLast && (
                   <div
-                    className={`absolute left-3.5 top-7 w-[2px] h-8 -ml-[1px] transition-colors ${
+                    className={`absolute left-[9px] top-7 w-[2px] h-8 transition-colors ${
                       index < currentIndex ? 'bg-primary' : 'bg-white/10'
                     }`}
                   />
@@ -96,7 +121,7 @@ export function OrderStatusSummary({ currentStatus, orderId }: OrderStatusSummar
                     <Circle className="w-5 h-5 text-text-primary/20" />
                   )}
                 </div>
-                <div className="py-1">
+                <div className="py-1 pb-4">
                   <p
                     className={`text-sm font-medium transition-colors ${
                       isComplete ? 'text-text-primary' : 'text-text-primary/40'
@@ -104,7 +129,7 @@ export function OrderStatusSummary({ currentStatus, orderId }: OrderStatusSummar
                   >
                     {step.label}
                   </p>
-                  {status === step.key && (
+                  {isActiveInProgress && (
                     <p className="text-[11px] text-primary mt-0.5 animate-pulse">
                       In progress...
                     </p>

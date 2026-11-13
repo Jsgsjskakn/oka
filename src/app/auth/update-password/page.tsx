@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, Suspense } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
+import { resetPasswordAction } from '@/lib/auth/convex-auth-actions';
 import { Shield, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 function UpdatePasswordForm() {
@@ -12,6 +14,8 @@ function UpdatePasswordForm() {
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const resetToken = searchParams.get('token');
   const supabase = createClient();
 
   const handleUpdate = async (e: React.FormEvent) => {
@@ -29,7 +33,22 @@ function UpdatePasswordForm() {
     }
 
     setLoading(true);
-    
+
+    if (resetToken) {
+      const convexRes = await resetPasswordAction(resetToken, password);
+      if (convexRes.error) {
+        setError(convexRes.error);
+        setLoading(false);
+        return;
+      }
+      setSuccess(true);
+      setTimeout(() => {
+        router.push('/auth/login');
+        router.refresh();
+      }, 2000);
+      return;
+    }
+
     // Uses the session established by clicking the email link
     const { error: updateError } = await supabase.auth.updateUser({
       password: password
@@ -113,13 +132,19 @@ function UpdatePasswordForm() {
           {loading ? 'Updating...' : 'Update Password'}
         </button>
       </form>
+
+      <div className="pt-2 text-center">
+        <Link href="/auth/login" className="text-xs text-text-secondary hover:text-champagne transition-colors">
+          ← Return to Sign In
+        </Link>
+      </div>
     </div>
   );
 }
 
 export default function UpdatePasswordPage() {
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-[calc(100vh-76px)] sm:min-h-[calc(100vh-84px)] bg-[#0a0a0a] flex flex-col justify-center px-4 py-10 pb-24 md:pb-12 sm:px-6 lg:px-8">
       <Suspense fallback={<div className="text-champagne text-center">Loading...</div>}>
         <UpdatePasswordForm />
       </Suspense>

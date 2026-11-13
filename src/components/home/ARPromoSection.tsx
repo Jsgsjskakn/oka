@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import {
   RotateCw,
@@ -196,17 +197,33 @@ export function ARPromoSection() {
     }
   }, []);
 
+  useEffect(() => {
+    if (!showQRModal) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setShowQRModal(false);
+    };
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [showQRModal]);
+
+  const router = useRouter();
+
   const handleOpenAR = useCallback(() => {
     const isMobile =
       typeof window !== 'undefined' &&
       /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
     if (isMobile) {
-      window.location.href = `/ar/${currentDish.slug}`;
+      router.push(`/ar/${currentDish.slug}`);
     } else {
       setShowQRModal(true);
     }
-  }, [currentDish.slug]);
+  }, [currentDish.slug, router]);
 
   return (
     <section
@@ -482,7 +499,7 @@ export function ARPromoSection() {
               onClick={() => {
                 if (!shouldMountCanvas) setShouldMountCanvas(true);
               }}
-              className="relative w-[280px] h-[280px] sm:w-[330px] sm:h-[330px] rounded-full overflow-hidden border-2 border-[#F0C36B]/50 z-10 shadow-[0_25px_60px_rgba(0,0,0,0.95),0_0_35px_rgba(240,195,107,0.3)] bg-gradient-to-b from-[#18130F] via-[#0E0B09] to-[#070504] group/platter"
+              className="relative w-[196px] h-[196px] min-[390px]:w-[228px] min-[390px]:h-[228px] sm:w-[330px] sm:h-[330px] rounded-full overflow-hidden border-2 border-[#F0C36B]/50 z-10 shadow-[0_25px_60px_rgba(0,0,0,0.95),0_0_35px_rgba(240,195,107,0.3)] bg-gradient-to-b from-[#18130F] via-[#0E0B09] to-[#070504] group/platter"
               title="Drag horizontally to rotate 360°"
             >
               {shouldMountCanvas ? (
@@ -584,8 +601,8 @@ export function ARPromoSection() {
         </div>
 
         {/* Bottom Sub-Bar Pill */}
-        <div className="relative mt-8 pt-6 border-t border-white/[0.08] flex items-center justify-end">
-          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-black/55 backdrop-blur-md border border-white/10 text-[11px] font-medium text-[#FAF5EC]/85 shadow-sm">
+        <div className="relative mt-8 pt-6 border-t border-white/[0.08] flex items-center justify-center sm:justify-end">
+          <div className="inline-flex flex-wrap justify-center items-center gap-2 sm:gap-2.5 px-3.5 sm:px-4 py-1.5 rounded-full bg-black/55 backdrop-blur-md border border-white/10 text-[10.5px] sm:text-[11px] font-medium text-[#FAF5EC]/85 shadow-sm">
             <span className="flex items-center gap-1 text-[#3EE094]">
               <Leaf className="w-3 h-3 text-[#3EE094]" />
               <span>Authentic Flavours</span>
@@ -606,9 +623,13 @@ export function ARPromoSection() {
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200"
+          className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200"
+          onClick={() => setShowQRModal(false)}
         >
-          <div className="relative w-full max-w-sm rounded-3xl bg-[rgba(18,14,11,0.96)] border border-[#F0C36B]/50 p-6 shadow-2xl flex flex-col items-center text-center">
+          <div
+            className="relative w-full max-w-sm rounded-3xl bg-[rgba(18,14,11,0.96)] border border-[#F0C36B]/50 p-6 shadow-2xl flex flex-col items-center text-center"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               type="button"
               onClick={() => setShowQRModal(false)}

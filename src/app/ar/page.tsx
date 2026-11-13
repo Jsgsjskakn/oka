@@ -35,10 +35,26 @@ export default async function ARPage() {
       />
 
       {/* Main Container with Architectural Margin Lines */}
-      <div className="max-w-[1360px] mx-auto border-l border-r border-[#E2A84B]/[0.07] min-h-screen relative z-10 px-4 sm:px-6 lg:px-8 py-12 flex flex-col justify-between">
+      <div className="max-w-[1360px] mx-auto border-l border-r border-[#E2A84B]/[0.07] min-h-screen relative z-10 px-4 sm:px-6 lg:px-8 py-6 sm:py-10 flex flex-col justify-between">
         <div>
+          {/* Clean Top Nav Strip (MobileShell hides TopBar on /ar, so provide quick Menu & Cart navigation) */}
+          <div className="flex items-center justify-between gap-3 mb-4">
+            <Link
+              href="/menu"
+              className="inline-flex items-center gap-2 px-3.5 min-h-[40px] rounded-full bg-[#181310]/85 border border-[#E2A84B]/30 hover:border-[#E2A84B] text-xs font-medium text-[#FAF5EC] transition-all"
+            >
+              <span>← Back to Menu</span>
+            </Link>
+            <Link
+              href="/cart"
+              className="inline-flex items-center gap-2 px-3.5 min-h-[40px] rounded-full bg-[#181310]/85 border border-[#E2A84B]/30 hover:border-[#E2A84B] text-xs font-medium text-[#F6D386] transition-all"
+            >
+              <span>Cart</span>
+            </Link>
+          </div>
+
           {/* 1. Spatial 3D Hero Banner (Clean Editorial Header — No yellow circle, No prototype warning) */}
-          <div className="text-center max-w-3xl mx-auto pt-6 pb-12">
+          <div className="text-center max-w-3xl mx-auto pt-4 pb-12">
             {/* Overline — SPATIAL GASTRONOMY LOUNGE — */}
             <div className="flex items-center justify-center gap-3 mb-3.5">
               <span className="w-8 h-[1px] bg-[#E2A84B]/40" />

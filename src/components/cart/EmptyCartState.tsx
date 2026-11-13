@@ -20,8 +20,9 @@ export function EmptyCartState() {
       </p>
 
       <button
+        type="button"
         onClick={() => router.push('/menu')}
-        className="bg-white text-black px-8 py-3 rounded-full font-semibold active:scale-[0.98] transition-transform"
+        className="min-h-[48px] bg-white text-black px-8 py-3 rounded-full font-semibold active:scale-[0.98] transition-transform"
       >
         Browse Menu
       </button>

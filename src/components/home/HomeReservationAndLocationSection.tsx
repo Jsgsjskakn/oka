@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -32,20 +32,33 @@ export function HomeReservationAndLocationSection() {
 
   // Reservation Form State
   const [guests, setGuests] = useState<number>(2);
-  const [selectedDateLabel, setSelectedDateLabel] = useState<string>('Today, 29 Oct 2026');
-  const [timeSlot, setTimeSlot] = useState<string>('8:00 PM');
+  const [selectedDateLabel, setSelectedDateLabel] = useState<string>('Today, Evening');
+  const [timeSlot, setTimeSlot] = useState<string>('08:00 PM');
+  const [dateOptions, setDateOptions] = useState<{ label: string; value: string }[]>([]);
 
   // Interactive Dropdown Toggles
   const [showGuestPicker, setShowGuestPicker] = useState<boolean>(false);
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
   const [showTimePicker, setShowTimePicker] = useState<boolean>(false);
 
-  // Dynamic Date calculation
+  // Dynamic Date calculation on client to prevent SSR/TZ hydration mismatch
   useEffect(() => {
     try {
-      const today = new Date();
-      const dateFormatted = `Today, ${today.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}`;
-      setSelectedDateLabel(dateFormatted);
+      const list: { label: string; value: string }[] = [];
+      for (let i = 0; i < 7; i++) {
+        const d = new Date();
+        d.setDate(d.getDate() + i);
+        const prefix = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : d.toLocaleDateString('en-US', { weekday: 'short' });
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        list.push({
+          label: `${prefix}, ${d.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}`,
+          value: `${yyyy}-${mm}-${dd}`,
+        });
+      }
+      setDateOptions(list);
+      if (list[0]) setSelectedDateLabel(list[0].label);
     } catch {
       setSelectedDateLabel('Today, 29 Oct 2026');
     }
@@ -63,21 +76,6 @@ export function HomeReservationAndLocationSection() {
     };
     window.addEventListener('mousedown', handleOutsideClick);
     return () => window.removeEventListener('mousedown', handleOutsideClick);
-  }, []);
-
-  // Date options for next 7 days
-  const dateOptions = useMemo(() => {
-    const list = [];
-    for (let i = 0; i < 7; i++) {
-      const d = new Date();
-      d.setDate(d.getDate() + i);
-      const prefix = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : d.toLocaleDateString('en-US', { weekday: 'short' });
-      list.push({
-        label: `${prefix}, ${d.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}`,
-        value: d.toISOString().split('T')[0],
-      });
-    }
-    return list;
   }, []);
 
   // Time options
@@ -142,7 +140,9 @@ export function HomeReservationAndLocationSection() {
           {/* CARD 1: RESERVATION & FIND SEATS (7 COLS ON DESKTOP)     */}
           {/* ========================================================= */}
           <div
-            className="lg:col-span-7 rounded-2xl sm:rounded-3xl border border-[#D4AF37]/45 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.92),inset_0_1px_1px_rgba(255,255,255,0.18)] flex flex-col sm:flex-row overflow-hidden relative transition-all duration-300 hover:border-[#D4AF37]/70 group"
+            className={`lg:col-span-7 rounded-2xl sm:rounded-3xl border border-[#D4AF37]/45 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.92),inset_0_1px_1px_rgba(255,255,255,0.18)] flex flex-col sm:flex-row relative transition-all duration-300 hover:border-[#D4AF37]/70 group ${
+              showGuestPicker || showDatePicker || showTimePicker ? 'z-30' : 'z-10'
+            }`}
             style={{
               background:
                 'linear-gradient(145deg, rgba(14, 24, 20, 0.84) 0%, rgba(10, 15, 13, 0.88) 60%, rgba(8, 12, 10, 0.92) 100%)',
@@ -154,7 +154,7 @@ export function HomeReservationAndLocationSection() {
           <div className="pointer-events-none absolute -top-24 -left-24 w-64 h-64 bg-[#D4AF37]/10 rounded-full blur-3xl -z-10" />
 
           {/* Left Wine Glass & Fine Dining Photo Strip with Vertical Ribbon */}
-          <div className="w-full sm:w-[135px] md:w-[155px] h-[160px] sm:h-auto shrink-0 relative overflow-hidden bg-black/60">
+          <div className="w-full sm:w-[135px] md:w-[155px] h-[160px] sm:h-auto shrink-0 relative overflow-hidden rounded-t-2xl sm:rounded-t-none sm:rounded-l-2xl md:rounded-l-3xl bg-black/60">
             <img
               src="/images/reservation-wine-table-clean.png"
               alt="The Golden Oak Fine Dining Ambience"
@@ -212,25 +212,25 @@ export function HomeReservationAndLocationSection() {
             </div>
 
             {/* 3 Input Selector Boxes Side-by-Side */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-2.5 my-3 relative">
+            <div className="grid grid-cols-1 min-[420px]:grid-cols-3 gap-2 sm:gap-2.5 my-3 relative">
               {/* 1. Guests Selector Box */}
               <div className="relative">
-                <div
-                  role="button"
-                  tabIndex={0}
+                <button
+                  type="button"
+                  aria-expanded={showGuestPicker}
+                  aria-haspopup="listbox"
                   onClick={() => {
                     setShowGuestPicker(!showGuestPicker);
                     setShowDatePicker(false);
                     setShowTimePicker(false);
                   }}
-                  className="bg-black/60 hover:bg-black/80 border border-white/12 hover:border-[#F0C36B]/60 rounded-xl p-2 sm:p-2.5 flex flex-col justify-between cursor-pointer transition-all shadow-sm group select-none"
+                  className="w-full text-left bg-black/60 hover:bg-black/80 border border-white/12 hover:border-[#F0C36B]/60 rounded-xl p-2 sm:p-2.5 flex flex-col justify-between cursor-pointer transition-all shadow-sm group select-none min-h-[52px]"
                 >
                   <div className="flex items-center justify-between gap-1 text-[#9A9286] group-hover:text-[#F0C36B] transition-colors mb-1">
                     <div className="flex items-center gap-1">
                       <User className="w-3 h-3 text-[#F0C36B]" />
                       <span className="text-[9.5px] font-mono uppercase tracking-wider">Guests</span>
                     </div>
-                    <ChevronDown className="w-3 h-3 text-[#9A9286] group-hover:text-[#F0C36B]" />
                   </div>
 
                   <div className="flex items-center justify-between gap-1">
@@ -240,9 +240,9 @@ export function HomeReservationAndLocationSection() {
                         {guests} Guests
                       </span>
                     </div>
-                    <ChevronDown className="w-3 h-3 text-[#9A9286] shrink-0" />
+                    <ChevronDown className={`w-3.5 h-3.5 text-[#9A9286] shrink-0 transition-transform ${showGuestPicker ? 'rotate-180 text-[#F0C36B]' : ''}`} />
                   </div>
-                </div>
+                </button>
 
                 {/* Guests Dropdown Popover */}
                 {showGuestPicker && (
@@ -283,31 +283,31 @@ export function HomeReservationAndLocationSection() {
 
               {/* 2. Date Selector Box */}
               <div className="relative">
-                <div
-                  role="button"
-                  tabIndex={0}
+                <button
+                  type="button"
+                  aria-expanded={showDatePicker}
+                  aria-haspopup="listbox"
                   onClick={() => {
                     setShowDatePicker(!showDatePicker);
                     setShowGuestPicker(false);
                     setShowTimePicker(false);
                   }}
-                  className="bg-black/60 hover:bg-black/80 border border-white/12 hover:border-[#F0C36B]/60 rounded-xl p-2 sm:p-2.5 flex flex-col justify-between cursor-pointer transition-all shadow-sm group select-none"
+                  className="w-full text-left bg-black/60 hover:bg-black/80 border border-white/12 hover:border-[#F0C36B]/60 rounded-xl p-2 sm:p-2.5 flex flex-col justify-between cursor-pointer transition-all shadow-sm group select-none min-h-[52px]"
                 >
                   <div className="flex items-center justify-between gap-1 text-[#9A9286] group-hover:text-[#F0C36B] transition-colors mb-1">
                     <div className="flex items-center gap-1">
                       <Calendar className="w-3 h-3 text-[#F0C36B]" />
                       <span className="text-[9.5px] font-mono uppercase tracking-wider">Date</span>
                     </div>
-                    <ChevronDown className="w-3 h-3 text-[#9A9286] group-hover:text-[#F0C36B]" />
                   </div>
 
                   <div className="flex items-center justify-between gap-1">
                     <span className="text-xs sm:text-[13px] font-semibold text-[#FAF5EC] truncate">
                       {selectedDateLabel}
                     </span>
-                    <ChevronDown className="w-3 h-3 text-[#9A9286] shrink-0" />
+                    <ChevronDown className={`w-3.5 h-3.5 text-[#9A9286] shrink-0 transition-transform ${showDatePicker ? 'rotate-180 text-[#F0C36B]' : ''}`} />
                   </div>
-                </div>
+                </button>
 
                 {/* Date Dropdown Popover */}
                 {showDatePicker && (
@@ -340,31 +340,31 @@ export function HomeReservationAndLocationSection() {
 
               {/* 3. Time Selector Box */}
               <div className="relative">
-                <div
-                  role="button"
-                  tabIndex={0}
+                <button
+                  type="button"
+                  aria-expanded={showTimePicker}
+                  aria-haspopup="listbox"
                   onClick={() => {
                     setShowTimePicker(!showTimePicker);
                     setShowGuestPicker(false);
                     setShowDatePicker(false);
                   }}
-                  className="bg-black/60 hover:bg-black/80 border border-white/12 hover:border-[#F0C36B]/60 rounded-xl p-2 sm:p-2.5 flex flex-col justify-between cursor-pointer transition-all shadow-sm group select-none"
+                  className="w-full text-left bg-black/60 hover:bg-black/80 border border-white/12 hover:border-[#F0C36B]/60 rounded-xl p-2 sm:p-2.5 flex flex-col justify-between cursor-pointer transition-all shadow-sm group select-none min-h-[52px]"
                 >
                   <div className="flex items-center justify-between gap-1 text-[#9A9286] group-hover:text-[#F0C36B] transition-colors mb-1">
                     <div className="flex items-center gap-1">
                       <Clock className="w-3 h-3 text-[#F0C36B]" />
                       <span className="text-[9.5px] font-mono uppercase tracking-wider">Time</span>
                     </div>
-                    <ChevronDown className="w-3 h-3 text-[#9A9286] group-hover:text-[#F0C36B]" />
                   </div>
 
                   <div className="flex items-center justify-between gap-1">
                     <span className="text-xs sm:text-[13px] font-semibold text-[#FAF5EC] truncate">
                       {timeSlot} (Available)
                     </span>
-                    <ChevronDown className="w-3 h-3 text-[#9A9286] shrink-0" />
+                    <ChevronDown className={`w-3.5 h-3.5 text-[#9A9286] shrink-0 transition-transform ${showTimePicker ? 'rotate-180 text-[#F0C36B]' : ''}`} />
                   </div>
-                </div>
+                </button>
 
                 {/* Time Dropdown Popover */}
                 {showTimePicker && (

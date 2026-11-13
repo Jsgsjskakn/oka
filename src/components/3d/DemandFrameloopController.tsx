@@ -56,6 +56,18 @@ export interface DemandFrameloopControllerProps {
   children?: ReactNode;
 }
 
+function stepOrbitTargetDamping(
+  controls: OrbitControlsType,
+  targetLook: THREE.Vector3,
+  lambda: number,
+  clampedDelta: number
+): void {
+  controls.target.x = THREE.MathUtils.damp(controls.target.x, targetLook.x, lambda, clampedDelta);
+  controls.target.y = THREE.MathUtils.damp(controls.target.y, targetLook.y, lambda, clampedDelta);
+  controls.target.z = THREE.MathUtils.damp(controls.target.z, targetLook.z, lambda, clampedDelta);
+  controls.update();
+}
+
 /**
  * DemandFrameloopController
  *
@@ -332,10 +344,7 @@ export function DemandFrameloopController({
 
       // Smoothly damp controls target
       if (controls) {
-        controls.target.x = THREE.MathUtils.damp(controls.target.x, targetLook.x, lambda, clampedDelta);
-        controls.target.y = THREE.MathUtils.damp(controls.target.y, targetLook.y, lambda, clampedDelta);
-        controls.target.z = THREE.MathUtils.damp(controls.target.z, targetLook.z, lambda, clampedDelta);
-        controls.update();
+        stepOrbitTargetDamping(controls, targetLook, lambda, clampedDelta);
       } else {
         camera.lookAt(targetLook);
       }

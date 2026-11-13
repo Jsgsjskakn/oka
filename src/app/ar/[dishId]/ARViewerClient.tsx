@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { ARViewer } from '@/components/ar/ARViewer';
 import { useFavoritesStore } from '@/store/favorites-store';
 import { useCartStore } from '@/store/cart-store';
@@ -24,21 +24,32 @@ export default function ARViewerClient(props: Props) {
   const addItem = useCartStore((s) => s.addItem);
 
   // Adapt DB dish to legacy Dish type
-  const dish: Dish = {
-    id: props.dishSlug,
-    slug: props.dishSlug,
-    name: props.dishName,
-    description: props.dishDescription,
-    price: props.dishPrice / 100,
-    image: props.dishImage,
-    category: props.dishCategory as any,
-    isVeg: props.dishIsVeg,
-    isAvailable: true,
-    isFeatured: false,
-    isBestSeller: false,
-    spiceLevel: 'medium',
-    has3DModel: true,
-  };
+  const dish: Dish = useMemo(
+    () => ({
+      id: props.dishSlug,
+      slug: props.dishSlug,
+      name: props.dishName,
+      description: props.dishDescription,
+      price: props.dishPrice / 100,
+      image: props.dishImage,
+      category: props.dishCategory as Dish['category'],
+      isVeg: props.dishIsVeg,
+      isAvailable: true,
+      isFeatured: false,
+      isBestSeller: false,
+      spiceLevel: 'medium',
+      has3DModel: true,
+    }),
+    [
+      props.dishSlug,
+      props.dishName,
+      props.dishDescription,
+      props.dishPrice,
+      props.dishImage,
+      props.dishCategory,
+      props.dishIsVeg,
+    ]
+  );
 
   const handleAddToCart = useCallback(() => {
     addItem(dish, 1, {});

@@ -5,8 +5,8 @@ import { CompactFooter } from '@/components/layout/CompactFooter';
 export default function PrivacyPage() {
   return (
     <div className="min-h-screen bg-obsidian text-text-primary flex flex-col">
-      <header className="px-4 py-5 flex items-center gap-3 border-b border-white/5 sticky top-0 bg-obsidian/90 backdrop-blur-md z-40">
-        <Link href="/" className="w-10 h-10 flex items-center justify-center -ml-2 text-text-primary/70 hover:text-text-primary active:scale-95 transition-transform">
+      <header className="px-4 py-4 flex items-center gap-3 border-b border-white/5 sticky top-[70px] sm:top-[80px] bg-obsidian/90 backdrop-blur-md z-40">
+        <Link href="/" aria-label="Back to Home" className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/5 text-text-primary/70 hover:text-text-primary active:scale-95 transition-transform">
           <ChevronLeft className="w-6 h-6" />
         </Link>
         <h1 className="font-heading text-lg font-bold">Privacy Policy</h1>

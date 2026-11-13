@@ -25,7 +25,7 @@ const localIps = getLocalIpAddresses();
 
 const cspHeader = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
+  "script-src 'self' 'unsafe-eval' 'unsafe-inline' 'wasm-unsafe-eval'",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' blob: data: https://*.supabase.co https://jimdmvzpmawbgzodzxhv.supabase.co https://*.convex.cloud https://*.convex.site https://*.google.com https://*.googleapis.com https://*.gstatic.com https://*.openstreetmap.org",
   "font-src 'self' data:",
@@ -39,18 +39,28 @@ const cspHeader = [
   "form-action 'self'",
 ].join('; ');
 
+const devPort = process.env.PORT?.trim();
+const devOriginEntries = Array.from(
+  new Set([
+    ...localIps,
+    ...localIps.map((ip) => `${ip}:3000`),
+    ...(devPort && devPort !== '3000' ? localIps.map((ip) => `${ip}:${devPort}`) : []),
+  ])
+);
+
 // Narrow, secure Server Actions allowed origins:
 // Next.js automatically permits same-origin requests (Origin === Host) by default.
 // Cross-origin Server Action invocations are restricted to local development ports
 // and the explicit production host if defined via environment variables.
 // Wildcards (such as *.vercel.app) are intentionally avoided to prevent cross-origin CSRF.
-const serverActionOrigins: string[] = [
-  'localhost:3000',
-  'localhost:3001',
-  'localhost:1111',
-  ...localIps,
-  ...localIps.map((ip) => `${ip}:3000`),
-];
+const serverActionOrigins: string[] = Array.from(
+  new Set([
+    'localhost:3000',
+    'localhost:3001',
+    'localhost:1111',
+    ...devOriginEntries,
+  ])
+);
 
 if (process.env.NEXT_PUBLIC_APP_URL) {
   try {
@@ -72,16 +82,19 @@ if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
 
 const nextConfig: NextConfig = {
   devIndicators: false,
-  allowedDevOrigins: [
-    ...localIps,
-    ...localIps.map((ip) => `${ip}:3000`),
-  ],
+  poweredByHeader: false,
+  allowedDevOrigins: devOriginEntries,
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'jimdmvzpmawbgzodzxhv.supabase.co',
+        pathname: '/storage/v1/object/public/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
         pathname: '/storage/v1/object/public/**',
       },
       {
@@ -102,11 +115,80 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
+        source: '/sw.js',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'application/javascript; charset=utf-8',
+          },
+          {
+            key: 'Cache-Control',
+            value: 'no-cache, no-store, must-revalidate',
+          },
+          {
+            key: 'Service-Worker-Allowed',
+            value: '/',
+          },
+        ],
+      },
+      {
+        source: '/manifest.json',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'application/manifest+json; charset=utf-8',
+          },
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=0, must-revalidate',
+          },
+        ],
+      },
+      {
+        source: '/manifest.webmanifest',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'application/manifest+json; charset=utf-8',
+          },
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=0, must-revalidate',
+          },
+        ],
+      },
+      {
         source: '/models/:path*',
         headers: [
           {
             key: 'Cache-Control',
             value: 'public, max-age=31536000, immutable',
+          },
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: '*',
+          },
+          {
+            key: 'Cross-Origin-Resource-Policy',
+            value: 'cross-origin',
+          },
+        ],
+      },
+      {
+        source: '/models/:path*.glb',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'model/gltf-binary',
+          },
+        ],
+      },
+      {
+        source: '/models/:path*.usdz',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'model/vnd.usdz+zip',
           },
         ],
       },
@@ -117,6 +199,35 @@ const nextConfig: NextConfig = {
             key: 'Cache-Control',
             value: 'public, max-age=31536000, immutable',
           },
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: '*',
+          },
+          {
+            key: 'Cross-Origin-Resource-Policy',
+            value: 'cross-origin',
+          },
+        ],
+      },
+      {
+        source: '/:path*.wasm',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'application/wasm',
+          },
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: '*',
+          },
+          {
+            key: 'Cross-Origin-Resource-Policy',
+            value: 'cross-origin',
+          },
         ],
       },
       {
@@ -125,6 +236,14 @@ const nextConfig: NextConfig = {
           {
             key: 'Cache-Control',
             value: 'public, max-age=31536000, immutable',
+          },
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: '*',
+          },
+          {
+            key: 'Cross-Origin-Resource-Policy',
+            value: 'cross-origin',
           },
         ],
       },

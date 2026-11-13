@@ -74,6 +74,32 @@ interface BookingClientProps {
   userEmail: string;
   userPhone: string;
   advanceAmountPaise: number;
+  initialGuests?: number;
+  initialDateStr?: string;
+  initialTime?: string;
+}
+
+function parseYmdToLocalDate(ymd?: string): Date {
+  if (ymd) {
+    const m = ymd.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (m) {
+      return new Date(
+        Number.parseInt(m[1], 10),
+        Number.parseInt(m[2], 10) - 1,
+        Number.parseInt(m[3], 10)
+      );
+    }
+  }
+  return new Date();
+}
+
+function normalizePhone10(raw?: string): string {
+  if (!raw) return '';
+  const digits = raw.replace(/\D/g, '');
+  if (digits.length > 10) {
+    return digits.slice(-10);
+  }
+  return digits;
 }
 
 export default function BookingClient({
@@ -82,6 +108,9 @@ export default function BookingClient({
   userEmail,
   userPhone,
   advanceAmountPaise,
+  initialGuests = 2,
+  initialDateStr,
+  initialTime = '08:00 PM',
 }: BookingClientProps) {
   const router = useRouter();
   const [step, setStep] = useState<1 | 2 | 3>(1);
@@ -101,13 +130,17 @@ export default function BookingClient({
   const [attachCart, setAttachCart] = useState(false);
 
   // Step 1: Configurator State
-  const [guests, setGuests] = useState<number>(2);
-  const [date, setDate] = useState<Date>(new Date());
-  const [time, setTime] = useState<string | null>('08:00 PM');
+  const [guests, setGuests] = useState<number>(initialGuests);
+  const [date, setDate] = useState<Date>(() => parseYmdToLocalDate(initialDateStr));
+  const [time, setTime] = useState<string | null>(initialTime);
   const [durationMinutes, setDurationMinutes] = useState<number>(120); // default 2 hours
   const [selectedTable, setSelectedTable] = useState<FloorTable | null>(
     RESTAURANT_TABLES.find((t) => t.tableNumber === 7) || RESTAURANT_TABLES[0]
   );
+  const selectedTableRef = useRef<FloorTable | null>(selectedTable);
+  useEffect(() => {
+    selectedTableRef.current = selectedTable;
+  }, [selectedTable]);
   const [selectedZone, setSelectedZone] = useState<string>("The Hearth Chef's Counter");
   const [availableTableNumbers, setAvailableTableNumbers] = useState<number[] | undefined>(undefined);
   const [view3DMode, setView3DMode] = useState(true);
@@ -120,14 +153,14 @@ export default function BookingClient({
     text: string;
     type: 'success' | 'error';
   } | null>({
-    text: 'Table T7 available for 2 guests.',
+    text: `Table T7 available for ${initialGuests} ${initialGuests === 1 ? 'guest' : 'guests'}.`,
     type: 'success',
   });
 
   // Step 2: Guest Dossier & Preferences
   const [details, setDetails] = useState({
     name: userName,
-    phone: userPhone,
+    phone: normalizePhone10(userPhone),
     email: userEmail,
   });
   const [specialRequests, setSpecialRequests] = useState('');
@@ -196,11 +229,13 @@ export default function BookingClient({
           const tableNums = res.availableTables?.map((t) => t.tableNumber) || [];
           setAvailableTableNumbers(tableNums);
 
+          const currentSelected = selectedTableRef.current;
+
           // Auto-select best table or first available
           if (
-            !selectedTable ||
-            !tableNums.includes(selectedTable.tableNumber) ||
-            (selectedTable.capacity && selectedTable.capacity < partySize)
+            !currentSelected ||
+            !tableNums.includes(currentSelected.tableNumber) ||
+            (currentSelected.capacity && currentSelected.capacity < partySize)
           ) {
             const candidate3DTables = RESTAURANT_3D_TABLES.filter(
               (t) => tableNums.includes(t.tableNumber) && t.capacity >= partySize
@@ -243,7 +278,7 @@ export default function BookingClient({
         setIsChecking(false);
       }
     },
-    [selectedTable]
+    []
   );
 
   // Trigger auto-check when Date, Time, Duration or Guests change
@@ -321,7 +356,7 @@ export default function BookingClient({
 
       // If pre-order from cart is toggled, append cart summary to special requests
       let fullSpecialRequests = specialRequests.trim();
-      if (attachCart && totalCartItems > 0) {
+      if (attachCart && safeTotalCartItems > 0) {
         const cartSummary = cartItems
           .map((item) => `${item.quantity}x ${item.dish.name}`)
           .join(', ');
@@ -413,7 +448,10 @@ export default function BookingClient({
   };
 
   return (
-    <div className="min-h-screen text-[#FAF5EC] pb-24 relative overflow-x-hidden selection:bg-[#F0C36B]/30" style={{ backgroundColor: '#0B0907' }}>
+    <div
+      className="min-h-screen text-[#FAF5EC] pb-24 md:pb-12 relative overflow-x-clip selection:bg-[#F0C36B]/30"
+      style={{ backgroundColor: '#0B0907' }}
+    >
       {/* 1. Full-Page Photorealistic Luxury Restaurant Background Image (Bright, Light & Warm) */}
       <div
         className="fixed inset-0 pointer-events-none z-0"
@@ -510,12 +548,12 @@ export default function BookingClient({
       {step > 1 && <BookingHeader step={step} onStepChange={setStep} />}
 
       {/* Main 3-Column Luxury Booking Workspace (100% Exact Match to Reference Design) */}
-      <main className="max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 w-full pt-20 sm:pt-24 pb-16 relative z-10">
+      <div className="max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 w-full pt-3 sm:pt-6 pb-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 xl:gap-6 items-start">
           {/* ========================================================= */}
           {/* COLUMN 1: LEFT BRAND EDITORIAL & FEATURES (3 COLS)        */}
           {/* ========================================================= */}
-          <div className="lg:col-span-3 xl:col-span-3 flex flex-col pt-2 xl:pt-4">
+          <div className="lg:col-span-3 xl:col-span-3 flex flex-col pt-1 sm:pt-2 xl:pt-4">
             {/* Category Tag */}
             <div className="text-[10px] sm:text-[11px] font-mono tracking-[0.25em] text-[#E2A84B] uppercase font-semibold flex items-center gap-2">
               <span className="w-3.5 h-[1.5px] bg-[#E2A84B]" />
@@ -523,21 +561,33 @@ export default function BookingClient({
             </div>
 
             {/* Main Luxury Heading */}
-            <h1 className="font-serif text-3xl sm:text-4xl xl:text-[42px] font-bold text-[#F8F2E8] leading-[1.12] mt-3.5 tracking-tight">
-              Reserve Your <br />
-              <span className="text-[#FFE3A5]">Perfect Table</span>
+            <h1 className="font-serif text-2xl sm:text-4xl xl:text-[42px] font-bold text-[#F8F2E8] leading-[1.12] mt-2.5 sm:mt-3.5 tracking-tight">
+              Reserve Your <span className="lg:block text-[#FFE3A5]">Perfect Table</span>
             </h1>
 
             {/* Editorial Subtitle */}
-            <p className="text-xs sm:text-[13px] text-[#C5BCAD] leading-relaxed mt-3 max-w-xs font-normal">
+            <p className="text-xs sm:text-[13px] text-[#C5BCAD] leading-relaxed mt-2 sm:mt-3 max-w-md lg:max-w-xs font-normal">
               Experience culinary excellence in a setting of timeless elegance.
             </p>
 
-            {/* Subtle Gold Line */}
-            <div className="w-12 h-[2px] bg-[#E2A84B] my-6" />
+            {/* Mobile/Tablet Compact Trust Strip */}
+            <div className="flex lg:hidden flex-wrap items-center gap-2 mt-3">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#16110D]/90 border border-[#F0C36B]/30 text-[11px] text-[#FAF5EC]">
+                <UtensilsCrossed className="w-3 h-3 text-[#F0C36B]" /> 28 Tables
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#16110D]/90 border border-[#F0C36B]/30 text-[11px] text-[#FAF5EC]">
+                <Box className="w-3 h-3 text-[#F0C36B]" /> 6 Views in 3D
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#16110D]/90 border border-[#F0C36B]/30 text-[11px] text-[#FAF5EC]">
+                <ShieldCheck className="w-3 h-3 text-[#36D6A0]" /> Instant Hold
+              </span>
+            </div>
 
-            {/* 4 Feature Badges (Stacked Vertically) */}
-            <div className="flex flex-col gap-5">
+            {/* Subtle Gold Line */}
+            <div className="hidden lg:block w-12 h-[2px] bg-[#E2A84B] my-6" />
+
+            {/* 4 Feature Badges (Desktop Vertical Stack) */}
+            <div className="hidden lg:flex flex-col gap-5">
               {/* Feature 1 */}
               <div className="flex items-center gap-3.5">
                 <div className="w-11 h-11 rounded-full border border-[#F0C36B]/40 bg-[#16110D]/90 flex items-center justify-center text-[#F0C36B] shrink-0 shadow-sm">
@@ -584,7 +634,7 @@ export default function BookingClient({
             </div>
 
             {/* Bottom Left: Golden Botanical Branch & Luxury Script Quote */}
-            <div className="mt-10 xl:mt-14 flex flex-col gap-2">
+            <div className="hidden lg:flex mt-10 xl:mt-14 flex-col gap-2">
               <svg className="w-12 h-12 text-[#E2A84B]/70" viewBox="0 0 64 64" fill="none">
                 <path
                   d="M12 52 C 16 38, 28 24, 48 16 M20 42 C 24 38, 28 39, 29 44 C 29 49, 24 48, 20 42 M28 32 C 34 29, 38 31, 38 36 C 37 41, 32 38, 28 32 M38 23 C 44 20, 48 23, 47 28 C 45 32, 41 29, 38 23"
@@ -632,7 +682,7 @@ export default function BookingClient({
                   </div>
 
                   {/* 7 Party Size Pills */}
-                  <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
+                  <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
                     {[
                       { num: 1, label: 'Solo' },
                       { num: 2, label: 'Couple' },
@@ -642,7 +692,7 @@ export default function BookingClient({
                       { num: 6, label: 'Group' },
                       { num: 7, label: 'Group' },
                     ].map((item) => {
-                      const isSelected = guests === item.num;
+                      const isSelected = item.num === 7 ? guests >= 7 : guests === item.num;
                       return (
                         <button
                           key={item.num}
@@ -682,7 +732,7 @@ export default function BookingClient({
                   </div>
 
                   {/* Two dropdown selectors side-by-side */}
-                  <div className="grid grid-cols-2 gap-2.5 mb-3 relative">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-3 relative">
                     {/* Date Selector Dropdown Button */}
                     <div className="relative">
                       <button
@@ -709,7 +759,7 @@ export default function BookingClient({
 
                       {/* Date Dropdown Menu */}
                       {showDateDropdown && (
-                        <div className="absolute top-full left-0 mt-1.5 w-60 z-50 rounded-2xl bg-[#140F0A]/95 border border-[#F0C36B]/40 shadow-[0_12px_36px_rgba(0,0,0,0.85)] backdrop-blur-xl p-2 flex flex-col gap-1 animate-in fade-in zoom-in-95 duration-150">
+                        <div className="absolute top-full left-0 mt-1.5 w-full sm:w-64 z-50 rounded-2xl bg-[#140F0A]/95 border border-[#F0C36B]/40 shadow-[0_12px_36px_rgba(0,0,0,0.85)] backdrop-blur-xl p-2 flex flex-col gap-1 animate-in fade-in zoom-in-95 duration-150">
                           <span className="text-[10px] font-mono text-[#F0C36B] uppercase tracking-wider px-2 py-1">
                             Select Reservation Date
                           </span>
@@ -767,7 +817,7 @@ export default function BookingClient({
 
                       {/* Time Dropdown Menu */}
                       {showTimeDropdown && (
-                        <div className="absolute top-full right-0 mt-1.5 w-48 z-50 rounded-2xl bg-[#140F0A]/95 border border-[#F0C36B]/40 shadow-[0_12px_36px_rgba(0,0,0,0.85)] backdrop-blur-xl p-2 flex flex-col gap-1 max-h-56 overflow-y-auto scrollbar-thin animate-in fade-in zoom-in-95 duration-150">
+                        <div className="absolute top-full left-0 sm:left-auto sm:right-0 mt-1.5 w-full sm:w-52 z-50 rounded-2xl bg-[#140F0A]/95 border border-[#F0C36B]/40 shadow-[0_12px_36px_rgba(0,0,0,0.85)] backdrop-blur-xl p-2 flex flex-col gap-1 max-h-56 overflow-y-auto scrollbar-thin animate-in fade-in zoom-in-95 duration-150">
                           <span className="text-[10px] font-mono text-[#F0C36B] uppercase tracking-wider px-2 py-1">
                             Available Seating Times
                           </span>
@@ -799,13 +849,13 @@ export default function BookingClient({
                   </div>
 
                   {/* 5 Time Slot Pills with Available Table Counts */}
-                  <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
+                  <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
                     {[
-                      { t: '8:00 PM', left: 2 },
-                      { t: '8:30 PM', left: 4 },
-                      { t: '9:00 PM', left: 6 },
-                      { t: '9:30 PM', left: 8 },
-                      { t: '10:00 PM', left: 5 },
+                      { t: '08:00 PM', label: '8:00 PM', left: 2 },
+                      { t: '08:30 PM', label: '8:30 PM', left: 4 },
+                      { t: '09:00 PM', label: '9:00 PM', left: 6 },
+                      { t: '09:30 PM', label: '9:30 PM', left: 8 },
+                      { t: '10:00 PM', label: '10:00 PM', left: 5 },
                     ].map((slot) => {
                       const isSelected = time === slot.t;
                       return (
@@ -813,7 +863,7 @@ export default function BookingClient({
                           key={slot.t}
                           type="button"
                           onClick={() => setTime(slot.t)}
-                          className={`flex flex-col items-center justify-center py-2 px-1 rounded-xl transition-all cursor-pointer select-none active:scale-95 ${
+                          className={`flex flex-col items-center justify-center py-2.5 px-1.5 rounded-xl transition-all cursor-pointer select-none active:scale-95 ${
                             isSelected
                               ? 'text-[#161008] font-bold shadow-[0_0_15px_rgba(240,195,107,0.4)]'
                               : 'bg-white/[0.04] border border-white/10 hover:border-[#F0C36B]/40 text-[#FAF5EC]'
@@ -826,7 +876,7 @@ export default function BookingClient({
                               : undefined
                           }
                         >
-                          <span className="text-xs font-bold leading-none">{slot.t}</span>
+                          <span className="text-xs font-bold leading-none">{slot.label}</span>
                           <span className={`text-[9.5px] mt-1 leading-none flex items-center gap-1 ${isSelected ? 'text-[#201509] font-semibold' : 'text-[#9A9286]'}`}>
                             <span className="w-1 h-1 rounded-full bg-[#36D6A0] inline-block" />
                             <span>{slot.left} Tables Left</span>
@@ -848,7 +898,7 @@ export default function BookingClient({
                   </div>
 
                   {/* 4 Duration Pills */}
-                  <div className="grid grid-cols-4 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     {[
                       { val: 90, label: '1.5 hrs', sub: 'Express' },
                       { val: 120, label: '2.0 hrs', sub: 'Standard' },
@@ -929,7 +979,21 @@ export default function BookingClient({
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault();
-                      setChefsSpecialSelected(!chefsSpecialSelected);
+                      const next = !chefsSpecialSelected;
+                      setChefsSpecialSelected(next);
+                      if (next) {
+                        toast.success(
+                          "Chef's Special Selected",
+                          "Signature 7-course tasting menu & sommelier reserve pairings requested."
+                        );
+                        setSpecialRequests((s) => (s ? `${s} | Chef's Tasting Menu requested` : "Chef's Tasting Menu requested"));
+                      } else {
+                        toast.info(
+                          "Chef's Special Removed",
+                          "Standard reservation restored."
+                        );
+                        setSpecialRequests((s) => s.replace(/ \| Chef's Tasting Menu requested|Chef's Tasting Menu requested/g, '').trim());
+                      }
                     }
                   }}
                   className={`rounded-2xl p-3 border flex items-center justify-between gap-3 shadow-sm transition-all cursor-pointer ${
@@ -957,7 +1021,7 @@ export default function BookingClient({
                           </span>
                         )}
                       </div>
-                      <p className="text-[11px] text-[#A69F94] truncate mt-0.5">
+                      <p className="text-[11px] text-[#A69F94] line-clamp-2 sm:truncate mt-0.5">
                         Ask about our signature tasting menu &amp; wine pairings.
                       </p>
                     </div>
@@ -965,16 +1029,54 @@ export default function BookingClient({
                   <ChevronRight className={`w-4 h-4 text-[#F0C36B] shrink-0 transition-transform ${chefsSpecialSelected ? 'rotate-90' : ''}`} />
                 </div>
 
+                {/* Live Availability & Mobile Floorplan Shortcut */}
+                <div className="flex flex-col gap-2">
+                  {isChecking ? (
+                    <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-[#D4C7B6] font-mono">
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-[#F0C36B]" />
+                      <span>Checking live table availability...</span>
+                    </div>
+                  ) : availabilityMsg ? (
+                    <div
+                      className={`flex items-center justify-between gap-2 px-3 py-2 rounded-xl border text-xs ${
+                        availabilityMsg.type === 'success'
+                          ? 'bg-[#0E1F18]/80 border-[#36D6A0]/35 text-[#36D6A0]'
+                          : 'bg-rose-950/60 border-rose-500/40 text-rose-300'
+                      }`}
+                    >
+                      <span className="font-medium leading-snug">{availabilityMsg.text}</span>
+                      {selectedTable && availabilityMsg.type === 'success' && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            document
+                              .getElementById('floorplan-card')
+                              ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                          }
+                          className="lg:hidden shrink-0 font-mono text-[10px] font-bold px-2 py-1 rounded-lg bg-[#F0C36B]/15 text-[#F0C36B] border border-[#F0C36B]/40 cursor-pointer"
+                        >
+                          T{selectedTable.tableNumber} · 3D Map ↓
+                        </button>
+                      )}
+                    </div>
+                  ) : null}
+                </div>
+
                 {/* 6. Primary Action CTA Button */}
                 <button
                   type="button"
                   onClick={handleProceedToDetails}
-                  className="relative overflow-hidden w-full h-[52px] rounded-xl font-bold text-sm tracking-wide text-[#161008] transition-all duration-300 shadow-[0_8px_25px_rgba(240,195,107,0.45)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] cursor-pointer flex items-center justify-center gap-2"
+                  disabled={isChecking || !time || availabilityMsg?.type !== 'success'}
+                  className="relative overflow-hidden w-full h-[52px] rounded-xl font-bold text-sm tracking-wide text-[#161008] transition-all duration-300 shadow-[0_8px_25px_rgba(240,195,107,0.45)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   style={{
                     background: 'linear-gradient(135deg, #F5D38B 0%, #E2A84B 50%, #B88226 100%)',
                   }}
                 >
-                  <Calendar className="w-4 h-4 text-[#161008]" />
+                  {isChecking ? (
+                    <Loader2 className="w-4 h-4 animate-spin text-[#161008]" />
+                  ) : (
+                    <Calendar className="w-4 h-4 text-[#161008]" />
+                  )}
                   <span>Find Available Tables →</span>
                 </button>
               </div>
@@ -983,7 +1085,8 @@ export default function BookingClient({
             {/* Step 2: Guest Dossier Form */}
             {step === 2 && (
               <div
-                className="rounded-3xl p-6 sm:p-8 border border-[#F0C36B]/40 shadow-[0_24px_60px_rgba(0,0,0,0.65),inset_0_1px_1px_rgba(255,255,255,0.18)] flex flex-col gap-6 animate-in fade-in duration-300"
+                id="guest-details-section"
+                className="rounded-3xl p-5 sm:p-8 border border-[#F0C36B]/40 shadow-[0_24px_60px_rgba(0,0,0,0.65),inset_0_1px_1px_rgba(255,255,255,0.18)] flex flex-col gap-6 animate-in fade-in duration-300"
                 style={{
                   background: 'rgba(18, 13, 10, 0.70)',
                   backdropFilter: 'blur(22px) saturate(140%)',
@@ -1013,6 +1116,40 @@ export default function BookingClient({
                 <SpecialRequestField value={specialRequests} onChange={setSpecialRequests} />
 
                 <TablePreferenceSelector selected={preference} onSelect={setPreference} />
+
+                {safeTotalCartItems > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setAttachCart(!attachCart)}
+                    className={`w-full p-3.5 rounded-2xl border flex items-center justify-between gap-3 text-left transition-all cursor-pointer ${
+                      attachCart
+                        ? 'bg-[#36D6A0]/10 border-[#36D6A0]/50 text-[#FAF5EC]'
+                        : 'bg-black/40 border-white/10 hover:border-[#F0C36B]/40 text-[#D4C7B6]'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <ShoppingBag className="w-4 h-4 text-[#F0C36B] shrink-0" />
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold text-[#FAF5EC]">
+                          Attach Menu Pre-Order ({safeTotalCartItems}{' '}
+                          {safeTotalCartItems === 1 ? 'dish' : 'dishes'})
+                        </p>
+                        <p className="text-[11px] text-[#9A9286]">
+                          Share your cart selections with our kitchen for faster table service.
+                        </p>
+                      </div>
+                    </div>
+                    <span
+                      className={`text-[10px] font-mono font-bold px-2.5 py-1 rounded-full border shrink-0 ${
+                        attachCart
+                          ? 'bg-[#36D6A0] text-black border-[#36D6A0]'
+                          : 'bg-white/5 text-[#D4C7B6] border-white/15'
+                      }`}
+                    >
+                      {attachCart ? 'LINKED' : 'ATTACH'}
+                    </span>
+                  </button>
+                )}
 
                 <button
                   type="button"
@@ -1112,7 +1249,10 @@ export default function BookingClient({
           {/* ========================================================= */}
           {/* COLUMN 3: RIGHT 3D VIEW + SELECTED TABLE + DOSSIER (4 COLS)*/}
           {/* ========================================================= */}
-          <aside className="lg:col-span-4 xl:col-span-4 sticky top-20 flex flex-col gap-4">
+          <aside
+            id="floorplan-card"
+            className="lg:col-span-4 xl:col-span-4 lg:sticky lg:top-24 flex flex-col gap-4 scroll-mt-24"
+          >
             {/* 1. Interactive Architectural Floor Map Card */}
             <div
               className="rounded-3xl p-3.5 sm:p-4 border border-[#F0C36B]/40 shadow-[0_24px_60px_rgba(0,0,0,0.65),inset_0_1px_1px_rgba(255,255,255,0.18)]"
@@ -1202,7 +1342,7 @@ export default function BookingClient({
             )}
           </div>
         </section>
-      </main>
+      </div>
     </div>
   );
 }

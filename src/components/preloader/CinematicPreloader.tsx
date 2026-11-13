@@ -17,8 +17,9 @@ interface CinematicPreloaderProps {
 export function CinematicPreloader({ forceShow, onFinished }: CinematicPreloaderProps) {
   const [shouldRender, setShouldRender] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
-  const exitTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const safetyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isExitingRef = useRef(false);
+  const exitTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const safetyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     try {
@@ -89,7 +90,10 @@ export function CinematicPreloader({ forceShow, onFinished }: CinematicPreloader
   }, []);
 
   const handleComplete = useCallback(() => {
-    if (isExiting) return;
+    // Use ref guard so handleComplete identity never changes on setIsExiting(true),
+    // preventing effect cleanup from cancelling exitTimeoutRef before unmount runs.
+    if (isExitingRef.current) return;
+    isExitingRef.current = true;
     setIsExiting(true);
     spaSessionPreloaderSeen = true;
 
@@ -101,12 +105,18 @@ export function CinematicPreloader({ forceShow, onFinished }: CinematicPreloader
       // Ignore sessionStorage exceptions (e.g. Safari private browsing quota)
     }
 
+    if (safetyTimeoutRef.current) {
+      clearTimeout(safetyTimeoutRef.current);
+      safetyTimeoutRef.current = null;
+    }
+
     // Smooth luxury exit fade-out (850ms duration)
+    if (exitTimeoutRef.current) clearTimeout(exitTimeoutRef.current);
     exitTimeoutRef.current = setTimeout(() => {
       setShouldRender(false);
       if (onFinished) onFinished();
     }, 850);
-  }, [isExiting, onFinished]);
+  }, [onFinished]);
 
   // Safety Entrapment Protection: If loading stalls for any reason, unblock user after 12s
   useEffect(() => {
@@ -117,10 +127,20 @@ export function CinematicPreloader({ forceShow, onFinished }: CinematicPreloader
     }, 12000);
 
     return () => {
-      if (safetyTimeoutRef.current) clearTimeout(safetyTimeoutRef.current);
-      if (exitTimeoutRef.current) clearTimeout(exitTimeoutRef.current);
+      if (safetyTimeoutRef.current) {
+        clearTimeout(safetyTimeoutRef.current);
+        safetyTimeoutRef.current = null;
+      }
     };
   }, [shouldRender, handleComplete]);
+
+  // Clean up any pending exit timer only on full component unmount
+  useEffect(() => {
+    return () => {
+      if (exitTimeoutRef.current) clearTimeout(exitTimeoutRef.current);
+      if (safetyTimeoutRef.current) clearTimeout(safetyTimeoutRef.current);
+    };
+  }, []);
 
   if (!shouldRender) {
     return null;
@@ -131,7 +151,8 @@ export function CinematicPreloader({ forceShow, onFinished }: CinematicPreloader
       id="golden-oak-preloader"
       aria-label="The Golden Oak Welcome Experience"
       aria-live="polite"
-      className={`fixed inset-0 z-[99999] w-screen h-screen overflow-hidden select-none touch-none transition-all duration-800 ease-out ${
+      onDoubleClick={handleComplete}
+      className={`fixed inset-0 z-[99999] w-full h-full overflow-hidden select-none touch-none transition-all duration-700 ease-out ${
         isExiting
           ? 'opacity-0 scale-[1.01] pointer-events-none'
           : 'opacity-100 scale-100 pointer-events-auto'

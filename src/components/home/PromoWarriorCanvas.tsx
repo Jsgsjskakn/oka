@@ -21,9 +21,7 @@ function detectSaveData(): boolean {
 function CanvasScrollPassThrough() {
   const { gl } = useThree();
   useEffect(() => {
-    if (gl?.domElement) {
-      gl.domElement.style.touchAction = 'pan-y';
-    }
+    gl?.domElement?.style.setProperty('touch-action', 'pan-y');
   }, [gl]);
   return null;
 }
@@ -34,8 +32,11 @@ function CameraZoomController({ zoomLevel = 1.0 }: { zoomLevel?: number }) {
   useEffect(() => {
     const baseDist = 3.4;
     const targetDist = baseDist / zoomLevel;
-    camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetDist, 0.8);
-    camera.position.y = 1.25 / zoomLevel;
+    camera.position.set(
+      camera.position.x,
+      1.25 / zoomLevel,
+      THREE.MathUtils.lerp(camera.position.z, targetDist, 0.8)
+    );
     camera.updateProjectionMatrix();
     invalidate();
   }, [zoomLevel, camera, invalidate]);

@@ -31,8 +31,9 @@ export function IngredientChips({ ingredients }: IngredientChipsProps) {
         ))}
         {hasMore && !expanded && (
           <button 
+            type="button"
             onClick={() => setExpanded(true)}
-            className="px-3 py-1.5 bg-[#1a1a1a] rounded-full text-xs text-primary font-medium border border-primary/20 flex items-center gap-1 active:scale-95 transition-transform"
+            className="min-h-[36px] px-3 py-1.5 bg-[#1a1a1a] rounded-full text-xs text-primary font-medium border border-primary/20 flex items-center gap-1 active:scale-95 transition-transform"
           >
             +{ingredients.length - 3} more
             <ChevronDown className="w-3 h-3" />
@@ -41,8 +42,9 @@ export function IngredientChips({ ingredients }: IngredientChipsProps) {
       </div>
       {expanded && (
         <button 
+          type="button"
           onClick={() => setExpanded(false)}
-          className="mt-3 text-xs text-primary/70 flex items-center gap-1 font-medium p-1 -ml-1 active:scale-95 transition-transform"
+          className="mt-3 min-h-[36px] text-xs text-primary/70 flex items-center gap-1 font-medium px-2 py-1 -ml-2 active:scale-95 transition-transform"
         >
           Show less
           <ChevronUp className="w-3 h-3" />

@@ -32,13 +32,13 @@ export function DishDetailClient({ dish, recommendations }: DishDetailClientProp
   const [removedIngredients, setRemovedIngredients] = useState<Set<string>>(new Set());
   const [specialInstructions, setSpecialInstructions] = useState('');
 
-  // Calculate Total Price
-  const basePrice = dish.price + (selectedSize?.priceModifier || 0);
-  const addOnsTotal = Array.from(selectedAddOns).reduce((total, id) => {
-    const addon = dish.addOns?.find(a => a.id === id);
-    return total + (addon?.price || 0);
+  // Calculate Total Price in integer paise to prevent float precision drift
+  const basePaise = Math.round((dish.price + (selectedSize?.priceModifier || 0)) * 100);
+  const addOnsPaise = Array.from(selectedAddOns).reduce((total, id) => {
+    const addon = dish.addOns?.find((a) => a.id === id);
+    return total + Math.round((addon?.price || 0) * 100);
   }, 0);
-  const totalPrice = (basePrice + addOnsTotal) * quantity;
+  const totalPrice = ((basePaise + addOnsPaise) * quantity) / 100;
 
   const handleAddOnToggle = (id: string) => {
     const next = new Set(selectedAddOns);
@@ -71,37 +71,39 @@ export function DishDetailClient({ dish, recommendations }: DishDetailClientProp
   };
 
   return (
-    <>
-      <DishDetailHero dish={dish} />
-      <DishInfoSection dish={dish} />
-      <IngredientChips ingredients={dish.ingredients} />
-      <AllergenInfo allergens={dish.allergens} />
-      {dish.spiceLevel && <SpiceLevelIndicator level={dish.spiceLevel} />}
-      
-      <CustomizationControls
-        sizes={dish.sizes}
-        addOns={dish.addOns}
-        removables={dish.removableIngredients}
-        selectedSize={selectedSize}
-        selectedAddOns={selectedAddOns}
-        removedIngredients={removedIngredients}
-        specialInstructions={specialInstructions}
-        onSizeSelect={setSelectedSize}
-        onAddOnToggle={handleAddOnToggle}
-        onRemoveToggle={handleRemoveToggle}
-        onInstructionsChange={setSpecialInstructions}
-      />
+    <div className="min-h-screen bg-[#0a0a0a] pb-32">
+      <div className="max-w-3xl mx-auto w-full">
+        <DishDetailHero dish={dish} />
+        <DishInfoSection dish={dish} />
+        <IngredientChips ingredients={dish.ingredients} />
+        <AllergenInfo allergens={dish.allergens} />
+        {dish.spiceLevel && <SpiceLevelIndicator level={dish.spiceLevel} />}
 
-      <Future3DARTeaser dish={dish} />
-      
-      <RecommendationCarousel dishes={recommendations} />
+        <CustomizationControls
+          sizes={dish.sizes}
+          addOns={dish.addOns}
+          removables={dish.removableIngredients}
+          selectedSize={selectedSize}
+          selectedAddOns={selectedAddOns}
+          removedIngredients={removedIngredients}
+          specialInstructions={specialInstructions}
+          onSizeSelect={setSelectedSize}
+          onAddOnToggle={handleAddOnToggle}
+          onRemoveToggle={handleRemoveToggle}
+          onInstructionsChange={setSpecialInstructions}
+        />
 
-      <FixedAddToCartBar 
+        <Future3DARTeaser dish={dish} />
+
+        <RecommendationCarousel dishes={recommendations} />
+      </div>
+
+      <FixedAddToCartBar
         quantity={quantity}
         totalPrice={totalPrice}
         onQuantityChange={setQuantity}
         onAdd={handleAddToCart}
       />
-    </>
+    </div>
   );
 }

@@ -88,7 +88,9 @@ export default async function AdminSettingsPage() {
           </div>
 
           <div className="flex items-end justify-between my-1.5 relative z-10">
-            <span className="text-xl md:text-2xl font-black text-white tracking-tight">5.0%</span>
+            <span className="text-xl md:text-2xl font-black text-white tracking-tight">
+              {Number(settings.tax_rate_percent ?? 5).toFixed(1)}%
+            </span>
             <svg className="w-20 h-8 overflow-visible" viewBox="0 0 100 40">
               <defs>
                 <linearGradient id="purpleGradSet" x1="0" y1="0" x2="0" y2="1">
@@ -106,18 +108,20 @@ export default async function AdminSettingsPage() {
           </div>
         </div>
 
-        {/* Card 4: Service Charge (Rose Glow) */}
+        {/* Card 4: Advance Booking Deposit (Rose Glow) */}
         <div className="rounded-[18px] bg-black/35 backdrop-blur-xl border border-rose-500/25 p-3.5 relative overflow-hidden shadow-lg flex flex-col justify-between group hover:border-rose-500/40 transition-all">
           <div className="absolute top-0 right-0 w-28 h-28 bg-rose-500/10 rounded-full blur-xl pointer-events-none" />
           <div className="flex items-center gap-2 relative z-10">
             <div className="w-7 h-7 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center justify-center font-bold text-xs shadow-inner">
               <Receipt className="w-3.5 h-3.5" />
             </div>
-            <span className="text-[11px] text-zinc-300 font-medium">VIP Service Charge</span>
+            <span className="text-[11px] text-zinc-300 font-medium">Table Deposit</span>
           </div>
 
           <div className="flex items-end justify-between my-1.5 relative z-10">
-            <span className="text-xl md:text-2xl font-black text-white tracking-tight">10.0%</span>
+            <span className="text-xl md:text-2xl font-black text-white tracking-tight">
+              ₹{Math.round(Number(settings.advance_booking_amount_paise ?? 50000) / 100)}
+            </span>
             <svg className="w-20 h-8 overflow-visible" viewBox="0 0 100 40">
               <defs>
                 <linearGradient id="roseGradSet" x1="0" y1="0" x2="0" y2="1">
@@ -131,7 +135,7 @@ export default async function AdminSettingsPage() {
           </div>
 
           <div className="flex items-center gap-1.5 text-[10px] text-rose-400 font-bold relative z-10">
-            Gratuity Allocation
+            VIP Advance Policy
           </div>
         </div>
       </div>

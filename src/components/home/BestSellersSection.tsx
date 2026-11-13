@@ -1,8 +1,9 @@
 'use client';
 
+import Link from 'next/link';
 import { VerticalDishCard } from './VerticalDishCard';
-import { SectionHeader } from '@/components/ui/SectionHeader';
 import { DishWithCategory, toRupees } from '@/lib/db/types';
+import { resolveDishImageUrl } from '@/lib/utils/dish-images';
 import { Flame } from 'lucide-react';
 import type { Dish, DishCategory, SpiceLevel } from '@/types/menu';
 
@@ -17,7 +18,7 @@ function adaptDish(d: DishWithCategory): Dish {
     name: d.name,
     description: d.description || '',
     price: toRupees(d.price_paise),
-    image: d.image_url || '',
+    image: resolveDishImageUrl(d.slug, d.image_url),
     category: (d.categories?.slug as DishCategory) || 'pizza',
     isVeg: d.is_veg,
     isAvailable: d.is_available,
@@ -38,9 +39,9 @@ export function BestSellersSection({ dishes }: BestSellersSectionProps) {
           </h2>
           <div className="w-1/2 h-[2px] bg-gradient-to-r from-orange-500 to-transparent rounded-full mt-1"></div>
         </div>
-        <a href="/menu?filter=bestsellers" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">
+        <Link href="/menu?filter=bestsellers" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">
           View All
-        </a>
+        </Link>
       </div>
       
       <div className="flex overflow-x-auto hide-scrollbar gap-4 px-4 pb-4 snap-x">

@@ -43,7 +43,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next({ request });
   }
 
-  let supabaseResponse = NextResponse.next({ request });
+  const supabaseResponse = NextResponse.next({ request });
   let hasSupabaseUser = false;
 
   // Session Refresh & Verification for Protected Staff/Admin Paths

@@ -93,7 +93,7 @@ export function StorySection() {
 
             {/* Half-Overlapping Floating Chef Quote Card (background: #0D0A08, text #FAF5EC, left border 3px solid #E2A84B) */}
             <div
-              className="relative sm:absolute -bottom-6 -left-4 sm:-left-8 right-4 sm:right-4 p-6 sm:p-7 shadow-2xl z-20 mt-4 sm:mt-0"
+              className="relative sm:absolute sm:-bottom-6 left-0 sm:-left-8 right-0 sm:right-4 p-5 sm:p-7 shadow-2xl z-20 -mt-6 mx-2 sm:mx-0 sm:mt-0"
               style={{
                 background: '#0D0A08',
                 borderLeft: '3px solid #E2A84B',

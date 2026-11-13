@@ -2,9 +2,11 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { AlertCircle } from 'lucide-react';
 import { useCartStore } from '@/store/cart-store';
 import { useOrderStore } from '@/store/order-store';
 import { useRecentlyViewedStore } from '@/store/recently-viewed-store';
+import { toast } from '@/store/toast-store';
 import { CheckoutHeader } from '@/components/checkout/CheckoutHeader';
 import { OrderTypeSelector } from '@/components/checkout/OrderTypeSelector';
 import { PickupTimeChips } from '@/components/checkout/PickupTimeChips';
@@ -16,22 +18,48 @@ import { PaymentMethodSelector } from '@/components/checkout/PaymentMethodSelect
 import { PlaceOrderButton } from '@/components/checkout/PlaceOrderButton';
 import type { OrderType, PaymentMethod } from '@/types/order';
 
+function normalizeIndianPhone(raw?: string): string {
+  const digits = String(raw || '').replace(/\D/g, '');
+  if (!digits) return '';
+  if (digits.length > 10 && digits.startsWith('91')) {
+    return digits.slice(-10);
+  }
+  return digits.slice(0, 10);
+}
+
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, getTotalPrice, clearCart } = useCartStore();
+  const { items, diningMode, tableNumber: storedTableNumber, setTableNumber: setStoredTableNumber, getTotalPrice, clearCart } =
+    useCartStore();
   const placeOrder = useOrderStore((state) => state.placeOrder);
 
-  const [orderType, setOrderType] = useState<OrderType>('dine-in');
-  const [pickupTime, setPickupTime] = useState<string | null>(null);
+  const [orderType, setOrderType] = useState<OrderType>(() =>
+    diningMode === 'takeaway' ? 'takeaway' : 'dine-in'
+  );
+  const [pickupTime, setPickupTime] = useState<string | null>(() =>
+    diningMode === 'takeaway' ? '30 min' : null
+  );
+  const [tableNumberInput, setTableNumberInput] = useState<string>(storedTableNumber || '');
   const [details, setDetails] = useState({ name: '', phone: '', email: '' });
   const [orderNotes, setOrderNotes] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('upi');
-  const [errors, setErrors] = useState<{ name?: string; phone?: string; email?: string }>({});
+  const [errors, setErrors] = useState<{
+    name?: string;
+    phone?: string;
+    email?: string;
+    tableNumber?: string;
+  }>({});
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isSubmittingRef = useRef(false);
   const orderSuccessRef = useRef(false);
-  const [idempotencyKey] = useState(() => (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : 'idemp-' + Date.now()));
+  const [idempotencyKey] = useState(() =>
+    typeof crypto !== 'undefined' && crypto.randomUUID
+      ? crypto.randomUUID()
+      : 'idemp-' + Date.now()
+  );
   const [isMounted, setIsMounted] = useState(false);
+  const [isAuthChecking, setIsAuthChecking] = useState(true);
 
   const [taxRate, setTaxRate] = useState(0.05);
   const [tipPercent, setTipPercent] = useState<number>(0);
@@ -39,31 +67,52 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     setIsMounted(true);
-    fetch('/api/settings').then(r => r.json()).then(s => {
-      if (s.tax_rate_percent) setTaxRate(Number(s.tax_rate_percent) / 100);
-      if (s.tip_presets_percent && Array.isArray(s.tip_presets_percent)) {
-        setTipPresets(s.tip_presets_percent);
-      }
-    }).catch(() => {});
+    let cancelled = false;
+
+    fetch('/api/settings')
+      .then((r) => r.json())
+      .then((s) => {
+        if (cancelled) return;
+        if (s.tax_rate_percent) setTaxRate(Number(s.tax_rate_percent) / 100);
+        if (s.tip_presets_percent && Array.isArray(s.tip_presets_percent)) {
+          setTipPresets(s.tip_presets_percent);
+        }
+      })
+      .catch(() => {});
 
     // Mandatory Customer Authentication for Checkout & Payment
     fetch('/api/auth/me')
       .then((r) => r.json())
       .then((data) => {
+        if (cancelled) return;
         if (data.authenticated && data.user) {
+          const cleanPhone = normalizeIndianPhone(data.user.phone);
           setDetails((prev) => ({
             name: prev.name || data.user.name || '',
             email: prev.email || data.user.email || '',
-            phone: prev.phone || data.user.phone || '',
+            phone: prev.phone || cleanPhone,
           }));
+          setIsAuthChecking(false);
         } else {
           router.replace('/auth/login?redirectTo=/checkout');
         }
       })
       .catch(() => {
-        router.replace('/auth/login?redirectTo=/checkout');
+        if (!cancelled) {
+          router.replace('/auth/login?redirectTo=/checkout');
+        }
       });
-  }, []);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [router]);
+
+  useEffect(() => {
+    if (isMounted && storedTableNumber && !tableNumberInput) {
+      setTableNumberInput(storedTableNumber);
+    }
+  }, [isMounted, storedTableNumber, tableNumberInput]);
 
   useEffect(() => {
     if (isMounted && !orderSuccessRef.current && items.length === 0) {
@@ -72,105 +121,169 @@ export default function CheckoutPage() {
   }, [isMounted, items.length, router]);
 
   const subtotal = getTotalPrice();
-  const tax = Math.round(subtotal * taxRate);
-  const tipAmount = Math.round(subtotal * tipPercent / 100);
-  const total = subtotal + tax + tipAmount;
+  const subtotalPaise = Math.round(subtotal * 100);
+  const taxPaise = Math.round(subtotalPaise * taxRate);
+  const tipPaise = Math.round((subtotalPaise * tipPercent) / 100);
+  const totalPaise = subtotalPaise + taxPaise + tipPaise;
+
+  const tax = taxPaise / 100;
+  const tipAmount = tipPaise / 100;
+  const total = totalPaise / 100;
+
+  const handleOrderTypeChange = (type: OrderType) => {
+    setOrderType(type);
+    if (type === 'takeaway' && !pickupTime) {
+      setPickupTime('30 min');
+    }
+    if (type === 'takeaway' && errors.tableNumber) {
+      setErrors((prev) => ({ ...prev, tableNumber: undefined }));
+    }
+  };
+
+  const handleTableNumberChange = (value: string) => {
+    setTableNumberInput(value);
+    setStoredTableNumber(value);
+    if (errors.tableNumber) {
+      setErrors((prev) => ({ ...prev, tableNumber: undefined }));
+    }
+  };
 
   const validate = () => {
-    const newErrors: { name?: string; phone?: string; email?: string } = {};
-    if (!details.name.trim()) newErrors.name = 'Name is required';
-    if (!details.phone || details.phone.length < 10) newErrors.phone = 'Valid 10-digit phone required';
-    if (!details.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(details.email)) {
-      newErrors.email = 'Enter a valid email';
+    const newErrors: {
+      name?: string;
+      phone?: string;
+      email?: string;
+      tableNumber?: string;
+    } = {};
+    const trimmedName = details.name.trim();
+    const cleanPhone = details.phone.replace(/\D/g, '');
+    const trimmedEmail = details.email.trim();
+
+    if (trimmedName.length < 2) {
+      newErrors.name = 'Please enter your full name (at least 2 characters)';
     }
+    if (!/^\d{10}$/.test(cleanPhone)) {
+      newErrors.phone = 'Valid 10-digit mobile number required';
+    }
+    if (!trimmedEmail) {
+      newErrors.email = 'Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      newErrors.email = 'Enter a valid email address';
+    }
+    if (orderType === 'dine-in' && tableNumberInput.trim() !== '') {
+      const parsedTable = Number(tableNumberInput.trim());
+      if (!Number.isInteger(parsedTable) || parsedTable < 1 || parsedTable > 30) {
+        newErrors.tableNumber = 'Table number must be between 1 and 30';
+      }
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handlePlaceOrder = async () => {
     if (isSubmittingRef.current) return;
-    if (!validate()) return;
+    setSubmitError(null);
+    if (!validate()) {
+      toast.error('Check Form Details', 'Please fix the highlighted checkout fields.');
+      return;
+    }
+
     isSubmittingRef.current = true;
     setIsSubmitting(true);
 
     try {
-      let isAuthenticated = false;
-      const { getCurrentUser } = await import('@/lib/auth/convex-auth-actions');
-      const convexUser = await getCurrentUser();
-      if (convexUser) {
-        isAuthenticated = true;
-      } else {
-        try {
-          const { createClient } = await import('@/lib/supabase/client');
-          const supabase = createClient();
-          const { data: { session } } = await supabase.auth.getSession();
-          if (session) isAuthenticated = true;
-        } catch {
-          // ignore
-        }
-      }
-      
-      if (!isAuthenticated) {
+      const authRes = await fetch('/api/auth/me');
+      const authData = await authRes.json().catch(() => ({ authenticated: false }));
+      if (!authData.authenticated) {
+        isSubmittingRef.current = false;
         setIsSubmitting(false);
-        router.push(`/auth/login?returnUrl=${encodeURIComponent('/checkout')}`);
+        router.push('/auth/login?redirectTo=/checkout');
         return;
       }
 
-      const { placeOrderAction } = await import('@/lib/actions/order-actions');
+      const parsedTable =
+        orderType === 'dine-in' && tableNumberInput.trim() !== ''
+          ? Number(tableNumberInput.trim())
+          : undefined;
+      const finalPickupTime = orderType === 'takeaway' ? pickupTime || '30 min' : undefined;
+      const trimmedNotes = orderNotes.trim();
+      const combinedNotes =
+        orderType === 'dine-in' && diningMode === 'pre-order'
+          ? ['[Pre-Order with Reservation]', trimmedNotes].filter(Boolean).join(' · ')
+          : trimmedNotes || undefined;
 
-      const orderItemsPayload = items.map(item => ({
-        dishId: item.dish.id,
+      const cleanPhone = details.phone.replace(/\D/g, '');
+      const cleanName = details.name.trim();
+      const cleanEmail = details.email.trim();
+
+      const orderItemsPayload = items.map((item) => ({
+        dishId: item.dish.id || item.dish.slug,
         dishName: item.dish.name,
         dishPricePaise: Math.round(item.dish.price * 100),
         quantity: item.quantity,
         sizeName: item.size?.name,
         sizePriceModifierPaise: item.size ? Math.round(item.size.priceModifier * 100) : 0,
         specialInstructions: item.specialInstructions,
-        addons: item.selectedAddOns?.map(a => ({ name: a.name, pricePaise: Math.round(a.price * 100) })),
+        addons: item.selectedAddOns?.map((a) => ({
+          name: a.name,
+          pricePaise: Math.round(a.price * 100),
+        })),
         removedIngredients: item.removedIngredients,
       }));
 
-      const result = await placeOrderAction({
-        customerName: details.name,
-        customerPhone: details.phone,
-        customerEmail: details.email,
-        orderType,
-        paymentMethod,
-        pickupTime: orderType === 'takeaway' ? (pickupTime || '30 min') : undefined,
-        notes: orderNotes,
-        items: orderItemsPayload,
-        subtotalPaise: Math.round(subtotal * 100),
-        taxPaise: Math.round(tax * 100),
-        tipPaise: Math.round(tipAmount * 100),
-        totalPaise: Math.round(total * 100),
-        idempotencyKey,
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customerName: cleanName,
+          customerPhone: cleanPhone,
+          customerEmail: cleanEmail,
+          orderType,
+          tableNumber: parsedTable,
+          paymentMethod,
+          pickupTime: finalPickupTime,
+          notes: combinedNotes,
+          items: orderItemsPayload,
+          subtotalPaise,
+          taxPaise,
+          tipPaise,
+          totalPaise,
+          idempotencyKey,
+        }),
       });
 
-      if (result.error) {
-        console.error('Order failed:', result.error);
+      const result = await response.json().catch(() => ({
+        error: 'Unable to parse server response. Please try again.',
+      }));
+
+      if (!response.ok || result.error || !result.orderId) {
+        const errMsg = result.error || 'Failed to place order. Please try again.';
         isSubmittingRef.current = false;
         setIsSubmitting(false);
-        if (result.error === 'AUTH_REQUIRED') {
-          router.push(`/auth/login?returnUrl=${encodeURIComponent('/checkout')}`);
-        } else {
-          alert(result.error);
+        if (errMsg === 'AUTH_REQUIRED' || response.status === 401) {
+          router.push('/auth/login?redirectTo=/checkout');
+          return;
         }
+        setSubmitError(errMsg);
+        toast.error('Order Failed', errMsg);
         return;
       }
 
       placeOrder({
+        id: result.orderId,
         orderType,
-        customerName: details.name,
-        customerPhone: details.phone,
-        customerEmail: details.email,
-        pickupTime: orderType === 'takeaway' ? (pickupTime || '30 min') : undefined,
-        orderNotes,
+        tableNumber: parsedTable,
+        customerName: cleanName,
+        customerPhone: cleanPhone,
+        customerEmail: cleanEmail,
+        pickupTime: finalPickupTime,
+        orderNotes: combinedNotes,
         paymentMethod,
         items: [...items],
         subtotal,
         tax,
+        tip: tipAmount,
         total,
       });
 
@@ -205,15 +318,21 @@ export default function CheckoutPage() {
 
       orderSuccessRef.current = true;
       clearCart();
-      router.push(`/order/success?id=${result.orderId}`);
+      router.push(`/order/success?id=${encodeURIComponent(result.orderId)}`);
     } catch (err) {
       console.error('Order placement error:', err);
+      const fallbackMsg =
+        err instanceof Error && err.message
+          ? err.message
+          : 'Network error while submitting your order. Please try again.';
       isSubmittingRef.current = false;
       setIsSubmitting(false);
+      setSubmitError(fallbackMsg);
+      toast.error('Order Failed', fallbackMsg);
     }
   };
 
-  if (!isMounted || items.length === 0) {
+  if (!isMounted || isAuthChecking || items.length === 0) {
     return (
       <div className="min-h-screen bg-obsidian flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
@@ -222,60 +341,91 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-obsidian text-text-primary pb-4">
+    <div className="min-h-screen bg-obsidian text-text-primary pb-36">
       <CheckoutHeader />
 
-      <div className="max-w-md mx-auto w-full">
-        <OrderTypeSelector selected={orderType} onSelect={setOrderType} />
-
-        {orderType === 'dine-in' ? (
-          <DiningSummaryCard />
-        ) : (
-          <PickupTimeChips selectedTime={pickupTime} onSelect={setPickupTime} />
+      <div className="max-w-md lg:max-w-5xl mx-auto w-full lg:px-6 lg:pt-6">
+        {submitError && (
+          <div
+            role="alert"
+            className="mx-4 lg:mx-0 mt-4 lg:mt-0 lg:mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/40 text-rose-200 text-xs sm:text-sm flex items-start gap-3"
+          >
+            <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="font-semibold text-rose-100">Unable to Complete Order</p>
+              <p className="mt-0.5 text-rose-200/85">{submitError}</p>
+            </div>
+          </div>
         )}
 
-        <CustomerCheckoutForm details={details} onChange={setDetails} errors={errors} />
+        <div className="lg:grid lg:grid-cols-12 lg:gap-8 lg:items-start">
+          {/* Left Column: Dining Mode, Guest Info & Kitchen Notes */}
+          <div className="lg:col-span-7 lg:rounded-2xl lg:border lg:border-white/5 lg:bg-[#111]/60 lg:overflow-hidden">
+            <OrderTypeSelector selected={orderType} onSelect={handleOrderTypeChange} />
 
-        <OrderNotesField value={orderNotes} onChange={setOrderNotes} />
+            {orderType === 'dine-in' ? (
+              <DiningSummaryCard
+                tableNumber={tableNumberInput}
+                onTableNumberChange={handleTableNumberChange}
+                error={errors.tableNumber}
+                isPreOrder={diningMode === 'pre-order'}
+              />
+            ) : (
+              <PickupTimeChips
+                selectedTime={pickupTime}
+                onSelect={(time) => setPickupTime(time)}
+              />
+            )}
 
-        <PriceBreakdownCard subtotal={subtotal} taxRate={taxRate} tip={tipAmount} />
+            <CustomerCheckoutForm details={details} onChange={setDetails} errors={errors} />
 
-        <div className="px-4 py-6 border-b border-white/5">
-          <h3 className="font-heading text-sm font-bold mb-4">Add a Tip</h3>
-          <div className="flex gap-3 mb-2">
-            <button
-              onClick={() => setTipPercent(0)}
-              className={`flex-1 py-2 rounded-xl text-sm font-medium border transition-colors ${
-                tipPercent === 0 
-                  ? 'border-primary bg-primary/10 text-primary' 
-                  : 'border-border-subtle bg-[#1a1a1a] text-text-primary/60 hover:bg-white/5'
-              }`}
-            >
-              No Tip
-            </button>
-            {tipPresets.map(preset => (
-              <button
-                key={preset}
-                onClick={() => setTipPercent(preset)}
-                className={`flex-1 py-2 rounded-xl text-sm font-medium border transition-colors ${
-                  tipPercent === preset 
-                    ? 'border-primary bg-primary/10 text-primary' 
-                    : 'border-border-subtle bg-[#1a1a1a] text-text-primary/60 hover:bg-white/5'
-                }`}
-              >
-                {preset}%
-              </button>
-            ))}
+            <OrderNotesField value={orderNotes} onChange={setOrderNotes} />
           </div>
-        </div>
 
-        <div className="pb-24">
-          <PaymentMethodSelector selected={paymentMethod} onSelect={setPaymentMethod} />
+          {/* Right Column: Price Summary, Tip & Payment */}
+          <div className="lg:col-span-5 lg:sticky lg:top-24 lg:rounded-2xl lg:border lg:border-white/5 lg:bg-[#111]/60 lg:overflow-hidden">
+            <PriceBreakdownCard subtotal={subtotal} taxRate={taxRate} tip={tipAmount} />
+
+            <div className="px-4 py-6 border-b border-white/5">
+              <h3 className="font-heading text-sm font-bold mb-4">Add a Tip</h3>
+              <div className="grid grid-cols-4 gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => setTipPercent(0)}
+                  aria-pressed={tipPercent === 0}
+                  className={`min-h-[44px] py-2.5 px-2 rounded-xl text-xs sm:text-sm font-medium border transition-colors ${
+                    tipPercent === 0
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-border-subtle bg-[#1a1a1a] text-text-primary/60 hover:bg-white/5'
+                  }`}
+                >
+                  No Tip
+                </button>
+                {tipPresets.map((preset) => (
+                  <button
+                    type="button"
+                    key={preset}
+                    onClick={() => setTipPercent(preset)}
+                    aria-pressed={tipPercent === preset}
+                    className={`min-h-[44px] py-2.5 px-2 rounded-xl text-xs sm:text-sm font-medium border transition-colors ${
+                      tipPercent === preset
+                        ? 'border-primary bg-primary/10 text-primary'
+                        : 'border-border-subtle bg-[#1a1a1a] text-text-primary/60 hover:bg-white/5'
+                    }`}
+                  >
+                    {preset}%
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <PaymentMethodSelector selected={paymentMethod} onSelect={setPaymentMethod} />
+          </div>
         </div>
       </div>
 
       <PlaceOrderButton
-        disabled={!details.name || !details.phone || !details.email}
+        disabled={false}
         isLoading={isSubmitting}
         total={total}
         onClick={handlePlaceOrder}

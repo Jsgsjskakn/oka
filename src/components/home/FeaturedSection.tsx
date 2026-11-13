@@ -3,6 +3,7 @@
 import { DishCard } from '@/components/ui/DishCard';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { DishWithCategory, toRupees } from '@/lib/db/types';
+import { resolveDishImageUrl } from '@/lib/utils/dish-images';
 import type { Dish, DishCategory, SpiceLevel } from '@/types/menu';
 
 interface FeaturedSectionProps {
@@ -16,7 +17,7 @@ function adaptDish(d: DishWithCategory): Dish {
     name: d.name,
     description: d.description || '',
     price: toRupees(d.price_paise),
-    image: d.image_url || '',
+    image: resolveDishImageUrl(d.slug, d.image_url),
     category: (d.categories?.slug as DishCategory) || 'pizza',
     isVeg: d.is_veg,
     isAvailable: d.is_available,

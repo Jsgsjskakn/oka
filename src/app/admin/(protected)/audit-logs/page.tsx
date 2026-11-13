@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createClient, isSupabaseConfigured } from '@/lib/supabase/server';
 import { requireAdmin } from '@/lib/auth/admin-auth';
 import Link from 'next/link';
 import { 
@@ -21,6 +21,17 @@ export const metadata = {
   title: 'Audit Logs | Admin | The Golden Oak',
 };
 
+export const dynamic = 'force-dynamic';
+
+function buildAuditLogsHref(opts: { entity?: string; action?: string; page?: number }) {
+  const qs = new URLSearchParams();
+  if (opts.entity) qs.set('entity', opts.entity);
+  if (opts.action) qs.set('action', opts.action);
+  if (opts.page && opts.page > 1) qs.set('page', String(opts.page));
+  const query = qs.toString();
+  return query ? `/admin/audit-logs?${query}` : '/admin/audit-logs';
+}
+
 export default async function AuditLogsPage({ 
   searchParams 
 }: { 
@@ -28,32 +39,51 @@ export default async function AuditLogsPage({
 }) {
   await requireAdmin();
   const params = await searchParams;
-  const supabase = await createClient();
-  const { sb } = await import('@/lib/supabase/typed');
-  const db = sb(supabase);
-  
-  const page = parseInt(params.page || '1');
+  const parsedPage = parseInt(params.page || '1', 10);
+  const page = Number.isFinite(parsedPage) && parsedPage >= 1 ? parsedPage : 1;
   const limit = 50;
   const offset = (page - 1) * limit;
 
-  // Query audit logs with pagination and filters
-  let query = db
-    .from('audit_logs')
-    .select('*', { count: 'exact' })
-    .order('created_at', { ascending: false })
-    .range(offset, offset + limit - 1);
+  let logs: any[] = [];
+  let totalLogsCount = 0;
+  let totalEvents: number | null = null;
+  let queryError: string | null = null;
+  const supabaseReady = isSupabaseConfigured();
 
-  if (params.action) query = query.eq('action', params.action);
-  if (params.entity) query = query.eq('entity_type', params.entity);
+  if (supabaseReady) {
+    try {
+      const supabase = await createClient();
+      const { sb } = await import('@/lib/supabase/typed');
+      const db = sb(supabase);
 
-  const { data: logs, count } = await query;
-  const totalLogsCount = count ?? logs?.length ?? 0;
+      let query = db
+        .from('audit_logs')
+        .select('*', { count: 'exact' })
+        .order('created_at', { ascending: false })
+        .range(offset, offset + limit - 1);
 
-  // Query all logs count for telemetry
-  const { count: totalEvents } = await db.from('audit_logs').select('*', { count: 'exact', head: true });
+      if (params.action) query = query.eq('action', params.action);
+      if (params.entity) query = query.eq('entity_type', params.entity);
+
+      const { data, count, error } = await query;
+      if (error) {
+        queryError = error.message;
+      } else {
+        logs = data ?? [];
+        totalLogsCount = count ?? logs.length;
+      }
+
+      const { count: allCount } = await db
+        .from('audit_logs')
+        .select('*', { count: 'exact', head: true });
+      totalEvents = allCount ?? totalLogsCount;
+    } catch (err: any) {
+      queryError = err?.message || 'Unable to query audit_logs';
+    }
+  }
 
   return (
-    <div className="relative min-h-screen p-6 md:p-10 max-w-7xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="relative p-3 sm:p-6 md:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Background Ambient Glow Orbs */}
       <div className="absolute top-12 left-1/4 w-96 h-96 bg-champagne/5 rounded-full blur-3xl pointer-events-none -z-10" />
       <div className="absolute top-48 right-10 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none -z-10" />
@@ -92,7 +122,10 @@ export default async function AuditLogsPage({
             { id: 'settings', label: 'Settings' },
           ].map((item) => {
             const isSelected = (params.entity || '') === item.id;
-            const targetUrl = `/admin/audit-logs?${item.id ? `entity=${item.id}` : ''}${params.action ? `&action=${params.action}` : ''}`;
+            const targetUrl = buildAuditLogsHref({
+              entity: item.id || undefined,
+              action: params.action,
+            });
 
             return (
               <Link
@@ -119,7 +152,10 @@ export default async function AuditLogsPage({
             { id: 'DELETE', label: 'Delete', color: 'text-danger' },
           ].map((actionItem) => {
             const isSelected = (params.action || '') === actionItem.id;
-            const targetUrl = `/admin/audit-logs?${params.entity ? `entity=${params.entity}&` : ''}${actionItem.id ? `action=${actionItem.id}` : ''}`;
+            const targetUrl = buildAuditLogsHref({
+              entity: params.entity,
+              action: actionItem.id || undefined,
+            });
 
             return (
               <Link
@@ -137,6 +173,14 @@ export default async function AuditLogsPage({
           })}
         </div>
       </div>
+
+      {(!supabaseReady || queryError) && (
+        <div className="px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs">
+          {!supabaseReady
+            ? 'Audit log streaming is running in Convex-primary mode (Supabase standby audit storage not configured).'
+            : `Audit log stream unavailable: ${queryError}`}
+        </div>
+      )}
 
       {/* Security Telemetry Metric Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
@@ -321,7 +365,7 @@ export default async function AuditLogsPage({
         <div className="flex items-center gap-2">
           {page > 1 && (
             <Link 
-              href={`/admin/audit-logs?page=${page - 1}${params.entity ? `&entity=${params.entity}` : ''}${params.action ? `&action=${params.action}` : ''}`}
+              href={buildAuditLogsHref({ entity: params.entity, action: params.action, page: page - 1 })}
               className="inline-flex items-center gap-1.5 px-4 py-2 bg-surface/80 hover:bg-elevated border border-border-subtle text-text-secondary hover:text-text-primary rounded-xl text-xs font-semibold transition-all"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
@@ -329,7 +373,7 @@ export default async function AuditLogsPage({
             </Link>
           )}
           <Link 
-            href={`/admin/audit-logs?page=${page + 1}${params.entity ? `&entity=${params.entity}` : ''}${params.action ? `&action=${params.action}` : ''}`}
+            href={buildAuditLogsHref({ entity: params.entity, action: params.action, page: page + 1 })}
             className="inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-zinc-800 to-zinc-900 hover:from-zinc-700 hover:to-zinc-800 border border-border-strong/80 text-text-primary rounded-xl text-xs font-semibold transition-all hover:-translate-y-0.5 shadow-md"
           >
             <span>Next Page</span>

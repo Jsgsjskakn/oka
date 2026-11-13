@@ -1,19 +1,16 @@
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth/convex-auth-actions';
-import { createClient } from '@/lib/supabase/server';
+import { createClient, isSupabaseConfigured } from '@/lib/supabase/server';
 import { getOrdersByPhone } from '@/lib/services/order.service';
 import { getAllDishes } from '@/lib/services/menu.service';
-import { mockOrders } from '@/data/mock-orders';
+import { resolveDishImageUrl } from '@/lib/utils/dish-images';
 import type { DishWithCategory } from '@/lib/db/types';
 import type { ExploredDishItem } from '@/store/recently-viewed-store';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
-    const { searchParams } = new URL(request.url);
-    const queryPhone = searchParams.get('phone');
-    const queryEmail = searchParams.get('email');
 
     let user: { id: string; name: string; email: string; phone?: string; role?: string } | null = null;
     let isAuthenticated = false;
@@ -36,7 +33,7 @@ export async function GET(request: Request) {
     }
 
     // 2. Check Supabase Session if not found
-    if (!user) {
+    if (!user && isSupabaseConfigured()) {
       try {
         const supabase = await createClient();
         const { data: { user: sbUser } } = await supabase.auth.getUser();
@@ -61,21 +58,19 @@ export async function GET(request: Request) {
       }
     }
 
-    // 3. Fallback Member Profile for seamless demo/preview if unauthenticated
-    const effectivePhone = user?.phone || queryPhone || '+91 98765 43210';
-    const effectiveEmail = user?.email || queryEmail || 'pyiush.999@gmail.com';
-
-    if (!user) {
-      user = {
-        id: 'member-pg',
-        name: 'Pyiush Gupta',
-        email: effectiveEmail,
-        phone: effectivePhone,
-        role: 'customer',
-      };
+    // 3. Do not expose hardcoded PII or query other customers' order history when unauthenticated
+    if (!isAuthenticated || !user) {
+      return NextResponse.json({
+        success: true,
+        authenticated: false,
+        user: null,
+        pastDishes: [],
+        lastOrderedDish: null,
+        totalPastOrders: 0,
+      });
     }
 
-    // 4. Fetch orders for this customer from database / service
+    // 4. Fetch orders for this authenticated customer only
     const allCatalogDishes = await getAllDishes();
     const dishMap = new Map<string, DishWithCategory>();
     for (const d of allCatalogDishes) {
@@ -83,9 +78,11 @@ export async function GET(request: Request) {
       dishMap.set(d.slug, d);
     }
 
-    let rawOrders = await getOrdersByPhone(effectivePhone, effectiveEmail);
+    const rawOrders =
+      user.phone || user.email
+        ? await getOrdersByPhone(user.phone || '', user.email || undefined)
+        : [];
 
-    // Fallback to mockOrders if no orders in database yet
     const pastDishesList: ExploredDishItem[] = [];
     const seenDishIds = new Set<string>();
 
@@ -110,7 +107,7 @@ export async function GET(request: Request) {
                 slug: dishId,
                 name: item.dish_name || 'Artisanal Dish',
                 price_paise: item.dish_price_paise || 49900,
-                image_url: '/images/dishes/placeholder.jpg',
+                image_url: resolveDishImageUrl(dishId),
                 category: 'pizza',
                 is_veg: true,
                 is_available: true,
@@ -123,48 +120,13 @@ export async function GET(request: Request) {
       }
     }
 
-    // If still empty, populate from mockOrders
-    if (pastDishesList.length === 0) {
-      for (const mo of mockOrders) {
-        for (const item of mo.items) {
-          const d = item.dish;
-          if (!seenDishIds.has(d.id)) {
-            seenDishIds.add(d.id);
-            const catalogDish = dishMap.get(d.id) || dishMap.get(d.slug);
-            if (catalogDish) {
-              pastDishesList.push({
-                ...catalogDish,
-                category: (catalogDish.categories?.slug || 'pizza') as string,
-                source: 'order_history',
-                exploredAt: mo.createdAt,
-              });
-            } else {
-              pastDishesList.push({
-                id: d.id,
-                slug: d.slug,
-                name: d.name,
-                description: d.description,
-                price_paise: Math.round(d.price * 100),
-                image_url: d.image,
-                category: (d.category as string) || 'pizza',
-                is_veg: d.isVeg,
-                is_available: true,
-                source: 'order_history',
-                exploredAt: mo.createdAt,
-              });
-            }
-          }
-        }
-      }
-    }
-
     return NextResponse.json({
       success: true,
-      authenticated: isAuthenticated,
+      authenticated: true,
       user,
       pastDishes: pastDishesList,
       lastOrderedDish: pastDishesList[0] || null,
-      totalPastOrders: rawOrders.length || mockOrders.length,
+      totalPastOrders: rawOrders.length,
     });
   } catch (error: any) {
     return NextResponse.json(

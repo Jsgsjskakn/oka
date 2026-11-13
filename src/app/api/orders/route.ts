@@ -2,10 +2,15 @@ import { NextResponse } from 'next/server';
 import { placeOrderAction } from '@/lib/actions/order-actions';
 
 export async function POST(request: Request) {
+  let body: any;
   try {
-    const body = await request.json();
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON payload' }, { status: 400 });
+  }
 
-    if (!body.items || !body.customerPhone) {
+  try {
+    if (!Array.isArray(body?.items) || body.items.length === 0 || !body?.customerPhone) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 

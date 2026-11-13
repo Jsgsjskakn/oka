@@ -4,45 +4,69 @@ import { BookingConfirmationCard } from '@/components/booking/BookingConfirmatio
 import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 
-export default async function BookingSuccessPage({ searchParams }: { searchParams: Promise<{ id?: string }> }) {
-  const { id } = await searchParams;
-  if (!id) {
+export const dynamic = 'force-dynamic';
+
+export default async function BookingSuccessPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ id?: string; bookingId?: string }>;
+}) {
+  const { id, bookingId } = await searchParams;
+  const resolvedId = bookingId || id;
+  if (!resolvedId) {
     redirect('/booking');
   }
 
-  const booking = await getBookingById(id);
+  const booking = await getBookingById(resolvedId);
 
   if (!booking) {
     redirect('/booking');
   }
 
+  const parsedBookingDate = new Date(booking.booking_date);
+  const safeIsoDate = Number.isNaN(parsedBookingDate.getTime())
+    ? new Date().toISOString()
+    : parsedBookingDate.toISOString();
+
   // Map DB booking to BookingDetails type for the card
   const bookingDetails = {
     id: booking.id,
-    date: new Date(booking.booking_date).toISOString(),
+    date: safeIsoDate,
     time: booking.booking_time,
     guests: booking.guests,
     customerName: booking.customer_name,
     customerPhone: booking.customer_phone,
+    customerEmail: booking.customer_email || undefined,
+    occasion: booking.occasion || undefined,
+    tablePreference: booking.table_preference || undefined,
+    specialRequests: booking.special_requests || undefined,
   };
 
   return (
-    <div className="min-h-screen bg-obsidian pb-8 text-text-primary relative">
-      <div className="absolute top-4 left-4 z-50">
-        <Link 
+    <div className="min-h-screen bg-obsidian pt-4 sm:pt-6 pb-24 md:pb-12 text-text-primary relative">
+      <div className="max-w-lg mx-auto px-4 flex items-center justify-between">
+        <Link
           href="/"
-          className="w-10 h-10 bg-[#1a1a1a] rounded-full flex items-center justify-center text-text-primary/70 hover:text-text-primary border border-border-subtle active:scale-95 transition-all"
+          className="inline-flex items-center gap-2 h-10 px-3 bg-[#1a1a1a] rounded-full text-xs font-medium text-text-primary/80 hover:text-text-primary border border-border-subtle active:scale-95 transition-all"
         >
-          <ChevronLeft className="w-6 h-6 -ml-0.5" />
+          <ChevronLeft className="w-4 h-4 -ml-0.5" />
+          <span>Back Home</span>
+        </Link>
+
+        <Link
+          href="/profile/reservations"
+          className="text-xs font-medium text-primary hover:underline underline-offset-4"
+        >
+          My Reservations
         </Link>
       </div>
 
-      <div className="pt-16">
+      <div className="pt-2">
         <BookingConfirmationCard booking={bookingDetails} />
       </div>
 
-      <div className="mt-8 text-center px-6">
-        <Link 
+      <div className="mt-4 text-center px-6">
+        <Link
           href="/"
           className="text-primary text-sm font-medium hover:underline underline-offset-4"
         >

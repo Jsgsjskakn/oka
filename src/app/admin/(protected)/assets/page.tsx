@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { createClient, isSupabaseConfigured } from '@/lib/supabase/client';
 import { sb } from '@/lib/supabase/typed';
 import { 
   Box, 
@@ -21,30 +21,52 @@ import {
 } from 'lucide-react';
 
 export default function AssetRequestsPage() {
-  const supabase = createClient();
+  const supabaseConfigured = isSupabaseConfigured();
+  const supabase = useMemo(() => (supabaseConfigured ? createClient() : null), [supabaseConfigured]);
   const [requests, setRequests] = useState<any[]>([]);
   const [dishes, setDishes] = useState<any[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [filter, setFilter] = useState<'all' | 'open' | 'in_progress' | 'resolved'>('all');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [statusError, setStatusError] = useState<string | null>(null);
 
-  const fetchRequests = async (signal?: AbortSignal) => {
-    const { data } = await supabase.from('asset_requests').select('*').order('created_at', { ascending: false });
-    if (signal?.aborted) return;
-    if (data) setRequests(data);
-  };
+  const fetchRequests = useCallback(async (signal?: AbortSignal) => {
+    if (!supabase) return;
+    try {
+      const { data, error } = await supabase
+        .from('asset_requests')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (signal?.aborted) return;
+      if (error) {
+        setStatusError('Asset request ledger is currently unavailable.');
+        return;
+      }
+      if (data) setRequests(data);
+    } catch {
+      if (!signal?.aborted) {
+        setStatusError('Unable to reach asset pipeline storage.');
+      }
+    }
+  }, [supabase]);
 
-  const fetchDishes = async () => {
-    const { data } = await supabase.from('dishes').select('id, name').order('name');
-    if (data) setDishes(data);
-  };
+  const fetchDishes = useCallback(async () => {
+    if (!supabase) return;
+    try {
+      const { data } = await supabase.from('dishes').select('id, name').order('name');
+      if (data) setDishes(data);
+    } catch {
+      // Optional dropdown enrichment
+    }
+  }, [supabase]);
 
   useEffect(() => {
+    if (!supabase) return;
     const controller = new AbortController();
     fetchRequests(controller.signal);
     fetchDishes();
     return () => controller.abort();
-  }, []);
+  }, [supabase, fetchRequests, fetchDishes]);
 
   // Telemetry Counts
   const totalCount = requests.length;
@@ -84,13 +106,27 @@ export default function AssetRequestsPage() {
         </div>
 
         <button 
+          type="button"
           onClick={() => setShowForm(!showForm)} 
-          className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-champagne to-platinum hover:from-[#d8b85b] hover:to-[#f0db99] text-zinc-950 font-bold rounded-xl text-sm transition-all duration-300 shadow-lg shadow-[#c9a84c]/20 hover:shadow-[#c9a84c]/30 hover:-translate-y-0.5"
+          disabled={!supabaseConfigured}
+          className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-champagne to-platinum hover:from-[#d8b85b] hover:to-[#f0db99] text-zinc-950 font-bold rounded-xl text-sm transition-all duration-300 shadow-lg shadow-[#c9a84c]/20 hover:shadow-[#c9a84c]/30 hover:-translate-y-0.5 disabled:opacity-50"
         >
           {showForm ? <X className="w-4 h-4 stroke-[3]" /> : <Plus className="w-4 h-4 stroke-[3]" />}
           <span>{showForm ? 'Close Form' : 'New Asset Request'}</span>
         </button>
       </div>
+
+      {!supabaseConfigured && (
+        <div className="px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs">
+          Asset request tracking requires Supabase pipeline storage (optional in Convex-only mode).
+        </div>
+      )}
+
+      {statusError && (
+        <div className="px-4 py-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-200 text-xs">
+          {statusError}
+        </div>
+      )}
 
       {/* Metric Telemetry Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
@@ -157,6 +193,8 @@ export default function AssetRequestsPage() {
           <form 
             onSubmit={async (e) => {
               e.preventDefault();
+              if (!supabase) return;
+              setStatusError(null);
               setIsSubmitting(true);
               const formData = new FormData(e.currentTarget);
               const { error } = await sb(supabase).from('asset_requests').insert({
@@ -169,7 +207,7 @@ export default function AssetRequestsPage() {
               });
               setIsSubmitting(false);
               if (error) {
-                alert('Failed to submit request');
+                setStatusError(error.message || 'Failed to submit asset request');
               } else {
                 setShowForm(false);
                 fetchRequests();
@@ -343,6 +381,7 @@ export default function AssetRequestsPage() {
                 <AssetStatusCustomDropdown
                   currentStatus={req.status}
                   onChange={async (newStatus) => {
+                    if (!supabase) return;
                     await sb(supabase).from('asset_requests').update({ status: newStatus }).eq('id', req.id);
                     fetchRequests();
                   }}

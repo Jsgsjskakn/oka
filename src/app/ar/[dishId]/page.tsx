@@ -1,5 +1,6 @@
 import { getAllDishes } from '@/lib/services/menu.service';
 import { getModelConfig } from '@/data/model-config';
+import { resolveDishImageUrl } from '@/lib/utils/dish-images';
 import { notFound } from 'next/navigation';
 import ARViewerClient from './ARViewerClient';
 
@@ -13,6 +14,7 @@ export default async function ARViewerPage({ params }: { params: Promise<{ dishI
   }
 
   const config = getModelConfig(dish.slug);
+  const resolvedImage = resolveDishImageUrl(dish.slug, dish.image_url);
   
   return (
     <ARViewerClient
@@ -20,7 +22,7 @@ export default async function ARViewerPage({ params }: { params: Promise<{ dishI
       dishName={dish.name}
       dishDescription={dish.description || ''}
       dishPrice={dish.price_paise}
-      dishImage={dish.image_url || '/images/dishes/placeholder.jpg'}
+      dishImage={resolvedImage}
       dishCategory={dish.categories?.slug || 'menu'}
       dishIsVeg={dish.is_veg}
       config={config}

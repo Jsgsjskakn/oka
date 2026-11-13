@@ -1,6 +1,6 @@
 'use server';
 
-import { createClient } from '@/lib/supabase/server';
+import { createClient, isSupabaseConfigured } from '@/lib/supabase/server';
 import { sb, type QR } from '@/lib/supabase/typed';
 
 const RESTAURANT_ID = 'a1b2c3d4-0000-0000-0000-000000000001';
@@ -10,6 +10,7 @@ export interface PlaceOrderInput {
   customerPhone: string;
   customerEmail?: string;
   orderType: 'dine-in' | 'takeaway';
+  tableNumber?: number;
   paymentMethod: 'upi' | 'cash';
   pickupTime?: string;
   notes?: string;
@@ -33,12 +34,13 @@ export interface PlaceOrderInput {
 
 export async function placeOrderAction(input: PlaceOrderInput): Promise<{ orderId?: string; error?: string }> {
   try {
-    // Verify user session if required, or allow guest
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      // In guest-friendly mode, allow or check session
-      // For Golden Oak, auth check is enforced or handled by client
+    if (isSupabaseConfigured()) {
+      try {
+        const supabase = await createClient();
+        await supabase.auth.getUser();
+      } catch {
+        // Guest checkout allowed in Convex-primary flow
+      }
     }
 
     const { createOrder } = await import('@/lib/services/order.service');
@@ -133,6 +135,9 @@ export async function cancelOrderByCustomer(orderId: string, phone: string): Pro
   }
 
   // 2. Supabase fallback
+  if (!isSupabaseConfigured()) {
+    return { error: 'Order cancellation service temporarily unavailable' };
+  }
   try {
     const db = sb(await createClient());
     const { getSettings } = await import('@/lib/services/settings.service');
@@ -144,7 +149,7 @@ export async function cancelOrderByCustomer(orderId: string, phone: string): Pro
 
     if (!order) return { error: 'Order not found' };
     if (order.status === 'cancelled') return { error: 'Order already cancelled' };
-    if (['completed', 'ready'].includes(order.status)) return { error: 'Cannot cancel at this stage' };
+    if (['preparing', 'ready', 'completed'].includes(order.status)) return { error: 'Cannot cancel at this stage' };
 
     const windowMinutes = Number(settings.cancellation_window_minutes) || 10;
     if ((Date.now() - new Date(order.created_at).getTime()) / 60000 > windowMinutes) return { error: `Cancellation window of ${windowMinutes} min has passed` };

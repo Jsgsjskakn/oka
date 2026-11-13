@@ -1,9 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Crown, ShoppingCart } from 'lucide-react';
 import { useCartStore } from '@/store/cart-store';
+
+const emptySubscribe = () => () => {};
+const getClientSnapshot = () => true;
+const getServerSnapshot = () => false;
 
 interface ViewerHeaderProps {
   dishName: string;
@@ -12,13 +16,9 @@ interface ViewerHeaderProps {
   children?: React.ReactNode;
 }
 
-export function ViewerHeader({ dishSlug, children }: ViewerHeaderProps) {
+export function ViewerHeader({ children }: ViewerHeaderProps) {
   const totalCartItems = useCartStore((s) => s.getTotalItems());
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useSyncExternalStore(emptySubscribe, getClientSnapshot, getServerSnapshot);
 
   return (
     <>
@@ -58,27 +58,28 @@ export function ViewerHeader({ dishSlug, children }: ViewerHeaderProps) {
       {/* ========================================================================= */}
       {/* MOBILE HEADER (< sm): Compact "3D Menu" pill + Controls in Top Bar        */}
       {/* ========================================================================= */}
-      <header className="flex sm:hidden fixed top-2.5 left-2 right-2 z-40 items-center justify-between gap-1 pointer-events-none">
+      <header className="flex sm:hidden fixed top-[max(10px,env(safe-area-inset-top))] left-2 right-2 z-40 items-center justify-between gap-1 pointer-events-none">
         {/* Top-Left: Compact Back & 3D Menu Pill */}
         <Link
           href="/menu"
-          className="pointer-events-auto group inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-[rgba(16,12,9,0.7)] backdrop-blur-xl border border-[rgba(240,195,107,0.35)] hover:border-[#F0C36B] hover:shadow-[0_0_18px_rgba(240,195,107,0.35)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] transition-all active:scale-95 shrink-0"
+          className="pointer-events-auto group inline-flex items-center gap-1 px-2 min-[375px]:px-2.5 min-h-[44px] rounded-full bg-[rgba(16,12,9,0.75)] backdrop-blur-xl border border-[rgba(240,195,107,0.35)] hover:border-[#F0C36B] hover:shadow-[0_0_18px_rgba(240,195,107,0.35)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] transition-all active:scale-95 shrink-0 touch-manipulation"
           aria-label="Back to 3D Menu"
         >
           <ArrowLeft className="w-3.5 h-3.5 text-[#F0C36B] group-hover:-translate-x-0.5 transition-transform" />
-          <span className="text-[11px] font-semibold tracking-wide text-[#F8F2E8]">
-            3D Menu
+          <span className="text-[11px] font-semibold tracking-wide text-[#F8F2E8] whitespace-nowrap">
+            <span className="hidden min-[390px]:inline">3D </span>Menu
           </span>
         </Link>
 
         {/* Top-Center: Integrated 3D Camera Controls Slot on Mobile */}
-        {children}
+        <div className="min-w-0 flex items-center justify-center">{children}</div>
 
         {/* Top-Right: Compact Cart Button */}
         <Link
           href="/cart"
-          className="pointer-events-auto group inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-[rgba(16,12,9,0.7)] backdrop-blur-xl border border-[rgba(240,195,107,0.35)] hover:border-[#F0C36B] hover:shadow-[0_0_18px_rgba(240,195,107,0.35)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] transition-all active:scale-95 shrink-0"
+          className="pointer-events-auto group inline-flex items-center gap-1 px-2 min-[375px]:px-2.5 min-h-[44px] rounded-full bg-[rgba(16,12,9,0.75)] backdrop-blur-xl border border-[rgba(240,195,107,0.35)] hover:border-[#F0C36B] hover:shadow-[0_0_18px_rgba(240,195,107,0.35)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] transition-all active:scale-95 shrink-0 touch-manipulation"
           title="View Cart"
+          aria-label="View Cart"
         >
           <ShoppingCart className="w-3.5 h-3.5 text-[#F0C36B] group-hover:scale-110 transition-transform" />
           {mounted && totalCartItems > 0 && (

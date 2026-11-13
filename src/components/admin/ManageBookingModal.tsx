@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { ChevronRight, X, Check, Users, Utensils, Ban } from 'lucide-react';
 import { updateBookingStatusAction } from '@/lib/actions/booking-actions';
 
@@ -13,6 +14,8 @@ interface ManageBookingModalProps {
     guests: number;
     booking_time: string;
     booking_date: string;
+    table_id?: string | null;
+    tables?: { table_number?: number | null } | null;
   };
 }
 
@@ -21,6 +24,9 @@ export function ManageBookingModal({ booking }: ManageBookingModalProps) {
   const [loading, setLoading] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+
+  const assignedTable = booking.tables?.table_number ?? booking.table_id;
 
   const handleStatusChange = async (
     newStatus: 'confirmed' | 'seated' | 'completed' | 'cancelled'
@@ -37,6 +43,7 @@ export function ManageBookingModal({ booking }: ManageBookingModalProps) {
         setError(res.error);
       } else {
         setIsOpen(false);
+        router.refresh();
       }
     } catch (err: any) {
       setError(err?.message || 'Failed to update booking');
@@ -48,6 +55,7 @@ export function ManageBookingModal({ booking }: ManageBookingModalProps) {
   return (
     <>
       <button
+        type="button"
         onClick={() => setIsOpen(true)}
         className="inline-flex items-center gap-1 text-xs font-semibold px-3.5 py-1.5 rounded-lg border border-border-subtle bg-champagne/10 text-platinum hover:bg-champagne/20 hover:border-champagne/50 hover:shadow-[0_0_12px_rgba(201,168,76,0.2)] transition-all duration-300 shadow-sm cursor-pointer"
       >
@@ -56,11 +64,19 @@ export function ManageBookingModal({ booking }: ManageBookingModalProps) {
       </button>
 
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-zinc-950 border border-border-subtle rounded-2xl p-6 max-w-md w-full shadow-2xl relative text-left">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
+          onClick={() => setIsOpen(false)}
+        >
+          <div
+            className="bg-zinc-950 border border-border-subtle rounded-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl relative text-left"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
+              type="button"
               onClick={() => setIsOpen(false)}
-              className="absolute top-4 right-4 text-zinc-400 hover:text-platinum p-1 rounded-lg transition-colors"
+              aria-label="Close booking modal"
+              className="absolute top-4 right-4 text-zinc-400 hover:text-platinum p-1 rounded-lg transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -70,6 +86,7 @@ export function ManageBookingModal({ booking }: ManageBookingModalProps) {
             </h3>
             <p className="text-xs text-zinc-400 mt-1">
               {booking.customer_name} • {booking.guests} Guests • {booking.booking_time} ({booking.booking_date})
+              {assignedTable ? ` • Table ${assignedTable}` : ''}
             </p>
 
             <div className="mt-4 p-3 rounded-xl bg-zinc-900/60 border border-border-subtle flex items-center justify-between text-xs">

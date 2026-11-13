@@ -12,20 +12,6 @@ const isLocalhost = Boolean(
     self.location.hostname === '[::1]'
 );
 
-// If running in development / localhost, self-destruct and clear all caches immediately
-if (isLocalhost) {
-  self.addEventListener('install', () => self.skipWaiting());
-  self.addEventListener('activate', (event) => {
-    event.waitUntil(
-      caches
-        .keys()
-        .then((keys) => Promise.all(keys.map((k) => caches.delete(k))))
-        .then(() => self.registration.unregister())
-        .then(() => self.clients.claim())
-    );
-  });
-}
-
 // Safe, non-sensitive static assets pre-cached during service worker installation
 const STATIC_ASSETS = [
   '/offline',
@@ -87,9 +73,12 @@ function isStaticAsset(url) {
   return false;
 }
 
-// Installation: Pre-cache core offline assets
+// Installation: Pre-cache core offline assets (or self-destruct on localhost)
 self.addEventListener('install', (event) => {
-  if (isLocalhost) return;
+  if (isLocalhost) {
+    self.skipWaiting();
+    return;
+  }
   event.waitUntil(
     caches
       .open(CACHE_NAME)
@@ -104,6 +93,16 @@ self.addEventListener('install', (event) => {
 
 // Activation: Purge outdated caches to clean up legacy or potentially sensitive cached entries
 self.addEventListener('activate', (event) => {
+  if (isLocalhost) {
+    event.waitUntil(
+      caches
+        .keys()
+        .then((keys) => Promise.all(keys.map((k) => caches.delete(k))))
+        .then(() => self.registration.unregister())
+        .then(() => self.clients.claim())
+    );
+    return;
+  }
   event.waitUntil(
     caches
       .keys()
@@ -147,11 +146,12 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // RULE 4: Never cache Next.js RSC data requests or Server Actions
+  // RULE 4: Never cache Next.js RSC data requests, router prefetches, or Server Actions
   // These contain dynamic server-side component payloads or user session state
   if (
     url.searchParams.has('_rsc') ||
     request.headers.get('RSC') === '1' ||
+    request.headers.get('Next-Router-Prefetch') ||
     request.headers.get('Next-Action') ||
     request.headers.get('Next-Router-State-Tree')
   ) {
@@ -193,16 +193,18 @@ self.addEventListener('fetch', (event) => {
             return cachedResponse;
           }
 
-          return fetch(request).then((networkResponse) => {
-            // Verify valid response before caching
-            if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
-              const responseToCache = networkResponse.clone();
-              caches.open(CACHE_NAME).then((cache) => {
-                cache.put(request, responseToCache);
-              });
-            }
-            return networkResponse;
-          });
+          return fetch(request)
+            .then((networkResponse) => {
+              // Verify valid response before caching
+              if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+                const responseToCache = networkResponse.clone();
+                caches.open(CACHE_NAME).then((cache) => {
+                  cache.put(request, responseToCache);
+                });
+              }
+              return networkResponse;
+            })
+            .catch(() => new Response('', { status: 504, statusText: 'Offline' }));
         })
       );
       return;

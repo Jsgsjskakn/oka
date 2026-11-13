@@ -25,12 +25,17 @@ export function ProfileHeader({ user, onLogout }: ProfileHeaderProps) {
             {user.name || 'Guest'}
           </h1>
           <p className="text-xs text-text-primary/40 truncate">
-            {user.phone ? `+91 ${user.phone}` : 'Complete your profile'}
+            {user.phone
+              ? user.phone.startsWith('+')
+                ? user.phone
+                : `+91 ${user.phone}`
+              : 'Complete your profile'}
           </p>
         </div>
         <Link
           href="/profile/edit"
-          className="w-9 h-9 rounded-full bg-white/5 border border-border-subtle flex items-center justify-center text-text-primary/50 hover:text-text-primary active:scale-95 transition-all"
+          aria-label="Edit Profile"
+          className="w-10 h-10 rounded-full bg-white/5 border border-border-subtle flex items-center justify-center text-text-primary/50 hover:text-text-primary active:scale-95 transition-all"
         >
           <User className="w-4 h-4" />
         </Link>

@@ -24,9 +24,11 @@ export function OrderTypeSelector({ selected, onSelect }: OrderTypeSelectorProps
           const isSelected = selected === value;
           return (
             <button
+              type="button"
               key={value}
               onClick={() => onSelect(value)}
-              className={`flex flex-col items-center gap-2 p-4 rounded-xl border transition-all active:scale-[0.97] ${
+              aria-pressed={isSelected}
+              className={`min-h-[48px] flex flex-col items-center gap-2 p-4 rounded-xl border transition-all active:scale-[0.97] ${
                 isSelected
                   ? 'bg-primary/10 border-primary/50 shadow-[0_0_20px_rgba(201,168,76,0.15)]'
                   : 'bg-[#1a1a1a] border-white/5 hover:border-border-strong'

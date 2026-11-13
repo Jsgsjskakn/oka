@@ -5,7 +5,8 @@ interface AuthStore {
   userId: string | null;
   userName: string | null;
   userEmail: string | null;
-  setAuth: (userId: string, name: string, email: string) => void;
+  userPhone: string | null;
+  setAuth: (userId: string, name: string, email: string, phone?: string | null) => void;
   clearAuth: () => void;
 }
 
@@ -14,6 +15,21 @@ export const useAuthStore = create<AuthStore>((set) => ({
   userId: null,
   userName: null,
   userEmail: null,
-  setAuth: (userId, name, email) => set({ isAuthenticated: true, userId, userName: name, userEmail: email }),
-  clearAuth: () => set({ isAuthenticated: false, userId: null, userName: null, userEmail: null }),
+  userPhone: null,
+  setAuth: (userId, name, email, phone = null) =>
+    set({
+      isAuthenticated: true,
+      userId,
+      userName: name,
+      userEmail: email,
+      userPhone: phone ?? null,
+    }),
+  clearAuth: () =>
+    set({
+      isAuthenticated: false,
+      userId: null,
+      userName: null,
+      userEmail: null,
+      userPhone: null,
+    }),
 }));
