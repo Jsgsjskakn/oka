@@ -20,7 +20,7 @@ const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12
 const isUuid = (id?: string | null): boolean => Boolean(id && UUID_REGEX.test(id));
 
 const VALID_TRANSITIONS: Record<string, string> = {
-  pending: 'confirmed',
+  pending: 'preparing',
   confirmed: 'preparing',
   preparing: 'ready',
   ready: 'completed',
@@ -31,7 +31,7 @@ const STATUS_LABELS: Record<string, string> = {
   confirmed: 'Accepted',
   preparing: 'Preparing',
   ready: 'Ready',
-  completed: 'Completed',
+  completed: 'Served',
   cancelled: 'Cancelled'
 };
 

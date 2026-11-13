@@ -277,7 +277,7 @@ export function DishSwitcher({
 
   return (
     <div
-      className="fixed bottom-[calc(max(12px,env(safe-area-inset-bottom))+96px)] sm:bottom-3.5 left-3 right-3 sm:left-4 sm:right-[332px] md:left-6 md:right-[356px] lg:left-8 lg:right-[392px] xl:right-[418px] sm:mx-auto sm:max-w-4xl xl:max-w-5xl z-[45] pointer-events-auto select-none transition-all duration-300"
+      className="fixed bottom-[calc(max(12px,env(safe-area-inset-bottom))+124px)] sm:bottom-3.5 left-3 right-3 sm:left-4 sm:right-[332px] md:left-6 md:right-[356px] lg:left-8 lg:right-[392px] xl:right-[418px] sm:mx-auto sm:max-w-4xl xl:max-w-5xl z-[45] pointer-events-auto select-none transition-all duration-300"
       aria-label="Interactive Dish & Category Dock"
     >
       {/* Luxury Glass Dock */}
@@ -293,7 +293,7 @@ export function DishSwitcher({
             onClick={() => setIsDropdownOpen((prev) => !prev)}
             aria-expanded={isDropdownOpen}
             aria-haspopup="listbox"
-            className="group flex items-center gap-1 sm:gap-1.5 lg:gap-2 px-2 sm:px-2.5 lg:px-3.5 py-2 min-h-[44px] max-w-[144px] sm:max-w-[156px] lg:max-w-none rounded-xl bg-gradient-to-r from-[#F0C36B] to-[#D4A346] text-[#120E0B] font-serif font-bold text-[11px] lg:text-[13px] shadow-[0_2px_14px_rgba(240,195,107,0.45)] hover:shadow-[0_4px_18px_rgba(240,195,107,0.6)] active:scale-[0.97] transition-all cursor-pointer border border-[#FFE3A5]/40 touch-manipulation"
+            className="group flex items-center gap-1 sm:gap-1.5 lg:gap-2 px-2 sm:px-2.5 lg:px-3.5 py-2 min-h-[48px] max-w-[144px] sm:max-w-[156px] lg:max-w-none rounded-xl bg-gradient-to-r from-[#F0C36B] to-[#D4A346] text-[#120E0B] font-serif font-bold text-[11px] lg:text-[13px] shadow-[0_2px_14px_rgba(240,195,107,0.45)] hover:shadow-[0_4px_18px_rgba(240,195,107,0.6)] active:scale-[0.97] transition-all cursor-pointer border border-[#FFE3A5]/40 touch-manipulation"
             title="Click to change food category"
           >
             <span className="text-sm select-none shrink-0">{currentCategoryInfo.emoji}</span>
@@ -328,7 +328,7 @@ export function DishSwitcher({
                 role="option"
                 aria-selected={selectedCategory === 'all'}
                 onClick={() => handleSelectCategory('all')}
-                className={`w-full min-h-[44px] flex items-center justify-between px-3 py-2 rounded-xl text-xs font-serif font-bold transition-all cursor-pointer touch-manipulation ${
+                className={`w-full min-h-[48px] flex items-center justify-between px-3 py-2 rounded-xl text-xs font-serif font-bold transition-all cursor-pointer touch-manipulation ${
                   selectedCategory === 'all'
                     ? 'bg-[#F0C36B]/20 text-[#FFE3A5] border border-[#F0C36B]/40'
                     : 'text-[#D8CFBE] hover:text-white hover:bg-white/[0.07]'
@@ -359,7 +359,7 @@ export function DishSwitcher({
                     role="option"
                     aria-selected={isSelected}
                     onClick={() => handleSelectCategory(cat.slug)}
-                    className={`w-full min-h-[44px] flex items-center justify-between px-3 py-2 rounded-xl text-xs font-serif font-bold transition-all cursor-pointer touch-manipulation mt-0.5 ${
+                    className={`w-full min-h-[48px] flex items-center justify-between px-3 py-2 rounded-xl text-xs font-serif font-bold transition-all cursor-pointer touch-manipulation mt-0.5 ${
                       isSelected
                         ? 'bg-[#F0C36B]/20 text-[#FFE3A5] border border-[#F0C36B]/40'
                         : 'text-[#D8CFBE] hover:text-white hover:bg-white/[0.07]'
@@ -407,7 +407,7 @@ export function DishSwitcher({
           {/* Scrollable Filmstrip of Large, Tactile Mouse-Interactive Dish Cards */}
           <div
             ref={scrollRef}
-            className="overflow-x-auto hide-scrollbar scroll-smooth flex items-center gap-2 lg:gap-2.5 py-1 px-0.5 flex-1 overflow-y-visible"
+            className="overflow-x-auto hide-scrollbar scroll-smooth flex items-center gap-2 lg:gap-2.5 py-1 px-0.5 flex-1 overflow-y-visible touch-pan-x"
           >
             {filteredDishes.map((dishItem) => {
               const isActive =
@@ -420,7 +420,7 @@ export function DishSwitcher({
                   data-active={isActive ? 'true' : undefined}
                   type="button"
                   onClick={() => handleDishClick(dishItem.id)}
-                  className={`group relative flex items-center gap-2 lg:gap-2.5 p-1 lg:p-1.5 pr-2.5 lg:pr-3.5 rounded-xl border text-left cursor-pointer transition-all duration-200 shrink-0 select-none touch-manipulation ${
+                  className={`group relative flex items-center gap-2 lg:gap-2.5 p-1 lg:p-1.5 pr-2.5 lg:pr-3.5 rounded-xl border text-left cursor-pointer transition-all duration-200 shrink-0 select-none min-h-[48px] touch-manipulation ${
                     isActive
                       ? 'bg-gradient-to-r from-[#F0C36B]/25 via-[#231A13] to-[#18130F] border-[#F0C36B] shadow-[0_0_24px_rgba(240,195,107,0.45),inset_0_1px_1px_rgba(255,255,255,0.22)] ring-1 ring-[#F0C36B]/40'
                       : 'bg-[#18130F]/90 hover:bg-[#241C16] border-white/10 hover:border-[#F0C36B]/60 shadow-[0_4px_16px_rgba(0,0,0,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.7)] sm:hover:-translate-y-1'

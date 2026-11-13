@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
+import Link from 'next/link';
 import { FilterSheet, FilterState } from '@/components/menu/FilterSheet';
 import { DishGrid } from '@/components/menu/DishGrid';
 import { EmptyState } from '@/components/menu/EmptyState';
-import type { SortOption } from '@/components/menu/SortSheet';
+import { SortSheet, type SortOption } from '@/components/menu/SortSheet';
 import { useCartStore } from '@/store/cart-store';
 import { Category, DishWithCategory } from '@/lib/db/types';
-import { Search, X, SlidersHorizontal, Sparkles, UtensilsCrossed } from 'lucide-react';
+import { Search, X, SlidersHorizontal, Sparkles, UtensilsCrossed, ArrowUpDown } from 'lucide-react';
 
 interface MenuClientProps {
   categories: Category[];
@@ -63,6 +64,8 @@ export function MenuClient({
   );
   const storedTableNumber = useCartStore((s) => s.tableNumber);
   const setStoredTableNumber = useCartStore((s) => s.setTableNumber);
+  const totalCartItems = useCartStore((s) => s.getTotalItems());
+  const totalCartPrice = useCartStore((s) => s.getTotalPrice());
   const [isMounted, setIsMounted] = useState(false);
 
   const qrTableNumber = useMemo(() => parseValidTable(initialTable), [initialTable]);
@@ -104,6 +107,7 @@ export function MenuClient({
   };
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isSortOpen, setIsSortOpen] = useState(false);
 
   const [filters, setFilters] = useState<FilterState>(() => ({
     vegOnly: false,
@@ -292,7 +296,7 @@ export function MenuClient({
                     <button
                       type="button"
                       onClick={() => handleSearchChange('')}
-                      className="min-w-[36px] min-h-[36px] mr-1 flex items-center justify-center rounded-md text-[#9A9286] hover:text-[#FAF5EC] transition-colors"
+                      className="min-w-[44px] min-h-[44px] mr-0.5 flex items-center justify-center rounded-md text-[#9A9286] hover:text-[#FAF5EC] transition-colors touch-manipulation cursor-pointer"
                       aria-label="Clear search"
                     >
                       <X className="w-4 h-4" />
@@ -312,7 +316,7 @@ export function MenuClient({
                     onClick={() =>
                       setFilters((f) => ({ ...f, vegOnly: !f.vegOnly, nonVegOnly: false }))
                     }
-                    className={`min-h-[40px] flex items-center gap-1.5 px-3 py-2 rounded-[6px] text-xs font-semibold whitespace-nowrap transition-all duration-200 active:scale-95 border ${
+                    className={`min-h-[44px] flex items-center gap-1.5 px-3 py-2 rounded-[6px] text-xs font-semibold whitespace-nowrap transition-all duration-200 active:scale-95 border touch-manipulation cursor-pointer ${
                       filters.vegOnly
                         ? 'bg-[#22C58B]/20 border-[#22C58B] text-[#22C58B] shadow-[0_0_12px_rgba(34,197,139,0.25)]'
                         : 'bg-[#16120E] border-white/10 text-[#9A9286] hover:text-[#FAF5EC]'
@@ -332,7 +336,7 @@ export function MenuClient({
                     onClick={() =>
                       setFilters((f) => ({ ...f, nonVegOnly: !f.nonVegOnly, vegOnly: false }))
                     }
-                    className={`min-h-[40px] flex items-center gap-1.5 px-3 py-2 rounded-[6px] text-xs font-semibold whitespace-nowrap transition-all duration-200 active:scale-95 border ${
+                    className={`min-h-[44px] flex items-center gap-1.5 px-3 py-2 rounded-[6px] text-xs font-semibold whitespace-nowrap transition-all duration-200 active:scale-95 border touch-manipulation cursor-pointer ${
                       filters.nonVegOnly
                         ? 'bg-rose-500/20 border-rose-500 text-rose-300 shadow-[0_0_12px_rgba(244,63,94,0.25)]'
                         : 'bg-[#16120E] border-white/10 text-[#9A9286] hover:text-[#FAF5EC]'
@@ -352,7 +356,7 @@ export function MenuClient({
                     onClick={() =>
                       setFilters((f) => ({ ...f, popularOnly: !f.popularOnly }))
                     }
-                    className={`min-h-[40px] flex items-center gap-1.5 px-3 py-2 rounded-[6px] text-xs font-semibold whitespace-nowrap transition-all duration-200 active:scale-95 border ${
+                    className={`min-h-[44px] flex items-center gap-1.5 px-3 py-2 rounded-[6px] text-xs font-semibold whitespace-nowrap transition-all duration-200 active:scale-95 border touch-manipulation cursor-pointer ${
                       filters.popularOnly
                         ? 'bg-[#E2A84B]/20 border-[#E2A84B] text-[#E2A84B] shadow-[0_0_12px_rgba(226,168,75,0.25)]'
                         : 'bg-[#16120E] border-white/10 text-[#9A9286] hover:text-[#FAF5EC]'
@@ -362,11 +366,28 @@ export function MenuClient({
                     <span>Chef&apos;s Picks</span>
                   </button>
 
+                  {/* Direct Sort Sheet Trigger */}
+                  <button
+                    type="button"
+                    onClick={() => setIsSortOpen(true)}
+                    className={`min-h-[44px] px-3.5 rounded-[6px] flex items-center justify-center gap-1.5 text-xs font-semibold whitespace-nowrap transition-all active:scale-95 border touch-manipulation cursor-pointer ${
+                      sort !== 'recommended'
+                        ? 'bg-[#E2A84B]/20 border-[#E2A84B] text-[#FAF5EC] shadow-[0_0_12px_rgba(226,168,75,0.2)]'
+                        : 'bg-[#16120E] border-white/10 hover:border-[#E2A84B]/40 text-[#FAF5EC] hover:text-[#E2A84B]'
+                    }`}
+                  >
+                    <ArrowUpDown className="w-3.5 h-3.5 text-[#E2A84B]" />
+                    <span>Sort</span>
+                    {sort !== 'recommended' && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#E2A84B]" />
+                    )}
+                  </button>
+
                   {/* Unified Filters Trigger (Includes Sorting per user request) */}
                   <button
                     type="button"
                     onClick={() => setIsFilterOpen(true)}
-                    className={`min-h-[40px] px-3.5 rounded-[6px] flex items-center justify-center gap-1.5 text-xs font-semibold whitespace-nowrap transition-all active:scale-95 border ${
+                    className={`min-h-[44px] px-3.5 rounded-[6px] flex items-center justify-center gap-1.5 text-xs font-semibold whitespace-nowrap transition-all active:scale-95 border touch-manipulation cursor-pointer ${
                       activeFilterCount > 0
                         ? 'bg-[#E2A84B]/20 border-[#E2A84B] text-[#FAF5EC] shadow-[0_0_12px_rgba(226,168,75,0.2)]'
                         : 'bg-[#16120E] border-white/10 hover:border-[#E2A84B]/40 text-[#FAF5EC] hover:text-[#E2A84B]'
@@ -383,6 +404,41 @@ export function MenuClient({
                 </div>
               </div>
             </div>
+
+          {/* Category Navigation Pills Strip */}
+          <div className="bg-[#0D0A08]/95 backdrop-blur-xl border-b border-[#E2A84B]/10 py-2.5 px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar max-w-[1360px] mx-auto">
+              {categoryTabs.map((cat) => {
+                const isSelected = activeCategory === cat.id;
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => {
+                      setActiveCategory(cat.id);
+                      if (typeof window !== 'undefined') {
+                        window.history.replaceState(null, '', cat.id === 'all' ? '/menu' : `/menu/${cat.id}`);
+                      }
+                    }}
+                    className={`min-h-[38px] px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer touch-manipulation border ${
+                      isSelected
+                        ? 'bg-[#E2A84B] border-[#E2A84B] text-[#0D0A08] font-bold shadow-[0_0_12px_rgba(226,168,75,0.35)]'
+                        : 'bg-[#16120E] border-white/10 text-[#9A9286] hover:text-[#FAF5EC] hover:border-[#E2A84B]/40'
+                    }`}
+                  >
+                    <span>{cat.label}</span>
+                    <span
+                      className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+                        isSelected ? 'bg-black/20 text-[#0D0A08]' : 'bg-white/5 text-[#9A9286]'
+                      }`}
+                    >
+                      {cat.count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
           {/* Active QR Table Dining Banner */}
           {activeTableNumber && (
@@ -417,7 +473,7 @@ export function MenuClient({
               <button
                 type="button"
                 onClick={clearFilters}
-                className="min-h-[36px] px-2 -mr-2 text-[#E2A84B] hover:underline font-semibold"
+                className="min-h-[44px] px-3 py-1.5 text-[#E2A84B] hover:underline font-semibold touch-manipulation cursor-pointer"
               >
                 Reset All Filters
               </button>
@@ -434,6 +490,41 @@ export function MenuClient({
           </div>
         </div>
       </div>
+
+      {/* Mobile Sticky Order Bar (docked above BottomNav when customer has added items) */}
+      {isMounted && totalCartItems > 0 && (
+        <aside
+          aria-label="Active Order Bar"
+          className="md:hidden fixed bottom-[calc(72px+env(safe-area-inset-bottom,0px)+10px)] left-3 right-3 z-40 animate-in fade-in slide-in-from-bottom-2 duration-200"
+        >
+          <Link
+            href="/cart"
+            aria-label={`View ${totalCartItems} dishes in order bag and proceed to checkout`}
+            className="flex items-center justify-between px-4 py-2.5 rounded-2xl bg-gradient-to-r from-[#F0C36B] via-[#E2A84B] to-[#C88E28] text-[#120E0B] font-bold shadow-[0_6px_25px_rgba(226,168,75,0.45)] min-h-[48px] active:scale-[0.98] transition-all touch-manipulation"
+          >
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full bg-black/20 flex items-center justify-center text-xs font-mono font-black">
+                {totalCartItems}
+              </span>
+              <span className="text-xs font-bold">
+                {totalCartItems === 1 ? 'Dish' : 'Dishes'} in Bag · ₹{Math.round(totalCartPrice)}
+              </span>
+            </div>
+            <div className="flex items-center gap-1 text-xs font-semibold">
+              <span>View Bag &amp; Checkout</span>
+              <span>→</span>
+            </div>
+          </Link>
+        </aside>
+      )}
+
+      {/* Dedicated Sort Bottom Sheet */}
+      <SortSheet
+        isOpen={isSortOpen}
+        onClose={() => setIsSortOpen(false)}
+        currentSort={sort}
+        onApply={(s) => setSort(s)}
+      />
 
       {/* Filter Bottom Sheet with Integrated Categories & Sorting */}
       <FilterSheet

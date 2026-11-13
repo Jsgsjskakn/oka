@@ -86,8 +86,13 @@ function normalizeInitialTime(raw?: string): string {
 
   if (!meridiem) {
     if (hours < 0 || hours > 23 || mins < 0 || mins > 59) return '08:00 PM';
-    meridiem = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12 || 12;
+    // Dinner hours default: 7-11 without AM/PM is evening PM
+    if (hours >= 7 && hours <= 11) {
+      meridiem = 'PM';
+    } else {
+      meridiem = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12 || 12;
+    }
   } else if (hours < 1 || hours > 12 || mins < 0 || mins > 59) {
     return '08:00 PM';
   }
@@ -153,6 +158,7 @@ export default async function BookingPage({
 
   return (
     <BookingClient
+      key={`${initialGuests}-${initialDateStr}-${initialTime}`}
       userId={userId}
       userName={userName}
       userEmail={userEmail}

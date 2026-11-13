@@ -62,6 +62,8 @@ export const useOrderStore = create<OrderStore>()(
           estimatedPrepTime:
             details.orderType === 'takeaway'
               ? details.pickupTime || '30 min'
+              : details.orderType === 'delivery'
+              ? '35-45 mins'
               : '25-35 mins',
           createdAt: new Date().toISOString(),
         };

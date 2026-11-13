@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { BookingHeader } from '@/components/booking/BookingHeader';
@@ -134,14 +134,22 @@ export default function BookingClient({
   const [date, setDate] = useState<Date>(() => parseYmdToLocalDate(initialDateStr));
   const [time, setTime] = useState<string | null>(initialTime);
   const [durationMinutes, setDurationMinutes] = useState<number>(120); // default 2 hours
-  const [selectedTable, setSelectedTable] = useState<FloorTable | null>(
-    RESTAURANT_TABLES.find((t) => t.tableNumber === 7) || RESTAURANT_TABLES[0]
-  );
+
+  // Initialize selected table that fits initial party capacity
+  const initialTable = useMemo(() => {
+    return (
+      RESTAURANT_TABLES.find((t) => t.capacity >= initialGuests && t.tableNumber === 7) ||
+      RESTAURANT_TABLES.find((t) => t.capacity >= initialGuests) ||
+      RESTAURANT_TABLES[0]
+    );
+  }, [initialGuests]);
+
+  const [selectedTable, setSelectedTable] = useState<FloorTable | null>(initialTable);
   const selectedTableRef = useRef<FloorTable | null>(selectedTable);
   useEffect(() => {
     selectedTableRef.current = selectedTable;
   }, [selectedTable]);
-  const [selectedZone, setSelectedZone] = useState<string>("The Hearth Chef's Counter");
+  const [selectedZone, setSelectedZone] = useState<string>(initialTable.zone);
   const [availableTableNumbers, setAvailableTableNumbers] = useState<number[] | undefined>(undefined);
   const [view3DMode, setView3DMode] = useState(true);
   const [openFullscreen3D, setOpenFullscreen3D] = useState(false);
@@ -153,7 +161,7 @@ export default function BookingClient({
     text: string;
     type: 'success' | 'error';
   } | null>({
-    text: `Table T7 available for ${initialGuests} ${initialGuests === 1 ? 'guest' : 'guests'}.`,
+    text: `Table T${initialTable.tableNumber} available for ${initialGuests} ${initialGuests === 1 ? 'guest' : 'guests'}.`,
     type: 'success',
   });
 
@@ -290,6 +298,18 @@ export default function BookingClient({
       return () => clearTimeout(timer);
     }
   }, [date, time, guests, durationMinutes, performAvailabilityCheck]);
+
+  // Sync URL query params on user selection changes without page reloading
+  useEffect(() => {
+    if (typeof window !== 'undefined' && time) {
+      const dateStr = getLocalDateStr(date);
+      const url = new URL(window.location.href);
+      url.searchParams.set('guests', String(guests));
+      url.searchParams.set('date', dateStr);
+      url.searchParams.set('time', time);
+      window.history.replaceState(null, '', url.pathname + url.search);
+    }
+  }, [guests, date, time]);
 
   // When user clicks a table on the floor map
   const handleSelectTableFromMap = (table: FloorTable) => {

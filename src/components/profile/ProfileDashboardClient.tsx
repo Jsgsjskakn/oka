@@ -86,6 +86,16 @@ function safeFormatDate(dateStr?: string, fmt = 'MMM d, yyyy'): string {
   return dateStr;
 }
 
+function formatPhoneDisplay(raw?: string): string {
+  if (!raw) return '';
+  const digits = raw.replace(/\D/g, '');
+  if (digits.length >= 10) {
+    const last10 = digits.slice(-10);
+    return `+91 ${last10.slice(0, 5)} ${last10.slice(5)}`;
+  }
+  return raw;
+}
+
 export function ProfileDashboardClient({
   user,
   profile,
@@ -404,7 +414,7 @@ export function ProfileDashboardClient({
                   {displayPhone && (
                     <div className="flex items-center gap-1.5 text-[11px] text-[#A99A88] truncate mt-0.5">
                       <Phone className="w-3 h-3 text-[#F0C36B] shrink-0" />
-                      <span className="truncate">{displayPhone}</span>
+                      <span className="truncate">{formatPhoneDisplay(displayPhone)}</span>
                     </div>
                   )}
                 </div>

@@ -85,8 +85,11 @@ export default defineSchema({
     customerName: v.string(),
     customerPhone: v.string(),
     customerEmail: v.optional(v.string()),
-    orderType: v.union(v.literal("dine-in"), v.literal("takeaway")),
+    orderType: v.union(v.literal("dine-in"), v.literal("takeaway"), v.literal("delivery")),
     tableNumber: v.optional(v.number()),
+    deliveryAddress: v.optional(v.string()),
+    promoCode: v.optional(v.string()),
+    discountPaise: v.optional(v.number()),
     status: v.union(
       v.literal("pending"),
       v.literal("confirmed"),

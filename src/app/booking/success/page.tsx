@@ -23,22 +23,20 @@ export default async function BookingSuccessPage({
     redirect('/booking');
   }
 
-  const parsedBookingDate = new Date(booking.booking_date);
-  const safeIsoDate = Number.isNaN(parsedBookingDate.getTime())
-    ? new Date().toISOString()
-    : parsedBookingDate.toISOString();
-
   // Map DB booking to BookingDetails type for the card
+  // Using booking.booking_date directly (YYYY-MM-DD) avoids UTC timezone shifting in date-fns
   const bookingDetails = {
     id: booking.id,
-    date: safeIsoDate,
+    date: booking.booking_date,
     time: booking.booking_time,
     guests: booking.guests,
     customerName: booking.customer_name,
     customerPhone: booking.customer_phone,
     customerEmail: booking.customer_email || undefined,
     occasion: booking.occasion || undefined,
-    tablePreference: booking.table_preference || undefined,
+    tablePreference:
+      booking.table_preference ||
+      (booking.tables?.table_number ? `Table #${booking.tables.table_number}` : undefined),
     specialRequests: booking.special_requests || undefined,
   };
 

@@ -94,7 +94,7 @@ export function FilterSheet({
             type="button"
             onClick={onClose}
             aria-label="Close filters"
-            className="w-11 h-11 -mr-1.5 rounded-full bg-white/5 flex items-center justify-center text-[#9A9286] hover:text-[#FAF5EC] hover:bg-white/10 transition-colors"
+            className="w-12 h-12 min-w-[48px] min-h-[48px] -mr-1.5 rounded-full bg-white/5 flex items-center justify-center text-[#9A9286] hover:text-[#FAF5EC] hover:bg-white/10 transition-colors touch-manipulation cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -258,7 +258,7 @@ export function FilterSheet({
                     key={range.id}
                     type="button"
                     onClick={() => onApply({ ...filters, priceRange: range.id as FilterState['priceRange'] })}
-                    className={`min-h-[40px] px-2.5 py-2 rounded-lg text-[11px] border transition-all text-center whitespace-nowrap ${
+                    className={`min-h-[44px] px-2.5 py-2 rounded-lg text-xs border transition-all text-center whitespace-nowrap touch-manipulation cursor-pointer ${
                       isSelected
                         ? 'bg-[#E2A84B]/20 border-[#E2A84B] text-[#FAF5EC] shadow-[0_0_8px_rgba(226,168,75,0.2)] font-semibold'
                         : 'bg-white/[0.03] border-white/10 text-[#9A9286] hover:text-[#FAF5EC] hover:bg-white/[0.06]'
@@ -276,17 +276,17 @@ export function FilterSheet({
             <button 
               type="button"
               onClick={() => onApply({ ...filters, popularOnly: !filters.popularOnly })}
-              className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-[11px] border transition-all ${
+              className={`w-full min-h-[44px] flex items-center justify-between px-3 py-2 rounded-lg text-xs border transition-all touch-manipulation cursor-pointer ${
                 filters.popularOnly 
                   ? 'bg-[#E2A84B]/20 border-[#E2A84B] text-[#E2A84B] shadow-[0_0_10px_rgba(226,168,75,0.25)] font-semibold' 
                   : 'bg-white/[0.03] border-white/10 text-[#9A9286] hover:text-[#FAF5EC] hover:bg-white/[0.06]'
               }`}
             >
               <div className="flex items-center gap-1.5">
-                <Sparkles className="w-3 h-3 text-[#E2A84B]" />
+                <Sparkles className="w-3.5 h-3.5 text-[#E2A84B]" />
                 <span>Chef&apos;s Signature Picks Only</span>
               </div>
-              {filters.popularOnly && <Check className="w-3 h-3 text-[#E2A84B] shrink-0" />}
+              {filters.popularOnly && <Check className="w-3.5 h-3.5 text-[#E2A84B] shrink-0" />}
             </button>
           </div>
         </div>
@@ -294,12 +294,12 @@ export function FilterSheet({
         {/* Action Buttons: always visible in view without scrolling */}
         <div className="flex gap-2.5 mt-3 pt-2.5 border-t border-white/[0.08] shrink-0">
           <SecondaryButton 
-            className="flex-1 min-h-[44px] py-2 text-xs"
+            className="flex-1 min-h-[48px] py-2 text-xs"
             onClick={handleClearAll}
           >
             Clear All
           </SecondaryButton>
-          <PrimaryButton className="flex-1 min-h-[44px] py-2 text-xs" onClick={onClose}>
+          <PrimaryButton className="flex-1 min-h-[48px] py-2 text-xs" onClick={onClose}>
             Apply Filters
           </PrimaryButton>
         </div>

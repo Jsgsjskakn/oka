@@ -237,7 +237,7 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
           type="button"
           onClick={handleToggleFav}
           aria-label={isFav ? 'Remove favorite' : 'Add favorite'}
-          className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-white/80 hover:text-white active:scale-90 transition-all"
+          className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 z-20 w-11 h-11 min-w-[44px] min-h-[44px] sm:w-12 sm:h-12 sm:min-w-[48px] sm:min-h-[48px] rounded-full flex items-center justify-center text-white/80 hover:text-white active:scale-90 transition-all touch-manipulation cursor-pointer"
           style={{
             background: 'rgba(16, 12, 9, 0.65)',
             backdropFilter: 'blur(16px)',
@@ -247,7 +247,7 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
           }}
         >
           <Heart
-            className={`w-4 h-4 transition-colors ${
+            className={`w-4 h-4 sm:w-4.5 sm:h-4.5 transition-colors ${
               isFav ? 'text-rose-500 fill-rose-500 scale-110' : 'text-[#FAF5EC]'
             }`}
           />
@@ -334,7 +334,7 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
                 type="button"
                 onClick={handleAddToCart}
                 aria-label={`Add ${dish.name} to dining order`}
-                className="min-h-[36px] sm:min-h-[38px] px-3 sm:px-5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-extrabold transition-all duration-300 active:scale-95 shadow-md flex items-center gap-1 rounded-lg sm:rounded-xl cursor-pointer text-[#17100C] hover:brightness-110 shrink-0"
+                className="min-h-[44px] px-4 sm:px-5 py-2 text-xs font-extrabold transition-all duration-300 active:scale-95 shadow-md flex items-center gap-1 rounded-xl cursor-pointer text-[#17100C] hover:brightness-110 shrink-0 touch-manipulation"
                 style={{
                   background: 'linear-gradient(135deg, #F0C36B 0%, #DDA33E 50%, #A8792A 100%)',
                 }}
@@ -343,7 +343,7 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
               </button>
             ) : (
               <div
-                className="flex items-center rounded-lg sm:rounded-xl overflow-hidden border shadow-lg backdrop-blur-md transition-all duration-300 h-9 sm:h-[38px] shrink-0"
+                className="flex items-center rounded-xl overflow-hidden border shadow-lg backdrop-blur-md transition-all duration-300 h-11 min-h-[44px] shrink-0"
                 style={{
                   background:
                     'linear-gradient(135deg, rgba(240, 195, 107, 0.22) 0%, rgba(221, 163, 62, 0.12) 100%)',
@@ -362,21 +362,21 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
                   onClick={handleDecrement}
                   aria-label={`Decrease ${dish.name} quantity`}
                   title={cartQuantity === 1 ? 'Remove from order' : 'Decrease quantity'}
-                  className="w-8 sm:w-9 h-full flex items-center justify-center text-[#F0C36B] hover:text-[#17100C] hover:bg-[#F0C36B] active:scale-90 transition-all cursor-pointer group/dec"
+                  className="w-10 sm:w-10 h-full flex items-center justify-center text-[#F0C36B] hover:text-[#17100C] hover:bg-[#F0C36B] active:scale-90 transition-all cursor-pointer group/dec touch-manipulation"
                 >
                   {cartQuantity === 1 ? (
-                    <Trash2 className="w-3.5 h-3.5 text-rose-400 group-hover/dec:text-[#17100C] transition-colors" />
+                    <Trash2 className="w-4 h-4 text-rose-400 group-hover/dec:text-[#17100C] transition-colors" />
                   ) : (
-                    <Minus className="w-3.5 h-3.5 stroke-[2.5]" />
+                    <Minus className="w-4 h-4 stroke-[2.5]" />
                   )}
                 </button>
 
                 {/* Display Current Added Quantity (Kitna Add Hua) */}
                 <div
-                  className="flex items-center justify-center gap-0.5 sm:gap-1 px-2 sm:px-2.5 font-mono select-none border-x border-[#F0C36B]/30 h-full bg-black/30"
+                  className="flex items-center justify-center gap-0.5 sm:gap-1 px-2.5 sm:px-3 font-mono select-none border-x border-[#F0C36B]/30 h-full bg-black/30"
                   title={`${cartQuantity} in your order`}
                 >
-                  <span className="text-[11px] sm:text-xs font-black text-[#FAF5EC]">
+                  <span className="text-xs sm:text-sm font-black text-[#FAF5EC]">
                     {cartQuantity}
                   </span>
                   <span className="text-[9px] font-bold text-[#F0C36B] uppercase tracking-wider hidden sm:inline">
@@ -390,9 +390,9 @@ export function MenuDishCard({ dish, searchHighlight }: MenuDishCardProps) {
                   onClick={handleIncrement}
                   aria-label={`Add more ${dish.name} to order`}
                   title="Add more"
-                  className="w-8 sm:w-9 h-full flex items-center justify-center text-[#F0C36B] hover:text-[#17100C] hover:bg-[#F0C36B] active:scale-90 transition-all cursor-pointer group/inc"
+                  className="w-10 sm:w-10 h-full flex items-center justify-center text-[#F0C36B] hover:text-[#17100C] hover:bg-[#F0C36B] active:scale-90 transition-all cursor-pointer group/inc touch-manipulation"
                 >
-                  <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+                  <Plus className="w-4 h-4 stroke-[2.5]" />
                 </button>
               </div>
             )}

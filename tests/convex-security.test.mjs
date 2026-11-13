@@ -237,7 +237,7 @@ async function updateSetting(ctx, args) {
 
 // 8. updateOrderStatus (convex/orders.ts)
 const ALLOWED_FORWARD_TRANSITIONS = {
-  pending: ['confirmed', 'cancelled'],
+  pending: ['confirmed', 'preparing', 'cancelled'],
   confirmed: ['preparing', 'cancelled'],
   preparing: ['ready', 'cancelled'],
   ready: ['completed'],

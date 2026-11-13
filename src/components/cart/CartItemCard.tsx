@@ -94,14 +94,14 @@ export function CartItemCard({
             <button
               type="button"
               onClick={() => setShowDeleteConfirm(false)}
-              className="min-h-[40px] px-3.5 py-2 rounded-[5px] bg-white/[0.08] hover:bg-white/[0.15] text-xs font-semibold text-[#FAF5EC] transition-colors"
+              className="min-h-[44px] px-4 py-2 rounded-[6px] bg-white/[0.08] hover:bg-white/[0.15] text-xs font-semibold text-[#FAF5EC] transition-colors touch-manipulation cursor-pointer"
             >
               Keep Dish
             </button>
             <button
               type="button"
               onClick={handleConfirmRemove}
-              className="min-h-[40px] px-4 py-2 rounded-[5px] bg-rose-600 hover:bg-rose-500 text-xs font-bold text-white shadow-md transition-colors"
+              className="min-h-[44px] px-4 py-2 rounded-[6px] bg-rose-600 hover:bg-rose-500 text-xs font-bold text-white shadow-md transition-colors touch-manipulation cursor-pointer"
             >
               Confirm Remove
             </button>
@@ -195,7 +195,7 @@ export function CartItemCard({
               <button
                 type="button"
                 onClick={() => setShowNotesInput(true)}
-                className="min-h-[36px] py-1 text-[11px] text-[#E2A84B] hover:text-[#FAF5EC] transition-colors inline-flex items-center gap-1.5 group cursor-pointer text-left"
+                className="min-h-[44px] py-2 text-[11px] text-[#E2A84B] hover:text-[#FAF5EC] transition-colors inline-flex items-center gap-1.5 group cursor-pointer text-left touch-manipulation"
               >
                 <Edit3 className="w-3.5 h-3.5 shrink-0 group-hover:scale-110 transition-transform" />
                 <span className="underline decoration-dotted underline-offset-4 line-clamp-2">
@@ -219,12 +219,12 @@ export function CartItemCard({
                   }}
                   placeholder="e.g. Medium spicy, dressing on side..."
                   aria-label="Chef instructions"
-                  className="flex-1 min-w-0 h-10 px-3 rounded-[6px] bg-[#0D0A08] border border-[#E2A84B]/40 text-xs text-[#FAF5EC] placeholder:text-[#9A9286]/60 outline-none focus:border-[#E2A84B]"
+                  className="flex-1 min-w-0 h-11 px-3 rounded-[6px] bg-[#0D0A08] border border-[#E2A84B]/40 text-xs text-[#FAF5EC] placeholder:text-[#9A9286]/60 outline-none focus:border-[#E2A84B]"
                   autoFocus
                 />
                 <button
                   type="submit"
-                  className="min-h-[40px] px-3 py-1.5 rounded-[6px] bg-[#E2A84B] text-[#0D0A08] text-xs font-bold shrink-0"
+                  className="min-h-[44px] px-3.5 py-2 rounded-[6px] bg-[#E2A84B] text-[#0D0A08] text-xs font-bold shrink-0 touch-manipulation cursor-pointer"
                 >
                   Save
                 </button>
@@ -235,7 +235,7 @@ export function CartItemCard({
                     setShowNotesInput(false);
                   }}
                   aria-label="Cancel instructions"
-                  className="w-10 h-10 flex items-center justify-center text-[#9A9286] hover:text-[#FAF5EC] shrink-0"
+                  className="min-w-[44px] min-h-[44px] flex items-center justify-center text-[#9A9286] hover:text-[#FAF5EC] shrink-0 touch-manipulation cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -253,8 +253,8 @@ export function CartItemCard({
             </span>
           </div>
 
-          {/* Architectural Stepper (40px tap targets) */}
-          <div className="flex items-center bg-[#0D0A08] rounded-[6px] border border-[#E2A84B]/35 p-0.5 shadow-inner shrink-0">
+          {/* Architectural Stepper (44px tap targets) */}
+          <div className="flex items-center bg-[#0D0A08] rounded-[8px] border border-[#E2A84B]/35 p-0.5 shadow-inner shrink-0 h-11 min-h-[44px]">
             <button
               type="button"
               onClick={() => {
@@ -264,13 +264,13 @@ export function CartItemCard({
                   onUpdateQuantity(cartItemId, quantity - 1);
                 }
               }}
-              className="w-10 h-10 flex items-center justify-center text-[#E2A84B] hover:bg-white/[0.08] rounded active:scale-90 transition-all cursor-pointer"
+              className="w-11 h-full min-h-[44px] flex items-center justify-center text-[#E2A84B] hover:bg-white/[0.08] rounded-md active:scale-90 transition-all cursor-pointer touch-manipulation"
               aria-label={quantity === 1 ? 'Remove item' : 'Decrease quantity'}
             >
               {quantity === 1 ? (
-                <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+                <Trash2 className="w-4 h-4 text-rose-400" />
               ) : (
-                <Minus className="w-3.5 h-3.5 stroke-[2.5]" />
+                <Minus className="w-4 h-4 stroke-[2.5]" />
               )}
             </button>
             <span className="w-7 text-center font-mono text-xs font-bold text-[#FAF5EC] select-none">
@@ -286,10 +286,10 @@ export function CartItemCard({
                 onUpdateQuantity(cartItemId, quantity + 1);
               }}
               disabled={quantity >= MAX_ITEM_QUANTITY}
-              className="w-10 h-10 flex items-center justify-center text-[#E2A84B] hover:bg-white/[0.08] disabled:opacity-40 rounded active:scale-90 transition-all cursor-pointer"
+              className="w-11 h-full min-h-[44px] flex items-center justify-center text-[#E2A84B] hover:bg-white/[0.08] disabled:opacity-40 rounded-md active:scale-90 transition-all cursor-pointer touch-manipulation"
               aria-label="Increase quantity"
             >
-              <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+              <Plus className="w-4 h-4 stroke-[2.5]" />
             </button>
           </div>
         </div>

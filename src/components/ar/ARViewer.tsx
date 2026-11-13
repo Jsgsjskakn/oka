@@ -1139,6 +1139,7 @@ export function ARViewer({
         onClose={() => setShowShareSheet(false)}
         dishName={selectedDish.name}
         dishId={selectedDish.slug}
+        onShowQRCode={() => setShowQRModal(true)}
       />
 
       {/* QR Code Desktop Modal */}

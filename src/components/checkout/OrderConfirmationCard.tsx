@@ -1,6 +1,6 @@
 'use client';
 
-import { CheckCircle2, ShoppingBag, Clock, UtensilsCrossed, CreditCard } from 'lucide-react';
+import { CheckCircle2, ShoppingBag, Clock, UtensilsCrossed, CreditCard, Bike, MapPin } from 'lucide-react';
 import type { StoredOrderDetails } from '@/store/order-store';
 
 interface OrderConfirmationCardProps {
@@ -53,19 +53,44 @@ export function OrderConfirmationCard({ order }: OrderConfirmationCardProps) {
         <div className="space-y-4">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center shrink-0">
-              <UtensilsCrossed className="w-4 h-4 text-primary" />
+              {order.orderType === 'delivery' ? (
+                <Bike className="w-4 h-4 text-primary" />
+              ) : (
+                <UtensilsCrossed className="w-4 h-4 text-primary" />
+              )}
             </div>
             <div>
               <p className="text-[10px] text-text-primary/45 uppercase tracking-wider mb-0.5">
-                Order Type
+                Dining Option
               </p>
               <p className="text-sm text-text-primary font-medium">
-                {order.orderType === 'dine-in' ? 'Dine In' : 'Takeaway'}
+                {order.orderType === 'dine-in'
+                  ? 'Dine In'
+                  : order.orderType === 'delivery'
+                  ? 'Home Delivery'
+                  : 'Takeaway'}
                 {order.tableNumber ? ` · Table #${order.tableNumber}` : ''}
                 {order.orderType === 'takeaway' && order.pickupTime ? ` · Pickup in ${order.pickupTime}` : ''}
+                {order.orderType === 'delivery' ? ' · Direct to Door' : ''}
               </p>
             </div>
           </div>
+
+          {order.deliveryAddress && (
+            <div className="flex items-start gap-3">
+              <div className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center shrink-0 mt-0.5">
+                <MapPin className="w-4 h-4 text-primary" />
+              </div>
+              <div>
+                <p className="text-[10px] text-text-primary/45 uppercase tracking-wider mb-0.5">
+                  Delivery Address
+                </p>
+                <p className="text-sm text-text-primary/80 font-light leading-relaxed">
+                  {order.deliveryAddress}
+                </p>
+              </div>
+            </div>
+          )}
 
           <div className="flex items-start gap-3">
             <div className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center shrink-0 mt-0.5">
@@ -102,6 +127,11 @@ export function OrderConfirmationCard({ order }: OrderConfirmationCardProps) {
                 {order.tip && order.tip > 0 ? (
                   <span className="text-xs font-normal text-text-primary/50 ml-2">
                     (incl. ₹{formatRupees(order.tip)} tip)
+                  </span>
+                ) : null}
+                {order.discount && order.discount > 0 ? (
+                  <span className="text-xs font-semibold text-[#22C58B] ml-2">
+                    (saved ₹{formatRupees(order.discount)}{order.promoCode ? ` via ${order.promoCode}` : ''})
                   </span>
                 ) : null}
               </p>

@@ -25,16 +25,8 @@ export default async function ReservationDetailPage({
     );
   }
 
-  let isoDate = rawBooking.booking_date;
-  try {
-    const d = new Date(rawBooking.booking_date);
-    if (!isNaN(d.getTime())) {
-      isoDate = d.toISOString();
-    }
-  } catch {}
-
   const { formattedDate, label, isUpcoming, isCancelled } = resolveReservationPresentation(
-    isoDate,
+    rawBooking.booking_date,
     rawBooking.booking_time,
     rawBooking.status
   );

@@ -39,7 +39,7 @@ export function IngredientPanel({ ingredients, isOpen, onClose }: IngredientPane
               type="button"
               onClick={onClose}
               aria-label="Close ingredients"
-              className="min-w-[44px] min-h-[44px] rounded-full bg-white/5 hover:bg-white/10 transition-colors text-text-primary/70 hover:text-text-primary flex items-center justify-center cursor-pointer touch-manipulation"
+              className="min-w-[48px] min-h-[48px] rounded-full bg-white/5 hover:bg-white/10 transition-colors text-text-primary/70 hover:text-text-primary flex items-center justify-center cursor-pointer touch-manipulation"
             >
               <X size={18} />
             </button>

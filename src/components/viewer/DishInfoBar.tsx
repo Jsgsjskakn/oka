@@ -329,7 +329,7 @@ export function DishInfoBar({
             <button
               type="button"
               onClick={onViewDetails}
-              className="flex items-center gap-1.5 min-w-0 flex-1 text-left cursor-pointer group touch-manipulation"
+              className="flex items-center gap-1.5 min-w-0 flex-1 min-h-[44px] text-left cursor-pointer group touch-manipulation"
               title="Tap to inspect full ingredients"
             >
               <span
@@ -361,10 +361,10 @@ export function DishInfoBar({
                 type="button"
                 onClick={handleMinus}
                 disabled={quantity <= 1}
-                className="relative w-7 h-7 rounded-full flex items-center justify-center text-[#F0C36B] hover:bg-[#F0C36B]/15 active:scale-95 transition-all disabled:opacity-30 disabled:pointer-events-none cursor-pointer touch-manipulation before:content-[''] before:absolute before:-inset-2"
+                className="relative w-8 h-8 rounded-full flex items-center justify-center text-[#F0C36B] hover:bg-[#F0C36B]/15 active:scale-95 transition-all disabled:opacity-30 disabled:pointer-events-none cursor-pointer touch-manipulation before:content-[''] before:absolute before:-inset-2.5"
                 aria-label="Decrease quantity"
               >
-                <Minus className="w-3 h-3" />
+                <Minus className="w-3.5 h-3.5" />
               </button>
               <span className="w-5 text-center font-mono text-[11px] font-bold text-[#F8F2E8]">
                 {quantity}
@@ -373,26 +373,26 @@ export function DishInfoBar({
                 type="button"
                 onClick={handlePlus}
                 disabled={quantity >= 20}
-                className="relative w-7 h-7 rounded-full flex items-center justify-center text-[#F0C36B] hover:bg-[#F0C36B]/15 active:scale-95 transition-all disabled:opacity-30 disabled:pointer-events-none cursor-pointer touch-manipulation before:content-[''] before:absolute before:-inset-2"
+                className="relative w-8 h-8 rounded-full flex items-center justify-center text-[#F0C36B] hover:bg-[#F0C36B]/15 active:scale-95 transition-all disabled:opacity-30 disabled:pointer-events-none cursor-pointer touch-manipulation before:content-[''] before:absolute before:-inset-2.5"
                 aria-label="Increase quantity"
               >
-                <Plus className="w-3 h-3" />
+                <Plus className="w-3.5 h-3.5" />
               </button>
             </div>
 
             {added ? (
-              <div className="min-h-[34px] rounded-lg px-3.5 py-1.5 bg-[#0A261C] border border-[#36D6A0]/50 text-[#36D6A0] font-bold text-[11px] flex items-center gap-1 shadow-[0_0_12px_rgba(54,214,160,0.3)]">
-                <Check className="w-3 h-3 text-[#36D6A0]" />
-                <span>Added</span>
+              <div className="min-h-[44px] rounded-xl px-4 py-2 bg-[#0A261C] border border-[#36D6A0]/50 text-[#36D6A0] font-bold text-xs flex items-center gap-1.5 shadow-[0_0_12px_rgba(54,214,160,0.3)]">
+                <Check className="w-3.5 h-3.5 text-[#36D6A0]" />
+                <span>Added to Bag</span>
               </div>
             ) : (
               <button
                 type="button"
                 onClick={handleAdd}
-                className="min-h-[34px] rounded-lg px-3.5 py-1.5 bg-gradient-to-r from-[#F0C36B] to-[#D4A346] text-[#120E0B] font-bold text-[11px] flex items-center gap-1 shadow-[0_2px_10px_rgba(240,195,107,0.35)] hover:shadow-[0_4px_14px_rgba(240,195,107,0.5)] active:scale-95 transition-all cursor-pointer border border-[#FFE3A5]/40 touch-manipulation"
+                className="min-h-[44px] rounded-xl px-4 py-2 bg-gradient-to-r from-[#F0C36B] to-[#D4A346] text-[#120E0B] font-bold text-xs flex items-center gap-1.5 shadow-[0_2px_12px_rgba(240,195,107,0.35)] hover:shadow-[0_4px_16px_rgba(240,195,107,0.5)] active:scale-95 transition-all cursor-pointer border border-[#FFE3A5]/40 touch-manipulation"
               >
-                <ShoppingCart className="w-3 h-3 text-[#120E0B]" />
-                <span className="whitespace-nowrap">Add to Cart</span>
+                <ShoppingCart className="w-3.5 h-3.5 text-[#120E0B]" />
+                <span className="whitespace-nowrap font-bold">Add to Order</span>
               </button>
             )}
           </div>

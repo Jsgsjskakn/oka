@@ -62,7 +62,7 @@ export function ViewerHeader({ children }: ViewerHeaderProps) {
         {/* Top-Left: Compact Back & 3D Menu Pill */}
         <Link
           href="/menu"
-          className="pointer-events-auto group inline-flex items-center gap-1 px-2 min-[375px]:px-2.5 min-h-[44px] rounded-full bg-[rgba(16,12,9,0.75)] backdrop-blur-xl border border-[rgba(240,195,107,0.35)] hover:border-[#F0C36B] hover:shadow-[0_0_18px_rgba(240,195,107,0.35)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] transition-all active:scale-95 shrink-0 touch-manipulation"
+          className="pointer-events-auto group inline-flex items-center gap-1.5 px-3 min-h-[48px] min-w-[48px] rounded-full bg-[rgba(16,12,9,0.75)] backdrop-blur-xl border border-[rgba(240,195,107,0.35)] hover:border-[#F0C36B] hover:shadow-[0_0_18px_rgba(240,195,107,0.35)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] transition-all active:scale-95 shrink-0 touch-manipulation"
           aria-label="Back to 3D Menu"
         >
           <ArrowLeft className="w-3.5 h-3.5 text-[#F0C36B] group-hover:-translate-x-0.5 transition-transform" />
@@ -77,13 +77,13 @@ export function ViewerHeader({ children }: ViewerHeaderProps) {
         {/* Top-Right: Compact Cart Button */}
         <Link
           href="/cart"
-          className="pointer-events-auto group inline-flex items-center gap-1 px-2 min-[375px]:px-2.5 min-h-[44px] rounded-full bg-[rgba(16,12,9,0.75)] backdrop-blur-xl border border-[rgba(240,195,107,0.35)] hover:border-[#F0C36B] hover:shadow-[0_0_18px_rgba(240,195,107,0.35)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] transition-all active:scale-95 shrink-0 touch-manipulation"
+          className="pointer-events-auto group inline-flex items-center gap-1.5 px-3 min-h-[48px] min-w-[48px] rounded-full bg-[rgba(16,12,9,0.75)] backdrop-blur-xl border border-[rgba(240,195,107,0.35)] hover:border-[#F0C36B] hover:shadow-[0_0_18px_rgba(240,195,107,0.35)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] transition-all active:scale-95 shrink-0 touch-manipulation"
           title="View Cart"
           aria-label="View Cart"
         >
           <ShoppingCart className="w-3.5 h-3.5 text-[#F0C36B] group-hover:scale-110 transition-transform" />
           {mounted && totalCartItems > 0 && (
-            <span className="min-w-[17px] h-[17px] px-1 rounded-full bg-[#F0C36B] text-[#100C09] text-[9.5px] font-bold flex items-center justify-center leading-none">
+            <span className="min-w-[18px] h-[18px] px-1 rounded-full bg-[#F0C36B] text-[#100C09] text-[9.5px] font-bold flex items-center justify-center leading-none">
               {totalCartItems > 99 ? '99+' : totalCartItems}
             </span>
           )}

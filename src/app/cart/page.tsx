@@ -220,7 +220,7 @@ export default function CartPage() {
                 <button
                   type="button"
                   onClick={() => setDiningMode('dine-in')}
-                  className={`min-h-[40px] px-3.5 py-2 rounded-md text-xs font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
+                  className={`min-h-[44px] px-3.5 py-2 rounded-md text-xs font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer flex items-center gap-1.5 touch-manipulation ${
                     diningMode === 'dine-in'
                       ? 'bg-[#0E1F18] border border-[#E2A84B] text-[#FAF5EC] shadow-md'
                       : 'text-[#9A9286] hover:text-[#FAF5EC]'
@@ -233,7 +233,7 @@ export default function CartPage() {
                 <button
                   type="button"
                   onClick={() => setDiningMode('pre-order')}
-                  className={`min-h-[40px] px-3.5 py-2 rounded-md text-xs font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
+                  className={`min-h-[44px] px-3.5 py-2 rounded-md text-xs font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer flex items-center gap-1.5 touch-manipulation ${
                     diningMode === 'pre-order'
                       ? 'bg-[#0E1F18] border border-[#E2A84B] text-[#FAF5EC] shadow-md'
                       : 'text-[#9A9286] hover:text-[#FAF5EC]'
@@ -246,7 +246,7 @@ export default function CartPage() {
                 <button
                   type="button"
                   onClick={() => setDiningMode('takeaway')}
-                  className={`min-h-[40px] px-3.5 py-2 rounded-md text-xs font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
+                  className={`min-h-[44px] px-3.5 py-2 rounded-md text-xs font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer flex items-center gap-1.5 touch-manipulation ${
                     diningMode === 'takeaway'
                       ? 'bg-[#0E1F18] border border-[#E2A84B] text-[#FAF5EC] shadow-md'
                       : 'text-[#9A9286] hover:text-[#FAF5EC]'
@@ -345,7 +345,7 @@ export default function CartPage() {
                             addItem(rec, 1);
                             toast.success('Pairing Added', `${rec.name} (₹${rec.price})`);
                           }}
-                          className="min-h-[40px] px-3.5 py-2 rounded-[5px] text-[11px] font-bold text-[#0D0A08] transition-all hover:brightness-110 active:scale-95 shadow-sm shrink-0 cursor-pointer"
+                          className="min-h-[44px] px-4 py-2 rounded-[6px] text-xs font-bold text-[#0D0A08] transition-all hover:brightness-110 active:scale-95 shadow-sm shrink-0 cursor-pointer touch-manipulation"
                           style={{
                             background:
                               'linear-gradient(135deg, #F6D386 0%, #D49432 50%, #9E6818 100%)',
@@ -371,7 +371,7 @@ export default function CartPage() {
                 <button
                   type="button"
                   onClick={() => router.push('/checkout')}
-                  className="group relative overflow-hidden w-full min-h-[56px] px-4 py-3 rounded-[6px] text-[11px] sm:text-[13px] font-extrabold tracking-[0.12em] text-[#0D0A08] transition-all duration-300 hover:brightness-110 active:scale-[0.98] shadow-2xl flex items-center justify-center gap-2 cursor-pointer uppercase text-center"
+                  className="group relative overflow-hidden w-full min-h-[56px] px-4 py-3 rounded-[6px] text-[11px] sm:text-[13px] font-extrabold tracking-[0.12em] text-[#0D0A08] transition-all duration-300 hover:brightness-110 active:scale-[0.98] shadow-2xl flex items-center justify-center gap-2 cursor-pointer uppercase text-center touch-manipulation"
                   style={{
                     background:
                       'linear-gradient(135deg, #F6D386 0%, #D49432 50%, #9E6818 100%)',
@@ -398,6 +398,30 @@ export default function CartPage() {
           </div>
         </div>
       </div>
+
+      {/* Mobile Sticky Order Checkout Bar (docked above BottomNav) */}
+      <aside
+        aria-label="Mobile Checkout Bar"
+        className="lg:hidden fixed bottom-[calc(72px+env(safe-area-inset-bottom,0px))] left-0 right-0 z-40 px-4 py-2.5 bg-[#0D0A08]/95 backdrop-blur-xl border-t border-[#E2A84B]/25 shadow-2xl flex items-center justify-between gap-3 animate-in fade-in slide-in-from-bottom-2 duration-200"
+      >
+        <div className="flex flex-col min-w-0">
+          <span className="text-[9.5px] uppercase font-mono tracking-wider text-[#9A9286]">TOTAL PAYABLE</span>
+          <span className="font-mono text-base font-bold text-[#FAF5EC] truncate">
+            ₹{formatRupees(totalPayable)}
+          </span>
+        </div>
+        <button
+          type="button"
+          onClick={() => router.push('/checkout')}
+          className="min-h-[48px] px-5 py-2 rounded-xl font-extrabold text-xs text-[#0D0A08] transition-all hover:brightness-110 active:scale-95 shadow-md flex items-center gap-1.5 cursor-pointer touch-manipulation uppercase shrink-0"
+          style={{
+            background: 'linear-gradient(135deg, #F6D386 0%, #D49432 50%, #9E6818 100%)',
+          }}
+        >
+          <span>Checkout</span>
+          <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
+        </button>
+      </aside>
     </div>
   );
 }

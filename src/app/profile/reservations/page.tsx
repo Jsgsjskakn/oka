@@ -46,17 +46,9 @@ export default async function ReservationsPage() {
   if (userContact?.phone || userContact?.email) {
     const rawBookings = await getBookingsByPhone(userContact.phone, userContact.email);
     reservations = rawBookings.map((b: any) => {
-      let isoDate = b.booking_date;
-      try {
-        const d = new Date(b.booking_date);
-        if (!isNaN(d.getTime())) {
-          isoDate = d.toISOString();
-        }
-      } catch {}
-
       return {
         id: b.id,
-        date: isoDate,
+        date: b.booking_date,
         time: b.booking_time,
         guests: b.guests,
         customerName: b.customer_name,

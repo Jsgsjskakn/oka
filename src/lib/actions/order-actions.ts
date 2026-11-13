@@ -9,11 +9,14 @@ export interface PlaceOrderInput {
   customerName: string;
   customerPhone: string;
   customerEmail?: string;
-  orderType: 'dine-in' | 'takeaway';
+  orderType: 'dine-in' | 'takeaway' | 'delivery';
   tableNumber?: number;
+  deliveryAddress?: string;
   paymentMethod: 'upi' | 'cash';
   pickupTime?: string;
   notes?: string;
+  promoCode?: string;
+  discountPaise?: number;
   items: Array<{
     dishId: string;
     dishName: string;

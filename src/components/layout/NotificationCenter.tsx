@@ -103,7 +103,7 @@ export function NotificationCenter() {
         aria-expanded={isOpen}
         aria-haspopup="dialog"
         title="Concierge Desk & Live Updates"
-        className={`relative p-2 rounded-full transition-all flex items-center justify-center group active:scale-95 cursor-pointer shrink-0 ${
+        className={`relative min-w-[48px] min-h-[48px] rounded-full transition-all flex items-center justify-center group active:scale-95 cursor-pointer shrink-0 touch-manipulation ${
           isOpen
             ? 'text-[#D6B77A] bg-[#D6B77A]/15 ring-1 ring-[#D6B77A]/40 shadow-[0_0_14px_rgba(214,183,122,0.3)]'
             : 'text-[#B5ADA2] hover:text-[#FAF5EC] hover:bg-white/[0.05]'

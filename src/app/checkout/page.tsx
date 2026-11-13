@@ -10,9 +10,11 @@ import { toast } from '@/store/toast-store';
 import { CheckoutHeader } from '@/components/checkout/CheckoutHeader';
 import { OrderTypeSelector } from '@/components/checkout/OrderTypeSelector';
 import { PickupTimeChips } from '@/components/checkout/PickupTimeChips';
+import { DeliveryAddressCard } from '@/components/checkout/DeliveryAddressCard';
 import { CustomerCheckoutForm } from '@/components/checkout/CustomerCheckoutForm';
 import { DiningSummaryCard } from '@/components/checkout/DiningSummaryCard';
 import { OrderNotesField } from '@/components/checkout/OrderNotesField';
+import { PromoCodeSection } from '@/components/checkout/PromoCodeSection';
 import { PriceBreakdownCard } from '@/components/checkout/PriceBreakdownCard';
 import { PaymentMethodSelector } from '@/components/checkout/PaymentMethodSelector';
 import { PlaceOrderButton } from '@/components/checkout/PlaceOrderButton';
@@ -40,6 +42,15 @@ export default function CheckoutPage() {
     diningMode === 'takeaway' ? '30 min' : null
   );
   const [tableNumberInput, setTableNumberInput] = useState<string>(storedTableNumber || '');
+  const [deliveryAddress, setDeliveryAddress] = useState<string>('');
+  const [deliveryLandmark, setDeliveryLandmark] = useState<string>('');
+  const [deliveryPincode, setDeliveryPincode] = useState<string>('');
+  const [deliveryInstructions, setDeliveryInstructions] = useState<string>('');
+  const [appliedPromo, setAppliedPromo] = useState<{
+    code: string;
+    discountPaise: number;
+    description: string;
+  } | null>(null);
   const [details, setDetails] = useState({ name: '', phone: '', email: '' });
   const [orderNotes, setOrderNotes] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('upi');
@@ -48,6 +59,7 @@ export default function CheckoutPage() {
     phone?: string;
     email?: string;
     tableNumber?: string;
+    deliveryAddress?: string;
   }>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -122,10 +134,13 @@ export default function CheckoutPage() {
 
   const subtotal = getTotalPrice();
   const subtotalPaise = Math.round(subtotal * 100);
-  const taxPaise = Math.round(subtotalPaise * taxRate);
-  const tipPaise = Math.round((subtotalPaise * tipPercent) / 100);
-  const totalPaise = subtotalPaise + taxPaise + tipPaise;
+  const discountPaise = appliedPromo ? Math.min(subtotalPaise, appliedPromo.discountPaise) : 0;
+  const effectiveSubtotalPaise = Math.max(0, subtotalPaise - discountPaise);
+  const taxPaise = Math.round(effectiveSubtotalPaise * taxRate);
+  const tipPaise = Math.round((effectiveSubtotalPaise * tipPercent) / 100);
+  const totalPaise = effectiveSubtotalPaise + taxPaise + tipPaise;
 
+  const discount = discountPaise / 100;
   const tax = taxPaise / 100;
   const tipAmount = tipPaise / 100;
   const total = totalPaise / 100;
@@ -135,9 +150,11 @@ export default function CheckoutPage() {
     if (type === 'takeaway' && !pickupTime) {
       setPickupTime('30 min');
     }
-    if (type === 'takeaway' && errors.tableNumber) {
-      setErrors((prev) => ({ ...prev, tableNumber: undefined }));
-    }
+    setErrors((prev) => ({
+      ...prev,
+      tableNumber: type === 'dine-in' ? prev.tableNumber : undefined,
+      deliveryAddress: type === 'delivery' ? prev.deliveryAddress : undefined,
+    }));
   };
 
   const handleTableNumberChange = (value: string) => {
@@ -154,6 +171,7 @@ export default function CheckoutPage() {
       phone?: string;
       email?: string;
       tableNumber?: string;
+      deliveryAddress?: string;
     } = {};
     const trimmedName = details.name.trim();
     const cleanPhone = details.phone.replace(/\D/g, '');
@@ -174,6 +192,11 @@ export default function CheckoutPage() {
       const parsedTable = Number(tableNumberInput.trim());
       if (!Number.isInteger(parsedTable) || parsedTable < 1 || parsedTable > 30) {
         newErrors.tableNumber = 'Table number must be between 1 and 30';
+      }
+    }
+    if (orderType === 'delivery') {
+      if (deliveryAddress.trim().length < 5) {
+        newErrors.deliveryAddress = 'Please enter complete delivery address (at least 5 characters)';
       }
     }
 
@@ -206,7 +229,24 @@ export default function CheckoutPage() {
         orderType === 'dine-in' && tableNumberInput.trim() !== ''
           ? Number(tableNumberInput.trim())
           : undefined;
-      const finalPickupTime = orderType === 'takeaway' ? pickupTime || '30 min' : undefined;
+      const fullDeliveryAddress =
+        orderType === 'delivery'
+          ? [
+              deliveryAddress.trim(),
+              deliveryLandmark.trim() ? `Near ${deliveryLandmark.trim()}` : '',
+              deliveryPincode.trim() ? `PIN: ${deliveryPincode.trim()}` : '',
+              deliveryInstructions.trim() ? `Note: ${deliveryInstructions.trim()}` : '',
+            ]
+              .filter(Boolean)
+              .join(', ')
+          : undefined;
+
+      const finalPickupTime =
+        orderType === 'takeaway'
+          ? pickupTime || '30 min'
+          : orderType === 'delivery'
+          ? '35-45 min'
+          : undefined;
       const trimmedNotes = orderNotes.trim();
       const combinedNotes =
         orderType === 'dine-in' && diningMode === 'pre-order'
@@ -241,9 +281,12 @@ export default function CheckoutPage() {
           customerEmail: cleanEmail,
           orderType,
           tableNumber: parsedTable,
+          deliveryAddress: fullDeliveryAddress,
           paymentMethod,
           pickupTime: finalPickupTime,
           notes: combinedNotes,
+          promoCode: appliedPromo?.code,
+          discountPaise: discountPaise > 0 ? discountPaise : undefined,
           items: orderItemsPayload,
           subtotalPaise,
           taxPaise,
@@ -274,6 +317,9 @@ export default function CheckoutPage() {
         id: result.orderId,
         orderType,
         tableNumber: parsedTable,
+        deliveryAddress: fullDeliveryAddress,
+        promoCode: appliedPromo?.code,
+        discount,
         customerName: cleanName,
         customerPhone: cleanPhone,
         customerEmail: cleanEmail,
@@ -370,10 +416,22 @@ export default function CheckoutPage() {
                 error={errors.tableNumber}
                 isPreOrder={diningMode === 'pre-order'}
               />
-            ) : (
+            ) : orderType === 'takeaway' ? (
               <PickupTimeChips
                 selectedTime={pickupTime}
                 onSelect={(time) => setPickupTime(time)}
+              />
+            ) : (
+              <DeliveryAddressCard
+                address={deliveryAddress}
+                landmark={deliveryLandmark}
+                pincode={deliveryPincode}
+                instructions={deliveryInstructions}
+                onAddressChange={setDeliveryAddress}
+                onLandmarkChange={setDeliveryLandmark}
+                onPincodeChange={setDeliveryPincode}
+                onInstructionsChange={setDeliveryInstructions}
+                error={errors.deliveryAddress}
               />
             )}
 
@@ -382,9 +440,22 @@ export default function CheckoutPage() {
             <OrderNotesField value={orderNotes} onChange={setOrderNotes} />
           </div>
 
-          {/* Right Column: Price Summary, Tip & Payment */}
+          {/* Right Column: Promo Code, Price Summary, Tip & Payment */}
           <div className="lg:col-span-5 lg:sticky lg:top-24 lg:rounded-2xl lg:border lg:border-white/5 lg:bg-[#111]/60 lg:overflow-hidden">
-            <PriceBreakdownCard subtotal={subtotal} taxRate={taxRate} tip={tipAmount} />
+            <PromoCodeSection
+              subtotal={subtotal}
+              appliedPromo={appliedPromo}
+              onApplyPromo={setAppliedPromo}
+              onRemovePromo={() => setAppliedPromo(null)}
+            />
+
+            <PriceBreakdownCard
+              subtotal={subtotal}
+              taxRate={taxRate}
+              tip={tipAmount}
+              discount={discount}
+              promoCode={appliedPromo?.code}
+            />
 
             <div className="px-4 py-6 border-b border-white/5">
               <h3 className="font-heading text-sm font-bold mb-4">Add a Tip</h3>
@@ -393,7 +464,7 @@ export default function CheckoutPage() {
                   type="button"
                   onClick={() => setTipPercent(0)}
                   aria-pressed={tipPercent === 0}
-                  className={`min-h-[44px] py-2.5 px-2 rounded-xl text-xs sm:text-sm font-medium border transition-colors ${
+                  className={`min-h-[48px] py-2.5 px-2 rounded-xl text-xs sm:text-sm font-medium border transition-colors touch-manipulation cursor-pointer ${
                     tipPercent === 0
                       ? 'border-primary bg-primary/10 text-primary'
                       : 'border-border-subtle bg-[#1a1a1a] text-text-primary/60 hover:bg-white/5'
@@ -407,7 +478,7 @@ export default function CheckoutPage() {
                     key={preset}
                     onClick={() => setTipPercent(preset)}
                     aria-pressed={tipPercent === preset}
-                    className={`min-h-[44px] py-2.5 px-2 rounded-xl text-xs sm:text-sm font-medium border transition-colors ${
+                    className={`min-h-[48px] py-2.5 px-2 rounded-xl text-xs sm:text-sm font-medium border transition-colors touch-manipulation cursor-pointer ${
                       tipPercent === preset
                         ? 'border-primary bg-primary/10 text-primary'
                         : 'border-border-subtle bg-[#1a1a1a] text-text-primary/60 hover:bg-white/5'

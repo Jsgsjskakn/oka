@@ -15,12 +15,15 @@ export const placeOrder = mutation({
     customerName: v.string(),
     customerPhone: v.string(),
     customerEmail: v.optional(v.string()),
-    orderType: v.union(v.literal("dine-in"), v.literal("takeaway")),
+    orderType: v.union(v.literal("dine-in"), v.literal("takeaway"), v.literal("delivery")),
     tableNumber: v.optional(v.number()),
+    deliveryAddress: v.optional(v.string()),
     paymentMethod: v.union(v.literal("upi"), v.literal("cash")),
     pickupTime: v.optional(v.string()),
     notes: v.optional(v.string()),
     tipPaise: v.number(),
+    promoCode: v.optional(v.string()),
+    discountPaise: v.optional(v.number()),
     idempotencyKey: v.optional(v.string()),
     accessTokenHash: v.optional(v.string()),
     items: v.array(
@@ -177,14 +180,18 @@ export const placeOrder = mutation({
       .first();
     const parsedTax = taxSetting ? Number(taxSetting.value) : NaN;
     const taxPercent = Number.isFinite(parsedTax) && parsedTax >= 0 ? parsedTax : 5;
+    const sanitizedDiscountPaise = Number.isFinite(args.discountPaise)
+      ? Math.max(0, Math.min(calculatedSubtotalPaise, Math.round(args.discountPaise!)))
+      : 0;
+    const effectiveSubtotalPaise = Math.max(0, calculatedSubtotalPaise - sanitizedDiscountPaise);
     const calculatedTaxPaise = Math.round(
-      calculatedSubtotalPaise * (taxPercent / 100)
+      effectiveSubtotalPaise * (taxPercent / 100)
     );
     const sanitizedTipPaise = Number.isFinite(args.tipPaise)
       ? Math.max(0, Math.round(args.tipPaise))
       : 0;
     const calculatedTotalPaise =
-      calculatedSubtotalPaise + calculatedTaxPaise + sanitizedTipPaise;
+      effectiveSubtotalPaise + calculatedTaxPaise + sanitizedTipPaise;
 
     const normalizedEmail = args.customerEmail?.trim().toLowerCase() || undefined;
 
@@ -195,12 +202,15 @@ export const placeOrder = mutation({
       customerEmail: normalizedEmail,
       orderType: args.orderType,
       tableNumber: args.tableNumber,
+      deliveryAddress: args.deliveryAddress,
       status: "pending",
       paymentStatus: "pending",
       paymentMethod: args.paymentMethod,
       pickupTime: args.pickupTime,
       notes: args.notes,
       subtotalPaise: calculatedSubtotalPaise,
+      discountPaise: sanitizedDiscountPaise > 0 ? sanitizedDiscountPaise : undefined,
+      promoCode: args.promoCode,
       taxPaise: calculatedTaxPaise,
       tipPaise: sanitizedTipPaise,
       totalPaise: calculatedTotalPaise,
@@ -312,7 +322,7 @@ export const getOrderHistory = query({
 
 // State Machine allowed transitions for order lifecycle
 const ALLOWED_FORWARD_TRANSITIONS: Record<string, string[]> = {
-  pending: ["confirmed", "cancelled"],
+  pending: ["confirmed", "preparing", "cancelled"],
   confirmed: ["preparing", "cancelled"],
   preparing: ["ready", "cancelled"],
   ready: ["completed"],

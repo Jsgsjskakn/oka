@@ -39,23 +39,43 @@ export function BottomNav() {
     { label: 'Profile', href: '/profile', icon: User },
   ];
 
+  const isARActive = pathname === '/ar' || pathname?.startsWith('/ar');
+
   return (
-    <nav aria-label="Mobile Bottom Navigation" className="md:hidden fixed bottom-0 left-0 right-0 bg-obsidian/90 backdrop-blur-lg border-t border-white/5 z-50 pb-safe">
+    <nav
+      aria-label="Mobile Bottom Navigation"
+      className="md:hidden fixed bottom-0 left-0 right-0 bg-obsidian/90 backdrop-blur-lg border-t border-white/5 z-50 pb-safe"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+    >
       <div className="flex items-center justify-around h-[72px] px-2 relative">
         {navItems.map((item) => {
           const isActive = item.href === '/' ? pathname === '/' : Boolean(pathname?.startsWith(item.href));
           return (
-            <Link key={item.href} href={item.href} className={`flex flex-col items-center justify-center flex-1 max-w-[68px] h-full min-h-[48px] gap-1 transition-colors relative touch-manipulation ${isActive ? 'text-primary' : 'text-muted-foreground hover:text-text-primary'}`}>
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex flex-col items-center justify-center flex-1 max-w-[68px] min-w-[48px] h-full min-h-[48px] gap-1 transition-colors relative touch-manipulation ${
+                isActive ? 'text-primary' : 'text-muted-foreground hover:text-text-primary'
+              }`}
+            >
               <item.icon className="w-5 h-5" />
-              <span className="text-[10px]">{item.label}</span>
-              {isActive && <div className="absolute bottom-2 w-1 h-1 rounded-full bg-primary" />}
+              <span className="text-[10px] font-medium">{item.label}</span>
+              {isActive && (
+                <div className="absolute bottom-2 w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(214,183,122,0.9)]" />
+              )}
             </Link>
           );
         })}
 
         {/* Center 3D Button */}
         <div className="relative -top-5 flex flex-col items-center justify-center w-20 shrink-0">
-          <Link href="/ar" aria-label="Open 3D Food Lounge" className="w-14 h-14 rounded-full bg-gradient-to-tr from-champagne to-[#e8c547] flex items-center justify-center text-black shadow-[0_0_15px_rgba(201,168,76,0.4)] transition-transform hover:scale-105 active:scale-95 touch-manipulation">
+          <Link
+            href="/ar"
+            aria-label="Open 3D Food Lounge"
+            className={`w-14 h-14 rounded-full bg-gradient-to-tr from-champagne to-[#e8c547] flex items-center justify-center text-black shadow-[0_0_15px_rgba(201,168,76,0.4)] transition-transform hover:scale-105 active:scale-95 touch-manipulation ${
+              isARActive ? 'ring-2 ring-primary ring-offset-2 ring-offset-obsidian shadow-[0_0_22px_rgba(201,168,76,0.7)]' : ''
+            }`}
+          >
             <Box className="w-6 h-6" />
           </Link>
           <span className="text-[10px] text-primary mt-1 font-medium">View 3D</span>
@@ -64,7 +84,13 @@ export function BottomNav() {
         {rightItems.map((item) => {
           const isActive = Boolean(pathname?.startsWith(item.href));
           return (
-            <Link key={item.href} href={item.href} className={`flex flex-col items-center justify-center flex-1 max-w-[68px] h-full min-h-[48px] gap-1 transition-colors relative touch-manipulation ${isActive ? 'text-primary' : 'text-muted-foreground hover:text-text-primary'}`}>
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex flex-col items-center justify-center flex-1 max-w-[68px] min-w-[48px] h-full min-h-[48px] gap-1 transition-colors relative touch-manipulation ${
+                isActive ? 'text-primary' : 'text-muted-foreground hover:text-text-primary'
+              }`}
+            >
               <div className="relative">
                 <item.icon className="w-5 h-5" />
                 {item.label === 'Cart' && isMounted && totalItems > 0 && (
@@ -73,8 +99,10 @@ export function BottomNav() {
                   </span>
                 )}
               </div>
-              <span className="text-[10px]">{item.label}</span>
-              {isActive && <div className="absolute bottom-2 w-1 h-1 rounded-full bg-primary" />}
+              <span className="text-[10px] font-medium">{item.label}</span>
+              {isActive && (
+                <div className="absolute bottom-2 w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(214,183,122,0.9)]" />
+              )}
             </Link>
           );
         })}

@@ -4,7 +4,9 @@ import { createClient } from '@/lib/supabase/server';
 import { sb, type QR } from '@/lib/supabase/typed';
 import type { Database } from '@/lib/db/types';
 
-type Booking = Database['public']['Tables']['bookings']['Row'];
+type Booking = Database['public']['Tables']['bookings']['Row'] & {
+  table_number?: number | null;
+};
 type RestaurantTable = Database['public']['Tables']['tables']['Row'];
 
 export type BookingStatus = 'pending' | 'confirmed' | 'seated' | 'cancelled' | 'completed';
@@ -48,6 +50,7 @@ export async function getBookingById(bookingId: string): Promise<BookingWithTabl
         id: booking._id,
         restaurant_id: restaurantId,
         table_id: tableNumber !== null ? String(tableNumber) : null,
+        table_number: tableNumber,
         customer_name: booking.customerName,
         customer_phone: booking.customerPhone,
         customer_email: booking.customerEmail || null,
@@ -148,6 +151,7 @@ export async function getBookingsByPhone(phone?: string, email?: string): Promis
         id: b._id,
         restaurant_id: 'a1b2c3d4-0000-0000-0000-000000000001',
         table_id: typeof b.tableNumber === 'number' ? String(b.tableNumber) : null,
+        table_number: typeof b.tableNumber === 'number' ? b.tableNumber : null,
         customer_name: b.customerName,
         customer_phone: b.customerPhone,
         customer_email: b.customerEmail || null,

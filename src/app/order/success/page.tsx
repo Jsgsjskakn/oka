@@ -32,12 +32,15 @@ export default async function OrderSuccessPage({
 
   const orderDetails: StoredOrderDetails = {
     id: order.id,
-    orderType: order.order_type as 'dine-in' | 'takeaway',
+    orderType: order.order_type as any,
     customerName: order.customer_name,
     customerPhone: order.customer_phone,
     customerEmail: order.customer_email || '',
     pickupTime: order.pickup_time || undefined,
+    deliveryAddress: (order as any).delivery_address || (order as any).deliveryAddress || undefined,
     orderNotes: order.notes || undefined,
+    promoCode: (order as any).promo_code || (order as any).promoCode || undefined,
+    discount: ((order as any).discount_paise || (order as any).discountPaise || 0) / 100,
     paymentMethod: order.payment_method as 'upi' | 'cash',
     items: (order.order_items || []).map((item: any, idx: number) => ({
       cartItemId: item.id || `item-${idx}`,
@@ -62,7 +65,11 @@ export default async function OrderSuccessPage({
     total: order.total_paise / 100,
     status: mappedStatus as OrderStatus,
     estimatedPrepTime:
-      order.order_type === 'takeaway' ? order.pickup_time || '30 min' : '25-30 mins',
+      order.order_type === 'takeaway'
+        ? order.pickup_time || '30 min'
+        : order.order_type === 'delivery'
+        ? '35-45 mins'
+        : '25-30 mins',
     createdAt: order.created_at,
   };
 

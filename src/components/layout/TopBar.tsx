@@ -205,7 +205,7 @@ export function TopBar() {
               onClick={() => openSpotlight()}
               title="Search Culinary Archive (⌘K)"
               aria-label="Open culinary search"
-              className="group flex items-center justify-center text-[#B5ADA2] hover:text-[#FAF5EC] transition-all w-9 h-9 sm:w-auto sm:h-auto sm:p-1.5 rounded-full hover:bg-white/[0.05] active:scale-95 cursor-pointer shrink-0 touch-manipulation"
+              className="group flex items-center justify-center text-[#B5ADA2] hover:text-[#FAF5EC] transition-all min-w-[48px] min-h-[48px] rounded-full hover:bg-white/[0.05] active:scale-95 cursor-pointer shrink-0 touch-manipulation"
             >
               <Search className="w-4 h-4 transition-colors group-hover:text-[#F0C36B]" />
             </button>
@@ -213,7 +213,7 @@ export function TopBar() {
             {/* Book Table Button (Rounded Capsule Outline) */}
             <Link
               href="/booking"
-              className="hidden sm:inline-flex items-center gap-1.5 h-[34px] px-3.5 rounded-full text-[11px] font-semibold tracking-wide text-[#FAF5EC] hover:text-[#FFE3A5] bg-white/[0.04] hover:bg-white/[0.08] border border-[#F0C36B]/50 hover:border-[#F0C36B] shadow-[0_2px_8px_rgba(0,0,0,0.3)] transition-all shrink-0"
+              className="hidden sm:inline-flex items-center gap-1.5 h-[36px] min-h-[36px] px-3.5 rounded-full text-[11px] font-semibold tracking-wide text-[#FAF5EC] hover:text-[#FFE3A5] bg-white/[0.04] hover:bg-white/[0.08] border border-[#F0C36B]/50 hover:border-[#F0C36B] shadow-[0_2px_8px_rgba(0,0,0,0.3)] transition-all shrink-0"
             >
               <Calendar className="w-3 h-3 text-[#F0C36B] shrink-0" />
               <span>Book Table</span>
@@ -224,11 +224,11 @@ export function TopBar() {
               href="/cart"
               title="Your Dining Cart"
               aria-label="Your Dining Cart"
-              className="relative w-9 h-9 sm:w-auto sm:h-auto sm:p-1.5 rounded-full hover:bg-white/[0.05] text-[#B5ADA2] hover:text-[#FAF5EC] transition-all flex items-center justify-center shrink-0 touch-manipulation"
+              className="relative min-w-[48px] min-h-[48px] rounded-full hover:bg-white/[0.05] text-[#B5ADA2] hover:text-[#FAF5EC] transition-all flex items-center justify-center shrink-0 touch-manipulation"
             >
               <ShoppingBag className="w-4 h-4 transition-transform hover:scale-105" />
               {isMounted && totalCartItems > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1.5 min-w-[15px] h-[15px] px-0.5 rounded-full bg-[#E0532B] text-white text-[8.5px] font-mono font-bold flex items-center justify-center shadow-[0_2px_6px_rgba(224,83,43,0.5)]">
+                <span className="absolute top-1.5 right-1.5 min-w-[16px] h-[16px] px-0.5 rounded-full bg-[#E0532B] text-white text-[8.5px] font-mono font-bold flex items-center justify-center shadow-[0_2px_6px_rgba(224,83,43,0.5)]">
                   {totalCartItems > 99 ? '99+' : totalCartItems}
                 </span>
               )}
@@ -240,7 +240,7 @@ export function TopBar() {
               onClick={() => setMobileMenuOpen(true)}
               aria-label="Open navigation drawer"
               aria-expanded={mobileMenuOpen}
-              className="lg:hidden text-[#FAF5EC] hover:text-[#F0C36B] transition-colors w-9 h-9 rounded-full hover:bg-white/[0.05] flex items-center justify-center shrink-0 cursor-pointer touch-manipulation"
+              className="lg:hidden text-[#FAF5EC] hover:text-[#F0C36B] transition-colors min-w-[48px] min-h-[48px] rounded-full hover:bg-white/[0.05] flex items-center justify-center shrink-0 cursor-pointer touch-manipulation"
             >
               <MenuIcon className="w-5 h-5" />
             </button>
@@ -270,9 +270,9 @@ export function TopBar() {
                   type="button"
                   onClick={() => setMobileMenuOpen(false)}
                   aria-label="Close navigation drawer"
-                  className="w-7 h-7 rounded-md bg-white/5 flex items-center justify-center text-white/80 hover:text-white"
+                  className="min-w-[48px] min-h-[48px] rounded-full bg-white/5 flex items-center justify-center text-white/80 hover:text-white hover:bg-white/10 transition-colors"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-5 h-5" />
                 </button>
               </div>
 
@@ -342,7 +342,7 @@ export function TopBar() {
                       key={link.href}
                       href={link.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className={`flex items-center justify-between px-3 py-3 min-h-[44px] rounded-md text-xs font-medium transition-colors ${
+                      className={`flex items-center justify-between px-3 py-3 min-h-[48px] rounded-md text-xs font-medium transition-colors touch-manipulation ${
                         isActive
                           ? 'bg-[#E2A84B]/10 text-[#E2A84B] border-l-2 border-[#E2A84B]'
                           : 'text-white/75 hover:text-white hover:bg-white/[0.04]'
@@ -367,7 +367,7 @@ export function TopBar() {
                     setMobileMenuOpen(false);
                     openSpotlight();
                   }}
-                  className="flex items-center gap-2.5 w-full px-3.5 py-2.5 min-h-[44px] rounded-[6px] bg-[#17120E] border border-[#E2A84B]/25 text-xs font-medium text-[#FAF5EC] active:scale-95 transition-all text-left"
+                  className="flex items-center gap-2.5 w-full px-3.5 py-2.5 min-h-[48px] rounded-[6px] bg-[#17120E] border border-[#E2A84B]/25 text-xs font-medium text-[#FAF5EC] active:scale-95 transition-all text-left touch-manipulation"
                 >
                   <Search className="w-3.5 h-3.5 text-[#E2A84B]" />
                   <span>Search Dishes (Spotlight)</span>

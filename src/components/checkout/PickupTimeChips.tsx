@@ -24,7 +24,7 @@ export function PickupTimeChips({ selectedTime, onSelect }: PickupTimeChipsProps
               key={slot}
               onClick={() => onSelect(slot)}
               aria-pressed={isSelected}
-              className={`min-h-[44px] py-3 rounded-xl border text-xs font-medium transition-all active:scale-95 ${
+              className={`min-h-[48px] py-3 rounded-xl border text-xs font-semibold transition-all active:scale-95 touch-manipulation cursor-pointer ${
                 isSelected
                   ? 'bg-primary border-primary text-black shadow-[0_0_15px_rgba(201,168,76,0.2)]'
                   : 'bg-[#1a1a1a] border-border-subtle text-text-primary/70 hover:border-white/30'

@@ -10,11 +10,14 @@ export interface CreateOrderInput {
   customerName: string;
   customerPhone: string;
   customerEmail?: string;
-  orderType: 'dine-in' | 'takeaway';
+  orderType: 'dine-in' | 'takeaway' | 'delivery';
   tableNumber?: number;
+  deliveryAddress?: string;
   paymentMethod: 'upi' | 'cash';
   pickupTime?: string;
   notes?: string;
+  promoCode?: string;
+  discountPaise?: number;
   items: Array<{
     dishId: string;
     dishName: string;
@@ -100,10 +103,13 @@ export async function createOrder(data: CreateOrderInput): Promise<{ orderId: st
       customerEmail: data.customerEmail,
       orderType: data.orderType,
       tableNumber: data.tableNumber,
+      deliveryAddress: data.deliveryAddress,
       paymentMethod: data.paymentMethod,
       pickupTime: data.pickupTime,
       notes: data.notes,
       tipPaise: data.tipPaise,
+      promoCode: data.promoCode,
+      discountPaise: data.discountPaise,
       idempotencyKey: data.idempotencyKey,
       items: data.items.map((i) => ({
         dishId: i.dishId,

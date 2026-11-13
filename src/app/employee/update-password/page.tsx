@@ -1,17 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { updateEmployeePassword } from '@/lib/actions/employee-actions';
+import { resetPasswordAction } from '@/lib/auth/convex-auth-actions';
 
-export default function UpdatePasswordPage() {
+function UpdatePasswordForm() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const resetToken = searchParams.get('token');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,6 +29,20 @@ export default function UpdatePasswordPage() {
 
     setLoading(true);
     setError(null);
+
+    if (resetToken) {
+      const convexRes = await resetPasswordAction(resetToken, password);
+      if (convexRes.error) {
+        setError(convexRes.error);
+        setLoading(false);
+        return;
+      }
+      setSuccess(true);
+      setTimeout(() => {
+        router.push('/employee/login');
+      }, 2000);
+      return;
+    }
 
     const res = await updateEmployeePassword(password);
 
@@ -118,5 +135,13 @@ export default function UpdatePasswordPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function UpdatePasswordPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#0d0d0d] flex items-center justify-center text-champagne text-sm">Loading...</div>}>
+      <UpdatePasswordForm />
+    </Suspense>
   );
 }

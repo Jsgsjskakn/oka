@@ -32,7 +32,7 @@ export function OrderStatusSummary({ currentStatus, orderId }: OrderStatusSummar
   }, [currentStatus]);
 
   // 1. Primary Realtime: Convex Query
-  const isConvexId = !!orderId && orderId.length > 25 && !orderId.includes('-');
+  const isConvexId = !!orderId && !orderId.includes('-') && /^[a-z0-9]+$/i.test(orderId);
   const convexOrder = useQuery(
     api.orders.getOrderById,
     isConvexId ? { orderId: orderId as any } : 'skip'
@@ -44,14 +44,35 @@ export function OrderStatusSummary({ currentStatus, orderId }: OrderStatusSummar
     }
   }, [convexOrder]);
 
-  // 2. Secondary Realtime: Supabase Fallback (for legacy UUID orders)
+  // 2. Secondary Realtime: Supabase Fallback & Periodic Fetch for legacy / UUID orders
   useEffect(() => {
     if (!orderId || isConvexId) return;
+
+    let isSubscribed = true;
+
+    // Direct API poll fallback for legacy / offline orders
+    const fetchStatus = () => {
+      fetch(`/api/orders/${orderId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (isSubscribed && data?.order?.status) {
+            setStatus(mapOrderStatus(data.order.status));
+          }
+        })
+        .catch(() => {});
+    };
+
+    const interval = setInterval(fetchStatus, 4000);
 
     try {
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
       const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      if (!supabaseUrl || !supabaseKey) return;
+      if (!supabaseUrl || !supabaseKey) {
+        return () => {
+          isSubscribed = false;
+          clearInterval(interval);
+        };
+      }
 
       const supabase = createBrowserClient(supabaseUrl, supabaseKey);
 
@@ -69,10 +90,15 @@ export function OrderStatusSummary({ currentStatus, orderId }: OrderStatusSummar
         .subscribe();
 
       return () => {
+        isSubscribed = false;
+        clearInterval(interval);
         supabase.removeChannel(channel);
       };
     } catch {
-      // ignore
+      return () => {
+        isSubscribed = false;
+        clearInterval(interval);
+      };
     }
   }, [orderId, isConvexId]);
 

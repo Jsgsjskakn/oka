@@ -10,6 +10,22 @@ interface OrderCardProps {
   order: OrderDetails;
 }
 
+function safeFormatCreatedAt(raw: string): string {
+  try {
+    const parsed = parseISO(raw);
+    if (!isNaN(parsed.getTime())) {
+      return format(parsed, 'MMM d, yyyy · h:mm a');
+    }
+    const fallback = new Date(raw);
+    if (!isNaN(fallback.getTime())) {
+      return format(fallback, 'MMM d, yyyy · h:mm a');
+    }
+  } catch {
+    // fallback
+  }
+  return raw;
+}
+
 export function OrderCard({ order }: OrderCardProps) {
   return (
     <Link
@@ -20,7 +36,7 @@ export function OrderCard({ order }: OrderCardProps) {
         <div>
           <p className="text-sm font-semibold text-text-primary">{order.id}</p>
           <p className="text-[10px] text-text-primary/40 mt-0.5">
-            {format(parseISO(order.createdAt), 'MMM d, yyyy · h:mm a')}
+            {safeFormatCreatedAt(order.createdAt)}
           </p>
         </div>
         <OrderStatusBadge status={order.status} />

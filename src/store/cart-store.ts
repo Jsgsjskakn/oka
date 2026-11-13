@@ -38,6 +38,21 @@ interface CartStore {
   clearCart: () => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
+  getTotalPricePaise: () => number;
+}
+
+export function getItemUnitPaise(item: CartItem): number {
+  const basePaise = (item.dish as any)?.price_paise !== undefined && !item.dish?.price
+    ? Math.max(0, Math.round(Number((item.dish as any).price_paise) || 0))
+    : Math.max(0, Math.round((Number(item.dish?.price) || 0) * 100));
+  const sizePaise = item.size ? Math.round((Number(item.size.priceModifier) || 0) * 100) : 0;
+  const addonsPaise = item.selectedAddOns
+    ? item.selectedAddOns.reduce(
+        (sum, addon) => sum + Math.max(0, Math.round((Number(addon.price) || 0) * 100)),
+        0
+      )
+    : 0;
+  return Math.max(0, basePaise + sizePaise + addonsPaise);
 }
 
 function safeHash(str: string): string {
@@ -190,21 +205,15 @@ export const useCartStore = create<CartStore>()(
           const q = Number.isFinite(item.quantity) ? Math.max(0, Math.floor(item.quantity)) : 0;
           return total + q;
         }, 0),
-      getTotalPrice: () => {
-        const totalPaise = get().items.reduce((total, item) => {
+      getTotalPricePaise: () => {
+        return get().items.reduce((total, item) => {
           const qty = Number.isFinite(item.quantity) ? Math.max(0, Math.floor(item.quantity)) : 0;
-          const basePaise = Math.max(0, Math.round((Number(item.dish?.price) || 0) * 100));
-          const sizePaise = item.size ? Math.round((Number(item.size.priceModifier) || 0) * 100) : 0;
-          const addonsPaise = item.selectedAddOns
-            ? item.selectedAddOns.reduce(
-                (sum, addon) => sum + Math.max(0, Math.round((Number(addon.price) || 0) * 100)),
-                0
-              )
-            : 0;
-          const unitPaise = Math.max(0, basePaise + sizePaise + addonsPaise);
+          const unitPaise = getItemUnitPaise(item);
           return total + unitPaise * qty;
         }, 0);
-        return totalPaise / 100;
+      },
+      getTotalPrice: () => {
+        return get().getTotalPricePaise() / 100;
       },
     }),
     {
