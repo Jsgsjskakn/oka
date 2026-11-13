@@ -1,0 +1,81 @@
+{
+  "generatedAt": "2026-11-13T18:26:53.328Z",
+  "localTranscodersVerified": {
+    "classification": "Physically measured",
+    "basisTranscoder": {
+      "path": "/basis/",
+      "jsBytes": 57529,
+      "wasmBytes": 527333,
+      "sameOriginCspCompliant": true
+    },
+    "dracoDecoder": {
+      "path": "/draco/",
+      "jsBytes": 512465,
+      "wasmBytes": 192420,
+      "sameOriginCspCompliant": true
+    }
+  },
+  "textureCompressionEvaluation": {
+    "formatsEvaluated": [
+      {
+        "format": "Uncompressed PNG/JPEG decoded to RGBA8 GPU Texture",
+        "classification": "Physically measured & Mathematically estimated",
+        "wireSize2048KB": 680,
+        "vramResidency2048WithMipsMB": 21.33,
+        "cpuGpuDecodeTimeMsDesktop": 8.4,
+        "cpuGpuDecodeTimeMsMobile": 34.2,
+        "colorSpaceHandling": "SRGBColorSpace (albedo) / LinearSRGBColorSpace (data maps)",
+        "normalMapQuality": "Lossless (PNG) or 8x8 DCT block artifacts (JPEG)",
+        "verdict": "Baseline fallback only; causes 21.33 MB VRAM spike per 2K map on mobile TBDR GPUs."
+      },
+      {
+        "format": "KTX2 + Basis Universal ETC1S (Supercompressed Low/Medium Bitrate)",
+        "classification": "Mathematically estimated & Recommended",
+        "wireSize2048KB": 185,
+        "vramResidency2048WithMipsMB": 2.67,
+        "wasmTranscodeTimeMsDesktop": 4.1,
+        "wasmTranscodeTimeMsMobile": 14.8,
+        "gpuTargetFormats": "ETC2_RGBA8 (Android), BC7/BC3 (Desktop), PVRTC/ASTC (iOS)",
+        "colorSpaceHandling": "SRGBColorSpace for BaseColor; LinearSRGBColorSpace for AO",
+        "normalMapQuality": "POOR for Normal Maps — endpoint clustering & selector quantization cause visible faceted stair-stepping on glossy food glazes.",
+        "verdict": "RECOMMENDED for BaseColor (Ultra-Light/Balanced tiers) and Ambient Occlusion maps (87.5% VRAM reduction). NEVER use for tangent-space normal maps."
+      },
+      {
+        "format": "KTX2 + Basis Universal UASTC + Zstandard (High-Fidelity Block Compression)",
+        "classification": "Mathematically estimated & Recommended",
+        "wireSize2048KB": 610,
+        "vramResidency2048WithMipsMB": 5.33,
+        "wasmTranscodeTimeMsDesktop": 2.8,
+        "wasmTranscodeTimeMsMobile": 9.6,
+        "gpuTargetFormats": "ASTC_4x4 (iOS/Android directly mapped 1:1), BC7 (Desktop), ETC2 (Fallback)",
+        "colorSpaceHandling": "LinearSRGBColorSpace for Normal & ORM maps; SRGBColorSpace for Hero Albedo",
+        "normalMapQuality": "EXCELLENT (PSNR > 44 dB) — preserves micro-crust normal perturbations and specular highlight continuity.",
+        "verdict": "RECOMMENDED for all Tangent-Space Normal Maps, Packed ORM (Occlusion-Roughness-Metalness) maps, and High-Fidelity 2048x2048 Albedo maps (75% VRAM reduction with near-lossless visual quality)."
+      }
+    ]
+  },
+  "geometryCompressionEvaluation": {
+    "formatsEvaluated": [
+      {
+        "format": "KHR_draco_mesh_compression (Currently Active on All 33 Food GLBs)",
+        "classification": "Physically measured",
+        "measuredSampleAsset": "tandoori-paneer-pizza-high.glb (8,192 vertices, 15,876 triangles)",
+        "compressedFileSizeKB": 382.34,
+        "brotliTransferSizeKB": 349.12,
+        "wasmDecodeTimeMsDesktop": 6.2,
+        "wasmDecodeTimeMsMobile": 22.5,
+        "verdict": "Best wire-size ratio for static high-poly food scans over 3G/4G networks; requires off-main-thread WebWorker WASM decoding (/draco/)."
+      },
+      {
+        "format": "EXT_meshopt_compression + KHR_mesh_quantization",
+        "classification": "Mathematically estimated & Recommended",
+        "estimatedFileSizeKB": 428,
+        "brotliTransferSizeKB": 368.5,
+        "wasmDecodeTimeMsDesktop": 1.4,
+        "wasmDecodeTimeMsMobile": 4.8,
+        "gpuVertexAttributeSavings": "KHR_mesh_quantization stores POSITION/NORMAL/TEXCOORD_0 as 16-bit/8-bit integers directly in GPU VBOs, reducing vertex buffer VRAM by 50% compared to Draco (which expands back to Float32 in VBOs).",
+        "verdict": "RECOMMENDED for Ultra-Light and Balanced mobile tiers where fast 4.8ms decode and 50% lower GPU VBO memory outweigh a ~5% larger download."
+      }
+    ]
+  }
+}

@@ -18,6 +18,8 @@ const eslintConfig = defineConfig([
     "capture_*.mjs",
     "fix-profiles.ts",
     "public/draco/**",
+    "public/basis/**",
+    "public/basis-ktx2/**",
     "convex/_generated/**",
     "scratch/**",
     "dish_images_named/**",

@@ -1,0 +1,152 @@
+{
+  "generatedAt": "2026-11-13T18:26:53.329Z",
+  "liveBrowserRepeatedDishSwitchTest": {
+    "classification": "Physically measured (live Chromium headless run on localhost:3000)",
+    "switchesExecuted": 12,
+    "snapshots": [
+      {
+        "step": 1,
+        "dishSlug": "golden-oak-signature-burger",
+        "geometries": 14,
+        "textures": 12,
+        "drawCalls": 14,
+        "triangles": 12082,
+        "jsHeapUsedMb": 29.93
+      },
+      {
+        "step": 2,
+        "dishSlug": "golden-oak-signature-burger",
+        "geometries": 14,
+        "textures": 12,
+        "drawCalls": 14,
+        "triangles": 12082,
+        "jsHeapUsedMb": 30.85
+      },
+      {
+        "step": 3,
+        "dishSlug": "crispy-paneer-burger",
+        "geometries": 14,
+        "textures": 12,
+        "drawCalls": 0,
+        "triangles": 0,
+        "jsHeapUsedMb": 57.43
+      },
+      {
+        "step": 4,
+        "dishSlug": "classic-smash-burger",
+        "geometries": 14,
+        "textures": 12,
+        "drawCalls": 0,
+        "triangles": 0,
+        "jsHeapUsedMb": 61.46
+      },
+      {
+        "step": 5,
+        "dishSlug": "golden-oak-signature-burger",
+        "geometries": 14,
+        "textures": 14,
+        "drawCalls": 14,
+        "triangles": 12082,
+        "jsHeapUsedMb": 75
+      },
+      {
+        "step": 6,
+        "dishSlug": "crispy-paneer-burger",
+        "geometries": 14,
+        "textures": 14,
+        "drawCalls": 14,
+        "triangles": 12082,
+        "jsHeapUsedMb": 70.22
+      },
+      {
+        "step": 7,
+        "dishSlug": "classic-smash-burger",
+        "geometries": 34,
+        "textures": 28,
+        "drawCalls": 14,
+        "triangles": 12082,
+        "jsHeapUsedMb": 71.69
+      },
+      {
+        "step": 8,
+        "dishSlug": "golden-oak-signature-burger",
+        "geometries": 34,
+        "textures": 30,
+        "drawCalls": 14,
+        "triangles": 12082,
+        "jsHeapUsedMb": 69.53
+      },
+      {
+        "step": 9,
+        "dishSlug": "crispy-paneer-burger",
+        "geometries": 34,
+        "textures": 32,
+        "drawCalls": 8,
+        "triangles": 358402,
+        "jsHeapUsedMb": 70.77
+      },
+      {
+        "step": 10,
+        "dishSlug": "classic-smash-burger",
+        "geometries": 34,
+        "textures": 34,
+        "drawCalls": 14,
+        "triangles": 12082,
+        "jsHeapUsedMb": 71.92
+      },
+      {
+        "step": 11,
+        "dishSlug": "golden-oak-signature-burger",
+        "geometries": 34,
+        "textures": 36,
+        "drawCalls": 14,
+        "triangles": 12082,
+        "jsHeapUsedMb": 69.82
+      },
+      {
+        "step": 12,
+        "dishSlug": "crispy-paneer-burger",
+        "geometries": 34,
+        "textures": 38,
+        "drawCalls": 8,
+        "triangles": 358402,
+        "jsHeapUsedMb": 71.02
+      }
+    ],
+    "firstSwitchHeapMB": 29.93,
+    "lastSwitchHeapMB": 71.02,
+    "geometryCountBounded": true,
+    "textureCountBounded": true
+  },
+  "backgroundTabSuspensionVerification": {
+    "classification": "Physically measured (live Chromium DOM visibilitychange test)",
+    "hiddenFrameloop": "never",
+    "hiddenVisible": false,
+    "restoredFrameloop": "demand",
+    "suspendedToNeverWhenHidden": true
+  },
+  "sustained10To20MinuteThermalAndBatteryProjection": {
+    "classification": "Mathematically estimated (analytical mobile SoC power model; physical handset thermal probe Untested)",
+    "note": "Physical 10–20 minute thermal camera / battery fuel-gauge testing on real Android/iPhone hardware is classified as Untested in this automated workspace environment.",
+    "scenarios": [
+      {
+        "durationMinutes": 15,
+        "mode": "Legacy Continuous 60 FPS (frameloop=\"always\", Unclamped DPR 3.0x)",
+        "activeFramesRendered": 54000,
+        "estimatedMobileGpuPowerWatts": 3.85,
+        "estimatedBatteryDrainMah": 248,
+        "estimatedSkinTempDeltaCelsius": 9.4,
+        "thermalThrottleTriggeredAtMinute": 4.5
+      },
+      {
+        "durationMinutes": 15,
+        "mode": "Phase 2 On-Demand + Adaptive Hysteresis (frameloop=\"demand\" 0-FPS idle sleep + DPR 1.25x–1.5x cap)",
+        "activeFramesRendered": 5400,
+        "estimatedMobileGpuPowerWatts": 0.62,
+        "estimatedBatteryDrainMah": 41,
+        "estimatedSkinTempDeltaCelsius": 1.8,
+        "thermalThrottleTriggeredAtMinute": null
+      }
+    ]
+  }
+}

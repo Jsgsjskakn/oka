@@ -22,6 +22,10 @@ import {
   getRendererMemorySnapshot,
   type RendererMemorySnapshot,
 } from '@/lib/three/resource-disposal';
+import {
+  buildProgressiveLodPlan,
+  getGlobalProgressiveAssetQueue,
+} from '@/lib/three/progressive-asset-loader';
 import type { ViewerQualityMode } from './ViewerControls';
 
 export interface DishViewerTelemetryPayload {
@@ -693,13 +697,45 @@ export function ViewerScene({
     overrideTier,
   });
 
-  const activeTier: QualityTier = quality.qualityTier;
-  const tierProfile = getTierProfileLabel(activeTier, quality);
+  const tierProfile = getTierProfileLabel(quality.qualityTier, quality);
+  // Phase 2 Objective 3 Reconciliation: align activeTier with multi-signal tierProfile
+  // so capable mid-range & flagship phones (including iPhones where deviceMemory is undefined)
+  // receive their calibrated 'medium' ('balanced') or 'high' ('high-fidelity') studio rendering profile.
+  const activeTier: QualityTier =
+    overrideTier ??
+    (tierProfile === 'high-fidelity'
+      ? 'high'
+      : tierProfile === 'balanced'
+        ? 'medium'
+        : 'low');
   const prefersReducedMotion = Boolean(quality.prefersReducedMotion);
 
   useEffect(() => {
     onActiveQualityChange?.(activeTier);
   }, [activeTier, onActiveQualityChange]);
+
+  // Phase 2 Objective 4: Cancel obsolete asset requests when switching dishes
+  const progressivePlan = useMemo(
+    () =>
+      buildProgressiveLodPlan(config.dishSlug, config, {
+        targetProfile: tierProfile,
+        thermalState: quality.thermalState,
+        saveData: quality.saveData,
+        effectiveNetworkType: quality.effectiveNetworkType,
+      }),
+    [
+      config,
+      tierProfile,
+      quality.thermalState,
+      quality.saveData,
+      quality.effectiveNetworkType,
+    ]
+  );
+
+  useEffect(() => {
+    const queue = getGlobalProgressiveAssetQueue();
+    queue.cancelAllObsoleteRequests(config.dishSlug);
+  }, [config.dishSlug]);
 
   const resolvedModelPath = useMemo(
     () => resolveDishModelPath(config, activeTier, quality),

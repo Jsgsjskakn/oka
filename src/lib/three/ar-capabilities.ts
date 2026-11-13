@@ -31,6 +31,92 @@ export type RecommendedARMode =
   | 'desktop-3d-or-webcam'
   | 'fallback-3d-only';
 
+/**
+ * Phase 2 — Objective 6: Strict 5-Mode Spatial Experience Taxonomy
+ * Explicitly separates non-world-tracked viewers/overlays from hardware SLAM world-tracked AR.
+ */
+export type SpatialExperienceKind =
+  | 'ordinary-3d-viewer'
+  | 'camera-overlay-preview'
+  | 'android-arcore-scene-viewer'
+  | 'ios-ar-quick-look'
+  | 'webxr-immersive-ar';
+
+export interface SpatialExperienceSpec {
+  kind: SpatialExperienceKind;
+  label: string;
+  shortBadge: string;
+  isWorldTracked: boolean;
+  planeDetection: 'hardware-slam' | 'hit-test-raycast' | 'none';
+  anchorStability: '6dof-world-anchor' | 'screen-space-gyro-assisted' | 'orbit-studio';
+  depthOcclusion: 'hardware-depth-api' | 'optional-webxr-depth' | 'none';
+  lightingEstimation:
+    | 'arkit-spherical-harmonics'
+    | 'arcore-environmental-hdr'
+    | 'webxr-light-probe'
+    | 'camera-rgba-16x16-luma-kelvin'
+    | 'studio-hdri';
+  fallbackKind: SpatialExperienceKind;
+}
+
+export const SPATIAL_EXPERIENCE_TAXONOMY: Record<SpatialExperienceKind, SpatialExperienceSpec> = {
+  'ordinary-3d-viewer': {
+    kind: 'ordinary-3d-viewer',
+    label: 'Interactive 3D Studio Viewer (Non-AR Orbit Inspection)',
+    shortBadge: '3D Studio View',
+    isWorldTracked: false,
+    planeDetection: 'none',
+    anchorStability: 'orbit-studio',
+    depthOcclusion: 'none',
+    lightingEstimation: 'studio-hdri',
+    fallbackKind: 'ordinary-3d-viewer',
+  },
+  'camera-overlay-preview': {
+    kind: 'camera-overlay-preview',
+    label: 'Camera Overlay Preview (Non-World-Tracked 3D Overlay)',
+    shortBadge: 'Camera Overlay Preview',
+    isWorldTracked: false,
+    planeDetection: 'none',
+    anchorStability: 'screen-space-gyro-assisted',
+    depthOcclusion: 'none',
+    lightingEstimation: 'camera-rgba-16x16-luma-kelvin',
+    fallbackKind: 'ordinary-3d-viewer',
+  },
+  'android-arcore-scene-viewer': {
+    kind: 'android-arcore-scene-viewer',
+    label: 'Android ARCore Scene Viewer (World-Tracked SLAM AR)',
+    shortBadge: 'ARCore World-Tracked AR',
+    isWorldTracked: true,
+    planeDetection: 'hardware-slam',
+    anchorStability: '6dof-world-anchor',
+    depthOcclusion: 'hardware-depth-api',
+    lightingEstimation: 'arcore-environmental-hdr',
+    fallbackKind: 'camera-overlay-preview',
+  },
+  'ios-ar-quick-look': {
+    kind: 'ios-ar-quick-look',
+    label: 'Apple AR Quick Look USDZ (World-Tracked ARKit SLAM)',
+    shortBadge: 'ARKit Quick Look AR',
+    isWorldTracked: true,
+    planeDetection: 'hardware-slam',
+    anchorStability: '6dof-world-anchor',
+    depthOcclusion: 'hardware-depth-api',
+    lightingEstimation: 'arkit-spherical-harmonics',
+    fallbackKind: 'camera-overlay-preview',
+  },
+  'webxr-immersive-ar': {
+    kind: 'webxr-immersive-ar',
+    label: 'WebXR Immersive AR Session (World-Tracked Hit-Test SLAM)',
+    shortBadge: 'WebXR World-Tracked AR',
+    isWorldTracked: true,
+    planeDetection: 'hit-test-raycast',
+    anchorStability: '6dof-world-anchor',
+    depthOcclusion: 'optional-webxr-depth',
+    lightingEstimation: 'webxr-light-probe',
+    fallbackKind: 'camera-overlay-preview',
+  },
+};
+
 export type QuickLookUnavailableReason =
   | 'ready'
   | 'missing-usdz-asset'
@@ -80,6 +166,12 @@ export interface ARCapabilityMatrix {
   canRunInBrowserCameraAR: boolean;
   recommendedMode: RecommendedARMode;
   modeSummary: string;
+  /** Strictly separates the active in-browser canvas mode from native world-tracked SLAM handoffs */
+  inBrowserExperience: SpatialExperienceSpec;
+  /** Best available native/WebXR world-tracked SLAM experience on this device, or null if unsupported */
+  worldTrackedExperience: SpatialExperienceSpec | null;
+  /** True ONLY when hardware world-tracked AR (WebXR immersive-ar, ARCore Scene Viewer, or iOS AR Quick Look) is ready */
+  isWorldTrackedARAvailable: boolean;
 }
 
 export interface SceneViewerIntentOptions {
@@ -587,6 +679,19 @@ export async function detectARCapabilityMatrix(
     modeSummary = 'Camera unavailable — Interactive 3D Studio fallback recommended';
   }
 
+  const inBrowserExperience: SpatialExperienceSpec = canRunInBrowserCameraAR
+    ? SPATIAL_EXPERIENCE_TAXONOMY['camera-overlay-preview']
+    : SPATIAL_EXPERIENCE_TAXONOMY['ordinary-3d-viewer'];
+
+  let worldTrackedExperience: SpatialExperienceSpec | null = null;
+  if (webxr.supported) {
+    worldTrackedExperience = SPATIAL_EXPERIENCE_TAXONOMY['webxr-immersive-ar'];
+  } else if (platform.isAndroid && sceneViewer.ready) {
+    worldTrackedExperience = SPATIAL_EXPERIENCE_TAXONOMY['android-arcore-scene-viewer'];
+  } else if ((platform.isIOS || platform.isIPadOS) && quickLook.quickLookReady) {
+    worldTrackedExperience = SPATIAL_EXPERIENCE_TAXONOMY['ios-ar-quick-look'];
+  }
+
   return {
     platform,
     webxr,
@@ -597,7 +702,35 @@ export async function detectARCapabilityMatrix(
     canRunInBrowserCameraAR,
     recommendedMode,
     modeSummary,
+    inBrowserExperience,
+    worldTrackedExperience,
+    isWorldTrackedARAvailable: worldTrackedExperience !== null,
   };
+}
+
+/**
+ * Classifies any ARCapabilityMatrix into the exact 5-mode SpatialExperienceKind.
+ * Never classifies a 2D camera video overlay as world-tracked AR.
+ */
+export function classifySpatialExperience(
+  matrix: Pick<ARCapabilityMatrix, 'webxr' | 'sceneViewer' | 'quickLook' | 'platform' | 'canRunInBrowserCameraAR'>,
+  preferNativeWorldTracking = false
+): SpatialExperienceSpec {
+  if (preferNativeWorldTracking) {
+    if (matrix.webxr.supported) {
+      return SPATIAL_EXPERIENCE_TAXONOMY['webxr-immersive-ar'];
+    }
+    if (matrix.platform.isAndroid && matrix.sceneViewer.ready) {
+      return SPATIAL_EXPERIENCE_TAXONOMY['android-arcore-scene-viewer'];
+    }
+    if ((matrix.platform.isIOS || matrix.platform.isIPadOS) && matrix.quickLook.quickLookReady) {
+      return SPATIAL_EXPERIENCE_TAXONOMY['ios-ar-quick-look'];
+    }
+  }
+  if (matrix.canRunInBrowserCameraAR) {
+    return SPATIAL_EXPERIENCE_TAXONOMY['camera-overlay-preview'];
+  }
+  return SPATIAL_EXPERIENCE_TAXONOMY['ordinary-3d-viewer'];
 }
 
 /**

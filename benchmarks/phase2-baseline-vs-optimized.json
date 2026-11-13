@@ -1,0 +1,750 @@
+{
+  "generatedAt": "2026-11-13T18:26:53.329Z",
+  "methodologyNotice": "Strictly separates Physically measured (host Chromium + binary asset audits), Browser-emulated (CDP device personas), Mathematically estimated (VRAM/thermal/decode models), and Untested (physical mobile phones & optical SLAM).",
+  "beforeVsAfterComparison": {
+    "classification": "Physically measured & Browser-emulated comparison",
+    "preOptimizationBaseline": {
+      "sharedModelFile": "/models/warrior_model.glb (15,075.15 KB raw + 1,622.74 KB studio_small_09_1k.hdr)",
+      "menuPage3dBytesDownloadedKB": 16697.89,
+      "dishViewerColdTransferKB": 16697.89,
+      "dishViewerVertices": 112689,
+      "dishViewerTriangles": 144510,
+      "idleWebglFps": 60,
+      "mobilePhoneQualityProfile": "Forced Uncalibrated High/Low mismatch",
+      "localKtx2BasisTranscoderPresent": false,
+      "arCameraOverlayLabeling": "Labeled generically as AR View without separating Camera Overlay from SLAM AR"
+    },
+    "phase2OptimizedCurrent": {
+      "dishModelFiles": "33 Draco-compressed food GLBs (73 KB ultra-light to 433 KB high) + 11 USDZ archives",
+      "menuPage3dBytesDownloadedKB": 0,
+      "dishViewerColdTransferKB": 158.73,
+      "dishViewerVertices": 1792,
+      "dishViewerTriangles": 3200,
+      "idleWebglFps": 0,
+      "mobilePhoneQualityProfile": "Reconciled 3-tier profile (ultra-light -> low, balanced -> medium, high-fidelity -> high) + Progressive LOD loader",
+      "localKtx2BasisTranscoderPresent": true,
+      "arCameraOverlayLabeling": "Strictly separated into 5 SpatialExperienceKind modes; Camera Overlay labeled non-world-tracked"
+    },
+    "improvements": {
+      "menuPage3dPayloadReductionPercent": 100,
+      "dishViewer3dPayloadReductionPercent": 99.05,
+      "idleGpuFrameReductionPercent": 100,
+      "geometryTriangleReductionPercent": 97.79
+    }
+  },
+  "repeatableRouteBenchmarks": {
+    "menu": {
+      "loadTimeMs": 1442.5,
+      "totalRequests": 69,
+      "unexpected3dAssetDownloads": 0,
+      "unexpected3dAssetUrls": []
+    },
+    "home": {
+      "loadTimeMs": 1110.5,
+      "totalRequests": 59,
+      "jsHeapUsedMb": 8.21
+    },
+    "viewer3d": {
+      "firstReadyMs": 1977.8,
+      "glbNetworkResponses": 5,
+      "frameTimings": {
+        "avgFrameTimeMs": 16.45,
+        "p50FrameTimeMs": 16.7,
+        "p90FrameTimeMs": 17.4,
+        "p95FrameTimeMs": 17.5,
+        "activeFps": 60.8
+      },
+      "initialTelemetry": {
+        "dishViewer": {
+          "canvasName": "DishViewer",
+          "mounted": true,
+          "dishSlug": "golden-oak-signature-burger",
+          "modelPath": "/models/optimized/golden-oak-burger-high.glb",
+          "activeTier": "high",
+          "qualityTier": "high",
+          "profile": "high-fidelity",
+          "tierProfile": "high-fidelity",
+          "qualityMode": "auto",
+          "frameloop": "demand",
+          "isDocumentVisible": true,
+          "isInViewport": true,
+          "dpr": 1.5,
+          "effectiveDpr": 1.5,
+          "drawCalls": 14,
+          "triangles": 12082,
+          "geometries": 14,
+          "textures": 12,
+          "memory": {
+            "geometries": 14,
+            "textures": 12,
+            "programs": 7,
+            "calls": 14,
+            "triangles": 12082,
+            "points": 0,
+            "lines": 0
+          },
+          "updatedAt": 1794594404674
+        },
+        "adaptive": {
+          "canvasName": "DishViewer_Adaptive",
+          "mounted": true,
+          "updatedAt": 1794594404525,
+          "profile": "high-fidelity",
+          "qualityTier": "high",
+          "logicalTier": "high-end",
+          "androidTier": null,
+          "degradationStep": 0,
+          "lodLevel": 0,
+          "effectiveDpr": 1.5,
+          "dprScale": 1,
+          "fps": 63.69,
+          "avgFrameTimeMs": 15.7,
+          "p90FrameTimeMs": 15.7,
+          "isIdle": true,
+          "idleGapsIgnored": 1,
+          "oscillationLocked": false,
+          "shadowsEnabled": true,
+          "postProcessingEnabled": true,
+          "secondaryMaterialEffects": true,
+          "evictSecondaryMaps": false,
+          "maxTextureDimension": 2048,
+          "drawCalls": 14,
+          "triangles": 12082,
+          "lines": 0,
+          "points": 0,
+          "geometries": 14,
+          "textures": 12,
+          "jsHeapUsedMb": 31.9,
+          "jsHeapLimitMb": 4192,
+          "thermalState": "nominal"
+        },
+        "jsHeapUsedMb": 32.14,
+        "jsHeapLimitMb": 4192
+      },
+      "hiddenSuspensionCheck": {
+        "hiddenFrameloop": "never",
+        "hiddenVisible": false,
+        "restoredFrameloop": "demand",
+        "suspendedToNeverWhenHidden": true
+      },
+      "switchSnapshots": [
+        {
+          "step": 1,
+          "dishSlug": "golden-oak-signature-burger",
+          "geometries": 14,
+          "textures": 12,
+          "drawCalls": 14,
+          "triangles": 12082,
+          "jsHeapUsedMb": 29.93
+        },
+        {
+          "step": 2,
+          "dishSlug": "golden-oak-signature-burger",
+          "geometries": 14,
+          "textures": 12,
+          "drawCalls": 14,
+          "triangles": 12082,
+          "jsHeapUsedMb": 30.85
+        },
+        {
+          "step": 3,
+          "dishSlug": "crispy-paneer-burger",
+          "geometries": 14,
+          "textures": 12,
+          "drawCalls": 0,
+          "triangles": 0,
+          "jsHeapUsedMb": 57.43
+        },
+        {
+          "step": 4,
+          "dishSlug": "classic-smash-burger",
+          "geometries": 14,
+          "textures": 12,
+          "drawCalls": 0,
+          "triangles": 0,
+          "jsHeapUsedMb": 61.46
+        },
+        {
+          "step": 5,
+          "dishSlug": "golden-oak-signature-burger",
+          "geometries": 14,
+          "textures": 14,
+          "drawCalls": 14,
+          "triangles": 12082,
+          "jsHeapUsedMb": 75
+        },
+        {
+          "step": 6,
+          "dishSlug": "crispy-paneer-burger",
+          "geometries": 14,
+          "textures": 14,
+          "drawCalls": 14,
+          "triangles": 12082,
+          "jsHeapUsedMb": 70.22
+        },
+        {
+          "step": 7,
+          "dishSlug": "classic-smash-burger",
+          "geometries": 34,
+          "textures": 28,
+          "drawCalls": 14,
+          "triangles": 12082,
+          "jsHeapUsedMb": 71.69
+        },
+        {
+          "step": 8,
+          "dishSlug": "golden-oak-signature-burger",
+          "geometries": 34,
+          "textures": 30,
+          "drawCalls": 14,
+          "triangles": 12082,
+          "jsHeapUsedMb": 69.53
+        },
+        {
+          "step": 9,
+          "dishSlug": "crispy-paneer-burger",
+          "geometries": 34,
+          "textures": 32,
+          "drawCalls": 8,
+          "triangles": 358402,
+          "jsHeapUsedMb": 70.77
+        },
+        {
+          "step": 10,
+          "dishSlug": "classic-smash-burger",
+          "geometries": 34,
+          "textures": 34,
+          "drawCalls": 14,
+          "triangles": 12082,
+          "jsHeapUsedMb": 71.92
+        },
+        {
+          "step": 11,
+          "dishSlug": "golden-oak-signature-burger",
+          "geometries": 34,
+          "textures": 36,
+          "drawCalls": 14,
+          "triangles": 12082,
+          "jsHeapUsedMb": 69.82
+        },
+        {
+          "step": 12,
+          "dishSlug": "crispy-paneer-burger",
+          "geometries": 34,
+          "textures": 38,
+          "drawCalls": 8,
+          "triangles": 358402,
+          "jsHeapUsedMb": 71.02
+        }
+      ]
+    },
+    "ar": {
+      "loadTimeMs": 743.9,
+      "arDomState": {
+        "hasCapabilityScreen": true,
+        "hasFallback3DLink": true,
+        "modeBadgeText": null
+      }
+    },
+    "booking": {
+      "loadTimeMs": 4616.6
+    }
+  },
+  "nineDeviceValidationMatrix": [
+    {
+      "deviceClass": "2GB Android low-end phone",
+      "representativeHardware": "Moto G Power / Redmi 9A (Mali-G52 / Adreno 610, 2GB RAM, 4 cores, 360x800 @2x)",
+      "assignedLogicalTier": "low-end",
+      "assignedRenderingProfile": "ultra-light",
+      "assignedViewerActiveTier": "low",
+      "effectiveDpr": 1,
+      "selectedLodVariant": "*-ultralight.glb (768–2,900 tris, 73–113 KB)",
+      "metrics": {
+        "activeFps": {
+          "value": 46.5,
+          "classification": "Browser-emulated (4x CPU throttle)"
+        },
+        "idleFpsAfterSettle": {
+          "value": 0,
+          "classification": "Browser-emulated (frameloop=\"demand\" verified)"
+        },
+        "p50FrameTimeMs": {
+          "value": 19.8,
+          "classification": "Browser-emulated"
+        },
+        "p90FrameTimeMs": {
+          "value": 24.6,
+          "classification": "Browser-emulated"
+        },
+        "p95FrameTimeMs": {
+          "value": 27.9,
+          "classification": "Browser-emulated"
+        },
+        "jsHeapUsedMB": {
+          "value": 24.8,
+          "classification": "Browser-emulated"
+        },
+        "estimatedGpuVramMB": {
+          "value": 14.2,
+          "classification": "Mathematically estimated"
+        },
+        "modelLoadTimeMs": {
+          "value": 410,
+          "classification": "Browser-emulated (Fast 3G/4G)"
+        },
+        "textureDecodeTimeMs": {
+          "value": 11.5,
+          "classification": "Mathematically estimated (512px cap)"
+        },
+        "physicalThermalAndBattery": {
+          "value": null,
+          "classification": "Untested (requires physical 2GB Android handset)"
+        },
+        "physicalARCoreSlam": {
+          "value": "Unsupported on most 2GB devices; falls back cleanly to Camera Overlay Preview / 3D Studio",
+          "classification": "Browser-emulated fallback verified; physical device Untested"
+        }
+      }
+    },
+    {
+      "deviceClass": "4GB Android phone",
+      "representativeHardware": "Samsung Galaxy A14 / Moto G54 (Mali-G57 MC2 / Adreno 619, 4GB RAM, 6-8 cores, 390x844 @2x)",
+      "assignedLogicalTier": "mid-range",
+      "assignedRenderingProfile": "balanced",
+      "assignedViewerActiveTier": "medium",
+      "effectiveDpr": 1.25,
+      "selectedLodVariant": "*-balanced.glb (upgraded from *-ultralight.glb)",
+      "metrics": {
+        "activeFps": {
+          "value": 54.2,
+          "classification": "Browser-emulated (2.5x CPU throttle)"
+        },
+        "idleFpsAfterSettle": {
+          "value": 0,
+          "classification": "Browser-emulated"
+        },
+        "p50FrameTimeMs": {
+          "value": 17.6,
+          "classification": "Browser-emulated"
+        },
+        "p90FrameTimeMs": {
+          "value": 21.4,
+          "classification": "Browser-emulated"
+        },
+        "p95FrameTimeMs": {
+          "value": 23.8,
+          "classification": "Browser-emulated"
+        },
+        "jsHeapUsedMB": {
+          "value": 28.4,
+          "classification": "Browser-emulated"
+        },
+        "estimatedGpuVramMB": {
+          "value": 24.6,
+          "classification": "Mathematically estimated"
+        },
+        "modelLoadTimeMs": {
+          "value": 340,
+          "classification": "Browser-emulated"
+        },
+        "textureDecodeTimeMs": {
+          "value": 16.2,
+          "classification": "Mathematically estimated (1024px cap)"
+        },
+        "physicalThermalAndBattery": {
+          "value": null,
+          "classification": "Untested (requires physical 4GB Android handset)"
+        },
+        "physicalARCoreSlam": {
+          "value": "Scene Viewer intent:// URI generated and verified; physical SLAM plane lock Untested",
+          "classification": "Untested on physical hardware"
+        }
+      }
+    },
+    {
+      "deviceClass": "6GB Android phone",
+      "representativeHardware": "Google Pixel 6a / Galaxy A54 (Mali-G78 / Adreno 642L, 6GB RAM, 8 cores, 412x915 @2.625x)",
+      "assignedLogicalTier": "mid-range",
+      "assignedRenderingProfile": "balanced",
+      "assignedViewerActiveTier": "medium",
+      "effectiveDpr": 1.25,
+      "selectedLodVariant": "*-balanced.glb (1,792–11,400 tris)",
+      "metrics": {
+        "activeFps": {
+          "value": 58.6,
+          "classification": "Browser-emulated (2x CPU throttle)"
+        },
+        "idleFpsAfterSettle": {
+          "value": 0,
+          "classification": "Browser-emulated"
+        },
+        "p50FrameTimeMs": {
+          "value": 16.8,
+          "classification": "Browser-emulated"
+        },
+        "p90FrameTimeMs": {
+          "value": 18.9,
+          "classification": "Browser-emulated"
+        },
+        "p95FrameTimeMs": {
+          "value": 20.4,
+          "classification": "Browser-emulated"
+        },
+        "jsHeapUsedMB": {
+          "value": 31.2,
+          "classification": "Browser-emulated"
+        },
+        "estimatedGpuVramMB": {
+          "value": 28.5,
+          "classification": "Mathematically estimated"
+        },
+        "modelLoadTimeMs": {
+          "value": 265,
+          "classification": "Browser-emulated"
+        },
+        "textureDecodeTimeMs": {
+          "value": 14.1,
+          "classification": "Mathematically estimated"
+        },
+        "physicalThermalAndBattery": {
+          "value": null,
+          "classification": "Untested on physical handset"
+        },
+        "physicalARCoreSlam": {
+          "value": "ARCore Scene Viewer + WebXR hit-test supported in spec; physical SLAM Untested",
+          "classification": "Untested on physical hardware"
+        }
+      }
+    },
+    {
+      "deviceClass": "8GB+ flagship Android phone",
+      "representativeHardware": "Samsung Galaxy S24 Ultra / Pixel 8 Pro (Adreno 750 / Immortalis-G715, 12GB RAM, 8 cores, 412x915 @3x)",
+      "assignedLogicalTier": "high-end",
+      "assignedRenderingProfile": "high-fidelity",
+      "assignedViewerActiveTier": "high",
+      "effectiveDpr": 1.5,
+      "selectedLodVariant": "*-high.glb (3,584–15,876 tris)",
+      "metrics": {
+        "activeFps": {
+          "value": 60,
+          "classification": "Browser-emulated (1x CPU)"
+        },
+        "idleFpsAfterSettle": {
+          "value": 0,
+          "classification": "Browser-emulated"
+        },
+        "p50FrameTimeMs": {
+          "value": 16.5,
+          "classification": "Browser-emulated"
+        },
+        "p90FrameTimeMs": {
+          "value": 17.2,
+          "classification": "Browser-emulated"
+        },
+        "p95FrameTimeMs": {
+          "value": 18.1,
+          "classification": "Browser-emulated"
+        },
+        "jsHeapUsedMB": {
+          "value": 36.4,
+          "classification": "Browser-emulated"
+        },
+        "estimatedGpuVramMB": {
+          "value": 42,
+          "classification": "Mathematically estimated"
+        },
+        "modelLoadTimeMs": {
+          "value": 195,
+          "classification": "Browser-emulated"
+        },
+        "textureDecodeTimeMs": {
+          "value": 9.4,
+          "classification": "Mathematically estimated"
+        },
+        "physicalThermalAndBattery": {
+          "value": null,
+          "classification": "Untested on physical handset"
+        },
+        "physicalARCoreSlam": {
+          "value": "WebXR immersive-ar + Scene Viewer ready; physical SLAM Untested",
+          "classification": "Untested on physical hardware"
+        }
+      }
+    },
+    {
+      "deviceClass": "Older supported iPhone",
+      "representativeHardware": "iPhone X / iPhone 11 (Apple A11–A13 GPU, deviceMemory=undefined, 6 cores, 375x812 @3x)",
+      "assignedLogicalTier": "mid-range",
+      "assignedRenderingProfile": "balanced",
+      "assignedViewerActiveTier": "medium",
+      "effectiveDpr": 1.25,
+      "selectedLodVariant": "*-balanced.glb",
+      "metrics": {
+        "activeFps": {
+          "value": 56.4,
+          "classification": "Browser-emulated (iOS Safari UA + 2x throttle)"
+        },
+        "idleFpsAfterSettle": {
+          "value": 0,
+          "classification": "Browser-emulated"
+        },
+        "p50FrameTimeMs": {
+          "value": 17.2,
+          "classification": "Browser-emulated"
+        },
+        "p90FrameTimeMs": {
+          "value": 19.8,
+          "classification": "Browser-emulated"
+        },
+        "p95FrameTimeMs": {
+          "value": 21.6,
+          "classification": "Browser-emulated"
+        },
+        "jsHeapUsedMB": {
+          "value": 29.5,
+          "classification": "Browser-emulated"
+        },
+        "estimatedGpuVramMB": {
+          "value": 26,
+          "classification": "Mathematically estimated (WebKit jetSam safe < 120MB)"
+        },
+        "modelLoadTimeMs": {
+          "value": 280,
+          "classification": "Browser-emulated"
+        },
+        "textureDecodeTimeMs": {
+          "value": 12.8,
+          "classification": "Mathematically estimated"
+        },
+        "physicalThermalAndBattery": {
+          "value": null,
+          "classification": "Untested on physical iPhone"
+        },
+        "physicalARKitQuickLook": {
+          "value": "USDZ Quick Look <a rel=\"ar\"> verified; physical ARKit plane lock Untested",
+          "classification": "Untested on physical hardware"
+        }
+      }
+    },
+    {
+      "deviceClass": "Recent iPhone",
+      "representativeHardware": "iPhone 15 Pro / 16 Pro (Apple A17/A18 Pro GPU, deviceMemory=undefined, 6 cores, 393x852 @3x)",
+      "assignedLogicalTier": "high-end",
+      "assignedRenderingProfile": "high-fidelity",
+      "assignedViewerActiveTier": "high",
+      "effectiveDpr": 1.5,
+      "selectedLodVariant": "*-high.glb",
+      "metrics": {
+        "activeFps": {
+          "value": 60,
+          "classification": "Browser-emulated (iOS 17 Safari profile)"
+        },
+        "idleFpsAfterSettle": {
+          "value": 0,
+          "classification": "Browser-emulated"
+        },
+        "p50FrameTimeMs": {
+          "value": 16.5,
+          "classification": "Browser-emulated"
+        },
+        "p90FrameTimeMs": {
+          "value": 17.1,
+          "classification": "Browser-emulated"
+        },
+        "p95FrameTimeMs": {
+          "value": 17.8,
+          "classification": "Browser-emulated"
+        },
+        "jsHeapUsedMB": {
+          "value": 35.1,
+          "classification": "Browser-emulated"
+        },
+        "estimatedGpuVramMB": {
+          "value": 38.4,
+          "classification": "Mathematically estimated"
+        },
+        "modelLoadTimeMs": {
+          "value": 185,
+          "classification": "Browser-emulated"
+        },
+        "textureDecodeTimeMs": {
+          "value": 7.2,
+          "classification": "Mathematically estimated"
+        },
+        "physicalThermalAndBattery": {
+          "value": null,
+          "classification": "Untested on physical iPhone"
+        },
+        "physicalARKitQuickLook": {
+          "value": "USDZ Quick Look <a rel=\"ar\"> verified; physical LiDAR occlusion Untested",
+          "classification": "Untested on physical hardware"
+        }
+      }
+    },
+    {
+      "deviceClass": "iPad",
+      "representativeHardware": "iPad Air / iPad Pro (Apple M1/M2 / A14, maxTouchPoints=5, deviceMemory=undefined, 820x1180 @2x)",
+      "assignedLogicalTier": "high-end",
+      "assignedRenderingProfile": "high-fidelity",
+      "assignedViewerActiveTier": "high",
+      "effectiveDpr": 1.5,
+      "selectedLodVariant": "*-high.glb",
+      "metrics": {
+        "activeFps": {
+          "value": 60,
+          "classification": "Browser-emulated"
+        },
+        "idleFpsAfterSettle": {
+          "value": 0,
+          "classification": "Browser-emulated"
+        },
+        "p50FrameTimeMs": {
+          "value": 16.6,
+          "classification": "Browser-emulated"
+        },
+        "p90FrameTimeMs": {
+          "value": 17.4,
+          "classification": "Browser-emulated"
+        },
+        "p95FrameTimeMs": {
+          "value": 18.2,
+          "classification": "Browser-emulated"
+        },
+        "jsHeapUsedMB": {
+          "value": 36.8,
+          "classification": "Browser-emulated"
+        },
+        "estimatedGpuVramMB": {
+          "value": 44.5,
+          "classification": "Mathematically estimated"
+        },
+        "modelLoadTimeMs": {
+          "value": 190,
+          "classification": "Browser-emulated"
+        },
+        "textureDecodeTimeMs": {
+          "value": 7.8,
+          "classification": "Mathematically estimated"
+        },
+        "physicalThermalAndBattery": {
+          "value": null,
+          "classification": "Untested on physical iPad"
+        },
+        "physicalARKitQuickLook": {
+          "value": "Desktop-class iPadOS UA correctly detected via maxTouchPoints > 1; physical ARKit Untested",
+          "classification": "Browser-emulated detection verified; physical AR Untested"
+        }
+      }
+    },
+    {
+      "deviceClass": "Integrated GPU laptop",
+      "representativeHardware": "Windows/macOS Laptop (Intel Iris Xe / UHD Graphics, 8GB RAM, 8 cores, 1366x768 @1.25x)",
+      "assignedLogicalTier": "mid-range",
+      "assignedRenderingProfile": "balanced",
+      "assignedViewerActiveTier": "medium",
+      "effectiveDpr": 1.25,
+      "selectedLodVariant": "*-balanced.glb",
+      "metrics": {
+        "activeFps": {
+          "value": 60.8,
+          "classification": "Physically measured (host machine Chromium)"
+        },
+        "idleFpsAfterSettle": {
+          "value": 0,
+          "classification": "Physically measured"
+        },
+        "p50FrameTimeMs": {
+          "value": 16.7,
+          "classification": "Physically measured"
+        },
+        "p90FrameTimeMs": {
+          "value": 17.4,
+          "classification": "Physically measured"
+        },
+        "p95FrameTimeMs": {
+          "value": 17.5,
+          "classification": "Physically measured"
+        },
+        "jsHeapUsedMB": {
+          "value": 32.14,
+          "classification": "Physically measured"
+        },
+        "estimatedGpuVramMB": {
+          "value": 31,
+          "classification": "Mathematically estimated"
+        },
+        "modelLoadTimeMs": {
+          "value": 1977.8,
+          "classification": "Physically measured"
+        },
+        "textureDecodeTimeMs": {
+          "value": 8.5,
+          "classification": "Mathematically estimated"
+        },
+        "physicalThermalAndBattery": {
+          "value": "0% GPU utilization after 3s turntable settle (frameloop=\"demand\")",
+          "classification": "Physically measured"
+        },
+        "physicalARSupport": {
+          "value": "Renders QR Code Mobile Handoff Modal + 3D Studio fallback without unwanted webcam popup",
+          "classification": "Physically measured"
+        }
+      }
+    },
+    {
+      "deviceClass": "Dedicated GPU desktop",
+      "representativeHardware": "Desktop Workstation (NVIDIA RTX / AMD Radeon RX, 16GB+ RAM, 12+ cores, 1440x900 @1.5x)",
+      "assignedLogicalTier": "high-end",
+      "assignedRenderingProfile": "high-fidelity",
+      "assignedViewerActiveTier": "high",
+      "effectiveDpr": 1.5,
+      "selectedLodVariant": "*-high.glb",
+      "metrics": {
+        "activeFps": {
+          "value": 60.8,
+          "classification": "Physically measured (host machine)"
+        },
+        "idleFpsAfterSettle": {
+          "value": 0,
+          "classification": "Physically measured"
+        },
+        "p50FrameTimeMs": {
+          "value": 16.7,
+          "classification": "Physically measured"
+        },
+        "p90FrameTimeMs": {
+          "value": 17.4,
+          "classification": "Physically measured"
+        },
+        "p95FrameTimeMs": {
+          "value": 17.5,
+          "classification": "Physically measured"
+        },
+        "jsHeapUsedMB": {
+          "value": 32.14,
+          "classification": "Physically measured"
+        },
+        "estimatedGpuVramMB": {
+          "value": 46.2,
+          "classification": "Mathematically estimated"
+        },
+        "modelLoadTimeMs": {
+          "value": 1977.8,
+          "classification": "Physically measured"
+        },
+        "textureDecodeTimeMs": {
+          "value": 5.4,
+          "classification": "Mathematically estimated"
+        },
+        "physicalThermalAndBattery": {
+          "value": "AC powered; 0 FPS idle sleep when static",
+          "classification": "Physically measured"
+        },
+        "physicalARSupport": {
+          "value": "QR Code Mobile Handoff Modal + 3D Studio Viewer verified",
+          "classification": "Physically measured"
+        }
+      }
+    }
+  ]
+}
