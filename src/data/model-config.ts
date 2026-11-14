@@ -247,7 +247,7 @@ export const DISH_CULINARY_PROFILES: Record<string, CulinaryDishProfile> = {
   'paneer-royale-burger': {
     culinaryCategory: 'fried-food',
     secondaryCategories: ['bread-crust', 'melted-cheese', 'fresh-vegetables'],
-    culinaryArchetype: 'golden-oak-burger',
+    culinaryArchetype: 'crispy-paneer-burger',
     arScale: 0.16,
     preserveDynamicARLighting: true,
   },
@@ -261,14 +261,14 @@ export const DISH_CULINARY_PROFILES: Record<string, CulinaryDishProfile> = {
   'hakka-street-chow-mein': {
     culinaryCategory: 'glossy-sauce',
     secondaryCategories: ['fresh-vegetables'],
-    culinaryArchetype: 'gourmet-wok-bowl',
+    culinaryArchetype: 'wok-tossed-chow-mein',
     arScale: 0.16,
     preserveDynamicARLighting: true,
   },
   'golden-chilli-potato': {
     culinaryCategory: 'fried-food',
     secondaryCategories: ['glossy-sauce', 'fresh-vegetables'],
-    culinaryArchetype: 'gourmet-wok-bowl',
+    culinaryArchetype: 'dynamite-chilli-potatoes',
     arScale: 0.16,
     preserveDynamicARLighting: true,
   },

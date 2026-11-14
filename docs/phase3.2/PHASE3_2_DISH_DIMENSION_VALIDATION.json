@@ -1,0 +1,1560 @@
+{
+  "schemaVersion": "3.2.0",
+  "generatedAt": "2026-11-14T15:54:50.188Z",
+  "owner": "Sub-Agent 2 (Table Placement & Dimension Engineer)",
+  "coordinateContract": {
+    "worldUnitsPerMetre": 1,
+    "canonicalOrigin": "footprint-centre-ground-contact (y = 0 table level)",
+    "scaleToleranceRatio": 0.05,
+    "groundContactToleranceM": 0.002
+  },
+  "measurementProcedure": {
+    "description": "Standardized physical measurement protocol for restaurant tabletop AR assets",
+    "referenceObject": "Standard ISO/IEC 7810 ID-1 card (Credit / Debit Card: 85.60 mm x 53.98 mm) or standard ISO 216 A4 sheet (297 mm x 210 mm)",
+    "equipment": [
+      "Digital Vernier Calipers (0-300mm, 0.01mm resolution, ±0.02mm accuracy)",
+      "Calibrated kitchen precision scale / flat gauge ruler",
+      "Level horizontal dining table with uniform ambient lighting (>300 lux)"
+    ],
+    "tolerance": "±5% maximum allowable deviation from physical dish dimensions (Phase 3.2 spatial-contract: SCALE_TOLERANCE_RATIO = 0.05)",
+    "groundContactTolerance": "±2 mm maximum allowable vertical gap or penetration (GROUND_CONTACT_TOLERANCE_M = 0.002m)",
+    "steps": [
+      "1. Plate the fresh dish following standard Golden Oak culinary presentation plating guidelines.",
+      "2. Place the plated dish on a level granite or wooden restaurant table.",
+      "3. Align digital calipers across the maximum outer rim diameter of the plate/board (widthCm & depthCm). Record 3 orthogonal readings; average them.",
+      "4. Place a level gauge across the highest garnish/bun peak and measure vertical height from tabletop to highest point (heightCm).",
+      "5. Place an ISO ID-1 card adjacent to the dish on the table as an optical ground-truth reference.",
+      "6. Launch WebXR AR mode on a calibrated ARCore device (e.g. Pixel 8 / Galaxy S24) or AR Quick Look on an iPhone (LiDAR).",
+      "7. Place the virtual dish next to the physical dish at 1.0x real size.",
+      "8. Measure distance across virtual reticle vs physical plate using AR ruler tool or physical reference overlay.",
+      "9. Update `src/data/dish-dimensions.ts` with measured values and toggle `scaleValidated: true`, `groundContactValidated: true`, `dimensionSource: 'physically-measured'`."
+    ]
+  },
+  "dishes": {
+    "tandoori-paneer-pizza": {
+      "dishSlug": "tandoori-paneer-pizza",
+      "archetype": "tandoori-paneer-pizza",
+      "targetDimensionsCm": {
+        "widthCm": 30,
+        "depthCm": 30,
+        "heightCm": 3.5
+      },
+      "targetDimensionsM": {
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.035
+      },
+      "dimensionSource": "estimated-typical-portion",
+      "scaleValidated": false,
+      "groundContactValidated": true,
+      "modelBoundingBoxM": {
+        "min": [
+          -1.199194,
+          0,
+          -1.2
+        ],
+        "max": [
+          1.199194,
+          0.118404,
+          1.2
+        ],
+        "width": 2.398388,
+        "height": 0.118404,
+        "depth": 2.4,
+        "footprintCenter": [
+          0,
+          0
+        ],
+        "lowestPointY": 0
+      },
+      "scaleFactor": 0.125,
+      "groundContactOffsetM": 0,
+      "heightDeviationRatio": -0.577129,
+      "heightDeviationPct": -57.71,
+      "canonicalOriginCheck": {
+        "isOriginGrounded": true,
+        "groundResidualM": 0,
+        "isFootprintCentred": true,
+        "footprintOffsetM": [
+          0,
+          0
+        ]
+      },
+      "lodConsistency": {
+        "consistent": true,
+        "maxLodFootprintDiffPct": 0
+      },
+      "usdzConsistency": {
+        "available": true,
+        "metersPerUnit": 1,
+        "upAxis": "Y",
+        "isCanonicalMeterScale": true,
+        "isCanonicalUpAxis": true,
+        "isTableAnchored": true
+      },
+      "evidenceLabels": [
+        "automated-test",
+        "estimated"
+      ]
+    },
+    "chicken-tikka-pizza": {
+      "dishSlug": "chicken-tikka-pizza",
+      "archetype": "chicken-tikka-pizza",
+      "targetDimensionsCm": {
+        "widthCm": 30,
+        "depthCm": 30,
+        "heightCm": 3.5
+      },
+      "targetDimensionsM": {
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.035
+      },
+      "dimensionSource": "estimated-typical-portion",
+      "scaleValidated": false,
+      "groundContactValidated": true,
+      "modelBoundingBoxM": {
+        "min": [
+          -1.197076,
+          0,
+          -1.195176
+        ],
+        "max": [
+          1.197076,
+          0.055674,
+          1.195176
+        ],
+        "width": 2.394152,
+        "height": 0.055674,
+        "depth": 2.390352,
+        "footprintCenter": [
+          0,
+          0
+        ],
+        "lowestPointY": 0
+      },
+      "scaleFactor": 0.125305,
+      "groundContactOffsetM": 0,
+      "heightDeviationRatio": -0.800679,
+      "heightDeviationPct": -80.07,
+      "canonicalOriginCheck": {
+        "isOriginGrounded": true,
+        "groundResidualM": 0,
+        "isFootprintCentred": true,
+        "footprintOffsetM": [
+          0,
+          0
+        ]
+      },
+      "lodConsistency": {
+        "consistent": true,
+        "maxLodFootprintDiffPct": 0
+      },
+      "usdzConsistency": {
+        "available": true,
+        "metersPerUnit": 1,
+        "upAxis": "Y",
+        "isCanonicalMeterScale": true,
+        "isCanonicalUpAxis": true,
+        "isTableAnchored": true
+      },
+      "evidenceLabels": [
+        "automated-test",
+        "estimated"
+      ]
+    },
+    "mushroom-truffle-pizza": {
+      "dishSlug": "mushroom-truffle-pizza",
+      "archetype": "mushroom-truffle-pizza",
+      "targetDimensionsCm": {
+        "widthCm": 30,
+        "depthCm": 30,
+        "heightCm": 3.5
+      },
+      "targetDimensionsM": {
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.035
+      },
+      "dimensionSource": "estimated-typical-portion",
+      "scaleValidated": false,
+      "groundContactValidated": true,
+      "modelBoundingBoxM": {
+        "min": [
+          -1.195278,
+          0,
+          -1.195205
+        ],
+        "max": [
+          1.195278,
+          0.055455,
+          1.195205
+        ],
+        "width": 2.390555,
+        "height": 0.055455,
+        "depth": 2.390409,
+        "footprintCenter": [
+          0,
+          0
+        ],
+        "lowestPointY": 0
+      },
+      "scaleFactor": 0.125494,
+      "groundContactOffsetM": 0,
+      "heightDeviationRatio": -0.801164,
+      "heightDeviationPct": -80.12,
+      "canonicalOriginCheck": {
+        "isOriginGrounded": true,
+        "groundResidualM": 0,
+        "isFootprintCentred": true,
+        "footprintOffsetM": [
+          0,
+          0
+        ]
+      },
+      "lodConsistency": {
+        "consistent": true,
+        "maxLodFootprintDiffPct": 0.02
+      },
+      "usdzConsistency": {
+        "available": true,
+        "metersPerUnit": 1,
+        "upAxis": "Y",
+        "isCanonicalMeterScale": true,
+        "isCanonicalUpAxis": true,
+        "isTableAnchored": true
+      },
+      "evidenceLabels": [
+        "automated-test",
+        "estimated"
+      ]
+    },
+    "peri-peri-fiesta-pizza": {
+      "dishSlug": "peri-peri-fiesta-pizza",
+      "archetype": "tandoori-paneer-pizza",
+      "targetDimensionsCm": {
+        "widthCm": 30,
+        "depthCm": 30,
+        "heightCm": 3.5
+      },
+      "targetDimensionsM": {
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.035
+      },
+      "dimensionSource": "estimated-typical-portion",
+      "scaleValidated": false,
+      "groundContactValidated": true,
+      "modelBoundingBoxM": {
+        "min": [
+          -1.199194,
+          0,
+          -1.2
+        ],
+        "max": [
+          1.199194,
+          0.118404,
+          1.2
+        ],
+        "width": 2.398388,
+        "height": 0.118404,
+        "depth": 2.4,
+        "footprintCenter": [
+          0,
+          0
+        ],
+        "lowestPointY": 0
+      },
+      "scaleFactor": 0.125,
+      "groundContactOffsetM": 0,
+      "heightDeviationRatio": -0.577129,
+      "heightDeviationPct": -57.71,
+      "canonicalOriginCheck": {
+        "isOriginGrounded": true,
+        "groundResidualM": 0,
+        "isFootprintCentred": true,
+        "footprintOffsetM": [
+          0,
+          0
+        ]
+      },
+      "lodConsistency": {
+        "consistent": true,
+        "maxLodFootprintDiffPct": 0
+      },
+      "usdzConsistency": {
+        "available": true,
+        "metersPerUnit": 1,
+        "upAxis": "Y",
+        "isCanonicalMeterScale": true,
+        "isCanonicalUpAxis": true,
+        "isTableAnchored": true
+      },
+      "evidenceLabels": [
+        "automated-test",
+        "estimated"
+      ]
+    },
+    "bbq-chicken-overload": {
+      "dishSlug": "bbq-chicken-overload",
+      "archetype": "bbq-chicken-overload",
+      "targetDimensionsCm": {
+        "widthCm": 30,
+        "depthCm": 30,
+        "heightCm": 3.5
+      },
+      "targetDimensionsM": {
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.035
+      },
+      "dimensionSource": "estimated-typical-portion",
+      "scaleValidated": false,
+      "groundContactValidated": true,
+      "modelBoundingBoxM": {
+        "min": [
+          -1.183959,
+          0,
+          -1.183007
+        ],
+        "max": [
+          1.183959,
+          0.211368,
+          1.183007
+        ],
+        "width": 2.367918,
+        "height": 0.211368,
+        "depth": 2.366013,
+        "footprintCenter": [
+          0,
+          0
+        ],
+        "lowestPointY": 0
+      },
+      "scaleFactor": 0.126694,
+      "groundContactOffsetM": 0,
+      "heightDeviationRatio": -0.234887,
+      "heightDeviationPct": -23.49,
+      "canonicalOriginCheck": {
+        "isOriginGrounded": true,
+        "groundResidualM": 0,
+        "isFootprintCentred": true,
+        "footprintOffsetM": [
+          0,
+          0
+        ]
+      },
+      "lodConsistency": {
+        "consistent": true,
+        "maxLodFootprintDiffPct": 1.41
+      },
+      "usdzConsistency": {
+        "available": true,
+        "metersPerUnit": 1,
+        "upAxis": "Y",
+        "isCanonicalMeterScale": true,
+        "isCanonicalUpAxis": true,
+        "isTableAnchored": true
+      },
+      "evidenceLabels": [
+        "automated-test",
+        "estimated"
+      ]
+    },
+    "classic-smash-burger": {
+      "dishSlug": "classic-smash-burger",
+      "archetype": "classic-smash-burger",
+      "targetDimensionsCm": {
+        "widthCm": 12,
+        "depthCm": 12,
+        "heightCm": 9.5
+      },
+      "targetDimensionsM": {
+        "width": 0.12,
+        "depth": 0.12,
+        "height": 0.095
+      },
+      "dimensionSource": "estimated-typical-portion",
+      "scaleValidated": false,
+      "groundContactValidated": true,
+      "modelBoundingBoxM": {
+        "min": [
+          -0.988146,
+          0,
+          -1.000001
+        ],
+        "max": [
+          0.988146,
+          1.210954,
+          1
+        ],
+        "width": 1.976292,
+        "height": 1.210954,
+        "depth": 2.000001,
+        "footprintCenter": [
+          0,
+          0
+        ],
+        "lowestPointY": 0
+      },
+      "scaleFactor": 0.06,
+      "groundContactOffsetM": 0,
+      "heightDeviationRatio": -0.235187,
+      "heightDeviationPct": -23.52,
+      "canonicalOriginCheck": {
+        "isOriginGrounded": true,
+        "groundResidualM": 0,
+        "isFootprintCentred": true,
+        "footprintOffsetM": [
+          0,
+          0
+        ]
+      },
+      "lodConsistency": {
+        "consistent": true,
+        "maxLodFootprintDiffPct": 0
+      },
+      "usdzConsistency": {
+        "available": true,
+        "metersPerUnit": 1,
+        "upAxis": "Y",
+        "isCanonicalMeterScale": true,
+        "isCanonicalUpAxis": true,
+        "isTableAnchored": true
+      },
+      "evidenceLabels": [
+        "automated-test",
+        "estimated"
+      ]
+    },
+    "golden-oak-signature-burger": {
+      "dishSlug": "golden-oak-signature-burger",
+      "archetype": "golden-oak-burger",
+      "targetDimensionsCm": {
+        "widthCm": 12.5,
+        "depthCm": 12.5,
+        "heightCm": 10.5
+      },
+      "targetDimensionsM": {
+        "width": 0.125,
+        "depth": 0.125,
+        "height": 0.105
+      },
+      "dimensionSource": "estimated-typical-portion",
+      "scaleValidated": false,
+      "groundContactValidated": true,
+      "modelBoundingBoxM": {
+        "min": [
+          -0.988146,
+          0,
+          -1.000001
+        ],
+        "max": [
+          0.988146,
+          1.210954,
+          1
+        ],
+        "width": 1.976292,
+        "height": 1.210954,
+        "depth": 2.000001,
+        "footprintCenter": [
+          0,
+          0
+        ],
+        "lowestPointY": 0
+      },
+      "scaleFactor": 0.0625,
+      "groundContactOffsetM": 0,
+      "heightDeviationRatio": -0.279194,
+      "heightDeviationPct": -27.92,
+      "canonicalOriginCheck": {
+        "isOriginGrounded": true,
+        "groundResidualM": 0,
+        "isFootprintCentred": true,
+        "footprintOffsetM": [
+          0,
+          0
+        ]
+      },
+      "lodConsistency": {
+        "consistent": true,
+        "maxLodFootprintDiffPct": 0
+      },
+      "usdzConsistency": {
+        "available": true,
+        "metersPerUnit": 1,
+        "upAxis": "Y",
+        "isCanonicalMeterScale": true,
+        "isCanonicalUpAxis": true,
+        "isTableAnchored": true
+      },
+      "evidenceLabels": [
+        "automated-test",
+        "estimated"
+      ]
+    },
+    "golden-oak-burger": {
+      "dishSlug": "golden-oak-burger",
+      "archetype": "golden-oak-burger",
+      "targetDimensionsCm": {
+        "widthCm": 12.5,
+        "depthCm": 12.5,
+        "heightCm": 10.5
+      },
+      "targetDimensionsM": {
+        "width": 0.125,
+        "depth": 0.125,
+        "height": 0.105
+      },
+      "dimensionSource": "estimated-typical-portion",
+      "scaleValidated": false,
+      "groundContactValidated": true,
+      "modelBoundingBoxM": {
+        "min": [
+          -0.988146,
+          0,
+          -1.000001
+        ],
+        "max": [
+          0.988146,
+          1.210954,
+          1
+        ],
+        "width": 1.976292,
+        "height": 1.210954,
+        "depth": 2.000001,
+        "footprintCenter": [
+          0,
+          0
+        ],
+        "lowestPointY": 0
+      },
+      "scaleFactor": 0.0625,
+      "groundContactOffsetM": 0,
+      "heightDeviationRatio": -0.279194,
+      "heightDeviationPct": -27.92,
+      "canonicalOriginCheck": {
+        "isOriginGrounded": true,
+        "groundResidualM": 0,
+        "isFootprintCentred": true,
+        "footprintOffsetM": [
+          0,
+          0
+        ]
+      },
+      "lodConsistency": {
+        "consistent": true,
+        "maxLodFootprintDiffPct": 0
+      },
+      "usdzConsistency": {
+        "available": true,
+        "metersPerUnit": 1,
+        "upAxis": "Y",
+        "isCanonicalMeterScale": true,
+        "isCanonicalUpAxis": true,
+        "isTableAnchored": true
+      },
+      "evidenceLabels": [
+        "automated-test",
+        "estimated"
+      ]
+    },
+    "crispy-paneer-burger": {
+      "dishSlug": "crispy-paneer-burger",
+      "archetype": "crispy-paneer-burger",
+      "targetDimensionsCm": {
+        "widthCm": 12,
+        "depthCm": 12,
+        "heightCm": 10
+      },
+      "targetDimensionsM": {
+        "width": 0.12,
+        "depth": 0.12,
+        "height": 0.1
+      },
+      "dimensionSource": "estimated-typical-portion",
+      "scaleValidated": false,
+      "groundContactValidated": true,
+      "modelBoundingBoxM": {
+        "min": [
+          -0.981078,
+          0,
+          -0.987609
+        ],
+        "max": [
+          0.981078,
+          1.461271,
+          0.987609
+        ],
+        "width": 1.962156,
+        "height": 1.461271,
+        "depth": 1.975218,
+        "footprintCenter": [
+          0,
+          0
+        ],
+        "lowestPointY": 0
+      },
+      "scaleFactor": 0.060753,
+      "groundContactOffsetM": 0,
+      "heightDeviationRatio": -0.112237,
+      "heightDeviationPct": -11.22,
+      "canonicalOriginCheck": {
+        "isOriginGrounded": true,
+        "groundResidualM": 0,
+        "isFootprintCentred": true,
+        "footprintOffsetM": [
+          0,
+          0
+        ]
+      },
+      "lodConsistency": {
+        "consistent": true,
+        "maxLodFootprintDiffPct": 0.14
+      },
+      "usdzConsistency": {
+        "available": true,
+        "metersPerUnit": 1,
+        "upAxis": "Y",
+        "isCanonicalMeterScale": true,
+        "isCanonicalUpAxis": true,
+        "isTableAnchored": true
+      },
+      "evidenceLabels": [
+        "automated-test",
+        "estimated"
+      ]
+    },
+    "wok-tossed-chow-mein": {
+      "dishSlug": "wok-tossed-chow-mein",
+      "archetype": "wok-tossed-chow-mein",
+      "targetDimensionsCm": {
+        "widthCm": 18,
+        "depthCm": 18,
+        "heightCm": 8
+      },
+      "targetDimensionsM": {
+        "width": 0.18,
+        "depth": 0.18,
+        "height": 0.08
+      },
+      "dimensionSource": "estimated-typical-portion",
+      "scaleValidated": false,
+      "groundContactValidated": true,
+      "modelBoundingBoxM": {
+        "min": [
+          -1.099597,
+          0,
+          -1.099194
+        ],
+        "max": [
+          1.099597,
+          1.478444,
+          1.099194
+        ],
+        "width": 2.199194,
+        "height": 1.478444,
+        "depth": 2.198388,
+        "footprintCenter": [
+          0,
+          0
+        ],
+        "lowestPointY": 0
+      },
+      "scaleFactor": 0.081848,
+      "groundContactOffsetM": 0,
+      "heightDeviationRatio": 0.512599,
+      "heightDeviationPct": 51.26,
+      "canonicalOriginCheck": {
+        "isOriginGrounded": true,
+        "groundResidualM": 0,
+        "isFootprintCentred": true,
+        "footprintOffsetM": [
+          0,
+          0
+        ]
+      },
+      "lodConsistency": {
+        "consistent": true,
+        "maxLodFootprintDiffPct": 0.59
+      },
+      "usdzConsistency": {
+        "available": true,
+        "metersPerUnit": 1,
+        "upAxis": "Y",
+        "isCanonicalMeterScale": true,
+        "isCanonicalUpAxis": true,
+        "isTableAnchored": true
+      },
+      "evidenceLabels": [
+        "automated-test",
+        "estimated"
+      ]
+    },
+    "dynamite-chilli-potatoes": {
+      "dishSlug": "dynamite-chilli-potatoes",
+      "archetype": "dynamite-chilli-potatoes",
+      "targetDimensionsCm": {
+        "widthCm": 20,
+        "depthCm": 20,
+        "heightCm": 5.5
+      },
+      "targetDimensionsM": {
+        "width": 0.2,
+        "depth": 0.2,
+        "height": 0.055
+      },
+      "dimensionSource": "estimated-typical-portion",
+      "scaleValidated": false,
+      "groundContactValidated": true,
+      "modelBoundingBoxM": {
+        "min": [
+          -1.09812,
+          0,
+          -1.098053
+        ],
+        "max": [
+          1.09812,
+          1.313555,
+          1.098053
+        ],
+        "width": 2.19624,
+        "height": 1.313555,
+        "depth": 2.196106,
+        "footprintCenter": [
+          0,
+          0
+        ],
+        "lowestPointY": 0
+      },
+      "scaleFactor": 0.091065,
+      "groundContactOffsetM": 0,
+      "heightDeviationRatio": 1.174882,
+      "heightDeviationPct": 117.49,
+      "canonicalOriginCheck": {
+        "isOriginGrounded": true,
+        "groundResidualM": 0,
+        "isFootprintCentred": true,
+        "footprintOffsetM": [
+          0,
+          0
+        ]
+      },
+      "lodConsistency": {
+        "consistent": true,
+        "maxLodFootprintDiffPct": 1.93
+      },
+      "usdzConsistency": {
+        "available": true,
+        "metersPerUnit": 1,
+        "upAxis": "Y",
+        "isCanonicalMeterScale": true,
+        "isCanonicalUpAxis": true,
+        "isTableAnchored": true
+      },
+      "evidenceLabels": [
+        "automated-test",
+        "estimated"
+      ]
+    },
+    "keema-masala-pizza": {
+      "dishSlug": "keema-masala-pizza",
+      "archetype": "chicken-tikka-pizza",
+      "targetDimensionsCm": {
+        "widthCm": 30,
+        "depthCm": 30,
+        "heightCm": 3.5
+      },
+      "targetDimensionsM": {
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.035
+      },
+      "dimensionSource": "estimated-typical-portion",
+      "scaleValidated": false,
+      "groundContactValidated": true,
+      "modelBoundingBoxM": {
+        "min": [
+          -1.197076,
+          0,
+          -1.195176
+        ],
+        "max": [
+          1.197076,
+          0.055674,
+          1.195176
+        ],
+        "width": 2.394152,
+        "height": 0.055674,
+        "depth": 2.390352,
+        "footprintCenter": [
+          0,
+          0
+        ],
+        "lowestPointY": 0
+      },
+      "scaleFactor": 0.125305,
+      "groundContactOffsetM": 0,
+      "heightDeviationRatio": -0.800679,
+      "heightDeviationPct": -80.07,
+      "canonicalOriginCheck": {
+        "isOriginGrounded": true,
+        "groundResidualM": 0,
+        "isFootprintCentred": true,
+        "footprintOffsetM": [
+          0,
+          0
+        ]
+      },
+      "lodConsistency": {
+        "consistent": true,
+        "maxLodFootprintDiffPct": 0
+      },
+      "usdzConsistency": {
+        "available": true,
+        "metersPerUnit": 1,
+        "upAxis": "Y",
+        "isCanonicalMeterScale": true,
+        "isCanonicalUpAxis": true,
+        "isTableAnchored": true
+      },
+      "evidenceLabels": [
+        "automated-test",
+        "estimated"
+      ]
+    },
+    "farmhouse-supreme-pizza": {
+      "dishSlug": "farmhouse-supreme-pizza",
+      "archetype": "tandoori-paneer-pizza",
+      "targetDimensionsCm": {
+        "widthCm": 30,
+        "depthCm": 30,
+        "heightCm": 3.5
+      },
+      "targetDimensionsM": {
+        "width": 0.3,
+        "depth": 0.3,
+        "height": 0.035
+      },
+      "dimensionSource": "estimated-typical-portion",
+      "scaleValidated": false,
+      "groundContactValidated": true,
+      "modelBoundingBoxM": {
+        "min": [
+          -1.199194,
+          0,
+          -1.2
+        ],
+        "max": [
+          1.199194,
+          0.118404,
+          1.2
+        ],
+        "width": 2.398388,
+        "height": 0.118404,
+        "depth": 2.4,
+        "footprintCenter": [
+          0,
+          0
+        ],
+        "lowestPointY": 0
+      },
+      "scaleFactor": 0.125,
+      "groundContactOffsetM": 0,
+      "heightDeviationRatio": -0.577129,
+      "heightDeviationPct": -57.71,
+      "canonicalOriginCheck": {
+        "isOriginGrounded": true,
+        "groundResidualM": 0,
+        "isFootprintCentred": true,
+        "footprintOffsetM": [
+          0,
+          0
+        ]
+      },
+      "lodConsistency": {
+        "consistent": true,
+        "maxLodFootprintDiffPct": 0
+      },
+      "usdzConsistency": {
+        "available": true,
+        "metersPerUnit": 1,
+        "upAxis": "Y",
+        "isCanonicalMeterScale": true,
+        "isCanonicalUpAxis": true,
+        "isTableAnchored": true
+      },
+      "evidenceLabels": [
+        "automated-test",
+        "estimated"
+      ]
+    },
+    "paneer-royale-burger": {
+      "dishSlug": "paneer-royale-burger",
+      "archetype": "golden-oak-burger",
+      "targetDimensionsCm": {
+        "widthCm": 12,
+        "depthCm": 12,
+        "heightCm": 10
+      },
+      "targetDimensionsM": {
+        "width": 0.12,
+        "depth": 0.12,
+        "height": 0.1
+      },
+      "dimensionSource": "estimated-typical-portion",
+      "scaleValidated": false,
+      "groundContactValidated": true,
+      "modelBoundingBoxM": {
+        "min": [
+          -0.988146,
+          0,
+          -1.000001
+        ],
+        "max": [
+          0.988146,
+          1.210954,
+          1
+        ],
+        "width": 1.976292,
+        "height": 1.210954,
+        "depth": 2.000001,
+        "footprintCenter": [
+          0,
+          0
+        ],
+        "lowestPointY": 0
+      },
+      "scaleFactor": 0.06,
+      "groundContactOffsetM": 0,
+      "heightDeviationRatio": -0.273428,
+      "heightDeviationPct": -27.34,
+      "canonicalOriginCheck": {
+        "isOriginGrounded": true,
+        "groundResidualM": 0,
+        "isFootprintCentred": true,
+        "footprintOffsetM": [
+          0,
+          0
+        ]
+      },
+      "lodConsistency": {
+        "consistent": true,
+        "maxLodFootprintDiffPct": 0
+      },
+      "usdzConsistency": {
+        "available": true,
+        "metersPerUnit": 1,
+        "upAxis": "Y",
+        "isCanonicalMeterScale": true,
+        "isCanonicalUpAxis": true,
+        "isTableAnchored": true
+      },
+      "evidenceLabels": [
+        "automated-test",
+        "estimated"
+      ]
+    },
+    "truffle-mushroom-cheese-burger": {
+      "dishSlug": "truffle-mushroom-cheese-burger",
+      "archetype": "classic-smash-burger",
+      "targetDimensionsCm": {
+        "widthCm": 12,
+        "depthCm": 12,
+        "heightCm": 10
+      },
+      "targetDimensionsM": {
+        "width": 0.12,
+        "depth": 0.12,
+        "height": 0.1
+      },
+      "dimensionSource": "estimated-typical-portion",
+      "scaleValidated": false,
+      "groundContactValidated": true,
+      "modelBoundingBoxM": {
+        "min": [
+          -0.988146,
+          0,
+          -1.000001
+        ],
+        "max": [
+          0.988146,
+          1.210954,
+          1
+        ],
+        "width": 1.976292,
+        "height": 1.210954,
+        "depth": 2.000001,
+        "footprintCenter": [
+          0,
+          0
+        ],
+        "lowestPointY": 0
+      },
+      "scaleFactor": 0.06,
+      "groundContactOffsetM": 0,
+      "heightDeviationRatio": -0.273428,
+      "heightDeviationPct": -27.34,
+      "canonicalOriginCheck": {
+        "isOriginGrounded": true,
+        "groundResidualM": 0,
+        "isFootprintCentred": true,
+        "footprintOffsetM": [
+          0,
+          0
+        ]
+      },
+      "lodConsistency": {
+        "consistent": true,
+        "maxLodFootprintDiffPct": 0
+      },
+      "usdzConsistency": {
+        "available": true,
+        "metersPerUnit": 1,
+        "upAxis": "Y",
+        "isCanonicalMeterScale": true,
+        "isCanonicalUpAxis": true,
+        "isTableAnchored": true
+      },
+      "evidenceLabels": [
+        "automated-test",
+        "estimated"
+      ]
+    },
+    "hakka-street-chow-mein": {
+      "dishSlug": "hakka-street-chow-mein",
+      "archetype": "gourmet-wok-bowl",
+      "targetDimensionsCm": {
+        "widthCm": 18,
+        "depthCm": 18,
+        "heightCm": 8
+      },
+      "targetDimensionsM": {
+        "width": 0.18,
+        "depth": 0.18,
+        "height": 0.08
+      },
+      "dimensionSource": "estimated-typical-portion",
+      "scaleValidated": false,
+      "groundContactValidated": true,
+      "modelBoundingBoxM": {
+        "min": [
+          -0.122,
+          0,
+          -0.122
+        ],
+        "max": [
+          0.122,
+          0.08592,
+          0.122
+        ],
+        "width": 0.244,
+        "height": 0.08592,
+        "depth": 0.244,
+        "footprintCenter": [
+          0,
+          0
+        ],
+        "lowestPointY": 0
+      },
+      "scaleFactor": 0.737705,
+      "groundContactOffsetM": 0,
+      "heightDeviationRatio": -0.207705,
+      "heightDeviationPct": -20.77,
+      "canonicalOriginCheck": {
+        "isOriginGrounded": true,
+        "groundResidualM": 0,
+        "isFootprintCentred": true,
+        "footprintOffsetM": [
+          0,
+          0
+        ]
+      },
+      "lodConsistency": {
+        "consistent": true,
+        "maxLodFootprintDiffPct": 0
+      },
+      "usdzConsistency": {
+        "available": true,
+        "metersPerUnit": 1,
+        "upAxis": "Y",
+        "isCanonicalMeterScale": true,
+        "isCanonicalUpAxis": true,
+        "isTableAnchored": true
+      },
+      "evidenceLabels": [
+        "automated-test",
+        "estimated"
+      ]
+    },
+    "golden-chilli-potato": {
+      "dishSlug": "golden-chilli-potato",
+      "archetype": "gourmet-wok-bowl",
+      "targetDimensionsCm": {
+        "widthCm": 20,
+        "depthCm": 20,
+        "heightCm": 5.5
+      },
+      "targetDimensionsM": {
+        "width": 0.2,
+        "depth": 0.2,
+        "height": 0.055
+      },
+      "dimensionSource": "estimated-typical-portion",
+      "scaleValidated": false,
+      "groundContactValidated": true,
+      "modelBoundingBoxM": {
+        "min": [
+          -0.122,
+          0,
+          -0.122
+        ],
+        "max": [
+          0.122,
+          0.08592,
+          0.122
+        ],
+        "width": 0.244,
+        "height": 0.08592,
+        "depth": 0.244,
+        "footprintCenter": [
+          0,
+          0
+        ],
+        "lowestPointY": 0
+      },
+      "scaleFactor": 0.819672,
+      "groundContactOffsetM": 0,
+      "heightDeviationRatio": 0.280477,
+      "heightDeviationPct": 28.05,
+      "canonicalOriginCheck": {
+        "isOriginGrounded": true,
+        "groundResidualM": 0,
+        "isFootprintCentred": true,
+        "footprintOffsetM": [
+          0,
+          0
+        ]
+      },
+      "lodConsistency": {
+        "consistent": true,
+        "maxLodFootprintDiffPct": 0
+      },
+      "usdzConsistency": {
+        "available": true,
+        "metersPerUnit": 1,
+        "upAxis": "Y",
+        "isCanonicalMeterScale": true,
+        "isCanonicalUpAxis": true,
+        "isTableAnchored": true
+      },
+      "evidenceLabels": [
+        "automated-test",
+        "estimated"
+      ]
+    },
+    "truffle-mushroom-risotto": {
+      "dishSlug": "truffle-mushroom-risotto",
+      "archetype": "gourmet-wok-bowl",
+      "targetDimensionsCm": {
+        "widthCm": 19,
+        "depthCm": 19,
+        "heightCm": 7
+      },
+      "targetDimensionsM": {
+        "width": 0.19,
+        "depth": 0.19,
+        "height": 0.07
+      },
+      "dimensionSource": "estimated-typical-portion",
+      "scaleValidated": false,
+      "groundContactValidated": true,
+      "modelBoundingBoxM": {
+        "min": [
+          -0.122,
+          0,
+          -0.122
+        ],
+        "max": [
+          0.122,
+          0.08592,
+          0.122
+        ],
+        "width": 0.244,
+        "height": 0.08592,
+        "depth": 0.244,
+        "footprintCenter": [
+          0,
+          0
+        ],
+        "lowestPointY": 0
+      },
+      "scaleFactor": 0.778689,
+      "groundContactOffsetM": 0,
+      "heightDeviationRatio": -0.044215,
+      "heightDeviationPct": -4.42,
+      "canonicalOriginCheck": {
+        "isOriginGrounded": true,
+        "groundResidualM": 0,
+        "isFootprintCentred": true,
+        "footprintOffsetM": [
+          0,
+          0
+        ]
+      },
+      "lodConsistency": {
+        "consistent": true,
+        "maxLodFootprintDiffPct": 0
+      },
+      "usdzConsistency": {
+        "available": true,
+        "metersPerUnit": 1,
+        "upAxis": "Y",
+        "isCanonicalMeterScale": true,
+        "isCanonicalUpAxis": true,
+        "isTableAnchored": true
+      },
+      "evidenceLabels": [
+        "automated-test",
+        "estimated"
+      ]
+    },
+    "butter-chicken-bao": {
+      "dishSlug": "butter-chicken-bao",
+      "archetype": "gourmet-wok-bowl",
+      "targetDimensionsCm": {
+        "widthCm": 18,
+        "depthCm": 18,
+        "heightCm": 7
+      },
+      "targetDimensionsM": {
+        "width": 0.18,
+        "depth": 0.18,
+        "height": 0.07
+      },
+      "dimensionSource": "estimated-typical-portion",
+      "scaleValidated": false,
+      "groundContactValidated": true,
+      "modelBoundingBoxM": {
+        "min": [
+          -0.122,
+          0,
+          -0.122
+        ],
+        "max": [
+          0.122,
+          0.08592,
+          0.122
+        ],
+        "width": 0.244,
+        "height": 0.08592,
+        "depth": 0.244,
+        "footprintCenter": [
+          0,
+          0
+        ],
+        "lowestPointY": 0
+      },
+      "scaleFactor": 0.737705,
+      "groundContactOffsetM": 0,
+      "heightDeviationRatio": -0.09452,
+      "heightDeviationPct": -9.45,
+      "canonicalOriginCheck": {
+        "isOriginGrounded": true,
+        "groundResidualM": 0,
+        "isFootprintCentred": true,
+        "footprintOffsetM": [
+          0,
+          0
+        ]
+      },
+      "lodConsistency": {
+        "consistent": true,
+        "maxLodFootprintDiffPct": 0
+      },
+      "usdzConsistency": {
+        "available": true,
+        "metersPerUnit": 1,
+        "upAxis": "Y",
+        "isCanonicalMeterScale": true,
+        "isCanonicalUpAxis": true,
+        "isTableAnchored": true
+      },
+      "evidenceLabels": [
+        "automated-test",
+        "estimated"
+      ]
+    },
+    "dahi-ke-kebab": {
+      "dishSlug": "dahi-ke-kebab",
+      "archetype": "gourmet-wok-bowl",
+      "targetDimensionsCm": {
+        "widthCm": 22,
+        "depthCm": 16,
+        "heightCm": 4.5
+      },
+      "targetDimensionsM": {
+        "width": 0.22,
+        "depth": 0.16,
+        "height": 0.045
+      },
+      "dimensionSource": "estimated-typical-portion",
+      "scaleValidated": false,
+      "groundContactValidated": true,
+      "modelBoundingBoxM": {
+        "min": [
+          -0.122,
+          0,
+          -0.122
+        ],
+        "max": [
+          0.122,
+          0.08592,
+          0.122
+        ],
+        "width": 0.244,
+        "height": 0.08592,
+        "depth": 0.244,
+        "footprintCenter": [
+          0,
+          0
+        ],
+        "lowestPointY": 0
+      },
+      "scaleFactor": 0.901639,
+      "groundContactOffsetM": 0,
+      "heightDeviationRatio": 0.72153,
+      "heightDeviationPct": 72.15,
+      "canonicalOriginCheck": {
+        "isOriginGrounded": true,
+        "groundResidualM": 0,
+        "isFootprintCentred": true,
+        "footprintOffsetM": [
+          0,
+          0
+        ]
+      },
+      "lodConsistency": {
+        "consistent": true,
+        "maxLodFootprintDiffPct": 0
+      },
+      "usdzConsistency": {
+        "available": true,
+        "metersPerUnit": 1,
+        "upAxis": "Y",
+        "isCanonicalMeterScale": true,
+        "isCanonicalUpAxis": true,
+        "isTableAnchored": true
+      },
+      "evidenceLabels": [
+        "automated-test",
+        "estimated"
+      ]
+    },
+    "crispy-chilli-babycorn": {
+      "dishSlug": "crispy-chilli-babycorn",
+      "archetype": "gourmet-wok-bowl",
+      "targetDimensionsCm": {
+        "widthCm": 20,
+        "depthCm": 20,
+        "heightCm": 5.5
+      },
+      "targetDimensionsM": {
+        "width": 0.2,
+        "depth": 0.2,
+        "height": 0.055
+      },
+      "dimensionSource": "estimated-typical-portion",
+      "scaleValidated": false,
+      "groundContactValidated": true,
+      "modelBoundingBoxM": {
+        "min": [
+          -0.122,
+          0,
+          -0.122
+        ],
+        "max": [
+          0.122,
+          0.08592,
+          0.122
+        ],
+        "width": 0.244,
+        "height": 0.08592,
+        "depth": 0.244,
+        "footprintCenter": [
+          0,
+          0
+        ],
+        "lowestPointY": 0
+      },
+      "scaleFactor": 0.819672,
+      "groundContactOffsetM": 0,
+      "heightDeviationRatio": 0.280477,
+      "heightDeviationPct": 28.05,
+      "canonicalOriginCheck": {
+        "isOriginGrounded": true,
+        "groundResidualM": 0,
+        "isFootprintCentred": true,
+        "footprintOffsetM": [
+          0,
+          0
+        ]
+      },
+      "lodConsistency": {
+        "consistent": true,
+        "maxLodFootprintDiffPct": 0
+      },
+      "usdzConsistency": {
+        "available": true,
+        "metersPerUnit": 1,
+        "upAxis": "Y",
+        "isCanonicalMeterScale": true,
+        "isCanonicalUpAxis": true,
+        "isTableAnchored": true
+      },
+      "evidenceLabels": [
+        "automated-test",
+        "estimated"
+      ]
+    },
+    "dim-sum-platter": {
+      "dishSlug": "dim-sum-platter",
+      "archetype": "gourmet-wok-bowl",
+      "targetDimensionsCm": {
+        "widthCm": 21,
+        "depthCm": 21,
+        "heightCm": 6
+      },
+      "targetDimensionsM": {
+        "width": 0.21,
+        "depth": 0.21,
+        "height": 0.06
+      },
+      "dimensionSource": "estimated-typical-portion",
+      "scaleValidated": false,
+      "groundContactValidated": true,
+      "modelBoundingBoxM": {
+        "min": [
+          -0.122,
+          0,
+          -0.122
+        ],
+        "max": [
+          0.122,
+          0.08592,
+          0.122
+        ],
+        "width": 0.244,
+        "height": 0.08592,
+        "depth": 0.244,
+        "footprintCenter": [
+          0,
+          0
+        ],
+        "lowestPointY": 0
+      },
+      "scaleFactor": 0.860656,
+      "groundContactOffsetM": 0,
+      "heightDeviationRatio": 0.232459,
+      "heightDeviationPct": 23.25,
+      "canonicalOriginCheck": {
+        "isOriginGrounded": true,
+        "groundResidualM": 0,
+        "isFootprintCentred": true,
+        "footprintOffsetM": [
+          0,
+          0
+        ]
+      },
+      "lodConsistency": {
+        "consistent": true,
+        "maxLodFootprintDiffPct": 0
+      },
+      "usdzConsistency": {
+        "available": true,
+        "metersPerUnit": 1,
+        "upAxis": "Y",
+        "isCanonicalMeterScale": true,
+        "isCanonicalUpAxis": true,
+        "isTableAnchored": true
+      },
+      "evidenceLabels": [
+        "automated-test",
+        "estimated"
+      ]
+    },
+    "kaffir-lime-mocktail": {
+      "dishSlug": "kaffir-lime-mocktail",
+      "archetype": "kaffir-lime-mocktail",
+      "targetDimensionsCm": {
+        "widthCm": 8,
+        "depthCm": 8,
+        "heightCm": 16
+      },
+      "targetDimensionsM": {
+        "width": 0.08,
+        "depth": 0.08,
+        "height": 0.16
+      },
+      "dimensionSource": "estimated-typical-portion",
+      "scaleValidated": false,
+      "groundContactValidated": true,
+      "modelBoundingBoxM": {
+        "min": [
+          -0.068,
+          0,
+          -0.068
+        ],
+        "max": [
+          0.068,
+          0.166007,
+          0.068
+        ],
+        "width": 0.136,
+        "height": 0.166007,
+        "depth": 0.136,
+        "footprintCenter": [
+          0,
+          0
+        ],
+        "lowestPointY": 0
+      },
+      "scaleFactor": 0.588235,
+      "groundContactOffsetM": 0,
+      "heightDeviationRatio": -0.38968,
+      "heightDeviationPct": -38.97,
+      "canonicalOriginCheck": {
+        "isOriginGrounded": true,
+        "groundResidualM": 0,
+        "isFootprintCentred": true,
+        "footprintOffsetM": [
+          0,
+          0
+        ]
+      },
+      "lodConsistency": {
+        "consistent": true,
+        "maxLodFootprintDiffPct": 0
+      },
+      "usdzConsistency": {
+        "available": true,
+        "metersPerUnit": 1,
+        "upAxis": "Y",
+        "isCanonicalMeterScale": true,
+        "isCanonicalUpAxis": true,
+        "isTableAnchored": true
+      },
+      "evidenceLabels": [
+        "automated-test",
+        "estimated"
+      ]
+    }
+  },
+  "summary": {
+    "totalDishesAudited": 23,
+    "archetypesCount": 11,
+    "allLodsConsistent": true,
+    "allUsdzCanonical": true,
+    "allDishSpecsEnforced": true
+  }
+}

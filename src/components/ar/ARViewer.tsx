@@ -29,13 +29,13 @@ import {
   DEFAULT_AR_LIGHT_ESTIMATE,
   detectARCapabilityMatrix,
   estimateLightingFromRgba,
-  evaluateMotionStability,
   extractUsdzPath,
   hasMeaningfulLightChange,
   type ARCapabilityMatrix,
-  type MotionStabilityState,
   type RealWorldLightEstimate,
 } from '@/lib/three/ar-capabilities';
+import { ROUTE_LABELS, type ARExperienceRoute } from '@/lib/xr/spatial-contract';
+import { WebXRARExperience } from './WebXRARExperience';
 import { CameraFeed } from './CameraFeed';
 import { ARLoadingState } from './ARLoadingState';
 import { ARPermissionDenied } from './ARPermissionDenied';
@@ -69,6 +69,8 @@ export interface ARViewerProps {
   isFavorite: boolean;
   onToggleFavorite: () => void;
   onAddToCart: () => void;
+  route?: ARExperienceRoute;
+  initialRoute?: ARExperienceRoute;
 }
 
 function loadDataUrlImage(dataUrl: string): Promise<HTMLImageElement> {
@@ -86,6 +88,8 @@ export function ARViewer({
   isFavorite,
   onToggleFavorite,
   onAddToCart,
+  route,
+  initialRoute,
 }: ARViewerProps) {
   const router = useRouter();
 
@@ -118,6 +122,23 @@ export function ARViewer({
 
   const [state, setState] = useState<ARState>('loading');
   const [webcamPreviewEnabled, setWebcamPreviewEnabled] = useState(false);
+
+  const effectiveInitialRoute =
+    route ||
+    initialRoute ||
+    (typeof window !== 'undefined'
+      ? (new URLSearchParams(window.location.search).get('route') as ARExperienceRoute | null)
+      : null);
+
+  const [activeWebXR, setActiveWebXR] = useState<boolean>(
+    effectiveInitialRoute === 'webxr-immersive-ar'
+  );
+
+  useEffect(() => {
+    if (route === 'webxr-immersive-ar') {
+      setActiveWebXR(true);
+    }
+  }, [route]);
   const [capabilityChecked, setCapabilityChecked] = useState(false);
   const [capabilities, setCapabilities] = useState<ARCapabilityMatrix | null>(null);
   const [copiedLink, setCopiedLink] = useState(false);
@@ -160,15 +181,6 @@ export function ARViewer({
 
   // Imperative WebGL snapshot provider registered by ARScene (`preserveDrawingBuffer: false`)
   const snapshotProviderRef = useRef<(() => string | null) | null>(null);
-
-  // Passive surface stability state
-  const [motionStability, setMotionStability] = useState<MotionStabilityState>({
-    level: 'stable',
-    stabilityScore: 1,
-    guidanceText: 'Table surface locked',
-    recommendRecenter: false,
-  });
-  const stabilityScoreRef = useRef(1);
 
   const hotspots = useMemo(() => getHotspots(selectedDish.slug), [selectedDish.slug]);
 
@@ -301,58 +313,7 @@ export function ARViewer({
     };
   }, [state]);
 
-  // Passive DeviceMotion surface stability indicator (zero intrusive permission prompts)
-  useEffect(() => {
-    if (state !== 'placing' && state !== 'placed') return;
-    if (typeof window === 'undefined' || !('DeviceMotionEvent' in window)) return;
 
-    // Skip on browsers requiring explicit modal permission (iOS 13+) so we never nag with popups
-    const DeviceMotionWithPerm = window.DeviceMotionEvent as unknown as {
-      requestPermission?: () => Promise<string>;
-    };
-    if (typeof DeviceMotionWithPerm?.requestPermission === 'function') {
-      return;
-    }
-
-    let lastEvalTs = 0;
-    let lastGravityMag = 9.81;
-
-    const handleDeviceMotion = (event: DeviceMotionEvent) => {
-      const now = Date.now();
-      if (now - lastEvalTs < 350) return;
-      lastEvalTs = now;
-
-      const acc = event.accelerationIncludingGravity;
-      const rot = event.rotationRate;
-      const ax = acc?.x ?? 0;
-      const ay = acc?.y ?? 0;
-      const az = acc?.z ?? 0;
-      const mag = Math.sqrt(ax * ax + ay * ay + az * az);
-      const accelDelta = Math.abs(mag - lastGravityMag);
-      lastGravityMag = mag * 0.7 + lastGravityMag * 0.3;
-
-      const rx = rot?.alpha ?? 0;
-      const ry = rot?.beta ?? 0;
-      const rz = rot?.gamma ?? 0;
-      const rotationRateDeg = Math.sqrt(rx * rx + ry * ry + rz * rz);
-
-      const evaluated = evaluateMotionStability(
-        { accelDelta, rotationRateDeg },
-        stabilityScoreRef.current
-      );
-      stabilityScoreRef.current = evaluated.stabilityScore;
-      setMotionStability((prev) =>
-        prev.level !== evaluated.level || prev.recommendRecenter !== evaluated.recommendRecenter
-          ? evaluated
-          : prev
-      );
-    };
-
-    window.addEventListener('devicemotion', handleDeviceMotion, { passive: true });
-    return () => {
-      window.removeEventListener('devicemotion', handleDeviceMotion);
-    };
-  }, [state]);
 
   const handleCameraReady = useCallback(() => {
     setState((prev) => (prev === 'placed' ? 'placed' : 'placing'));
@@ -381,13 +342,6 @@ export function ARViewer({
     setModelOffsetXZ([0, 0]);
     setModelRotation(0);
     setRecenterTrigger((n) => n + 1);
-    stabilityScoreRef.current = 1;
-    setMotionStability({
-      level: 'stable',
-      stabilityScore: 1,
-      guidanceText: 'Table surface locked',
-      recommendRecenter: false,
-    });
     if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
       navigator.vibrate(12);
     }
@@ -705,6 +659,21 @@ export function ARViewer({
     }
   }, [state, modelLoaded, handleTapToPlace, showShareSheet, isDishSelectorOpen]);
 
+  if (activeWebXR) {
+    const glbUrl =
+      selectedConfig.culinaryAssetLodPaths?.balanced ||
+      selectedConfig.modelPath;
+    return (
+      <WebXRARExperience
+        dishSlug={selectedDish.slug}
+        modelUrl={glbUrl}
+        dishTitle={selectedDish.name}
+        onExit={() => setActiveWebXR(false)}
+        onFallback={() => setActiveWebXR(false)}
+      />
+    );
+  }
+
   if (state === 'permission_denied') {
     return <ARPermissionDenied onGoBack={handleExit} onContinue3D={handleContinue3D} />;
   }
@@ -755,6 +724,21 @@ export function ARViewer({
 
           {/* Primary 1-Click Actions */}
           <div className="w-full space-y-2.5 mb-5">
+            {capabilities?.webxr.supported && (
+              <button
+                type="button"
+                data-testid="ar-launch-webxr-btn"
+                onClick={() => setActiveWebXR(true)}
+                className="w-full min-h-[48px] py-3.5 px-4 rounded-xl font-bold text-xs sm:text-sm tracking-wide text-[#17100C] shadow-[0_8px_25px_rgba(240,195,107,0.4)] hover:brightness-105 active:scale-[0.98] transition-all flex items-center justify-center gap-2 touch-manipulation cursor-pointer"
+                style={{
+                  background: 'linear-gradient(135deg, #F0C36B 0%, #DDA33E 50%, #A8792A 100%)',
+                }}
+              >
+                <Sparkles className="w-4 h-4 text-[#17100C]" />
+                <span>{ROUTE_LABELS['webxr-immersive-ar']}</span>
+              </button>
+            )}
+
             <Link
               href={`/3d/${selectedDish.slug}`}
               data-testid="ar-fallback-3d-studio-link"
@@ -942,29 +926,18 @@ export function ARViewer({
         </div>
       )}
 
-      {/* Top Surface Stability & Real-World Ambient Light Pill */}
+      {/* Top Real-World Ambient Light Pill */}
       {(state === 'placing' || state === 'placed') && modelLoaded && (
         <div className="pointer-events-none absolute top-[calc(4.5rem+env(safe-area-inset-top))] left-3 right-16 sm:left-20 sm:right-20 z-[25] flex flex-col items-center gap-2 px-1">
           <div className="inline-flex max-w-full flex-wrap items-center justify-center gap-x-2 gap-y-0.5 px-3 py-1 rounded-full bg-obsidian/65 backdrop-blur-md border border-white/10 text-[10px] text-text-primary/80 shadow-md text-center">
-            <span
-              className={`w-1.5 h-1.5 rounded-full ${
-                motionStability.level === 'stable'
-                  ? 'bg-emerald-400'
-                  : motionStability.level === 'moving'
-                    ? 'bg-amber-400 animate-pulse'
-                    : 'bg-rose-400 animate-ping'
-              }`}
-            />
-            <span>{motionStability.guidanceText}</span>
-            <span className="text-white/25">•</span>
             <SunMedium className="w-3 h-3 text-[#F0C36B]" />
             <span className="capitalize text-[#F0C36B]/90">
               {lightEstimate.lightingLabel.replace('-', ' ')}
             </span>
           </div>
 
-          {/* 1-Tap Re-center Recovery Pill when excessive motion or table drift occurs */}
-          {placed && (motionStability.recommendRecenter || hasPositionDrift) && (
+          {/* 1-Tap Re-center Recovery Pill when table drift occurs */}
+          {placed && hasPositionDrift && (
             <button
               type="button"
               data-testid="ar-recenter-recovery-pill"
@@ -993,6 +966,17 @@ export function ARViewer({
             </span>
           </div>
 
+          {capabilities?.webxr.supported && (
+            <button
+              type="button"
+              onClick={() => setActiveWebXR(true)}
+              className="pointer-events-auto inline-flex items-center gap-1.5 px-3.5 min-h-[38px] rounded-full bg-[#181310]/90 backdrop-blur-md border border-[#F0C36B]/60 text-[#F0C36B] text-[11px] font-medium shadow-md active:scale-95 transition-transform touch-manipulation cursor-pointer"
+            >
+              <Sparkles className="w-3.5 h-3.5 shrink-0" />
+              <span>{ROUTE_LABELS['webxr-immersive-ar']}</span>
+            </button>
+          )}
+
           {sceneViewerIntentUrl && (
             <a
               href={sceneViewerIntentUrl}
@@ -1006,7 +990,11 @@ export function ARViewer({
           {quickLookUsdzUrl && (
             <a
               rel="ar"
-              href={quickLookUsdzUrl}
+              href={
+                quickLookUsdzUrl.includes('#')
+                  ? `${quickLookUsdzUrl}&allowsContentScaling=0`
+                  : `${quickLookUsdzUrl}#allowsContentScaling=0`
+              }
               className="pointer-events-auto inline-flex items-center gap-1.5 px-3.5 min-h-[38px] rounded-full bg-[#181310]/90 backdrop-blur-md border border-[#E2A84B]/45 text-[#F6D386] text-[11px] font-medium shadow-md active:scale-95 transition-transform touch-manipulation"
             >
               <img
@@ -1047,7 +1035,13 @@ export function ARViewer({
       {state === 'placing' && modelLoaded && <ARInstructionsOverlay />}
 
       {/* AR Header */}
-      {(state === 'placing' || state === 'placed') && <ARHeader onExit={handleExit} />}
+      {(state === 'placing' || state === 'placed') && (
+        <ARHeader
+          onExit={handleExit}
+          modeBadgeLabel={ROUTE_LABELS['camera-preview-not-tracked']}
+          isWorldTracked={false}
+        />
+      )}
 
       {/* Compact In-AR Dish Selector Strip (zero camera restart on dish switch!) */}
       {isDishSelectorOpen && (state === 'placing' || state === 'placed') && (
@@ -1116,7 +1110,13 @@ export function ARViewer({
           onShare={() => setShowShareSheet(true)}
           onView3D={handleContinue3D}
           sceneViewerIntentUrl={sceneViewerIntentUrl}
-          quickLookUsdzUrl={quickLookUsdzUrl}
+          quickLookUsdzUrl={
+            quickLookUsdzUrl
+              ? quickLookUsdzUrl.includes('#')
+                ? `${quickLookUsdzUrl}&allowsContentScaling=0`
+                : `${quickLookUsdzUrl}#allowsContentScaling=0`
+              : null
+          }
           dishPosterUrl={selectedDish.image}
         />
       )}

@@ -422,7 +422,7 @@ export function buildAndroidSceneViewerIntentUrl(options: SceneViewerIntentOptio
   }
 
   const mode = options.mode ?? 'ar_preferred';
-  const resizable = options.resizable ?? true;
+  const resizable = options.resizable ?? false;
   const cleanTitle = (options.title || 'The Golden Oak Dish').trim();
   const absoluteFallbackUrl = resolveAbsoluteAssetUrl(
     options.fallbackUrl || '/',
@@ -624,6 +624,7 @@ export async function detectARCapabilityMatrix(
       fallbackUrl,
       baseOrigin,
       mode: 'ar_preferred',
+      resizable: false,
     });
     sceneViewer = {
       ready: Boolean(intentUrl),

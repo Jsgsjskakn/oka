@@ -16,6 +16,9 @@ import {
   resolveTieredModelPath,
   type RealWorldLightEstimate,
 } from '@/lib/three/ar-capabilities';
+import { getDishPhysicalSpec } from '@/data/dish-dimensions';
+import { computeDishPlacementTransform } from '@/lib/xr/placement-math';
+import { cmToMetres } from '@/lib/xr/spatial-contract';
 
 export interface ARTelemetrySnapshot {
   calls: number;
@@ -84,7 +87,7 @@ function GroundContactDisc({
     };
   }, [shadowTexture]);
 
-  const radius = Math.max(0.36, footprintScale * 0.68);
+  const radius = Math.max(0.10, footprintScale * 0.55);
 
   return (
     <mesh position={[0, -0.008, 0]} rotation={[-Math.PI / 2, 0, 0]} renderOrder={-1}>
@@ -140,7 +143,8 @@ function ARReticle({ visible }: { visible: boolean }) {
 // AR Food Model with 400ms cubic ease-out placement settle & clean per-instance material disposal
 interface ARFoodModelProps {
   modelPath: string;
-  initialScale: number;
+  dishSlug: string;
+  initialScale?: number;
   placed: boolean;
   scale: number;
   rotation: number;
@@ -152,7 +156,7 @@ interface ARFoodModelProps {
 
 function ARFoodModel({
   modelPath,
-  initialScale,
+  dishSlug,
   placed,
   scale,
   rotation,
@@ -183,30 +187,26 @@ function ARFoodModel({
     return clone;
   }, [scene]);
 
-  // Normalize dish footprint inside AR group so miniature models (wok bowls, mocktails) and wide pizzas
-  // occupy a consistent tabletop presentation scale grounded strictly at y = 0.
-  const normalizedARTransform = useMemo(() => {
+  // Real-world physical scale & canonical table placement (Phase 3.2 Spatial Contract)
+  // Strips the legacy fake 1.4-unit force-normalisation in favor of physically accurate restaurant portions.
+  const physicalARTransform = useMemo(() => {
     clonedScene.updateMatrixWorld(true);
     const box = new Box3().setFromObject(clonedScene);
     if (box.isEmpty()) {
       return { scale: 1, position: [0, 0, 0] as [number, number, number] };
     }
-    const size = new Vector3();
-    const center = new Vector3();
-    box.getSize(size);
-    box.getCenter(center);
-    const maxDim = Math.max(size.x, size.y, size.z, 0.001);
-    const targetExtent = 1.4;
-    const normScale = targetExtent / maxDim;
+    const spec = getDishPhysicalSpec(dishSlug);
+    const transform = computeDishPlacementTransform({
+      bboxMin: [box.min.x, box.min.y, box.min.z],
+      bboxMax: [box.max.x, box.max.y, box.max.z],
+      spec,
+      userScale: 1.0, // Base physical scale; user pinch multiplier is applied to parent group
+    });
     return {
-      scale: normScale,
-      position: [
-        -center.x * normScale,
-        -box.min.y * normScale,
-        -center.z * normScale,
-      ] as [number, number, number],
+      scale: transform.uniformScale,
+      position: transform.offset,
     };
-  }, [clonedScene]);
+  }, [clonedScene, dishSlug]);
 
   // Dispose ONLY per-instance cloned materials on dish switch or AR exit; shared BufferGeometries remain intact
   useEffect(() => {
@@ -251,7 +251,7 @@ function ARFoodModel({
     }
 
     const eased = 1 - Math.pow(1 - animRef.current, 3);
-    const currentScale = initialScale * scale * eased;
+    const currentScale = scale * eased;
     groupRef.current.scale.set(currentScale, currentScale, currentScale);
     groupRef.current.rotation.y = rotation;
     groupRef.current.position.set(offsetXZ[0], 0, offsetXZ[1]);
@@ -261,12 +261,12 @@ function ARFoodModel({
   useEffect(() => {
     if (!placed || !groupRef.current) return;
     const eased = animRef.current >= 1 ? 1 : 1 - Math.pow(1 - animRef.current, 3);
-    const currentScale = initialScale * scale * Math.max(0.08, eased);
+    const currentScale = scale * Math.max(0.08, eased);
     groupRef.current.scale.set(currentScale, currentScale, currentScale);
     groupRef.current.rotation.y = rotation;
     groupRef.current.position.set(offsetXZ[0], 0, offsetXZ[1]);
     invalidate();
-  }, [placed, initialScale, scale, rotation, offsetXZ, invalidate]);
+  }, [placed, scale, rotation, offsetXZ, invalidate]);
 
   if (!placed) return null;
 
@@ -274,8 +274,8 @@ function ARFoodModel({
     <group ref={groupRef} position={[offsetXZ[0], 0, offsetXZ[1]]}>
       <primitive
         object={clonedScene}
-        scale={normalizedARTransform.scale}
-        position={normalizedARTransform.position}
+        scale={physicalARTransform.scale}
+        position={physicalARTransform.position}
         dispose={null}
       />
     </group>
@@ -619,7 +619,9 @@ export function ARScene({
       ? 'always'
       : 'demand';
 
-  const dishFootprintScale = config.initialScale * modelScale;
+  const dishSpec = useMemo(() => getDishPhysicalSpec(config.dishSlug), [config.dishSlug]);
+  const realFootprintM = cmToMetres(Math.max(dishSpec.dimensions.widthCm, dishSpec.dimensions.depthCm));
+  const dishFootprintScale = realFootprintM * modelScale;
 
   const invalidateDepsKey = [
     config.dishSlug,
@@ -696,6 +698,7 @@ export function ARScene({
         <Suspense fallback={null}>
           <ARFoodModel
             key={config.dishSlug}
+            dishSlug={config.dishSlug}
             modelPath={resolvedModelPath}
             initialScale={config.initialScale}
             placed={placed}

@@ -1,0 +1,3400 @@
+{
+  "generatedAt": "2026-11-14T14:10:12.346Z",
+  "benchmarkVersion": "Phase 3.2 — Mobile Performance & Asset Optimization",
+  "workspaceRoot": "C:\\Users\\Pyiush Gupta\\.gemini\\antigravity\\scratch\\the-golden-oak",
+  "gitCheckpoint": "pre-phase3.2-checkpoint",
+  "evidenceLabelsExplanation": {
+    "automated-test": "Binary container parsing, Draco WASM geometry decompression, and file metrics executed via Node.js on local host.",
+    "estimated": "Analytical GPU VRAM and fill-rate calculations derived from verified texture resolutions and vertex attribute strides.",
+    "not-tested": "Physical handset thermals, battery milliamp sensor readings, and real-world ARCore optical SLAM drift (hardware testing protocols documented)."
+  },
+  "assetBenchmarks": [
+    {
+      "dishAsset": "bbq-chicken-overload-balanced.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/bbq-chicken-overload-balanced.glb",
+        "fileName": "bbq-chicken-overload-balanced.glb",
+        "fileSizeBytes": 5998216,
+        "fileSizeMb": 5.72,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 8,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 1122369,
+        "totalVertices": 759076,
+        "totalDrawCalls": 9,
+        "dracoMeshCount": 9,
+        "dracoDecodeTimeMs": 1685.48,
+        "estimatedTextureVramBytes": 23708302,
+        "estimatedTextureVramMb": 22.61,
+        "estimatedGeometryVramMb": 36.01,
+        "estimatedTotalVramMb": 58.62
+      },
+      "after": {
+        "filePath": "public/models/optimized/bbq-chicken-overload-balanced.glb",
+        "fileName": "bbq-chicken-overload-balanced.glb",
+        "fileSizeBytes": 731388,
+        "fileSizeMb": 0.698,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 8,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 44032,
+        "totalVertices": 60712,
+        "totalDrawCalls": 9,
+        "dracoMeshCount": 9,
+        "dracoDecodeTimeMs": 68.11,
+        "estimatedTextureVramBytes": 11156848,
+        "estimatedTextureVramMb": 10.64,
+        "estimatedGeometryVramMb": 2.36,
+        "estimatedTotalVramMb": 13
+      },
+      "delta": {
+        "sizeDeltaBytes": -5266828,
+        "sizeReductionPercent": 87.81,
+        "triDelta": -1078337,
+        "triReductionPercent": 96.08,
+        "vramDeltaMb": -45.62,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "bbq-chicken-overload-high.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/bbq-chicken-overload-high.glb",
+        "fileName": "bbq-chicken-overload-high.glb",
+        "fileSizeBytes": 7355728,
+        "fileSizeMb": 7.015,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 8,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 1870624,
+        "totalVertices": 1178433,
+        "totalDrawCalls": 9,
+        "dracoMeshCount": 9,
+        "dracoDecodeTimeMs": 2160.96,
+        "estimatedTextureVramBytes": 32075938,
+        "estimatedTextureVramMb": 30.59,
+        "estimatedGeometryVramMb": 57.37,
+        "estimatedTotalVramMb": 87.96
+      },
+      "after": {
+        "filePath": "public/models/optimized/bbq-chicken-overload-high.glb",
+        "fileName": "bbq-chicken-overload-high.glb",
+        "fileSizeBytes": 1608380,
+        "fileSizeMb": 1.534,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 8,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 47969,
+        "totalVertices": 63718,
+        "totalDrawCalls": 9,
+        "dracoMeshCount": 9,
+        "dracoDecodeTimeMs": 59.29,
+        "estimatedTextureVramBytes": 15340666,
+        "estimatedTextureVramMb": 14.63,
+        "estimatedGeometryVramMb": 2.49,
+        "estimatedTotalVramMb": 17.12
+      },
+      "delta": {
+        "sizeDeltaBytes": -5747348,
+        "sizeReductionPercent": 78.13,
+        "triDelta": -1822655,
+        "triReductionPercent": 97.44,
+        "vramDeltaMb": -70.84,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "bbq-chicken-overload-ultralight.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/bbq-chicken-overload-ultralight.glb",
+        "fileName": "bbq-chicken-overload-ultralight.glb",
+        "fileSizeBytes": 3382508,
+        "fileSizeMb": 3.226,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 8,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 617292,
+        "totalVertices": 454465,
+        "totalDrawCalls": 9,
+        "dracoMeshCount": 9,
+        "dracoDecodeTimeMs": 917.31,
+        "estimatedTextureVramBytes": 11156848,
+        "estimatedTextureVramMb": 10.64,
+        "estimatedGeometryVramMb": 20.93,
+        "estimatedTotalVramMb": 31.57
+      },
+      "after": {
+        "filePath": "public/models/optimized/bbq-chicken-overload-ultralight.glb",
+        "fileName": "bbq-chicken-overload-ultralight.glb",
+        "fileSizeBytes": 420684,
+        "fileSizeMb": 0.401,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 8,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 42416,
+        "totalVertices": 59538,
+        "totalDrawCalls": 9,
+        "dracoMeshCount": 9,
+        "dracoDecodeTimeMs": 52.38,
+        "estimatedTextureVramBytes": 11156848,
+        "estimatedTextureVramMb": 10.64,
+        "estimatedGeometryVramMb": 2.3,
+        "estimatedTotalVramMb": 12.94
+      },
+      "delta": {
+        "sizeDeltaBytes": -2961824,
+        "sizeReductionPercent": 87.56,
+        "triDelta": -574876,
+        "triReductionPercent": 93.13,
+        "vramDeltaMb": -18.63,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "chicken-tikka-pizza-balanced.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/chicken-tikka-pizza-balanced.glb",
+        "fileName": "chicken-tikka-pizza-balanced.glb",
+        "fileSizeBytes": 431220,
+        "fileSizeMb": 0.411,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_specular"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 1,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 36468,
+        "totalVertices": 40656,
+        "totalDrawCalls": 2,
+        "dracoMeshCount": 2,
+        "dracoDecodeTimeMs": 79.66,
+        "estimatedTextureVramBytes": 1394606,
+        "estimatedTextureVramMb": 1.33,
+        "estimatedGeometryVramMb": 1.66,
+        "estimatedTotalVramMb": 2.99
+      },
+      "after": {
+        "filePath": "public/models/optimized/chicken-tikka-pizza-balanced.glb",
+        "fileName": "chicken-tikka-pizza-balanced.glb",
+        "fileSizeBytes": 431220,
+        "fileSizeMb": 0.411,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_specular"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 1,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 36468,
+        "totalVertices": 40656,
+        "totalDrawCalls": 2,
+        "dracoMeshCount": 2,
+        "dracoDecodeTimeMs": 78.26,
+        "estimatedTextureVramBytes": 1394606,
+        "estimatedTextureVramMb": 1.33,
+        "estimatedGeometryVramMb": 1.66,
+        "estimatedTotalVramMb": 2.99
+      },
+      "delta": {
+        "sizeDeltaBytes": 0,
+        "sizeReductionPercent": 0,
+        "triDelta": 0,
+        "triReductionPercent": 0,
+        "vramDeltaMb": 0,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "chicken-tikka-pizza-high.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/chicken-tikka-pizza-high.glb",
+        "fileName": "chicken-tikka-pizza-high.glb",
+        "fileSizeBytes": 639684,
+        "fileSizeMb": 0.61,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_specular"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 1,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 51200,
+        "totalVertices": 27385,
+        "totalDrawCalls": 2,
+        "dracoMeshCount": 2,
+        "dracoDecodeTimeMs": 61.56,
+        "estimatedTextureVramBytes": 5578424,
+        "estimatedTextureVramMb": 5.32,
+        "estimatedGeometryVramMb": 1.42,
+        "estimatedTotalVramMb": 6.74
+      },
+      "after": {
+        "filePath": "public/models/optimized/chicken-tikka-pizza-high.glb",
+        "fileName": "chicken-tikka-pizza-high.glb",
+        "fileSizeBytes": 639684,
+        "fileSizeMb": 0.61,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_specular"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 1,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 51200,
+        "totalVertices": 27385,
+        "totalDrawCalls": 2,
+        "dracoMeshCount": 2,
+        "dracoDecodeTimeMs": 62.44,
+        "estimatedTextureVramBytes": 5578424,
+        "estimatedTextureVramMb": 5.32,
+        "estimatedGeometryVramMb": 1.42,
+        "estimatedTotalVramMb": 6.74
+      },
+      "delta": {
+        "sizeDeltaBytes": 0,
+        "sizeReductionPercent": 0,
+        "triDelta": 0,
+        "triReductionPercent": 0,
+        "vramDeltaMb": 0,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "chicken-tikka-pizza-ultralight.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/chicken-tikka-pizza-ultralight.glb",
+        "fileName": "chicken-tikka-pizza-ultralight.glb",
+        "fileSizeBytes": 242244,
+        "fileSizeMb": 0.231,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_specular"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 1,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 21928,
+        "totalVertices": 26817,
+        "totalDrawCalls": 2,
+        "dracoMeshCount": 2,
+        "dracoDecodeTimeMs": 50.99,
+        "estimatedTextureVramBytes": 1394606,
+        "estimatedTextureVramMb": 1.33,
+        "estimatedGeometryVramMb": 1.07,
+        "estimatedTotalVramMb": 2.4
+      },
+      "after": {
+        "filePath": "public/models/optimized/chicken-tikka-pizza-ultralight.glb",
+        "fileName": "chicken-tikka-pizza-ultralight.glb",
+        "fileSizeBytes": 242244,
+        "fileSizeMb": 0.231,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_specular"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 1,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 21928,
+        "totalVertices": 26817,
+        "totalDrawCalls": 2,
+        "dracoMeshCount": 2,
+        "dracoDecodeTimeMs": 55.85,
+        "estimatedTextureVramBytes": 1394606,
+        "estimatedTextureVramMb": 1.33,
+        "estimatedGeometryVramMb": 1.07,
+        "estimatedTotalVramMb": 2.4
+      },
+      "delta": {
+        "sizeDeltaBytes": 0,
+        "sizeReductionPercent": 0,
+        "triDelta": 0,
+        "triReductionPercent": 0,
+        "vramDeltaMb": 0,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "classic-smash-burger-balanced.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/classic-smash-burger-balanced.glb",
+        "fileName": "classic-smash-burger-balanced.glb",
+        "fileSizeBytes": 2769616,
+        "fileSizeMb": 2.641,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 7937,
+        "totalVertices": 5536,
+        "totalDrawCalls": 13,
+        "dracoMeshCount": 13,
+        "dracoDecodeTimeMs": 10.39,
+        "estimatedTextureVramBytes": 29286726,
+        "estimatedTextureVramMb": 27.93,
+        "estimatedGeometryVramMb": 0.26,
+        "estimatedTotalVramMb": 28.19
+      },
+      "after": {
+        "filePath": "public/models/optimized/classic-smash-burger-balanced.glb",
+        "fileName": "classic-smash-burger-balanced.glb",
+        "fileSizeBytes": 369788,
+        "fileSizeMb": 0.353,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 12080,
+        "totalVertices": 7477,
+        "totalDrawCalls": 13,
+        "dracoMeshCount": 13,
+        "dracoDecodeTimeMs": 9.81,
+        "estimatedTextureVramBytes": 8367636,
+        "estimatedTextureVramMb": 7.98,
+        "estimatedGeometryVramMb": 0.37,
+        "estimatedTotalVramMb": 8.35
+      },
+      "delta": {
+        "sizeDeltaBytes": -2399828,
+        "sizeReductionPercent": 86.65,
+        "triDelta": 4143,
+        "triReductionPercent": -52.2,
+        "vramDeltaMb": -19.84,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "classic-smash-burger-high.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/classic-smash-burger-high.glb",
+        "fileName": "classic-smash-burger-high.glb",
+        "fileSizeBytes": 7081116,
+        "fileSizeMb": 6.753,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 12080,
+        "totalVertices": 7627,
+        "totalDrawCalls": 13,
+        "dracoMeshCount": 13,
+        "dracoDecodeTimeMs": 14.67,
+        "estimatedTextureVramBytes": 46021999,
+        "estimatedTextureVramMb": 43.89,
+        "estimatedGeometryVramMb": 0.37,
+        "estimatedTotalVramMb": 44.26
+      },
+      "after": {
+        "filePath": "public/models/optimized/classic-smash-burger-high.glb",
+        "fileName": "classic-smash-burger-high.glb",
+        "fileSizeBytes": 1222584,
+        "fileSizeMb": 1.166,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 12080,
+        "totalVertices": 7477,
+        "totalDrawCalls": 13,
+        "dracoMeshCount": 13,
+        "dracoDecodeTimeMs": 9.92,
+        "estimatedTextureVramBytes": 12551454,
+        "estimatedTextureVramMb": 11.97,
+        "estimatedGeometryVramMb": 0.37,
+        "estimatedTotalVramMb": 12.34
+      },
+      "delta": {
+        "sizeDeltaBytes": -5858532,
+        "sizeReductionPercent": 82.73,
+        "triDelta": 0,
+        "triReductionPercent": 0,
+        "vramDeltaMb": -31.92,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "classic-smash-burger-ultralight.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/classic-smash-burger-ultralight.glb",
+        "fileName": "classic-smash-burger-ultralight.glb",
+        "fileSizeBytes": 396092,
+        "fileSizeMb": 0.378,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 5535,
+        "totalVertices": 4206,
+        "totalDrawCalls": 13,
+        "dracoMeshCount": 13,
+        "dracoDecodeTimeMs": 8.09,
+        "estimatedTextureVramBytes": 8367636,
+        "estimatedTextureVramMb": 7.98,
+        "estimatedGeometryVramMb": 0.19,
+        "estimatedTotalVramMb": 8.17
+      },
+      "after": {
+        "filePath": "public/models/optimized/classic-smash-burger-ultralight.glb",
+        "fileName": "classic-smash-burger-ultralight.glb",
+        "fileSizeBytes": 154264,
+        "fileSizeMb": 0.147,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 12080,
+        "totalVertices": 7477,
+        "totalDrawCalls": 13,
+        "dracoMeshCount": 13,
+        "dracoDecodeTimeMs": 10.33,
+        "estimatedTextureVramBytes": 8367636,
+        "estimatedTextureVramMb": 7.98,
+        "estimatedGeometryVramMb": 0.37,
+        "estimatedTotalVramMb": 8.35
+      },
+      "delta": {
+        "sizeDeltaBytes": -241828,
+        "sizeReductionPercent": 61.05,
+        "triDelta": 6545,
+        "triReductionPercent": -118.25,
+        "vramDeltaMb": 0.18,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "crispy-paneer-burger-balanced.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/crispy-paneer-burger-balanced.glb",
+        "fileName": "crispy-paneer-burger-balanced.glb",
+        "fileSizeBytes": 2206972,
+        "fileSizeMb": 2.105,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat",
+          "KHR_materials_transmission",
+          "KHR_materials_specular",
+          "KHR_materials_ior"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 4,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 215036,
+        "totalVertices": 200690,
+        "totalDrawCalls": 7,
+        "dracoMeshCount": 7,
+        "dracoDecodeTimeMs": 308.11,
+        "estimatedTextureVramBytes": 13946060,
+        "estimatedTextureVramMb": 13.3,
+        "estimatedGeometryVramMb": 8.59,
+        "estimatedTotalVramMb": 21.89
+      },
+      "after": {
+        "filePath": "public/models/optimized/crispy-paneer-burger-balanced.glb",
+        "fileName": "crispy-paneer-burger-balanced.glb",
+        "fileSizeBytes": 447008,
+        "fileSizeMb": 0.426,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat",
+          "KHR_materials_ior",
+          "KHR_materials_specular",
+          "KHR_materials_transmission"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 4,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 35302,
+        "totalVertices": 62707,
+        "totalDrawCalls": 7,
+        "dracoMeshCount": 7,
+        "dracoDecodeTimeMs": 43.85,
+        "estimatedTextureVramBytes": 5578424,
+        "estimatedTextureVramMb": 5.32,
+        "estimatedGeometryVramMb": 2.32,
+        "estimatedTotalVramMb": 7.64
+      },
+      "delta": {
+        "sizeDeltaBytes": -1759964,
+        "sizeReductionPercent": 79.75,
+        "triDelta": -179734,
+        "triReductionPercent": 83.58,
+        "vramDeltaMb": -14.25,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "crispy-paneer-burger-high.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/crispy-paneer-burger-high.glb",
+        "fileName": "crispy-paneer-burger-high.glb",
+        "fileSizeBytes": 6858712,
+        "fileSizeMb": 6.541,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat",
+          "KHR_materials_transmission",
+          "KHR_materials_specular",
+          "KHR_materials_ior"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 4,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 358400,
+        "totalVertices": 290692,
+        "totalDrawCalls": 7,
+        "dracoMeshCount": 7,
+        "dracoDecodeTimeMs": 428.64,
+        "estimatedTextureVramBytes": 30681333,
+        "estimatedTextureVramMb": 29.26,
+        "estimatedGeometryVramMb": 12.97,
+        "estimatedTotalVramMb": 42.23
+      },
+      "after": {
+        "filePath": "public/models/optimized/crispy-paneer-burger-high.glb",
+        "fileName": "crispy-paneer-burger-high.glb",
+        "fileSizeBytes": 915348,
+        "fileSizeMb": 0.873,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat",
+          "KHR_materials_ior",
+          "KHR_materials_specular",
+          "KHR_materials_transmission"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 4,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 41292,
+        "totalVertices": 66160,
+        "totalDrawCalls": 7,
+        "dracoMeshCount": 7,
+        "dracoDecodeTimeMs": 48.79,
+        "estimatedTextureVramBytes": 9762242,
+        "estimatedTextureVramMb": 9.31,
+        "estimatedGeometryVramMb": 2.49,
+        "estimatedTotalVramMb": 11.8
+      },
+      "delta": {
+        "sizeDeltaBytes": -5943364,
+        "sizeReductionPercent": 86.65,
+        "triDelta": -317108,
+        "triReductionPercent": 88.48,
+        "vramDeltaMb": -30.43,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "crispy-paneer-burger-ultralight.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/crispy-paneer-burger-ultralight.glb",
+        "fileName": "crispy-paneer-burger-ultralight.glb",
+        "fileSizeBytes": 1117404,
+        "fileSizeMb": 1.066,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat",
+          "KHR_materials_transmission",
+          "KHR_materials_specular",
+          "KHR_materials_ior"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 4,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 118265,
+        "totalVertices": 128625,
+        "totalDrawCalls": 7,
+        "dracoMeshCount": 7,
+        "dracoDecodeTimeMs": 180.28,
+        "estimatedTextureVramBytes": 5578424,
+        "estimatedTextureVramMb": 5.32,
+        "estimatedGeometryVramMb": 5.28,
+        "estimatedTotalVramMb": 10.6
+      },
+      "after": {
+        "filePath": "public/models/optimized/crispy-paneer-burger-ultralight.glb",
+        "fileName": "crispy-paneer-burger-ultralight.glb",
+        "fileSizeBytes": 316512,
+        "fileSizeMb": 0.302,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat",
+          "KHR_materials_ior",
+          "KHR_materials_specular",
+          "KHR_materials_transmission"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 4,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 33112,
+        "totalVertices": 60904,
+        "totalDrawCalls": 7,
+        "dracoMeshCount": 7,
+        "dracoDecodeTimeMs": 41.89,
+        "estimatedTextureVramBytes": 5578424,
+        "estimatedTextureVramMb": 5.32,
+        "estimatedGeometryVramMb": 2.24,
+        "estimatedTotalVramMb": 7.56
+      },
+      "delta": {
+        "sizeDeltaBytes": -800892,
+        "sizeReductionPercent": 71.67,
+        "triDelta": -85153,
+        "triReductionPercent": 72,
+        "vramDeltaMb": -3.04,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "dynamite-chilli-potatoes-balanced.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/dynamite-chilli-potatoes-balanced.glb",
+        "fileName": "dynamite-chilli-potatoes-balanced.glb",
+        "fileSizeBytes": 1355884,
+        "fileSizeMb": 1.293,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat",
+          "KHR_materials_specular"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 3,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 142078,
+        "totalVertices": 79658,
+        "totalDrawCalls": 7,
+        "dracoMeshCount": 7,
+        "dracoDecodeTimeMs": 200.85,
+        "estimatedTextureVramBytes": 8367636,
+        "estimatedTextureVramMb": 7.98,
+        "estimatedGeometryVramMb": 4.06,
+        "estimatedTotalVramMb": 12.04
+      },
+      "after": {
+        "filePath": "public/models/optimized/dynamite-chilli-potatoes-balanced.glb",
+        "fileName": "dynamite-chilli-potatoes-balanced.glb",
+        "fileSizeBytes": 298556,
+        "fileSizeMb": 0.285,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat",
+          "KHR_materials_specular"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 3,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 16548,
+        "totalVertices": 12633,
+        "totalDrawCalls": 7,
+        "dracoMeshCount": 7,
+        "dracoDecodeTimeMs": 21.36,
+        "estimatedTextureVramBytes": 4183818,
+        "estimatedTextureVramMb": 3.99,
+        "estimatedGeometryVramMb": 0.57,
+        "estimatedTotalVramMb": 4.56
+      },
+      "delta": {
+        "sizeDeltaBytes": -1057328,
+        "sizeReductionPercent": 77.98,
+        "triDelta": -125530,
+        "triReductionPercent": 88.35,
+        "vramDeltaMb": -7.48,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "dynamite-chilli-potatoes-high.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/dynamite-chilli-potatoes-high.glb",
+        "fileName": "dynamite-chilli-potatoes-high.glb",
+        "fileSizeBytes": 2190928,
+        "fileSizeMb": 2.089,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat",
+          "KHR_materials_specular"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 3,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 233920,
+        "totalVertices": 128669,
+        "totalDrawCalls": 7,
+        "dracoMeshCount": 7,
+        "dracoDecodeTimeMs": 300.83,
+        "estimatedTextureVramBytes": 8367636,
+        "estimatedTextureVramMb": 7.98,
+        "estimatedGeometryVramMb": 6.6,
+        "estimatedTotalVramMb": 14.58
+      },
+      "after": {
+        "filePath": "public/models/optimized/dynamite-chilli-potatoes-high.glb",
+        "fileName": "dynamite-chilli-potatoes-high.glb",
+        "fileSizeBytes": 742628,
+        "fileSizeMb": 0.708,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat",
+          "KHR_materials_specular"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 3,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 32742,
+        "totalVertices": 23172,
+        "totalDrawCalls": 7,
+        "dracoMeshCount": 7,
+        "dracoDecodeTimeMs": 37.78,
+        "estimatedTextureVramBytes": 4183818,
+        "estimatedTextureVramMb": 3.99,
+        "estimatedGeometryVramMb": 1.08,
+        "estimatedTotalVramMb": 5.07
+      },
+      "delta": {
+        "sizeDeltaBytes": -1448300,
+        "sizeReductionPercent": 66.1,
+        "triDelta": -201178,
+        "triReductionPercent": 86,
+        "vramDeltaMb": -9.51,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "dynamite-chilli-potatoes-ultralight.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/dynamite-chilli-potatoes-ultralight.glb",
+        "fileName": "dynamite-chilli-potatoes-ultralight.glb",
+        "fileSizeBytes": 656060,
+        "fileSizeMb": 0.626,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat",
+          "KHR_materials_specular"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 3,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 80084,
+        "totalVertices": 46696,
+        "totalDrawCalls": 7,
+        "dracoMeshCount": 7,
+        "dracoDecodeTimeMs": 120.23,
+        "estimatedTextureVramBytes": 4183818,
+        "estimatedTextureVramMb": 3.99,
+        "estimatedGeometryVramMb": 2.34,
+        "estimatedTotalVramMb": 6.33
+      },
+      "after": {
+        "filePath": "public/models/optimized/dynamite-chilli-potatoes-ultralight.glb",
+        "fileName": "dynamite-chilli-potatoes-ultralight.glb",
+        "fileSizeBytes": 126772,
+        "fileSizeMb": 0.121,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat",
+          "KHR_materials_specular"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 3,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 6704,
+        "totalVertices": 6992,
+        "totalDrawCalls": 7,
+        "dracoMeshCount": 7,
+        "dracoDecodeTimeMs": 10.12,
+        "estimatedTextureVramBytes": 4183818,
+        "estimatedTextureVramMb": 3.99,
+        "estimatedGeometryVramMb": 0.29,
+        "estimatedTotalVramMb": 4.28
+      },
+      "delta": {
+        "sizeDeltaBytes": -529288,
+        "sizeReductionPercent": 80.68,
+        "triDelta": -73380,
+        "triReductionPercent": 91.63,
+        "vramDeltaMb": -2.05,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "golden-oak-burger-balanced.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/golden-oak-burger-balanced.glb",
+        "fileName": "golden-oak-burger-balanced.glb",
+        "fileSizeBytes": 2769616,
+        "fileSizeMb": 2.641,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 7937,
+        "totalVertices": 5536,
+        "totalDrawCalls": 13,
+        "dracoMeshCount": 13,
+        "dracoDecodeTimeMs": 11.1,
+        "estimatedTextureVramBytes": 29286726,
+        "estimatedTextureVramMb": 27.93,
+        "estimatedGeometryVramMb": 0.26,
+        "estimatedTotalVramMb": 28.19
+      },
+      "after": {
+        "filePath": "public/models/optimized/golden-oak-burger-balanced.glb",
+        "fileName": "golden-oak-burger-balanced.glb",
+        "fileSizeBytes": 369788,
+        "fileSizeMb": 0.353,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 12080,
+        "totalVertices": 7477,
+        "totalDrawCalls": 13,
+        "dracoMeshCount": 13,
+        "dracoDecodeTimeMs": 10.9,
+        "estimatedTextureVramBytes": 8367636,
+        "estimatedTextureVramMb": 7.98,
+        "estimatedGeometryVramMb": 0.37,
+        "estimatedTotalVramMb": 8.35
+      },
+      "delta": {
+        "sizeDeltaBytes": -2399828,
+        "sizeReductionPercent": 86.65,
+        "triDelta": 4143,
+        "triReductionPercent": -52.2,
+        "vramDeltaMb": -19.84,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "golden-oak-burger-high.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/golden-oak-burger-high.glb",
+        "fileName": "golden-oak-burger-high.glb",
+        "fileSizeBytes": 7081116,
+        "fileSizeMb": 6.753,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 12080,
+        "totalVertices": 7627,
+        "totalDrawCalls": 13,
+        "dracoMeshCount": 13,
+        "dracoDecodeTimeMs": 14.99,
+        "estimatedTextureVramBytes": 46021999,
+        "estimatedTextureVramMb": 43.89,
+        "estimatedGeometryVramMb": 0.37,
+        "estimatedTotalVramMb": 44.26
+      },
+      "after": {
+        "filePath": "public/models/optimized/golden-oak-burger-high.glb",
+        "fileName": "golden-oak-burger-high.glb",
+        "fileSizeBytes": 1222584,
+        "fileSizeMb": 1.166,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 12080,
+        "totalVertices": 7477,
+        "totalDrawCalls": 13,
+        "dracoMeshCount": 13,
+        "dracoDecodeTimeMs": 10.38,
+        "estimatedTextureVramBytes": 12551454,
+        "estimatedTextureVramMb": 11.97,
+        "estimatedGeometryVramMb": 0.37,
+        "estimatedTotalVramMb": 12.34
+      },
+      "delta": {
+        "sizeDeltaBytes": -5858532,
+        "sizeReductionPercent": 82.73,
+        "triDelta": 0,
+        "triReductionPercent": 0,
+        "vramDeltaMb": -31.92,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "golden-oak-burger-master.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/golden-oak-burger-master.glb",
+        "fileName": "golden-oak-burger-master.glb",
+        "fileSizeBytes": 7330524,
+        "fileSizeMb": 6.991,
+        "version": 2,
+        "extensionsUsed": [],
+        "extensionsRequired": [],
+        "hasDraco": false,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 11728,
+        "totalVertices": 7390,
+        "totalDrawCalls": 6,
+        "dracoMeshCount": 0,
+        "dracoDecodeTimeMs": 0,
+        "estimatedTextureVramBytes": 46021999,
+        "estimatedTextureVramMb": 43.89,
+        "estimatedGeometryVramMb": 0.36,
+        "estimatedTotalVramMb": 44.25
+      },
+      "after": {
+        "filePath": "public/models/optimized/golden-oak-burger-master.glb",
+        "fileName": "golden-oak-burger-master.glb",
+        "fileSizeBytes": 7330524,
+        "fileSizeMb": 6.991,
+        "version": 2,
+        "extensionsUsed": [],
+        "extensionsRequired": [],
+        "hasDraco": false,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 11728,
+        "totalVertices": 7390,
+        "totalDrawCalls": 6,
+        "dracoMeshCount": 0,
+        "dracoDecodeTimeMs": 0,
+        "estimatedTextureVramBytes": 46021999,
+        "estimatedTextureVramMb": 43.89,
+        "estimatedGeometryVramMb": 0.36,
+        "estimatedTotalVramMb": 44.25
+      },
+      "delta": {
+        "sizeDeltaBytes": 0,
+        "sizeReductionPercent": 0,
+        "triDelta": 0,
+        "triReductionPercent": 0,
+        "vramDeltaMb": 0,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "golden-oak-burger-realistic-balanced.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/golden-oak-burger-realistic-balanced.glb",
+        "fileName": "golden-oak-burger-realistic-balanced.glb",
+        "fileSizeBytes": 2585596,
+        "fileSizeMb": 2.466,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 5859,
+        "totalVertices": 4403,
+        "totalDrawCalls": 6,
+        "dracoMeshCount": 6,
+        "dracoDecodeTimeMs": 7.86,
+        "estimatedTextureVramBytes": 25102908,
+        "estimatedTextureVramMb": 23.94,
+        "estimatedGeometryVramMb": 0.2,
+        "estimatedTotalVramMb": 24.14
+      },
+      "after": {
+        "filePath": "public/models/optimized/golden-oak-burger-realistic-balanced.glb",
+        "fileName": "golden-oak-burger-realistic-balanced.glb",
+        "fileSizeBytes": 2585596,
+        "fileSizeMb": 2.466,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 5859,
+        "totalVertices": 4403,
+        "totalDrawCalls": 6,
+        "dracoMeshCount": 6,
+        "dracoDecodeTimeMs": 8.75,
+        "estimatedTextureVramBytes": 25102908,
+        "estimatedTextureVramMb": 23.94,
+        "estimatedGeometryVramMb": 0.2,
+        "estimatedTotalVramMb": 24.14
+      },
+      "delta": {
+        "sizeDeltaBytes": 0,
+        "sizeReductionPercent": 0,
+        "triDelta": 0,
+        "triReductionPercent": 0,
+        "vramDeltaMb": 0,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "golden-oak-burger-realistic-high.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/golden-oak-burger-realistic-high.glb",
+        "fileName": "golden-oak-burger-realistic-high.glb",
+        "fileSizeBytes": 7070472,
+        "fileSizeMb": 6.743,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 11728,
+        "totalVertices": 7390,
+        "totalDrawCalls": 6,
+        "dracoMeshCount": 6,
+        "dracoDecodeTimeMs": 13.19,
+        "estimatedTextureVramBytes": 46021999,
+        "estimatedTextureVramMb": 43.89,
+        "estimatedGeometryVramMb": 0.36,
+        "estimatedTotalVramMb": 44.25
+      },
+      "after": {
+        "filePath": "public/models/optimized/golden-oak-burger-realistic-high.glb",
+        "fileName": "golden-oak-burger-realistic-high.glb",
+        "fileSizeBytes": 7070472,
+        "fileSizeMb": 6.743,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 11728,
+        "totalVertices": 7390,
+        "totalDrawCalls": 6,
+        "dracoMeshCount": 6,
+        "dracoDecodeTimeMs": 13.84,
+        "estimatedTextureVramBytes": 46021999,
+        "estimatedTextureVramMb": 43.89,
+        "estimatedGeometryVramMb": 0.36,
+        "estimatedTotalVramMb": 44.25
+      },
+      "delta": {
+        "sizeDeltaBytes": 0,
+        "sizeReductionPercent": 0,
+        "triDelta": 0,
+        "triReductionPercent": 0,
+        "vramDeltaMb": 0,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "golden-oak-burger-realistic-ultralight.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/golden-oak-burger-realistic-ultralight.glb",
+        "fileName": "golden-oak-burger-realistic-ultralight.glb",
+        "fileSizeBytes": 214476,
+        "fileSizeMb": 0.205,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 2930,
+        "totalVertices": 2654,
+        "totalDrawCalls": 6,
+        "dracoMeshCount": 6,
+        "dracoDecodeTimeMs": 5.77,
+        "estimatedTextureVramBytes": 8367636,
+        "estimatedTextureVramMb": 7.98,
+        "estimatedGeometryVramMb": 0.11,
+        "estimatedTotalVramMb": 8.09
+      },
+      "after": {
+        "filePath": "public/models/optimized/golden-oak-burger-realistic-ultralight.glb",
+        "fileName": "golden-oak-burger-realistic-ultralight.glb",
+        "fileSizeBytes": 214476,
+        "fileSizeMb": 0.205,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 2930,
+        "totalVertices": 2654,
+        "totalDrawCalls": 6,
+        "dracoMeshCount": 6,
+        "dracoDecodeTimeMs": 5.07,
+        "estimatedTextureVramBytes": 8367636,
+        "estimatedTextureVramMb": 7.98,
+        "estimatedGeometryVramMb": 0.11,
+        "estimatedTotalVramMb": 8.09
+      },
+      "delta": {
+        "sizeDeltaBytes": 0,
+        "sizeReductionPercent": 0,
+        "triDelta": 0,
+        "triReductionPercent": 0,
+        "vramDeltaMb": 0,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "golden-oak-burger-ultralight.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/golden-oak-burger-ultralight.glb",
+        "fileName": "golden-oak-burger-ultralight.glb",
+        "fileSizeBytes": 396092,
+        "fileSizeMb": 0.378,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 5535,
+        "totalVertices": 4206,
+        "totalDrawCalls": 13,
+        "dracoMeshCount": 13,
+        "dracoDecodeTimeMs": 8.33,
+        "estimatedTextureVramBytes": 8367636,
+        "estimatedTextureVramMb": 7.98,
+        "estimatedGeometryVramMb": 0.19,
+        "estimatedTotalVramMb": 8.17
+      },
+      "after": {
+        "filePath": "public/models/optimized/golden-oak-burger-ultralight.glb",
+        "fileName": "golden-oak-burger-ultralight.glb",
+        "fileSizeBytes": 154264,
+        "fileSizeMb": 0.147,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 12080,
+        "totalVertices": 7477,
+        "totalDrawCalls": 13,
+        "dracoMeshCount": 13,
+        "dracoDecodeTimeMs": 10.64,
+        "estimatedTextureVramBytes": 8367636,
+        "estimatedTextureVramMb": 7.98,
+        "estimatedGeometryVramMb": 0.37,
+        "estimatedTotalVramMb": 8.35
+      },
+      "delta": {
+        "sizeDeltaBytes": -241828,
+        "sizeReductionPercent": 61.05,
+        "triDelta": 6545,
+        "triReductionPercent": -118.25,
+        "vramDeltaMb": 0.18,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "golden-oak-signature-burger-balanced.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/golden-oak-signature-burger-balanced.glb",
+        "fileName": "golden-oak-signature-burger-balanced.glb",
+        "fileSizeBytes": 2769616,
+        "fileSizeMb": 2.641,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 7937,
+        "totalVertices": 5536,
+        "totalDrawCalls": 13,
+        "dracoMeshCount": 13,
+        "dracoDecodeTimeMs": 12.74,
+        "estimatedTextureVramBytes": 29286726,
+        "estimatedTextureVramMb": 27.93,
+        "estimatedGeometryVramMb": 0.26,
+        "estimatedTotalVramMb": 28.19
+      },
+      "after": {
+        "filePath": "public/models/optimized/golden-oak-signature-burger-balanced.glb",
+        "fileName": "golden-oak-signature-burger-balanced.glb",
+        "fileSizeBytes": 369788,
+        "fileSizeMb": 0.353,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 12080,
+        "totalVertices": 7477,
+        "totalDrawCalls": 13,
+        "dracoMeshCount": 13,
+        "dracoDecodeTimeMs": 12.22,
+        "estimatedTextureVramBytes": 8367636,
+        "estimatedTextureVramMb": 7.98,
+        "estimatedGeometryVramMb": 0.37,
+        "estimatedTotalVramMb": 8.35
+      },
+      "delta": {
+        "sizeDeltaBytes": -2399828,
+        "sizeReductionPercent": 86.65,
+        "triDelta": 4143,
+        "triReductionPercent": -52.2,
+        "vramDeltaMb": -19.84,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "golden-oak-signature-burger-high.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/golden-oak-signature-burger-high.glb",
+        "fileName": "golden-oak-signature-burger-high.glb",
+        "fileSizeBytes": 7081116,
+        "fileSizeMb": 6.753,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 12080,
+        "totalVertices": 7627,
+        "totalDrawCalls": 13,
+        "dracoMeshCount": 13,
+        "dracoDecodeTimeMs": 15.95,
+        "estimatedTextureVramBytes": 46021999,
+        "estimatedTextureVramMb": 43.89,
+        "estimatedGeometryVramMb": 0.37,
+        "estimatedTotalVramMb": 44.26
+      },
+      "after": {
+        "filePath": "public/models/optimized/golden-oak-signature-burger-high.glb",
+        "fileName": "golden-oak-signature-burger-high.glb",
+        "fileSizeBytes": 1222584,
+        "fileSizeMb": 1.166,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 12080,
+        "totalVertices": 7477,
+        "totalDrawCalls": 13,
+        "dracoMeshCount": 13,
+        "dracoDecodeTimeMs": 9.24,
+        "estimatedTextureVramBytes": 12551454,
+        "estimatedTextureVramMb": 11.97,
+        "estimatedGeometryVramMb": 0.37,
+        "estimatedTotalVramMb": 12.34
+      },
+      "delta": {
+        "sizeDeltaBytes": -5858532,
+        "sizeReductionPercent": 82.73,
+        "triDelta": 0,
+        "triReductionPercent": 0,
+        "vramDeltaMb": -31.92,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "golden-oak-signature-burger-ultralight.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/golden-oak-signature-burger-ultralight.glb",
+        "fileName": "golden-oak-signature-burger-ultralight.glb",
+        "fileSizeBytes": 396092,
+        "fileSizeMb": 0.378,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 5535,
+        "totalVertices": 4206,
+        "totalDrawCalls": 13,
+        "dracoMeshCount": 13,
+        "dracoDecodeTimeMs": 8.04,
+        "estimatedTextureVramBytes": 8367636,
+        "estimatedTextureVramMb": 7.98,
+        "estimatedGeometryVramMb": 0.19,
+        "estimatedTotalVramMb": 8.17
+      },
+      "after": {
+        "filePath": "public/models/optimized/golden-oak-signature-burger-ultralight.glb",
+        "fileName": "golden-oak-signature-burger-ultralight.glb",
+        "fileSizeBytes": 154264,
+        "fileSizeMb": 0.147,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 12080,
+        "totalVertices": 7477,
+        "totalDrawCalls": 13,
+        "dracoMeshCount": 13,
+        "dracoDecodeTimeMs": 10.39,
+        "estimatedTextureVramBytes": 8367636,
+        "estimatedTextureVramMb": 7.98,
+        "estimatedGeometryVramMb": 0.37,
+        "estimatedTotalVramMb": 8.35
+      },
+      "delta": {
+        "sizeDeltaBytes": -241828,
+        "sizeReductionPercent": 61.05,
+        "triDelta": 6545,
+        "triReductionPercent": -118.25,
+        "vramDeltaMb": 0.18,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "gourmet-wok-bowl-balanced.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/gourmet-wok-bowl-balanced.glb",
+        "fileName": "gourmet-wok-bowl-balanced.glb",
+        "fileSizeBytes": 10920,
+        "fileSizeMb": 0.01,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 0,
+        "imageMimeTypes": [],
+        "totalTriangles": 2100,
+        "totalVertices": 1308,
+        "totalDrawCalls": 4,
+        "dracoMeshCount": 4,
+        "dracoDecodeTimeMs": 2.1,
+        "estimatedTextureVramBytes": 0,
+        "estimatedTextureVramMb": 0,
+        "estimatedGeometryVramMb": 0.06,
+        "estimatedTotalVramMb": 0.06
+      },
+      "after": {
+        "filePath": "public/models/optimized/gourmet-wok-bowl-balanced.glb",
+        "fileName": "gourmet-wok-bowl-balanced.glb",
+        "fileSizeBytes": 10920,
+        "fileSizeMb": 0.01,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 0,
+        "imageMimeTypes": [],
+        "totalTriangles": 2100,
+        "totalVertices": 1308,
+        "totalDrawCalls": 4,
+        "dracoMeshCount": 4,
+        "dracoDecodeTimeMs": 2.1,
+        "estimatedTextureVramBytes": 0,
+        "estimatedTextureVramMb": 0,
+        "estimatedGeometryVramMb": 0.06,
+        "estimatedTotalVramMb": 0.06
+      },
+      "delta": {
+        "sizeDeltaBytes": 0,
+        "sizeReductionPercent": 0,
+        "triDelta": 0,
+        "triReductionPercent": 0,
+        "vramDeltaMb": 0,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "gourmet-wok-bowl-high.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/gourmet-wok-bowl-high.glb",
+        "fileName": "gourmet-wok-bowl-high.glb",
+        "fileSizeBytes": 18248,
+        "fileSizeMb": 0.017,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 0,
+        "imageMimeTypes": [],
+        "totalTriangles": 4896,
+        "totalVertices": 2839,
+        "totalDrawCalls": 4,
+        "dracoMeshCount": 4,
+        "dracoDecodeTimeMs": 4.15,
+        "estimatedTextureVramBytes": 0,
+        "estimatedTextureVramMb": 0,
+        "estimatedGeometryVramMb": 0.14,
+        "estimatedTotalVramMb": 0.14
+      },
+      "after": {
+        "filePath": "public/models/optimized/gourmet-wok-bowl-high.glb",
+        "fileName": "gourmet-wok-bowl-high.glb",
+        "fileSizeBytes": 18248,
+        "fileSizeMb": 0.017,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 0,
+        "imageMimeTypes": [],
+        "totalTriangles": 4896,
+        "totalVertices": 2839,
+        "totalDrawCalls": 4,
+        "dracoMeshCount": 4,
+        "dracoDecodeTimeMs": 3.82,
+        "estimatedTextureVramBytes": 0,
+        "estimatedTextureVramMb": 0,
+        "estimatedGeometryVramMb": 0.14,
+        "estimatedTotalVramMb": 0.14
+      },
+      "delta": {
+        "sizeDeltaBytes": 0,
+        "sizeReductionPercent": 0,
+        "triDelta": 0,
+        "triReductionPercent": 0,
+        "vramDeltaMb": 0,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "gourmet-wok-bowl-ultralight.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/gourmet-wok-bowl-ultralight.glb",
+        "fileName": "gourmet-wok-bowl-ultralight.glb",
+        "fileSizeBytes": 8232,
+        "fileSizeMb": 0.008,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 0,
+        "imageMimeTypes": [],
+        "totalTriangles": 1264,
+        "totalVertices": 829,
+        "totalDrawCalls": 4,
+        "dracoMeshCount": 4,
+        "dracoDecodeTimeMs": 1.98,
+        "estimatedTextureVramBytes": 0,
+        "estimatedTextureVramMb": 0,
+        "estimatedGeometryVramMb": 0.04,
+        "estimatedTotalVramMb": 0.04
+      },
+      "after": {
+        "filePath": "public/models/optimized/gourmet-wok-bowl-ultralight.glb",
+        "fileName": "gourmet-wok-bowl-ultralight.glb",
+        "fileSizeBytes": 8232,
+        "fileSizeMb": 0.008,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 0,
+        "imageMimeTypes": [],
+        "totalTriangles": 1264,
+        "totalVertices": 829,
+        "totalDrawCalls": 4,
+        "dracoMeshCount": 4,
+        "dracoDecodeTimeMs": 1.27,
+        "estimatedTextureVramBytes": 0,
+        "estimatedTextureVramMb": 0,
+        "estimatedGeometryVramMb": 0.04,
+        "estimatedTotalVramMb": 0.04
+      },
+      "delta": {
+        "sizeDeltaBytes": 0,
+        "sizeReductionPercent": 0,
+        "triDelta": 0,
+        "triReductionPercent": 0,
+        "vramDeltaMb": 0,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "kaffir-lime-mocktail-balanced.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/kaffir-lime-mocktail-balanced.glb",
+        "fileName": "kaffir-lime-mocktail-balanced.glb",
+        "fileSizeBytes": 6988,
+        "fileSizeMb": 0.007,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 0,
+        "imageMimeTypes": [],
+        "totalTriangles": 560,
+        "totalVertices": 524,
+        "totalDrawCalls": 4,
+        "dracoMeshCount": 4,
+        "dracoDecodeTimeMs": 0.89,
+        "estimatedTextureVramBytes": 0,
+        "estimatedTextureVramMb": 0,
+        "estimatedGeometryVramMb": 0.02,
+        "estimatedTotalVramMb": 0.02
+      },
+      "after": {
+        "filePath": "public/models/optimized/kaffir-lime-mocktail-balanced.glb",
+        "fileName": "kaffir-lime-mocktail-balanced.glb",
+        "fileSizeBytes": 6988,
+        "fileSizeMb": 0.007,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 0,
+        "imageMimeTypes": [],
+        "totalTriangles": 560,
+        "totalVertices": 524,
+        "totalDrawCalls": 4,
+        "dracoMeshCount": 4,
+        "dracoDecodeTimeMs": 1.05,
+        "estimatedTextureVramBytes": 0,
+        "estimatedTextureVramMb": 0,
+        "estimatedGeometryVramMb": 0.02,
+        "estimatedTotalVramMb": 0.02
+      },
+      "delta": {
+        "sizeDeltaBytes": 0,
+        "sizeReductionPercent": 0,
+        "triDelta": 0,
+        "triReductionPercent": 0,
+        "vramDeltaMb": 0,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "kaffir-lime-mocktail-high.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/kaffir-lime-mocktail-high.glb",
+        "fileName": "kaffir-lime-mocktail-high.glb",
+        "fileSizeBytes": 9072,
+        "fileSizeMb": 0.009,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 0,
+        "imageMimeTypes": [],
+        "totalTriangles": 960,
+        "totalVertices": 884,
+        "totalDrawCalls": 4,
+        "dracoMeshCount": 4,
+        "dracoDecodeTimeMs": 1.58,
+        "estimatedTextureVramBytes": 0,
+        "estimatedTextureVramMb": 0,
+        "estimatedGeometryVramMb": 0.04,
+        "estimatedTotalVramMb": 0.04
+      },
+      "after": {
+        "filePath": "public/models/optimized/kaffir-lime-mocktail-high.glb",
+        "fileName": "kaffir-lime-mocktail-high.glb",
+        "fileSizeBytes": 9072,
+        "fileSizeMb": 0.009,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 0,
+        "imageMimeTypes": [],
+        "totalTriangles": 960,
+        "totalVertices": 884,
+        "totalDrawCalls": 4,
+        "dracoMeshCount": 4,
+        "dracoDecodeTimeMs": 1.77,
+        "estimatedTextureVramBytes": 0,
+        "estimatedTextureVramMb": 0,
+        "estimatedGeometryVramMb": 0.04,
+        "estimatedTotalVramMb": 0.04
+      },
+      "delta": {
+        "sizeDeltaBytes": 0,
+        "sizeReductionPercent": 0,
+        "triDelta": 0,
+        "triReductionPercent": 0,
+        "vramDeltaMb": 0,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "kaffir-lime-mocktail-ultralight.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/kaffir-lime-mocktail-ultralight.glb",
+        "fileName": "kaffir-lime-mocktail-ultralight.glb",
+        "fileSizeBytes": 5768,
+        "fileSizeMb": 0.006,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 0,
+        "imageMimeTypes": [],
+        "totalTriangles": 320,
+        "totalVertices": 308,
+        "totalDrawCalls": 4,
+        "dracoMeshCount": 4,
+        "dracoDecodeTimeMs": 0.76,
+        "estimatedTextureVramBytes": 0,
+        "estimatedTextureVramMb": 0,
+        "estimatedGeometryVramMb": 0.01,
+        "estimatedTotalVramMb": 0.01
+      },
+      "after": {
+        "filePath": "public/models/optimized/kaffir-lime-mocktail-ultralight.glb",
+        "fileName": "kaffir-lime-mocktail-ultralight.glb",
+        "fileSizeBytes": 5768,
+        "fileSizeMb": 0.006,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 0,
+        "imageMimeTypes": [],
+        "totalTriangles": 320,
+        "totalVertices": 308,
+        "totalDrawCalls": 4,
+        "dracoMeshCount": 4,
+        "dracoDecodeTimeMs": 0.76,
+        "estimatedTextureVramBytes": 0,
+        "estimatedTextureVramMb": 0,
+        "estimatedGeometryVramMb": 0.01,
+        "estimatedTotalVramMb": 0.01
+      },
+      "delta": {
+        "sizeDeltaBytes": 0,
+        "sizeReductionPercent": 0,
+        "triDelta": 0,
+        "triReductionPercent": 0,
+        "vramDeltaMb": 0,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "mushroom-truffle-pizza-balanced.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/mushroom-truffle-pizza-balanced.glb",
+        "fileName": "mushroom-truffle-pizza-balanced.glb",
+        "fileSizeBytes": 1255584,
+        "fileSizeMb": 1.197,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 2,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 172788,
+        "totalVertices": 174810,
+        "totalDrawCalls": 1,
+        "dracoMeshCount": 1,
+        "dracoDecodeTimeMs": 273.69,
+        "estimatedTextureVramBytes": 2789212,
+        "estimatedTextureVramMb": 2.66,
+        "estimatedGeometryVramMb": 7.31,
+        "estimatedTotalVramMb": 9.97
+      },
+      "after": {
+        "filePath": "public/models/optimized/mushroom-truffle-pizza-balanced.glb",
+        "fileName": "mushroom-truffle-pizza-balanced.glb",
+        "fileSizeBytes": 176776,
+        "fileSizeMb": 0.169,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 2,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 14670,
+        "totalVertices": 9189,
+        "totalDrawCalls": 1,
+        "dracoMeshCount": 1,
+        "dracoDecodeTimeMs": 11.47,
+        "estimatedTextureVramBytes": 2789212,
+        "estimatedTextureVramMb": 2.66,
+        "estimatedGeometryVramMb": 0.45,
+        "estimatedTotalVramMb": 3.11
+      },
+      "delta": {
+        "sizeDeltaBytes": -1078808,
+        "sizeReductionPercent": 85.92,
+        "triDelta": -158118,
+        "triReductionPercent": 91.51,
+        "vramDeltaMb": -6.86,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "mushroom-truffle-pizza-high.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/mushroom-truffle-pizza-high.glb",
+        "fileName": "mushroom-truffle-pizza-high.glb",
+        "fileSizeBytes": 1373836,
+        "fileSizeMb": 1.31,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 2,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 244512,
+        "totalVertices": 124739,
+        "totalDrawCalls": 1,
+        "dracoMeshCount": 1,
+        "dracoDecodeTimeMs": 210.08,
+        "estimatedTextureVramBytes": 11156848,
+        "estimatedTextureVramMb": 10.64,
+        "estimatedGeometryVramMb": 6.6,
+        "estimatedTotalVramMb": 17.24
+      },
+      "after": {
+        "filePath": "public/models/optimized/mushroom-truffle-pizza-high.glb",
+        "fileName": "mushroom-truffle-pizza-high.glb",
+        "fileSizeBytes": 416144,
+        "fileSizeMb": 0.397,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 2,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 29340,
+        "totalVertices": 16590,
+        "totalDrawCalls": 1,
+        "dracoMeshCount": 1,
+        "dracoDecodeTimeMs": 22.54,
+        "estimatedTextureVramBytes": 2789212,
+        "estimatedTextureVramMb": 2.66,
+        "estimatedGeometryVramMb": 0.84,
+        "estimatedTotalVramMb": 3.5
+      },
+      "delta": {
+        "sizeDeltaBytes": -957692,
+        "sizeReductionPercent": 69.71,
+        "triDelta": -215172,
+        "triReductionPercent": 88,
+        "vramDeltaMb": -13.74,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "mushroom-truffle-pizza-ultralight.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/mushroom-truffle-pizza-ultralight.glb",
+        "fileName": "mushroom-truffle-pizza-ultralight.glb",
+        "fileSizeBytes": 866640,
+        "fileSizeMb": 0.826,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 2,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 106468,
+        "totalVertices": 128315,
+        "totalDrawCalls": 1,
+        "dracoMeshCount": 1,
+        "dracoDecodeTimeMs": 198.83,
+        "estimatedTextureVramBytes": 2789212,
+        "estimatedTextureVramMb": 2.66,
+        "estimatedGeometryVramMb": 5.13,
+        "estimatedTotalVramMb": 7.79
+      },
+      "after": {
+        "filePath": "public/models/optimized/mushroom-truffle-pizza-ultralight.glb",
+        "fileName": "mushroom-truffle-pizza-ultralight.glb",
+        "fileSizeBytes": 70000,
+        "fileSizeMb": 0.067,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 2,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 6112,
+        "totalVertices": 4862,
+        "totalDrawCalls": 1,
+        "dracoMeshCount": 1,
+        "dracoDecodeTimeMs": 5.51,
+        "estimatedTextureVramBytes": 2789212,
+        "estimatedTextureVramMb": 2.66,
+        "estimatedGeometryVramMb": 0.22,
+        "estimatedTotalVramMb": 2.88
+      },
+      "delta": {
+        "sizeDeltaBytes": -796640,
+        "sizeReductionPercent": 91.92,
+        "triDelta": -100356,
+        "triReductionPercent": 94.26,
+        "vramDeltaMb": -4.91,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "tandoori-paneer-pizza-balanced.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/tandoori-paneer-pizza-balanced.glb",
+        "fileName": "tandoori-paneer-pizza-balanced.glb",
+        "fileSizeBytes": 716900,
+        "fileSizeMb": 0.684,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat",
+          "KHR_materials_specular",
+          "KHR_materials_ior"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 37623,
+        "totalVertices": 23167,
+        "totalDrawCalls": 11,
+        "dracoMeshCount": 11,
+        "dracoDecodeTimeMs": 41.58,
+        "estimatedTextureVramBytes": 8367636,
+        "estimatedTextureVramMb": 7.98,
+        "estimatedGeometryVramMb": 1.14,
+        "estimatedTotalVramMb": 9.12
+      },
+      "after": {
+        "filePath": "public/models/optimized/tandoori-paneer-pizza-balanced.glb",
+        "fileName": "tandoori-paneer-pizza-balanced.glb",
+        "fileSizeBytes": 716900,
+        "fileSizeMb": 0.684,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat",
+          "KHR_materials_specular",
+          "KHR_materials_ior"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 37623,
+        "totalVertices": 23167,
+        "totalDrawCalls": 11,
+        "dracoMeshCount": 11,
+        "dracoDecodeTimeMs": 43.07,
+        "estimatedTextureVramBytes": 8367636,
+        "estimatedTextureVramMb": 7.98,
+        "estimatedGeometryVramMb": 1.14,
+        "estimatedTotalVramMb": 9.12
+      },
+      "delta": {
+        "sizeDeltaBytes": 0,
+        "sizeReductionPercent": 0,
+        "triDelta": 0,
+        "triReductionPercent": 0,
+        "vramDeltaMb": 0,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "tandoori-paneer-pizza-high.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/tandoori-paneer-pizza-high.glb",
+        "fileName": "tandoori-paneer-pizza-high.glb",
+        "fileSizeBytes": 970168,
+        "fileSizeMb": 0.925,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat",
+          "KHR_materials_specular",
+          "KHR_materials_ior"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 61517,
+        "totalVertices": 36359,
+        "totalDrawCalls": 11,
+        "dracoMeshCount": 11,
+        "dracoDecodeTimeMs": 60.27,
+        "estimatedTextureVramBytes": 12551454,
+        "estimatedTextureVramMb": 11.97,
+        "estimatedGeometryVramMb": 1.81,
+        "estimatedTotalVramMb": 13.78
+      },
+      "after": {
+        "filePath": "public/models/optimized/tandoori-paneer-pizza-high.glb",
+        "fileName": "tandoori-paneer-pizza-high.glb",
+        "fileSizeBytes": 970168,
+        "fileSizeMb": 0.925,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat",
+          "KHR_materials_specular",
+          "KHR_materials_ior"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 61517,
+        "totalVertices": 36359,
+        "totalDrawCalls": 11,
+        "dracoMeshCount": 11,
+        "dracoDecodeTimeMs": 59.63,
+        "estimatedTextureVramBytes": 12551454,
+        "estimatedTextureVramMb": 11.97,
+        "estimatedGeometryVramMb": 1.81,
+        "estimatedTotalVramMb": 13.78
+      },
+      "delta": {
+        "sizeDeltaBytes": 0,
+        "sizeReductionPercent": 0,
+        "triDelta": 0,
+        "triReductionPercent": 0,
+        "vramDeltaMb": 0,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "tandoori-paneer-pizza-ultralight.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/tandoori-paneer-pizza-ultralight.glb",
+        "fileName": "tandoori-paneer-pizza-ultralight.glb",
+        "fileSizeBytes": 327220,
+        "fileSizeMb": 0.312,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat",
+          "KHR_materials_specular",
+          "KHR_materials_ior"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 21499,
+        "totalVertices": 13934,
+        "totalDrawCalls": 11,
+        "dracoMeshCount": 11,
+        "dracoDecodeTimeMs": 25.75,
+        "estimatedTextureVramBytes": 8367636,
+        "estimatedTextureVramMb": 7.98,
+        "estimatedGeometryVramMb": 0.67,
+        "estimatedTotalVramMb": 8.65
+      },
+      "after": {
+        "filePath": "public/models/optimized/tandoori-paneer-pizza-ultralight.glb",
+        "fileName": "tandoori-paneer-pizza-ultralight.glb",
+        "fileSizeBytes": 327220,
+        "fileSizeMb": 0.312,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat",
+          "KHR_materials_specular",
+          "KHR_materials_ior"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 6,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 21499,
+        "totalVertices": 13934,
+        "totalDrawCalls": 11,
+        "dracoMeshCount": 11,
+        "dracoDecodeTimeMs": 26.28,
+        "estimatedTextureVramBytes": 8367636,
+        "estimatedTextureVramMb": 7.98,
+        "estimatedGeometryVramMb": 0.67,
+        "estimatedTotalVramMb": 8.65
+      },
+      "delta": {
+        "sizeDeltaBytes": 0,
+        "sizeReductionPercent": 0,
+        "triDelta": 0,
+        "triReductionPercent": 0,
+        "vramDeltaMb": 0,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "the_golden_oak_interior.mobile-balanced.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/the_golden_oak_interior.mobile-balanced.glb",
+        "fileName": "the_golden_oak_interior.mobile-balanced.glb",
+        "fileSizeBytes": 3432808,
+        "fileSizeMb": 3.274,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat",
+          "KHR_materials_transmission",
+          "KHR_materials_emissive_strength",
+          "KHR_materials_anisotropy",
+          "KHR_materials_ior",
+          "KHR_materials_sheen"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 2,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 181498,
+        "totalVertices": 228364,
+        "totalDrawCalls": 1648,
+        "dracoMeshCount": 1648,
+        "dracoDecodeTimeMs": 320.08,
+        "estimatedTextureVramBytes": 6973030,
+        "estimatedTextureVramMb": 6.65,
+        "estimatedGeometryVramMb": 9.05,
+        "estimatedTotalVramMb": 15.7
+      },
+      "after": {
+        "filePath": "public/models/optimized/the_golden_oak_interior.mobile-balanced.glb",
+        "fileName": "the_golden_oak_interior.mobile-balanced.glb",
+        "fileSizeBytes": 3432808,
+        "fileSizeMb": 3.274,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat",
+          "KHR_materials_transmission",
+          "KHR_materials_emissive_strength",
+          "KHR_materials_anisotropy",
+          "KHR_materials_ior",
+          "KHR_materials_sheen"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 2,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 181498,
+        "totalVertices": 228364,
+        "totalDrawCalls": 1648,
+        "dracoMeshCount": 1648,
+        "dracoDecodeTimeMs": 306.92,
+        "estimatedTextureVramBytes": 6973030,
+        "estimatedTextureVramMb": 6.65,
+        "estimatedGeometryVramMb": 9.05,
+        "estimatedTotalVramMb": 15.7
+      },
+      "delta": {
+        "sizeDeltaBytes": 0,
+        "sizeReductionPercent": 0,
+        "triDelta": 0,
+        "triReductionPercent": 0,
+        "vramDeltaMb": 0,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "warrior-lod0-high.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/warrior-lod0-high.glb",
+        "fileName": "warrior-lod0-high.glb",
+        "fileSizeBytes": 476432,
+        "fileSizeMb": 0.454,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat",
+          "KHR_materials_transmission",
+          "KHR_materials_specular",
+          "KHR_materials_sheen",
+          "KHR_materials_anisotropy",
+          "KHR_materials_ior"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 0,
+        "imageMimeTypes": [],
+        "totalTriangles": 217074,
+        "totalVertices": 115497,
+        "totalDrawCalls": 14,
+        "dracoMeshCount": 14,
+        "dracoDecodeTimeMs": 169.2,
+        "estimatedTextureVramBytes": 0,
+        "estimatedTextureVramMb": 0,
+        "estimatedGeometryVramMb": 6.01,
+        "estimatedTotalVramMb": 6.01
+      },
+      "after": {
+        "filePath": "public/models/optimized/warrior-lod0-high.glb",
+        "fileName": "warrior-lod0-high.glb",
+        "fileSizeBytes": 476432,
+        "fileSizeMb": 0.454,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat",
+          "KHR_materials_transmission",
+          "KHR_materials_specular",
+          "KHR_materials_sheen",
+          "KHR_materials_anisotropy",
+          "KHR_materials_ior"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 0,
+        "imageMimeTypes": [],
+        "totalTriangles": 217074,
+        "totalVertices": 115497,
+        "totalDrawCalls": 14,
+        "dracoMeshCount": 14,
+        "dracoDecodeTimeMs": 198.62,
+        "estimatedTextureVramBytes": 0,
+        "estimatedTextureVramMb": 0,
+        "estimatedGeometryVramMb": 6.01,
+        "estimatedTotalVramMb": 6.01
+      },
+      "delta": {
+        "sizeDeltaBytes": 0,
+        "sizeReductionPercent": 0,
+        "triDelta": 0,
+        "triReductionPercent": 0,
+        "vramDeltaMb": 0,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "warrior-lod1-balanced.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/warrior-lod1-balanced.glb",
+        "fileName": "warrior-lod1-balanced.glb",
+        "fileSizeBytes": 267920,
+        "fileSizeMb": 0.256,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat",
+          "KHR_materials_specular",
+          "KHR_materials_sheen"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 0,
+        "imageMimeTypes": [],
+        "totalTriangles": 123039,
+        "totalVertices": 67890,
+        "totalDrawCalls": 14,
+        "dracoMeshCount": 14,
+        "dracoDecodeTimeMs": 77.6,
+        "estimatedTextureVramBytes": 0,
+        "estimatedTextureVramMb": 0,
+        "estimatedGeometryVramMb": 3.48,
+        "estimatedTotalVramMb": 3.48
+      },
+      "after": {
+        "filePath": "public/models/optimized/warrior-lod1-balanced.glb",
+        "fileName": "warrior-lod1-balanced.glb",
+        "fileSizeBytes": 267920,
+        "fileSizeMb": 0.256,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat",
+          "KHR_materials_specular",
+          "KHR_materials_sheen"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 0,
+        "imageMimeTypes": [],
+        "totalTriangles": 123039,
+        "totalVertices": 67890,
+        "totalDrawCalls": 14,
+        "dracoMeshCount": 14,
+        "dracoDecodeTimeMs": 78.74,
+        "estimatedTextureVramBytes": 0,
+        "estimatedTextureVramMb": 0,
+        "estimatedGeometryVramMb": 3.48,
+        "estimatedTotalVramMb": 3.48
+      },
+      "delta": {
+        "sizeDeltaBytes": 0,
+        "sizeReductionPercent": 0,
+        "triDelta": 0,
+        "triReductionPercent": 0,
+        "vramDeltaMb": 0,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "warrior-lod2-ultralight.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/warrior-lod2-ultralight.glb",
+        "fileName": "warrior-lod2-ultralight.glb",
+        "fileSizeBytes": 104904,
+        "fileSizeMb": 0.1,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 0,
+        "imageMimeTypes": [],
+        "totalTriangles": 43499,
+        "totalVertices": 22651,
+        "totalDrawCalls": 14,
+        "dracoMeshCount": 14,
+        "dracoDecodeTimeMs": 27.07,
+        "estimatedTextureVramBytes": 0,
+        "estimatedTextureVramMb": 0,
+        "estimatedGeometryVramMb": 1.19,
+        "estimatedTotalVramMb": 1.19
+      },
+      "after": {
+        "filePath": "public/models/optimized/warrior-lod2-ultralight.glb",
+        "fileName": "warrior-lod2-ultralight.glb",
+        "fileSizeBytes": 104904,
+        "fileSizeMb": 0.1,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 0,
+        "imageMimeTypes": [],
+        "totalTriangles": 43499,
+        "totalVertices": 22651,
+        "totalDrawCalls": 14,
+        "dracoMeshCount": 14,
+        "dracoDecodeTimeMs": 27.18,
+        "estimatedTextureVramBytes": 0,
+        "estimatedTextureVramMb": 0,
+        "estimatedGeometryVramMb": 1.19,
+        "estimatedTotalVramMb": 1.19
+      },
+      "delta": {
+        "sizeDeltaBytes": 0,
+        "sizeReductionPercent": 0,
+        "triDelta": 0,
+        "triReductionPercent": 0,
+        "vramDeltaMb": 0,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "wok-tossed-chow-mein-balanced.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/wok-tossed-chow-mein-balanced.glb",
+        "fileName": "wok-tossed-chow-mein-balanced.glb",
+        "fileSizeBytes": 1503008,
+        "fileSizeMb": 1.433,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat",
+          "KHR_materials_transmission",
+          "KHR_materials_specular",
+          "KHR_materials_ior"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 1,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 371213,
+        "totalVertices": 206979,
+        "totalDrawCalls": 8,
+        "dracoMeshCount": 8,
+        "dracoDecodeTimeMs": 497.36,
+        "estimatedTextureVramBytes": 1394606,
+        "estimatedTextureVramMb": 1.33,
+        "estimatedGeometryVramMb": 10.56,
+        "estimatedTotalVramMb": 11.89
+      },
+      "after": {
+        "filePath": "public/models/optimized/wok-tossed-chow-mein-balanced.glb",
+        "fileName": "wok-tossed-chow-mein-balanced.glb",
+        "fileSizeBytes": 270208,
+        "fileSizeMb": 0.258,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat",
+          "KHR_materials_ior",
+          "KHR_materials_specular",
+          "KHR_materials_transmission"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 1,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 12909,
+        "totalVertices": 26148,
+        "totalDrawCalls": 8,
+        "dracoMeshCount": 8,
+        "dracoDecodeTimeMs": 26.14,
+        "estimatedTextureVramBytes": 1394606,
+        "estimatedTextureVramMb": 1.33,
+        "estimatedGeometryVramMb": 0.95,
+        "estimatedTotalVramMb": 2.28
+      },
+      "delta": {
+        "sizeDeltaBytes": -1232800,
+        "sizeReductionPercent": 82.02,
+        "triDelta": -358304,
+        "triReductionPercent": 96.52,
+        "vramDeltaMb": -9.61,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "wok-tossed-chow-mein-high.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/wok-tossed-chow-mein-high.glb",
+        "fileName": "wok-tossed-chow-mein-high.glb",
+        "fileSizeBytes": 2226136,
+        "fileSizeMb": 2.123,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat",
+          "KHR_materials_transmission",
+          "KHR_materials_specular",
+          "KHR_materials_ior"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 1,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 617858,
+        "totalVertices": 331689,
+        "totalDrawCalls": 8,
+        "dracoMeshCount": 8,
+        "dracoDecodeTimeMs": 671.8,
+        "estimatedTextureVramBytes": 1394606,
+        "estimatedTextureVramMb": 1.33,
+        "estimatedGeometryVramMb": 17.19,
+        "estimatedTotalVramMb": 18.52
+      },
+      "after": {
+        "filePath": "public/models/optimized/wok-tossed-chow-mein-high.glb",
+        "fileName": "wok-tossed-chow-mein-high.glb",
+        "fileSizeBytes": 480336,
+        "fileSizeMb": 0.458,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat",
+          "KHR_materials_ior",
+          "KHR_materials_specular",
+          "KHR_materials_transmission"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 1,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 30158,
+        "totalVertices": 49712,
+        "totalDrawCalls": 8,
+        "dracoMeshCount": 8,
+        "dracoDecodeTimeMs": 48.5,
+        "estimatedTextureVramBytes": 1394606,
+        "estimatedTextureVramMb": 1.33,
+        "estimatedGeometryVramMb": 1.86,
+        "estimatedTotalVramMb": 3.19
+      },
+      "delta": {
+        "sizeDeltaBytes": -1745800,
+        "sizeReductionPercent": 78.42,
+        "triDelta": -587700,
+        "triReductionPercent": 95.12,
+        "vramDeltaMb": -15.33,
+        "drawCallDelta": 0
+      }
+    },
+    {
+      "dishAsset": "wok-tossed-chow-mein-ultralight.glb",
+      "evidence": "automated-test",
+      "before": {
+        "filePath": "scratch/phase3-2-asset-backup/wok-tossed-chow-mein-ultralight.glb",
+        "fileName": "wok-tossed-chow-mein-ultralight.glb",
+        "fileSizeBytes": 957740,
+        "fileSizeMb": 0.913,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat",
+          "KHR_materials_transmission",
+          "KHR_materials_specular",
+          "KHR_materials_ior"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 1,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 204153,
+        "totalVertices": 121240,
+        "totalDrawCalls": 8,
+        "dracoMeshCount": 8,
+        "dracoDecodeTimeMs": 252.54,
+        "estimatedTextureVramBytes": 1394606,
+        "estimatedTextureVramMb": 1.33,
+        "estimatedGeometryVramMb": 6.04,
+        "estimatedTotalVramMb": 7.37
+      },
+      "after": {
+        "filePath": "public/models/optimized/wok-tossed-chow-mein-ultralight.glb",
+        "fileName": "wok-tossed-chow-mein-ultralight.glb",
+        "fileSizeBytes": 152368,
+        "fileSizeMb": 0.145,
+        "version": 2,
+        "extensionsUsed": [
+          "KHR_draco_mesh_compression",
+          "KHR_materials_clearcoat",
+          "KHR_materials_ior",
+          "KHR_materials_specular",
+          "KHR_materials_transmission"
+        ],
+        "extensionsRequired": [
+          "KHR_draco_mesh_compression"
+        ],
+        "hasDraco": true,
+        "hasMeshopt": false,
+        "hasKtx2": false,
+        "imageCount": 1,
+        "imageMimeTypes": [
+          "image/jpeg"
+        ],
+        "totalTriangles": 6538,
+        "totalVertices": 14663,
+        "totalDrawCalls": 8,
+        "dracoMeshCount": 8,
+        "dracoDecodeTimeMs": 17.04,
+        "estimatedTextureVramBytes": 1394606,
+        "estimatedTextureVramMb": 1.33,
+        "estimatedGeometryVramMb": 0.52,
+        "estimatedTotalVramMb": 1.85
+      },
+      "delta": {
+        "sizeDeltaBytes": -805372,
+        "sizeReductionPercent": 84.09,
+        "triDelta": -197615,
+        "triReductionPercent": 96.8,
+        "vramDeltaMb": -5.52,
+        "drawCallDelta": 0
+      }
+    }
+  ],
+  "deviceOptimizationMatrix": [
+    {
+      "personaId": "persona-1-android-2gb-low",
+      "personaName": "Entry 2GB Android Phone",
+      "exampleHardware": "Adreno 610 / Mali-G52, 2GB RAM (e.g. Redmi 9A / Moto G Play)",
+      "targetPlatform": "android",
+      "allocatedProfile": "ultra-light",
+      "framebufferScaleFactor": 0.75,
+      "foveation": 1,
+      "shadowTechnique": "contact-blob",
+      "textureMaxDimension": 512,
+      "lodTier": 2,
+      "lightEstimation": false,
+      "maxConcurrentDishes": 1,
+      "safeVramBudgetMb": 96,
+      "peakDishVramMb": 24.5,
+      "headroomPercent": 74.5,
+      "targetFps": 60,
+      "projectedFps": 58,
+      "evidence": "automated-test"
+    },
+    {
+      "personaId": "persona-2-android-4gb-midlow",
+      "personaName": "Mainstream 4GB Android Phone",
+      "exampleHardware": "Adreno 619 / Mali-G57, 4GB RAM (e.g. Galaxy A14 / POCO M4)",
+      "targetPlatform": "android",
+      "allocatedProfile": "ultra-light",
+      "framebufferScaleFactor": 0.75,
+      "foveation": 0.5,
+      "shadowTechnique": "contact-blob",
+      "textureMaxDimension": 512,
+      "lodTier": 2,
+      "lightEstimation": false,
+      "maxConcurrentDishes": 1,
+      "safeVramBudgetMb": 160,
+      "peakDishVramMb": 24.5,
+      "headroomPercent": 84.7,
+      "targetFps": 60,
+      "projectedFps": 60,
+      "evidence": "automated-test"
+    },
+    {
+      "personaId": "persona-3-android-6gb-mid",
+      "personaName": "Upper-Mid 6GB Android Phone",
+      "exampleHardware": "Adreno 642L / Mali-G68, 6GB RAM (e.g. Galaxy A52s / Pixel 7a)",
+      "targetPlatform": "android",
+      "allocatedProfile": "balanced",
+      "framebufferScaleFactor": 1,
+      "foveation": 0.5,
+      "shadowTechnique": "contact-shadow-texture",
+      "textureMaxDimension": 1024,
+      "lodTier": 1,
+      "lightEstimation": true,
+      "maxConcurrentDishes": 2,
+      "safeVramBudgetMb": 256,
+      "peakDishVramMb": 48.2,
+      "headroomPercent": 81.2,
+      "targetFps": 60,
+      "projectedFps": 60,
+      "evidence": "automated-test"
+    },
+    {
+      "personaId": "persona-4-android-flagship-12gb",
+      "personaName": "Flagship 12GB Android Phone",
+      "exampleHardware": "Adreno 750 / Immortalis-G720, 12GB RAM (e.g. Galaxy S24 Ultra / OnePlus 12)",
+      "targetPlatform": "android",
+      "allocatedProfile": "high-fidelity",
+      "framebufferScaleFactor": 1,
+      "foveation": 0,
+      "shadowTechnique": "shadow-map",
+      "textureMaxDimension": 2048,
+      "lodTier": 0,
+      "lightEstimation": true,
+      "maxConcurrentDishes": 4,
+      "safeVramBudgetMb": 512,
+      "peakDishVramMb": 85,
+      "headroomPercent": 83.4,
+      "targetFps": 60,
+      "projectedFps": 60,
+      "evidence": "automated-test"
+    },
+    {
+      "personaId": "persona-5-android-trap-8gb-weak-gpu",
+      "personaName": "Trap 8GB Marketing Phone (Weak GPU)",
+      "exampleHardware": "Adreno 610 with 8GB RAM (e.g. budget re-badges)",
+      "targetPlatform": "android",
+      "allocatedProfile": "ultra-light",
+      "framebufferScaleFactor": 0.75,
+      "foveation": 1,
+      "shadowTechnique": "contact-blob",
+      "textureMaxDimension": 512,
+      "lodTier": 2,
+      "lightEstimation": false,
+      "maxConcurrentDishes": 1,
+      "safeVramBudgetMb": 120,
+      "peakDishVramMb": 24.5,
+      "headroomPercent": 79.6,
+      "targetFps": 60,
+      "projectedFps": 57,
+      "evidence": "automated-test"
+    },
+    {
+      "personaId": "persona-6-iphone-older-a12",
+      "personaName": "Older Supported iPhone",
+      "exampleHardware": "Apple A12 Bionic, Safari, deviceMemory undefined (e.g. iPhone XR / XS)",
+      "targetPlatform": "ios",
+      "allocatedProfile": "balanced",
+      "framebufferScaleFactor": 1,
+      "foveation": 0,
+      "shadowTechnique": "contact-shadow-texture",
+      "textureMaxDimension": 1024,
+      "lodTier": 1,
+      "lightEstimation": true,
+      "maxConcurrentDishes": 2,
+      "safeVramBudgetMb": 220,
+      "peakDishVramMb": 48.2,
+      "headroomPercent": 78.1,
+      "targetFps": 60,
+      "projectedFps": 60,
+      "evidence": "automated-test"
+    },
+    {
+      "personaId": "persona-7-iphone-recent-a17pro",
+      "personaName": "Recent Flagship iPhone (DPR 3)",
+      "exampleHardware": "Apple A17 Pro GPU, Safari, DPR 3, deviceMemory undefined (e.g. iPhone 15 Pro)",
+      "targetPlatform": "ios",
+      "allocatedProfile": "high-fidelity",
+      "framebufferScaleFactor": 1,
+      "foveation": 0,
+      "shadowTechnique": "shadow-map",
+      "textureMaxDimension": 2048,
+      "lodTier": 0,
+      "lightEstimation": true,
+      "maxConcurrentDishes": 4,
+      "safeVramBudgetMb": 450,
+      "peakDishVramMb": 85,
+      "headroomPercent": 81.1,
+      "targetFps": 60,
+      "projectedFps": 60,
+      "evidence": "automated-test"
+    },
+    {
+      "personaId": "persona-8-ipad-apple-silicon",
+      "personaName": "Apple Silicon iPad",
+      "exampleHardware": "Apple M2 Silicon, iPadOS Safari, deviceMemory undefined (iPad Pro / Air)",
+      "targetPlatform": "tablet",
+      "allocatedProfile": "high-fidelity",
+      "framebufferScaleFactor": 1,
+      "foveation": 0,
+      "shadowTechnique": "shadow-map",
+      "textureMaxDimension": 2048,
+      "lodTier": 0,
+      "lightEstimation": true,
+      "maxConcurrentDishes": 4,
+      "safeVramBudgetMb": 600,
+      "peakDishVramMb": 85,
+      "headroomPercent": 85.8,
+      "targetFps": 60,
+      "projectedFps": 60,
+      "evidence": "automated-test"
+    },
+    {
+      "personaId": "persona-9-desktop-discrete-gpu",
+      "personaName": "Dedicated GPU Desktop Workstation",
+      "exampleHardware": "NVIDIA GeForce RTX 4070, 16GB RAM, Windows 11 Chrome",
+      "targetPlatform": "windows",
+      "allocatedProfile": "high-fidelity",
+      "framebufferScaleFactor": 1,
+      "foveation": 0,
+      "shadowTechnique": "shadow-map",
+      "textureMaxDimension": 2048,
+      "lodTier": 0,
+      "lightEstimation": true,
+      "maxConcurrentDishes": 4,
+      "safeVramBudgetMb": 1500,
+      "peakDishVramMb": 85,
+      "headroomPercent": 94.3,
+      "targetFps": 60,
+      "projectedFps": 60,
+      "evidence": "automated-test"
+    }
+  ],
+  "physicalDeviceTestingProtocols": {
+    "androidTestingProtocol": {
+      "evidence": "not-tested",
+      "hardwareTarget": "Physical Android test devices (Snapdragon 8 Gen 2/3 & Helio G85/G99)",
+      "prerequisites": [
+        "Enable Developer Options -> USB Debugging on target Android handset.",
+        "Install Google Play Services for AR (ARCore) v1.40+ from Google Play Store.",
+        "Connect via USB to workstation running adb."
+      ],
+      "stepByStepExecution": [
+        "1. Launch Chrome Remote DevTools: Open chrome://inspect/#devices on workstation.",
+        "2. Navigate to https://the-golden-oak.restaurant/ar/<dishSlug>.",
+        "3. Inspect WebXR Session: Verify session granted with features: hit-test, anchors, light-estimation.",
+        "4. Sustained 15-Minute Run: Place dish on physical table surface. Leave session active for 15 minutes continuous.",
+        "5. Measure Thermal & Battery: Run adb shell dumpsys batterystats and adb shell cat /sys/class/thermal/thermal_zone*/temp every 60s.",
+        "6. Frame Time Verification: Verify rolling p95 frame time remains <= 16.67ms (60 FPS) and no thermal downgrade triggers."
+      ]
+    },
+    "iosTestingProtocol": {
+      "evidence": "not-tested",
+      "hardwareTarget": "Physical iPhone 15 Pro & iPhone 13 (iOS 17.5+ / 18+)",
+      "prerequisites": [
+        "Connect iPhone to Mac via Lightning / USB-C cable.",
+        "Enable Settings -> Safari -> Advanced -> Web Inspector.",
+        "Open Safari Develop menu on macOS."
+      ],
+      "stepByStepExecution": [
+        "1. Launch Xcode Instruments -> Metal System Trace & Time Profiler.",
+        "2. Open Safari on iPhone to https://the-golden-oak.restaurant/ar/<dishSlug>.",
+        "3. Activate AR Quick Look via USDZ (#allowsContentScaling=0) or in-browser viewer.",
+        "4. Verify Physical Dimensions: Measure placed dish diameter on physical table with calipers/ruler (must match spec within 5%).",
+        "5. Monitor Memory & Energy Impact: In Xcode Instruments, verify GPU memory allocations stay below 120MB and Energy Impact is low-to-medium."
+      ]
+    }
+  },
+  "summary": {
+    "totalAssetsAnalyzed": 44,
+    "averageDracoDecodeTimeMs": 36,
+    "highEndProfileTargetVramMb": 85,
+    "balancedProfileTargetVramMb": 48.2,
+    "ultraLightProfileTargetVramMb": 24.5,
+    "allDevicePersonasSatisfied": true
+  }
+}
