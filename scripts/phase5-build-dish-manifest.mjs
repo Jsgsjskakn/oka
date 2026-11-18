@@ -282,17 +282,47 @@ export async function buildDishAssetManifest() {
     // Ground contact validation: bounding box min Y touches ground (within 10mm tolerance)
     const groundContactValidated = Math.abs(highAudit.bbox.min[1]) <= 0.01;
 
-    // Scale validation: model bounding box multiplied by scale factor matches physical dimension portion
-    const scaleFactor = cfg.arScale || physicalSpec.modelScaleFactor || 0.16;
-    const effectiveWidthM = highAudit.bbox.width * scaleFactor;
-    const targetWidthM = physicalSpec.dimensions.widthCm / 100;
-    const scaleRatio = effectiveWidthM / targetWidthM;
-    const scaleValidated = scaleRatio >= 0.5 && scaleRatio <= 2.0;
+    // Scale Factor & scaleValidated Honesty Fix (Phase 6 Defect P6-01):
+    // Use targetFootprintM / modelFootprintM matching physical portion specs, never studio turntable arScale.
+    const targetFootprintM = Math.max(physicalSpec.dimensions.widthCm, physicalSpec.dimensions.depthCm) / 100;
+    const modelFootprintM = Math.max(highAudit.bbox.width, highAudit.bbox.depth, 0.001);
+    const scaleFactor = Number((targetFootprintM / modelFootprintM).toFixed(4));
+    // Strictly false across all dishes until measured with physical calipers on plated restaurant samples
+    const scaleValidated = Boolean(physicalSpec.scaleValidated);
+    const dimensionSource = physicalSpec.dimensionSource || 'estimated-typical-portion';
 
-    // Food color validation:
-    // Confirmed rendered with Khronos PBR Neutral (NeutralToneMapping, SRGBColorSpace, exposure 1.0)
-    // with un-tinted BaseColor textures and zero artificial self-illumination.
-    const colorValidated = true;
+    // Placeholder & Color Validation Honesty Fix (Phase 6 Defect P6-01):
+    // 1. The 6 untextured placeholder dishes (texturesCount === 0: gourmet-wok-bowl dishes & kaffir-lime-mocktail)
+    const isUntexturedPlaceholder = highAudit.texturesCount === 0;
+
+    // 2. The 3 cross-recipe stand-in dishes borrowing another recipe's geometry/texture
+    const CROSS_RECIPE_STAND_INS = new Set([
+      'keema-masala-pizza',
+      'farmhouse-supreme-pizza',
+      'truffle-mushroom-cheese-burger',
+      'pepperoni-blast',
+      'farmhouse-veggie',
+    ]);
+    const isCrossRecipeStandIn = CROSS_RECIPE_STAND_INS.has(slug);
+
+    // Color validated ONLY for the 14 dishes mapping to their own recipe's textured model
+    const colorValidated = !isUntexturedPlaceholder && !isCrossRecipeStandIn;
+
+    // isSharedPlaceholder is false for primary authentic recipe dishes, true for stand-ins/placeholders/variants
+    const PRIMARY_RECIPE_DISHES = new Set([
+      'tandoori-paneer-pizza',
+      'chicken-tikka-pizza',
+      'mushroom-truffle-pizza',
+      'bbq-chicken-overload',
+      'classic-smash-burger',
+      'golden-oak-signature-burger',
+      'golden-oak-burger',
+      'crispy-paneer-burger',
+      'wok-tossed-chow-mein',
+      'dynamite-chilli-potatoes',
+      'peri-peri-fiesta-pizza',
+    ]);
+    const isSharedPlaceholder = !PRIMARY_RECIPE_DISHES.has(slug);
 
     manifest[slug] = {
       dishId: slug,
@@ -301,7 +331,8 @@ export async function buildDishAssetManifest() {
       units: 'meters',
       culinaryCategory: cfg.culinaryCategory || 'grilled-meat',
       secondaryCategories: cfg.secondaryCategories || [],
-      isSharedPlaceholder: Boolean(cfg.isSharedPlaceholder),
+      isSharedPlaceholder,
+      dimensionSource,
       dimensions: {
         widthCm: physicalSpec.dimensions.widthCm,
         depthCm: physicalSpec.dimensions.depthCm,
@@ -433,6 +464,7 @@ export interface DishAssetManifestEntry {
   culinaryCategory: CulinaryMaterialCategory;
   secondaryCategories: CulinaryMaterialCategory[];
   isSharedPlaceholder: boolean;
+  dimensionSource: 'estimated-typical-portion' | 'caliper-measured';
   dimensions: {
     widthCm: number;
     depthCm: number;

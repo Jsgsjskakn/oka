@@ -140,6 +140,7 @@ export class WebXRAREngine {
   private reticle: PlacementReticleInstance;
   private dishGroup: THREE.Group;
   private modelContainer: THREE.Group;
+  private loadedModelRoot: THREE.Object3D | null = null;
   private contactShadowMesh: THREE.Mesh | null = null;
 
   private xrEstimatedLight: THREE.Object3D | null = null;
@@ -574,6 +575,18 @@ export class WebXRAREngine {
     this.reposition();
   }
 
+  public getModelContainer(): THREE.Group {
+    return this.modelContainer;
+  }
+
+  public getLoadedModelRoot(): THREE.Object3D | null {
+    return (
+      this.loadedModelRoot ??
+      (this.modelContainer.children[0] as THREE.Object3D | undefined) ??
+      null
+    );
+  }
+
   public init(): Promise<void> {
     return this.start();
   }
@@ -629,6 +642,7 @@ export class WebXRAREngine {
 
       this.disposeObjectHierarchy(this.modelContainer);
       this.modelContainer.clear();
+      this.loadedModelRoot = root;
       this.modelContainer.add(root);
 
       this.modelLoaded = true;
@@ -677,7 +691,10 @@ export class WebXRAREngine {
       // Safely dispose old model
       this.disposeObjectHierarchy(this.modelContainer);
       this.modelContainer.clear();
+      this.loadedModelRoot = newRoot;
       this.modelContainer.add(newRoot);
+
+      this.modelUrl = targetModelUrl;
 
       // Re-apply scale & offset to new root without touching dishGroup anchor
       this.updateModelPlacementTransform();
@@ -691,6 +708,11 @@ export class WebXRAREngine {
   }
 
   private updateModelPlacementTransform(): void {
+    // modelContainer stays at (0, 0, 0) with scale (1, 1, 1) and handles yaw rotation around centered anchor origin
+    this.modelContainer.position.set(0, 0, 0);
+    this.modelContainer.scale.set(1, 1, 1);
+    this.modelContainer.rotation.y = this.userYawRad;
+
     if (!this.rawModelBBox) return;
 
     const transform = this.computeTransformFn({
@@ -700,13 +722,20 @@ export class WebXRAREngine {
       userScale: this.userScale,
     });
 
-    this.modelContainer.scale.set(
-      transform.uniformScale,
-      transform.uniformScale,
-      transform.uniformScale
-    );
-    this.modelContainer.position.set(...transform.offset);
-    this.modelContainer.rotation.y = this.userYawRad;
+    // Apply scale and offset to the inner loaded model child so pivot point is centered
+    const targetRoot =
+      this.loadedModelRoot ??
+      (this.modelContainer.children[0] as THREE.Object3D | undefined) ??
+      null;
+
+    if (targetRoot) {
+      targetRoot.scale.set(
+        transform.uniformScale,
+        transform.uniformScale,
+        transform.uniformScale
+      );
+      targetRoot.position.set(...transform.offset);
+    }
 
     // Align contact shadow to ground plane (y=0)
     if (this.contactShadowMesh) {
@@ -745,6 +774,7 @@ export class WebXRAREngine {
   }
 
   private handleSessionEnd(): void {
+    perfMark('ar:session-ended', { dishSlug: this.dishSlug });
     this.dispose();
     this.setTrackingState('session-ended');
   }
@@ -822,6 +852,8 @@ export class WebXRAREngine {
     }
 
     this.reticle.dispose();
+
+    this.loadedModelRoot = null;
 
     // Dispose scene meshes, geometries, materials, and textures
     this.disposeObjectHierarchy(this.scene);

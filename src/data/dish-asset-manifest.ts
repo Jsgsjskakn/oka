@@ -54,6 +54,7 @@ export interface DishAssetManifestEntry {
   culinaryCategory: CulinaryMaterialCategory;
   secondaryCategories: CulinaryMaterialCategory[];
   isSharedPlaceholder: boolean;
+  dimensionSource: 'estimated-typical-portion' | 'caliper-measured';
   dimensions: {
     widthCm: number;
     depthCm: number;
@@ -84,16 +85,17 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "glossy-sauce",
       "fresh-vegetables"
     ],
-    "isSharedPlaceholder": true,
+    "isSharedPlaceholder": false,
+    "dimensionSource": "estimated-typical-portion",
     "dimensions": {
       "widthCm": 30,
       "depthCm": 30,
       "heightCm": 3.5
     },
-    "modelScaleFactor": 0.18,
+    "modelScaleFactor": 0.125,
     "groundContactValidated": true,
     "colorValidated": true,
-    "scaleValidated": true,
+    "scaleValidated": false,
     "canonicalOrigin": "footprint-centre-ground-contact",
     "profiles": {
       "high": {
@@ -121,7 +123,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.1184,
           "depth": 2.4
         },
-        "dracoDecodeTimeMs": 19.92,
+        "dracoDecodeTimeMs": 18.05,
         "estimatedGpuMemoryBytes": 34672604,
         "estimatedGpuMemoryMb": 33.07
       },
@@ -150,7 +152,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.1175,
           "depth": 2.4
         },
-        "dracoDecodeTimeMs": 5.88,
+        "dracoDecodeTimeMs": 5.99,
         "estimatedGpuMemoryBytes": 9034818,
         "estimatedGpuMemoryMb": 8.62
       },
@@ -179,7 +181,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.1175,
           "depth": 2.3988
         },
-        "dracoDecodeTimeMs": 2.99,
+        "dracoDecodeTimeMs": 2.98,
         "estimatedGpuMemoryBytes": 2446300,
         "estimatedGpuMemoryMb": 2.33
       },
@@ -203,16 +205,17 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "bread-crust",
       "fresh-vegetables"
     ],
-    "isSharedPlaceholder": true,
+    "isSharedPlaceholder": false,
+    "dimensionSource": "estimated-typical-portion",
     "dimensions": {
       "widthCm": 30,
       "depthCm": 30,
       "heightCm": 3.5
     },
-    "modelScaleFactor": 0.18,
+    "modelScaleFactor": 0.1253,
     "groundContactValidated": true,
     "colorValidated": true,
-    "scaleValidated": true,
+    "scaleValidated": false,
     "canonicalOrigin": "footprint-centre-ground-contact",
     "profiles": {
       "high": {
@@ -240,7 +243,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.0557,
           "depth": 2.3904
         },
-        "dracoDecodeTimeMs": 13.41,
+        "dracoDecodeTimeMs": 13.56,
         "estimatedGpuMemoryBytes": 6511033,
         "estimatedGpuMemoryMb": 6.21
       },
@@ -269,7 +272,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.0557,
           "depth": 2.3904
         },
-        "dracoDecodeTimeMs": 6.97,
+        "dracoDecodeTimeMs": 7.45,
         "estimatedGpuMemoryBytes": 1864535,
         "estimatedGpuMemoryMb": 1.78
       },
@@ -298,7 +301,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.0557,
           "depth": 2.3904
         },
-        "dracoDecodeTimeMs": 2.89,
+        "dracoDecodeTimeMs": 3.05,
         "estimatedGpuMemoryBytes": 542385,
         "estimatedGpuMemoryMb": 0.52
       },
@@ -322,16 +325,17 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "fresh-vegetables",
       "glossy-sauce"
     ],
-    "isSharedPlaceholder": true,
+    "isSharedPlaceholder": false,
+    "dimensionSource": "estimated-typical-portion",
     "dimensions": {
       "widthCm": 30,
       "depthCm": 30,
       "heightCm": 3.5
     },
-    "modelScaleFactor": 0.18,
+    "modelScaleFactor": 0.1255,
     "groundContactValidated": true,
     "colorValidated": true,
-    "scaleValidated": true,
+    "scaleValidated": false,
     "canonicalOrigin": "footprint-centre-ground-contact",
     "profiles": {
       "high": {
@@ -359,7 +363,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.0555,
           "depth": 2.3904
         },
-        "dracoDecodeTimeMs": 6.63,
+        "dracoDecodeTimeMs": 6.89,
         "estimatedGpuMemoryBytes": 11888934,
         "estimatedGpuMemoryMb": 11.34
       },
@@ -388,7 +392,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.0552,
           "depth": 2.3903
         },
-        "dracoDecodeTimeMs": 3.56,
+        "dracoDecodeTimeMs": 3.41,
         "estimatedGpuMemoryBytes": 3177570,
         "estimatedGpuMemoryMb": 3.03
       },
@@ -417,7 +421,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.055,
           "depth": 2.3903
         },
-        "dracoDecodeTimeMs": 1.59,
+        "dracoDecodeTimeMs": 1.6,
         "estimatedGpuMemoryBytes": 891130,
         "estimatedGpuMemoryMb": 0.85
       },
@@ -441,16 +445,17 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "glossy-sauce",
       "fresh-vegetables"
     ],
-    "isSharedPlaceholder": true,
+    "isSharedPlaceholder": false,
+    "dimensionSource": "estimated-typical-portion",
     "dimensions": {
       "widthCm": 30,
       "depthCm": 30,
       "heightCm": 3.5
     },
-    "modelScaleFactor": 0.18,
+    "modelScaleFactor": 0.125,
     "groundContactValidated": true,
     "colorValidated": true,
-    "scaleValidated": true,
+    "scaleValidated": false,
     "canonicalOrigin": "footprint-centre-ground-contact",
     "profiles": {
       "high": {
@@ -478,7 +483,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.1184,
           "depth": 2.4
         },
-        "dracoDecodeTimeMs": 9.52,
+        "dracoDecodeTimeMs": 8.94,
         "estimatedGpuMemoryBytes": 34672604,
         "estimatedGpuMemoryMb": 33.07
       },
@@ -507,7 +512,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.1175,
           "depth": 2.4
         },
-        "dracoDecodeTimeMs": 5.46,
+        "dracoDecodeTimeMs": 5.69,
         "estimatedGpuMemoryBytes": 9034818,
         "estimatedGpuMemoryMb": 8.62
       },
@@ -536,7 +541,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.1175,
           "depth": 2.3988
         },
-        "dracoDecodeTimeMs": 2.85,
+        "dracoDecodeTimeMs": 2.87,
         "estimatedGpuMemoryBytes": 2446300,
         "estimatedGpuMemoryMb": 2.33
       },
@@ -560,16 +565,17 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "melted-cheese",
       "bread-crust"
     ],
-    "isSharedPlaceholder": true,
+    "isSharedPlaceholder": false,
+    "dimensionSource": "estimated-typical-portion",
     "dimensions": {
       "widthCm": 30,
       "depthCm": 30,
       "heightCm": 3.5
     },
-    "modelScaleFactor": 0.18,
+    "modelScaleFactor": 0.1267,
     "groundContactValidated": true,
     "colorValidated": true,
-    "scaleValidated": true,
+    "scaleValidated": false,
     "canonicalOrigin": "footprint-centre-ground-contact",
     "profiles": {
       "high": {
@@ -597,7 +603,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.2114,
           "depth": 2.366
         },
-        "dracoDecodeTimeMs": 16.69,
+        "dracoDecodeTimeMs": 17.21,
         "estimatedGpuMemoryBytes": 47054846,
         "estimatedGpuMemoryMb": 44.87
       },
@@ -626,7 +632,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.2055,
           "depth": 2.3631
         },
-        "dracoDecodeTimeMs": 10.05,
+        "dracoDecodeTimeMs": 9.71,
         "estimatedGpuMemoryBytes": 12021066,
         "estimatedGpuMemoryMb": 11.46
       },
@@ -655,7 +661,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.1921,
           "depth": 2.1627
         },
-        "dracoDecodeTimeMs": 4.56,
+        "dracoDecodeTimeMs": 4.23,
         "estimatedGpuMemoryBytes": 3169634,
         "estimatedGpuMemoryMb": 3.02
       },
@@ -679,13 +685,14 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "bread-crust",
       "fresh-vegetables"
     ],
-    "isSharedPlaceholder": true,
+    "isSharedPlaceholder": false,
+    "dimensionSource": "estimated-typical-portion",
     "dimensions": {
       "widthCm": 12,
       "depthCm": 12,
       "heightCm": 9.5
     },
-    "modelScaleFactor": 0.16,
+    "modelScaleFactor": 0.06,
     "groundContactValidated": true,
     "colorValidated": true,
     "scaleValidated": false,
@@ -716,7 +723,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.211,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 2.98,
+        "dracoDecodeTimeMs": 3.1,
         "estimatedGpuMemoryBytes": 33857786,
         "estimatedGpuMemoryMb": 32.29
       },
@@ -745,7 +752,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.211,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 2.85,
+        "dracoDecodeTimeMs": 2.82,
         "estimatedGpuMemoryBytes": 8698250,
         "estimatedGpuMemoryMb": 8.3
       },
@@ -774,7 +781,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.211,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 2.83,
+        "dracoDecodeTimeMs": 2.94,
         "estimatedGpuMemoryBytes": 2408366,
         "estimatedGpuMemoryMb": 2.3
       },
@@ -800,12 +807,13 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "fresh-vegetables"
     ],
     "isSharedPlaceholder": false,
+    "dimensionSource": "estimated-typical-portion",
     "dimensions": {
       "widthCm": 12.5,
       "depthCm": 12.5,
       "heightCm": 10.5
     },
-    "modelScaleFactor": 0.16,
+    "modelScaleFactor": 0.0625,
     "groundContactValidated": true,
     "colorValidated": true,
     "scaleValidated": false,
@@ -836,7 +844,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.211,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 2.8,
+        "dracoDecodeTimeMs": 2.81,
         "estimatedGpuMemoryBytes": 33857786,
         "estimatedGpuMemoryMb": 32.29
       },
@@ -865,7 +873,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.211,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 3.32,
+        "dracoDecodeTimeMs": 2.79,
         "estimatedGpuMemoryBytes": 8698250,
         "estimatedGpuMemoryMb": 8.3
       },
@@ -894,7 +902,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.211,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 3.14,
+        "dracoDecodeTimeMs": 3.15,
         "estimatedGpuMemoryBytes": 2408366,
         "estimatedGpuMemoryMb": 2.3
       },
@@ -919,13 +927,14 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "fresh-vegetables",
       "glossy-sauce"
     ],
-    "isSharedPlaceholder": true,
+    "isSharedPlaceholder": false,
+    "dimensionSource": "estimated-typical-portion",
     "dimensions": {
       "widthCm": 12,
       "depthCm": 12,
       "heightCm": 10
     },
-    "modelScaleFactor": 0.16,
+    "modelScaleFactor": 0.0608,
     "groundContactValidated": true,
     "colorValidated": true,
     "scaleValidated": false,
@@ -956,7 +965,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.4613,
           "depth": 1.9752
         },
-        "dracoDecodeTimeMs": 14.67,
+        "dracoDecodeTimeMs": 13.87,
         "estimatedGpuMemoryBytes": 21933396,
         "estimatedGpuMemoryMb": 20.92
       },
@@ -985,7 +994,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.4013,
           "depth": 1.9511
         },
-        "dracoDecodeTimeMs": 8.23,
+        "dracoDecodeTimeMs": 8.71,
         "estimatedGpuMemoryBytes": 5652080,
         "estimatedGpuMemoryMb": 5.39
       },
@@ -1014,7 +1023,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.4013,
           "depth": 1.9464
         },
-        "dracoDecodeTimeMs": 4.84,
+        "dracoDecodeTimeMs": 3.94,
         "estimatedGpuMemoryBytes": 1598281,
         "estimatedGpuMemoryMb": 1.52
       },
@@ -1036,16 +1045,17 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
     "secondaryCategories": [
       "fresh-vegetables"
     ],
-    "isSharedPlaceholder": true,
+    "isSharedPlaceholder": false,
+    "dimensionSource": "estimated-typical-portion",
     "dimensions": {
       "widthCm": 18,
       "depthCm": 18,
       "heightCm": 8
     },
-    "modelScaleFactor": 0.16,
+    "modelScaleFactor": 0.0818,
     "groundContactValidated": true,
     "colorValidated": true,
-    "scaleValidated": true,
+    "scaleValidated": false,
     "canonicalOrigin": "footprint-centre-ground-contact",
     "profiles": {
       "high": {
@@ -1073,7 +1083,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.4784,
           "depth": 2.1984
         },
-        "dracoDecodeTimeMs": 15.96,
+        "dracoDecodeTimeMs": 14.61,
         "estimatedGpuMemoryBytes": 3169483,
         "estimatedGpuMemoryMb": 3.02
       },
@@ -1102,7 +1112,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.4784,
           "depth": 2.1968
         },
-        "dracoDecodeTimeMs": 7.53,
+        "dracoDecodeTimeMs": 6.94,
         "estimatedGpuMemoryBytes": 2311941,
         "estimatedGpuMemoryMb": 2.2
       },
@@ -1131,7 +1141,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.4735,
           "depth": 2.1898
         },
-        "dracoDecodeTimeMs": 4.43,
+        "dracoDecodeTimeMs": 3.86,
         "estimatedGpuMemoryBytes": 857881,
         "estimatedGpuMemoryMb": 0.82
       },
@@ -1154,16 +1164,17 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "glossy-sauce",
       "fresh-vegetables"
     ],
-    "isSharedPlaceholder": true,
+    "isSharedPlaceholder": false,
+    "dimensionSource": "estimated-typical-portion",
     "dimensions": {
       "widthCm": 20,
       "depthCm": 20,
       "heightCm": 5.5
     },
-    "modelScaleFactor": 0.16,
+    "modelScaleFactor": 0.0911,
     "groundContactValidated": true,
     "colorValidated": true,
-    "scaleValidated": true,
+    "scaleValidated": false,
     "canonicalOrigin": "footprint-centre-ground-contact",
     "profiles": {
       "high": {
@@ -1191,7 +1202,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.3136,
           "depth": 2.1961
         },
-        "dracoDecodeTimeMs": 11.59,
+        "dracoDecodeTimeMs": 12.31,
         "estimatedGpuMemoryBytes": 17710977,
         "estimatedGpuMemoryMb": 16.89
       },
@@ -1220,7 +1231,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.3103,
           "depth": 2.1961
         },
-        "dracoDecodeTimeMs": 6.52,
+        "dracoDecodeTimeMs": 6.49,
         "estimatedGpuMemoryBytes": 4696797,
         "estimatedGpuMemoryMb": 4.48
       },
@@ -1249,7 +1260,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.2847,
           "depth": 2.1949
         },
-        "dracoDecodeTimeMs": 3.3,
+        "dracoDecodeTimeMs": 3.72,
         "estimatedGpuMemoryBytes": 1312279,
         "estimatedGpuMemoryMb": 1.25
       },
@@ -1274,15 +1285,16 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "fresh-vegetables"
     ],
     "isSharedPlaceholder": true,
+    "dimensionSource": "estimated-typical-portion",
     "dimensions": {
       "widthCm": 30,
       "depthCm": 30,
       "heightCm": 3.5
     },
-    "modelScaleFactor": 0.18,
+    "modelScaleFactor": 0.1253,
     "groundContactValidated": true,
-    "colorValidated": true,
-    "scaleValidated": true,
+    "colorValidated": false,
+    "scaleValidated": false,
     "canonicalOrigin": "footprint-centre-ground-contact",
     "profiles": {
       "high": {
@@ -1310,7 +1322,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.0557,
           "depth": 2.3904
         },
-        "dracoDecodeTimeMs": 12.5,
+        "dracoDecodeTimeMs": 11.93,
         "estimatedGpuMemoryBytes": 6511033,
         "estimatedGpuMemoryMb": 6.21
       },
@@ -1339,7 +1351,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.0557,
           "depth": 2.3904
         },
-        "dracoDecodeTimeMs": 6.91,
+        "dracoDecodeTimeMs": 6.71,
         "estimatedGpuMemoryBytes": 1864535,
         "estimatedGpuMemoryMb": 1.78
       },
@@ -1368,7 +1380,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.0557,
           "depth": 2.3904
         },
-        "dracoDecodeTimeMs": 2.96,
+        "dracoDecodeTimeMs": 2.91,
         "estimatedGpuMemoryBytes": 542385,
         "estimatedGpuMemoryMb": 0.52
       },
@@ -1393,15 +1405,16 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "glossy-sauce"
     ],
     "isSharedPlaceholder": true,
+    "dimensionSource": "estimated-typical-portion",
     "dimensions": {
       "widthCm": 30,
       "depthCm": 30,
       "heightCm": 3.5
     },
-    "modelScaleFactor": 0.18,
+    "modelScaleFactor": 0.125,
     "groundContactValidated": true,
-    "colorValidated": true,
-    "scaleValidated": true,
+    "colorValidated": false,
+    "scaleValidated": false,
     "canonicalOrigin": "footprint-centre-ground-contact",
     "profiles": {
       "high": {
@@ -1429,7 +1442,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.1184,
           "depth": 2.4
         },
-        "dracoDecodeTimeMs": 9.52,
+        "dracoDecodeTimeMs": 9.08,
         "estimatedGpuMemoryBytes": 34672604,
         "estimatedGpuMemoryMb": 33.07
       },
@@ -1458,7 +1471,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.1175,
           "depth": 2.4
         },
-        "dracoDecodeTimeMs": 5.43,
+        "dracoDecodeTimeMs": 5.32,
         "estimatedGpuMemoryBytes": 9034818,
         "estimatedGpuMemoryMb": 8.62
       },
@@ -1487,7 +1500,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.1175,
           "depth": 2.3988
         },
-        "dracoDecodeTimeMs": 3.47,
+        "dracoDecodeTimeMs": 2.81,
         "estimatedGpuMemoryBytes": 2446300,
         "estimatedGpuMemoryMb": 2.33
       },
@@ -1512,12 +1525,13 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "fresh-vegetables"
     ],
     "isSharedPlaceholder": true,
+    "dimensionSource": "estimated-typical-portion",
     "dimensions": {
       "widthCm": 12,
       "depthCm": 12,
       "heightCm": 10
     },
-    "modelScaleFactor": 0.16,
+    "modelScaleFactor": 0.0608,
     "groundContactValidated": true,
     "colorValidated": true,
     "scaleValidated": false,
@@ -1548,7 +1562,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.4613,
           "depth": 1.9752
         },
-        "dracoDecodeTimeMs": 14.48,
+        "dracoDecodeTimeMs": 13.88,
         "estimatedGpuMemoryBytes": 21933396,
         "estimatedGpuMemoryMb": 20.92
       },
@@ -1577,7 +1591,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.4013,
           "depth": 1.9511
         },
-        "dracoDecodeTimeMs": 8.37,
+        "dracoDecodeTimeMs": 8.35,
         "estimatedGpuMemoryBytes": 5652080,
         "estimatedGpuMemoryMb": 5.39
       },
@@ -1606,7 +1620,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.4013,
           "depth": 1.9464
         },
-        "dracoDecodeTimeMs": 4.19,
+        "dracoDecodeTimeMs": 3.95,
         "estimatedGpuMemoryBytes": 1598281,
         "estimatedGpuMemoryMb": 1.52
       },
@@ -1631,14 +1645,15 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "fried-food"
     ],
     "isSharedPlaceholder": true,
+    "dimensionSource": "estimated-typical-portion",
     "dimensions": {
       "widthCm": 12,
       "depthCm": 12,
       "heightCm": 10
     },
-    "modelScaleFactor": 0.16,
+    "modelScaleFactor": 0.06,
     "groundContactValidated": true,
-    "colorValidated": true,
+    "colorValidated": false,
     "scaleValidated": false,
     "canonicalOrigin": "footprint-centre-ground-contact",
     "profiles": {
@@ -1667,7 +1682,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.211,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 2.95,
+        "dracoDecodeTimeMs": 2.89,
         "estimatedGpuMemoryBytes": 33857786,
         "estimatedGpuMemoryMb": 32.29
       },
@@ -1696,7 +1711,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.211,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 2.91,
+        "dracoDecodeTimeMs": 3.05,
         "estimatedGpuMemoryBytes": 8698250,
         "estimatedGpuMemoryMb": 8.3
       },
@@ -1725,7 +1740,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.211,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 2.83,
+        "dracoDecodeTimeMs": 2.84,
         "estimatedGpuMemoryBytes": 2408366,
         "estimatedGpuMemoryMb": 2.3
       },
@@ -1748,15 +1763,16 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "fresh-vegetables"
     ],
     "isSharedPlaceholder": true,
+    "dimensionSource": "estimated-typical-portion",
     "dimensions": {
       "widthCm": 18,
       "depthCm": 18,
       "heightCm": 8
     },
-    "modelScaleFactor": 0.16,
+    "modelScaleFactor": 0.0818,
     "groundContactValidated": true,
     "colorValidated": true,
-    "scaleValidated": true,
+    "scaleValidated": false,
     "canonicalOrigin": "footprint-centre-ground-contact",
     "profiles": {
       "high": {
@@ -1784,7 +1800,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.4784,
           "depth": 2.1984
         },
-        "dracoDecodeTimeMs": 15.13,
+        "dracoDecodeTimeMs": 14.13,
         "estimatedGpuMemoryBytes": 3169483,
         "estimatedGpuMemoryMb": 3.02
       },
@@ -1813,7 +1829,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.4784,
           "depth": 2.1968
         },
-        "dracoDecodeTimeMs": 7.53,
+        "dracoDecodeTimeMs": 6.94,
         "estimatedGpuMemoryBytes": 2311941,
         "estimatedGpuMemoryMb": 2.2
       },
@@ -1842,7 +1858,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.4735,
           "depth": 2.1898
         },
-        "dracoDecodeTimeMs": 4.12,
+        "dracoDecodeTimeMs": 3.99,
         "estimatedGpuMemoryBytes": 857881,
         "estimatedGpuMemoryMb": 0.82
       },
@@ -1866,15 +1882,16 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "fresh-vegetables"
     ],
     "isSharedPlaceholder": true,
+    "dimensionSource": "estimated-typical-portion",
     "dimensions": {
       "widthCm": 20,
       "depthCm": 20,
       "heightCm": 5.5
     },
-    "modelScaleFactor": 0.16,
+    "modelScaleFactor": 0.0911,
     "groundContactValidated": true,
     "colorValidated": true,
-    "scaleValidated": true,
+    "scaleValidated": false,
     "canonicalOrigin": "footprint-centre-ground-contact",
     "profiles": {
       "high": {
@@ -1902,7 +1919,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.3136,
           "depth": 2.1961
         },
-        "dracoDecodeTimeMs": 12.23,
+        "dracoDecodeTimeMs": 11.53,
         "estimatedGpuMemoryBytes": 17710977,
         "estimatedGpuMemoryMb": 16.89
       },
@@ -1931,7 +1948,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.3103,
           "depth": 2.1961
         },
-        "dracoDecodeTimeMs": 6.09,
+        "dracoDecodeTimeMs": 5.84,
         "estimatedGpuMemoryBytes": 4696797,
         "estimatedGpuMemoryMb": 4.48
       },
@@ -1960,7 +1977,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.2847,
           "depth": 2.1949
         },
-        "dracoDecodeTimeMs": 2.96,
+        "dracoDecodeTimeMs": 2.85,
         "estimatedGpuMemoryBytes": 1312279,
         "estimatedGpuMemoryMb": 1.25
       },
@@ -1984,14 +2001,15 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "fresh-vegetables"
     ],
     "isSharedPlaceholder": true,
+    "dimensionSource": "estimated-typical-portion",
     "dimensions": {
       "widthCm": 19,
       "depthCm": 19,
       "heightCm": 7
     },
-    "modelScaleFactor": 0.16,
+    "modelScaleFactor": 0.7787,
     "groundContactValidated": true,
-    "colorValidated": true,
+    "colorValidated": false,
     "scaleValidated": false,
     "canonicalOrigin": "footprint-centre-ground-contact",
     "profiles": {
@@ -2020,243 +2038,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.0859,
           "depth": 0.244
         },
-        "dracoDecodeTimeMs": 1.82,
-        "estimatedGpuMemoryBytes": 120224,
-        "estimatedGpuMemoryMb": 0.11
-      },
-      "balanced": {
-        "path": "/models/optimized/gourmet-wok-bowl-balanced.glb",
-        "sizeBytes": 10920,
-        "sizeKb": 10.66,
-        "triangleCount": 2100,
-        "vertexCount": 1308,
-        "drawCalls": 4,
-        "materialsCount": 4,
-        "texturesCount": 0,
-        "hasUVs": true,
-        "bboxM": {
-          "min": [
-            -0.122,
-            0,
-            -0.122
-          ],
-          "max": [
-            0.122,
-            0.0859,
-            0.122
-          ],
-          "width": 0.244,
-          "height": 0.0859,
-          "depth": 0.244
-        },
-        "dracoDecodeTimeMs": 0.68,
-        "estimatedGpuMemoryBytes": 54456,
-        "estimatedGpuMemoryMb": 0.05
-      },
-      "ultraLight": {
-        "path": "/models/optimized/gourmet-wok-bowl-ultralight.glb",
-        "sizeBytes": 8232,
-        "sizeKb": 8.04,
-        "triangleCount": 1264,
-        "vertexCount": 829,
-        "drawCalls": 4,
-        "materialsCount": 4,
-        "texturesCount": 0,
-        "hasUVs": true,
-        "bboxM": {
-          "min": [
-            -0.122,
-            0,
-            -0.122
-          ],
-          "max": [
-            0.122,
-            0.0859,
-            0.122
-          ],
-          "width": 0.244,
-          "height": 0.0859,
-          "depth": 0.244
-        },
-        "dracoDecodeTimeMs": 0.48,
-        "estimatedGpuMemoryBytes": 34112,
-        "estimatedGpuMemoryMb": 0.03
-      },
-      "usdz": {
-        "path": "/models/optimized/gourmet-wok-bowl.usdz",
-        "sizeBytes": 175885,
-        "sizeKb": 171.76,
-        "format": "usdz",
-        "validZip": true
-      }
-    }
-  },
-  "butter-chicken-bao": {
-    "dishId": "butter-chicken-bao",
-    "modelName": "3D Interactive Model Showcase [Prototype Asset]",
-    "assetVersion": "2.0.0",
-    "units": "meters",
-    "culinaryCategory": "bread-crust",
-    "secondaryCategories": [
-      "grilled-meat",
-      "glossy-sauce"
-    ],
-    "isSharedPlaceholder": true,
-    "dimensions": {
-      "widthCm": 18,
-      "depthCm": 18,
-      "heightCm": 7
-    },
-    "modelScaleFactor": 0.15,
-    "groundContactValidated": true,
-    "colorValidated": true,
-    "scaleValidated": false,
-    "canonicalOrigin": "footprint-centre-ground-contact",
-    "profiles": {
-      "high": {
-        "path": "/models/optimized/gourmet-wok-bowl-high.glb",
-        "sizeBytes": 18248,
-        "sizeKb": 17.82,
-        "triangleCount": 4896,
-        "vertexCount": 2839,
-        "drawCalls": 4,
-        "materialsCount": 4,
-        "texturesCount": 0,
-        "hasUVs": true,
-        "bboxM": {
-          "min": [
-            -0.122,
-            0,
-            -0.122
-          ],
-          "max": [
-            0.122,
-            0.0859,
-            0.122
-          ],
-          "width": 0.244,
-          "height": 0.0859,
-          "depth": 0.244
-        },
-        "dracoDecodeTimeMs": 1.2,
-        "estimatedGpuMemoryBytes": 120224,
-        "estimatedGpuMemoryMb": 0.11
-      },
-      "balanced": {
-        "path": "/models/optimized/gourmet-wok-bowl-balanced.glb",
-        "sizeBytes": 10920,
-        "sizeKb": 10.66,
-        "triangleCount": 2100,
-        "vertexCount": 1308,
-        "drawCalls": 4,
-        "materialsCount": 4,
-        "texturesCount": 0,
-        "hasUVs": true,
-        "bboxM": {
-          "min": [
-            -0.122,
-            0,
-            -0.122
-          ],
-          "max": [
-            0.122,
-            0.0859,
-            0.122
-          ],
-          "width": 0.244,
-          "height": 0.0859,
-          "depth": 0.244
-        },
-        "dracoDecodeTimeMs": 0.61,
-        "estimatedGpuMemoryBytes": 54456,
-        "estimatedGpuMemoryMb": 0.05
-      },
-      "ultraLight": {
-        "path": "/models/optimized/gourmet-wok-bowl-ultralight.glb",
-        "sizeBytes": 8232,
-        "sizeKb": 8.04,
-        "triangleCount": 1264,
-        "vertexCount": 829,
-        "drawCalls": 4,
-        "materialsCount": 4,
-        "texturesCount": 0,
-        "hasUVs": true,
-        "bboxM": {
-          "min": [
-            -0.122,
-            0,
-            -0.122
-          ],
-          "max": [
-            0.122,
-            0.0859,
-            0.122
-          ],
-          "width": 0.244,
-          "height": 0.0859,
-          "depth": 0.244
-        },
-        "dracoDecodeTimeMs": 0.38,
-        "estimatedGpuMemoryBytes": 34112,
-        "estimatedGpuMemoryMb": 0.03
-      },
-      "usdz": {
-        "path": "/models/optimized/gourmet-wok-bowl.usdz",
-        "sizeBytes": 175885,
-        "sizeKb": 171.76,
-        "format": "usdz",
-        "validZip": true
-      }
-    }
-  },
-  "dahi-ke-kebab": {
-    "dishId": "dahi-ke-kebab",
-    "modelName": "3D Interactive Model Showcase [Prototype Asset]",
-    "assetVersion": "2.0.0",
-    "units": "meters",
-    "culinaryCategory": "fried-food",
-    "secondaryCategories": [
-      "melted-cheese",
-      "fresh-vegetables"
-    ],
-    "isSharedPlaceholder": true,
-    "dimensions": {
-      "widthCm": 22,
-      "depthCm": 16,
-      "heightCm": 4.5
-    },
-    "modelScaleFactor": 0.15,
-    "groundContactValidated": true,
-    "colorValidated": true,
-    "scaleValidated": false,
-    "canonicalOrigin": "footprint-centre-ground-contact",
-    "profiles": {
-      "high": {
-        "path": "/models/optimized/gourmet-wok-bowl-high.glb",
-        "sizeBytes": 18248,
-        "sizeKb": 17.82,
-        "triangleCount": 4896,
-        "vertexCount": 2839,
-        "drawCalls": 4,
-        "materialsCount": 4,
-        "texturesCount": 0,
-        "hasUVs": true,
-        "bboxM": {
-          "min": [
-            -0.122,
-            0,
-            -0.122
-          ],
-          "max": [
-            0.122,
-            0.0859,
-            0.122
-          ],
-          "width": 0.244,
-          "height": 0.0859,
-          "depth": 0.244
-        },
-        "dracoDecodeTimeMs": 1.19,
+        "dracoDecodeTimeMs": 1.74,
         "estimatedGpuMemoryBytes": 120224,
         "estimatedGpuMemoryMb": 0.11
       },
@@ -2314,7 +2096,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.0859,
           "depth": 0.244
         },
-        "dracoDecodeTimeMs": 0.57,
+        "dracoDecodeTimeMs": 0.37,
         "estimatedGpuMemoryBytes": 34112,
         "estimatedGpuMemoryMb": 0.03
       },
@@ -2327,25 +2109,26 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       }
     }
   },
-  "crispy-chilli-babycorn": {
-    "dishId": "crispy-chilli-babycorn",
+  "butter-chicken-bao": {
+    "dishId": "butter-chicken-bao",
     "modelName": "3D Interactive Model Showcase [Prototype Asset]",
     "assetVersion": "2.0.0",
     "units": "meters",
-    "culinaryCategory": "fried-food",
+    "culinaryCategory": "bread-crust",
     "secondaryCategories": [
-      "glossy-sauce",
-      "fresh-vegetables"
+      "grilled-meat",
+      "glossy-sauce"
     ],
     "isSharedPlaceholder": true,
+    "dimensionSource": "estimated-typical-portion",
     "dimensions": {
-      "widthCm": 20,
-      "depthCm": 20,
-      "heightCm": 5.5
+      "widthCm": 18,
+      "depthCm": 18,
+      "heightCm": 7
     },
-    "modelScaleFactor": 0.16,
+    "modelScaleFactor": 0.7377,
     "groundContactValidated": true,
-    "colorValidated": true,
+    "colorValidated": false,
     "scaleValidated": false,
     "canonicalOrigin": "footprint-centre-ground-contact",
     "profiles": {
@@ -2374,7 +2157,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.0859,
           "depth": 0.244
         },
-        "dracoDecodeTimeMs": 1.17,
+        "dracoDecodeTimeMs": 1.12,
         "estimatedGpuMemoryBytes": 120224,
         "estimatedGpuMemoryMb": 0.11
       },
@@ -2432,7 +2215,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.0859,
           "depth": 0.244
         },
-        "dracoDecodeTimeMs": 0.37,
+        "dracoDecodeTimeMs": 0.36,
         "estimatedGpuMemoryBytes": 34112,
         "estimatedGpuMemoryMb": 0.03
       },
@@ -2445,25 +2228,26 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       }
     }
   },
-  "dim-sum-platter": {
-    "dishId": "dim-sum-platter",
+  "dahi-ke-kebab": {
+    "dishId": "dahi-ke-kebab",
     "modelName": "3D Interactive Model Showcase [Prototype Asset]",
     "assetVersion": "2.0.0",
     "units": "meters",
-    "culinaryCategory": "bread-crust",
+    "culinaryCategory": "fried-food",
     "secondaryCategories": [
-      "glossy-sauce",
+      "melted-cheese",
       "fresh-vegetables"
     ],
     "isSharedPlaceholder": true,
+    "dimensionSource": "estimated-typical-portion",
     "dimensions": {
-      "widthCm": 21,
-      "depthCm": 21,
-      "heightCm": 6
+      "widthCm": 22,
+      "depthCm": 16,
+      "heightCm": 4.5
     },
-    "modelScaleFactor": 0.16,
+    "modelScaleFactor": 0.9016,
     "groundContactValidated": true,
-    "colorValidated": true,
+    "colorValidated": false,
     "scaleValidated": false,
     "canonicalOrigin": "footprint-centre-ground-contact",
     "profiles": {
@@ -2492,7 +2276,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.0859,
           "depth": 0.244
         },
-        "dracoDecodeTimeMs": 1.61,
+        "dracoDecodeTimeMs": 1.15,
         "estimatedGpuMemoryBytes": 120224,
         "estimatedGpuMemoryMb": 0.11
       },
@@ -2521,7 +2305,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.0859,
           "depth": 0.244
         },
-        "dracoDecodeTimeMs": 0.62,
+        "dracoDecodeTimeMs": 0.52,
         "estimatedGpuMemoryBytes": 54456,
         "estimatedGpuMemoryMb": 0.05
       },
@@ -2550,7 +2334,245 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.0859,
           "depth": 0.244
         },
-        "dracoDecodeTimeMs": 0.44,
+        "dracoDecodeTimeMs": 0.38,
+        "estimatedGpuMemoryBytes": 34112,
+        "estimatedGpuMemoryMb": 0.03
+      },
+      "usdz": {
+        "path": "/models/optimized/gourmet-wok-bowl.usdz",
+        "sizeBytes": 175885,
+        "sizeKb": 171.76,
+        "format": "usdz",
+        "validZip": true
+      }
+    }
+  },
+  "crispy-chilli-babycorn": {
+    "dishId": "crispy-chilli-babycorn",
+    "modelName": "3D Interactive Model Showcase [Prototype Asset]",
+    "assetVersion": "2.0.0",
+    "units": "meters",
+    "culinaryCategory": "fried-food",
+    "secondaryCategories": [
+      "glossy-sauce",
+      "fresh-vegetables"
+    ],
+    "isSharedPlaceholder": true,
+    "dimensionSource": "estimated-typical-portion",
+    "dimensions": {
+      "widthCm": 20,
+      "depthCm": 20,
+      "heightCm": 5.5
+    },
+    "modelScaleFactor": 0.8197,
+    "groundContactValidated": true,
+    "colorValidated": false,
+    "scaleValidated": false,
+    "canonicalOrigin": "footprint-centre-ground-contact",
+    "profiles": {
+      "high": {
+        "path": "/models/optimized/gourmet-wok-bowl-high.glb",
+        "sizeBytes": 18248,
+        "sizeKb": 17.82,
+        "triangleCount": 4896,
+        "vertexCount": 2839,
+        "drawCalls": 4,
+        "materialsCount": 4,
+        "texturesCount": 0,
+        "hasUVs": true,
+        "bboxM": {
+          "min": [
+            -0.122,
+            0,
+            -0.122
+          ],
+          "max": [
+            0.122,
+            0.0859,
+            0.122
+          ],
+          "width": 0.244,
+          "height": 0.0859,
+          "depth": 0.244
+        },
+        "dracoDecodeTimeMs": 1.06,
+        "estimatedGpuMemoryBytes": 120224,
+        "estimatedGpuMemoryMb": 0.11
+      },
+      "balanced": {
+        "path": "/models/optimized/gourmet-wok-bowl-balanced.glb",
+        "sizeBytes": 10920,
+        "sizeKb": 10.66,
+        "triangleCount": 2100,
+        "vertexCount": 1308,
+        "drawCalls": 4,
+        "materialsCount": 4,
+        "texturesCount": 0,
+        "hasUVs": true,
+        "bboxM": {
+          "min": [
+            -0.122,
+            0,
+            -0.122
+          ],
+          "max": [
+            0.122,
+            0.0859,
+            0.122
+          ],
+          "width": 0.244,
+          "height": 0.0859,
+          "depth": 0.244
+        },
+        "dracoDecodeTimeMs": 0.5,
+        "estimatedGpuMemoryBytes": 54456,
+        "estimatedGpuMemoryMb": 0.05
+      },
+      "ultraLight": {
+        "path": "/models/optimized/gourmet-wok-bowl-ultralight.glb",
+        "sizeBytes": 8232,
+        "sizeKb": 8.04,
+        "triangleCount": 1264,
+        "vertexCount": 829,
+        "drawCalls": 4,
+        "materialsCount": 4,
+        "texturesCount": 0,
+        "hasUVs": true,
+        "bboxM": {
+          "min": [
+            -0.122,
+            0,
+            -0.122
+          ],
+          "max": [
+            0.122,
+            0.0859,
+            0.122
+          ],
+          "width": 0.244,
+          "height": 0.0859,
+          "depth": 0.244
+        },
+        "dracoDecodeTimeMs": 0.37,
+        "estimatedGpuMemoryBytes": 34112,
+        "estimatedGpuMemoryMb": 0.03
+      },
+      "usdz": {
+        "path": "/models/optimized/gourmet-wok-bowl.usdz",
+        "sizeBytes": 175885,
+        "sizeKb": 171.76,
+        "format": "usdz",
+        "validZip": true
+      }
+    }
+  },
+  "dim-sum-platter": {
+    "dishId": "dim-sum-platter",
+    "modelName": "3D Interactive Model Showcase [Prototype Asset]",
+    "assetVersion": "2.0.0",
+    "units": "meters",
+    "culinaryCategory": "bread-crust",
+    "secondaryCategories": [
+      "glossy-sauce",
+      "fresh-vegetables"
+    ],
+    "isSharedPlaceholder": true,
+    "dimensionSource": "estimated-typical-portion",
+    "dimensions": {
+      "widthCm": 21,
+      "depthCm": 21,
+      "heightCm": 6
+    },
+    "modelScaleFactor": 0.8607,
+    "groundContactValidated": true,
+    "colorValidated": false,
+    "scaleValidated": false,
+    "canonicalOrigin": "footprint-centre-ground-contact",
+    "profiles": {
+      "high": {
+        "path": "/models/optimized/gourmet-wok-bowl-high.glb",
+        "sizeBytes": 18248,
+        "sizeKb": 17.82,
+        "triangleCount": 4896,
+        "vertexCount": 2839,
+        "drawCalls": 4,
+        "materialsCount": 4,
+        "texturesCount": 0,
+        "hasUVs": true,
+        "bboxM": {
+          "min": [
+            -0.122,
+            0,
+            -0.122
+          ],
+          "max": [
+            0.122,
+            0.0859,
+            0.122
+          ],
+          "width": 0.244,
+          "height": 0.0859,
+          "depth": 0.244
+        },
+        "dracoDecodeTimeMs": 1.45,
+        "estimatedGpuMemoryBytes": 120224,
+        "estimatedGpuMemoryMb": 0.11
+      },
+      "balanced": {
+        "path": "/models/optimized/gourmet-wok-bowl-balanced.glb",
+        "sizeBytes": 10920,
+        "sizeKb": 10.66,
+        "triangleCount": 2100,
+        "vertexCount": 1308,
+        "drawCalls": 4,
+        "materialsCount": 4,
+        "texturesCount": 0,
+        "hasUVs": true,
+        "bboxM": {
+          "min": [
+            -0.122,
+            0,
+            -0.122
+          ],
+          "max": [
+            0.122,
+            0.0859,
+            0.122
+          ],
+          "width": 0.244,
+          "height": 0.0859,
+          "depth": 0.244
+        },
+        "dracoDecodeTimeMs": 0.6,
+        "estimatedGpuMemoryBytes": 54456,
+        "estimatedGpuMemoryMb": 0.05
+      },
+      "ultraLight": {
+        "path": "/models/optimized/gourmet-wok-bowl-ultralight.glb",
+        "sizeBytes": 8232,
+        "sizeKb": 8.04,
+        "triangleCount": 1264,
+        "vertexCount": 829,
+        "drawCalls": 4,
+        "materialsCount": 4,
+        "texturesCount": 0,
+        "hasUVs": true,
+        "bboxM": {
+          "min": [
+            -0.122,
+            0,
+            -0.122
+          ],
+          "max": [
+            0.122,
+            0.0859,
+            0.122
+          ],
+          "width": 0.244,
+          "height": 0.0859,
+          "depth": 0.244
+        },
+        "dracoDecodeTimeMs": 0.57,
         "estimatedGpuMemoryBytes": 34112,
         "estimatedGpuMemoryMb": 0.03
       },
@@ -2574,14 +2596,15 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "fresh-vegetables"
     ],
     "isSharedPlaceholder": true,
+    "dimensionSource": "estimated-typical-portion",
     "dimensions": {
       "widthCm": 8,
       "depthCm": 8,
       "heightCm": 16
     },
-    "modelScaleFactor": 0.16,
+    "modelScaleFactor": 0.5882,
     "groundContactValidated": true,
-    "colorValidated": true,
+    "colorValidated": false,
     "scaleValidated": false,
     "canonicalOrigin": "footprint-centre-ground-contact",
     "profiles": {
@@ -2610,7 +2633,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.166,
           "depth": 0.136
         },
-        "dracoDecodeTimeMs": 0.37,
+        "dracoDecodeTimeMs": 0.38,
         "estimatedGpuMemoryBytes": 34048,
         "estimatedGpuMemoryMb": 0.03
       },
@@ -2639,7 +2662,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.166,
           "depth": 0.136
         },
-        "dracoDecodeTimeMs": 0.27,
+        "dracoDecodeTimeMs": 0.25,
         "estimatedGpuMemoryBytes": 20128,
         "estimatedGpuMemoryMb": 0.02
       },
@@ -2668,7 +2691,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.166,
           "depth": 0.136
         },
-        "dracoDecodeTimeMs": 0.22,
+        "dracoDecodeTimeMs": 0.17,
         "estimatedGpuMemoryBytes": 11776,
         "estimatedGpuMemoryMb": 0.01
       },
@@ -2692,13 +2715,14 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "melted-cheese",
       "fresh-vegetables"
     ],
-    "isSharedPlaceholder": true,
+    "isSharedPlaceholder": false,
+    "dimensionSource": "estimated-typical-portion",
     "dimensions": {
       "widthCm": 12.5,
       "depthCm": 12.5,
       "heightCm": 10.5
     },
-    "modelScaleFactor": 0.16,
+    "modelScaleFactor": 0.0625,
     "groundContactValidated": true,
     "colorValidated": true,
     "scaleValidated": false,
@@ -2729,7 +2753,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.211,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 2.99,
+        "dracoDecodeTimeMs": 2.84,
         "estimatedGpuMemoryBytes": 33857786,
         "estimatedGpuMemoryMb": 32.29
       },
@@ -2758,7 +2782,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.211,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 2.81,
+        "dracoDecodeTimeMs": 2.94,
         "estimatedGpuMemoryBytes": 8698250,
         "estimatedGpuMemoryMb": 8.3
       },
@@ -2787,7 +2811,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.211,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 2.78,
+        "dracoDecodeTimeMs": 3.18,
         "estimatedGpuMemoryBytes": 2408366,
         "estimatedGpuMemoryMb": 2.3
       },
