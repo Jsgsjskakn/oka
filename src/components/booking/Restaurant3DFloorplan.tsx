@@ -48,6 +48,13 @@ import {
   type CameraTarget,
   type FrameloopTelemetry,
 } from '@/components/3d/DemandFrameloopController';
+import { perfMark } from '@/lib/three/perf-telemetry';
+import {
+  applyCanonicalColorPipeline,
+  CANONICAL_TONE_MAPPING,
+  CANONICAL_EXPOSURE,
+  type ColorPipelineTarget,
+} from '@/lib/three/color-pipeline';
 
 interface Restaurant3DFloorplanProps {
   selectedTableNumber: number | null;
@@ -554,6 +561,7 @@ export function Restaurant3DFloorplan({
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);
+    perfMark('booking3d:mount');
   }, []);
 
   const [internalFullscreen, setInternalFullscreen] = useState(false);
@@ -1151,10 +1159,13 @@ export function Restaurant3DFloorplan({
               antialias: quality.antialias,
               alpha: false,
               powerPreference: quality.powerPreference,
-              toneMapping: THREE.ACESFilmicToneMapping,
-              toneMappingExposure: quality.toneMappingExposure,
+              toneMapping: CANONICAL_TONE_MAPPING,
+              toneMappingExposure: CANONICAL_EXPOSURE,
             }}
             onCreated={({ gl, scene, camera }) => {
+              applyCanonicalColorPipeline(gl as unknown as ColorPipelineTarget);
+              perfMark('booking3d:layout-visible');
+              perfMark('booking3d:interactive');
               if (gl.shadowMap) {
                 gl.shadowMap.autoUpdate = false;
                 gl.shadowMap.needsUpdate = true;

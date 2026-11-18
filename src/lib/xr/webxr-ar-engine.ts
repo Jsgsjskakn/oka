@@ -20,29 +20,32 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js';
 import { XREstimatedLight } from 'three/examples/jsm/webxr/XREstimatedLight.js';
 
+import { applyCanonicalColorPipeline } from '../three/color-pipeline.ts';
+import { perfMark } from '../three/perf-telemetry.ts';
+
 import type {
   XRTrackingState,
   PlacementRecord,
   PlacementAnchorKind,
   DishPhysicalSpec,
-} from './spatial-contract';
+} from './spatial-contract.ts';
 import {
   REAL_SIZE_USER_SCALE,
   cmToMetres,
-} from './spatial-contract';
+} from './spatial-contract.ts';
 import {
   computeDishPlacementTransform,
   isHorizontalSurface,
   clampUserScale,
-} from './placement-math';
-import { createPlacementReticle } from './placement-reticle';
-import { getDishPhysicalSpec } from '../../data/dish-dimensions';
+} from './placement-math.ts';
+import { createPlacementReticle } from './placement-reticle.ts';
+import { getDishPhysicalSpec } from '../../data/dish-dimensions.ts';
 
 import {
   resolveXRSessionQualityProfile,
   XRFrameTimeMonitor,
-} from './ar-quality-profile';
-import type { XRSessionQualityProfile } from './ar-quality-profile';
+} from './ar-quality-profile.ts';
+import type { XRSessionQualityProfile } from './ar-quality-profile.ts';
 
 // ---------------------------------------------------------------------------
 // Interfaces & Contract Signatures
@@ -65,12 +68,14 @@ export interface WebXRAREngineDependencies {
   }) => { uniformScale: number; offset: [number, number, number] };
   isHorizontalSurface?: (normalY: number) => boolean;
   createPlacementReticle?: () => PlacementReticleInstance;
+  createRenderer?: (profile: XRSessionQualityProfile) => THREE.WebGLRenderer;
 }
 
 export interface WebXRAREngineOptions {
   session: XRSession;
   dishSlug: string;
   modelUrl: string;
+  upgradeModelUrl?: string;
   container?: HTMLElement | null;
   onTrackingStateChange?: (state: XRTrackingState, details?: unknown) => void;
   onPlacementComplete?: (record: PlacementRecord) => void;
@@ -144,6 +149,7 @@ export class WebXRAREngine {
 
   private dishSlug: string;
   private modelUrl: string;
+  private upgradeModelUrl?: string;
   private dishPhysicalSpec: DishPhysicalSpec;
 
   private isPlaced = false;
@@ -159,6 +165,13 @@ export class WebXRAREngine {
   private trackingState: XRTrackingState = 'scanning';
   private frameTimeMonitor: XRFrameTimeMonitor;
   private qualityProfile: XRSessionQualityProfile;
+
+  private firstXRFrameFired = false;
+  private firstSurfaceHitFired = false;
+  private modelLoaded = false;
+  private gltfLoader: GLTFLoader | null = null;
+  private dracoLoader: DRACOLoader | null = null;
+  private ktx2Loader: KTX2Loader | null = null;
 
   private lastFrameTimestamp = 0;
   private disposed = false;
@@ -180,6 +193,7 @@ export class WebXRAREngine {
     this.session = options.session;
     this.dishSlug = options.dishSlug;
     this.modelUrl = options.modelUrl;
+    this.upgradeModelUrl = options.upgradeModelUrl;
 
     this.onTrackingStateChange = options.onTrackingStateChange;
     this.onPlacementComplete = options.onPlacementComplete;
@@ -206,18 +220,25 @@ export class WebXRAREngine {
     });
 
     // 1. Renderer Setup
-    this.renderer = new THREE.WebGLRenderer({
-      alpha: true,
-      antialias: this.qualityProfile.antialias,
-      powerPreference: this.qualityProfile.powerPreference,
-    });
+    this.renderer =
+      deps.createRenderer?.(this.qualityProfile) ??
+      new THREE.WebGLRenderer({
+        alpha: true,
+        antialias: this.qualityProfile.antialias,
+        powerPreference: this.qualityProfile.powerPreference,
+      });
     this.renderer.setPixelRatio(1);
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    if (typeof window !== 'undefined') {
+      this.renderer.setSize(window.innerWidth, window.innerHeight);
+    }
     this.renderer.xr.enabled = true;
 
-    if (options.container) {
+    // Phase 5 Task 2: Apply canonical colour pipeline (Khronos PBR Neutral, SRGBColorSpace, Exposure 1.0)
+    applyCanonicalColorPipeline(this.renderer);
+
+    if (options.container && this.renderer.domElement) {
       options.container.appendChild(this.renderer.domElement);
-    } else {
+    } else if (typeof document !== 'undefined' && document.body && this.renderer.domElement) {
       this.renderer.domElement.style.position = 'fixed';
       this.renderer.domElement.style.inset = '0';
       this.renderer.domElement.style.width = '100vw';
@@ -283,19 +304,22 @@ export class WebXRAREngine {
 
     this.session.addEventListener('select', this.handleSelect);
     this.session.addEventListener('end', this.handleSessionEnd);
-    document.addEventListener('visibilitychange', this.handleVisibilityChange);
+    if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
+      document.addEventListener('visibilitychange', this.handleVisibilityChange);
+    }
   }
 
   public async start(): Promise<void> {
     try {
-      this.renderer.xr.setReferenceSpaceType('local');
-      await this.renderer.xr.setSession(this.session);
-
-      // Request reference spaces
+      // 1. Establish reference space with fallback order (local-floor -> local)
       try {
         this.refSpace = await this.session.requestReferenceSpace('local-floor');
+        this.renderer.xr.setReferenceSpaceType('local-floor');
+        await this.renderer.xr.setSession(this.session);
       } catch {
         this.refSpace = await this.session.requestReferenceSpace('local');
+        this.renderer.xr.setReferenceSpaceType('local');
+        await this.renderer.xr.setSession(this.session);
       }
 
       this.viewerSpace = await this.session.requestReferenceSpace('viewer');
@@ -308,8 +332,8 @@ export class WebXRAREngine {
           })) ?? null;
       }
 
-      // Load model asynchronously
-      void this.loadDishModel();
+      // Parallelize: load model asynchronously, never block camera loop
+      void this.loadDishModel(this.modelUrl);
 
       // Start animation loop
       this.renderer.setAnimationLoop(this.onXRFrame.bind(this));
@@ -329,6 +353,11 @@ export class WebXRAREngine {
   private onXRFrame(timestamp: number, frame?: XRFrame): void {
     if (this.disposed || !frame || !this.refSpace) return;
 
+    if (!this.firstXRFrameFired) {
+      this.firstXRFrameFired = true;
+      perfMark('ar:first-xr-frame');
+    }
+
     // 1. Frame-time Monitoring
     const deltaMs = this.lastFrameTimestamp ? timestamp - this.lastFrameTimestamp : 16.67;
     this.lastFrameTimestamp = timestamp;
@@ -341,6 +370,7 @@ export class WebXRAREngine {
     if (!viewerPose || viewerPose.emulatedPosition) {
       if (this.trackingState !== 'tracking-limited') {
         const reason = !viewerPose ? 'pose-lost' : 'emulated-position';
+        perfMark('ar:tracking-lost', { reason });
         this.setTrackingState('tracking-limited', reason);
         this.reticle.setState('hidden');
       }
@@ -350,6 +380,7 @@ export class WebXRAREngine {
     }
 
     if (this.trackingState === 'tracking-limited') {
+      perfMark('ar:tracking-restored');
       this.setTrackingState(this.isPlaced ? 'placed' : 'scanning');
     }
 
@@ -366,6 +397,10 @@ export class WebXRAREngine {
           const isHorizontal = this.isHorizontalSurfaceFn(surfaceNormal.y);
 
           if (isHorizontal) {
+            if (!this.firstSurfaceHitFired) {
+              this.firstSurfaceHitFired = true;
+              perfMark('ar:first-surface-hit');
+            }
             this.reticle.object.position.set(
               hitPose.transform.position.x,
               hitPose.transform.position.y,
@@ -460,6 +495,11 @@ export class WebXRAREngine {
 
     this.updateModelPlacementTransform();
 
+    perfMark('ar:first-placement', { dishSlug: this.dishSlug, anchorKind });
+    if (this.modelLoaded) {
+      perfMark('ar:model-visible', { dishSlug: this.dishSlug });
+    }
+
     const record: PlacementRecord = {
       dishSlug: this.dishSlug,
       anchorKind,
@@ -471,6 +511,11 @@ export class WebXRAREngine {
 
     this.onPlacementComplete?.(record);
     this.setTrackingState('placed', record);
+
+    // If upgrade model is configured and different from initial, upgrade LOD in background
+    if (this.upgradeModelUrl && this.upgradeModelUrl !== this.modelUrl) {
+      void this.upgradeLod(this.upgradeModelUrl);
+    }
 
     return true;
   }
@@ -534,30 +579,43 @@ export class WebXRAREngine {
   }
 
   // ---------------------------------------------------------------------------
-  // Model Loading & Ground Contact Alignment
+  // Model Loading, Ground Contact Alignment & Progressive LOD
   // ---------------------------------------------------------------------------
 
-  private async loadDishModel(): Promise<void> {
-    const dracoLoader = new DRACOLoader();
-    dracoLoader.setDecoderPath('/draco/');
-
-    const gltfLoader = new GLTFLoader();
-    gltfLoader.setDRACOLoader(dracoLoader);
-
-    try {
-      const ktx2Loader = new KTX2Loader();
-      ktx2Loader.setTranscoderPath('/basis-ktx2/');
-      ktx2Loader.detectSupport(this.renderer);
-      gltfLoader.setKTX2Loader(ktx2Loader);
-    } catch {
-      // Optional KTX2 support
+  private getOrCreateLoaders(): {
+    gltfLoader: GLTFLoader;
+    dracoLoader: DRACOLoader;
+  } {
+    if (!this.dracoLoader) {
+      this.dracoLoader = new DRACOLoader();
+      this.dracoLoader.setDecoderPath('/draco/');
     }
+    if (!this.gltfLoader) {
+      this.gltfLoader = new GLTFLoader();
+      this.gltfLoader.setDRACOLoader(this.dracoLoader);
+      try {
+        if (!this.ktx2Loader) {
+          this.ktx2Loader = new KTX2Loader();
+          this.ktx2Loader.setTranscoderPath('/basis-ktx2/');
+          this.ktx2Loader.detectSupport(this.renderer);
+        }
+        this.gltfLoader.setKTX2Loader(this.ktx2Loader);
+      } catch {
+        // Optional KTX2 support
+      }
+    }
+    return { gltfLoader: this.gltfLoader, dracoLoader: this.dracoLoader };
+  }
+
+  private async loadDishModel(url: string): Promise<void> {
+    const { gltfLoader } = this.getOrCreateLoaders();
 
     try {
       const gltf = await new Promise<{ scene: THREE.Group }>((resolve, reject) => {
-        gltfLoader.load(this.modelUrl, resolve, undefined, reject);
+        gltfLoader.load(url, resolve, undefined, reject);
       });
 
+      if (this.disposed) return;
       const root = gltf.scene;
 
       // Calculate raw model bounds
@@ -569,15 +627,66 @@ export class WebXRAREngine {
         max: [bbox.max.x, bbox.max.y, bbox.max.z],
       };
 
+      this.disposeObjectHierarchy(this.modelContainer);
       this.modelContainer.clear();
       this.modelContainer.add(root);
 
+      this.modelLoaded = true;
       this.updateModelPlacementTransform();
+
+      perfMark('ar:model-ready', { dishSlug: this.dishSlug, url });
+      if (this.isPlaced) {
+        perfMark('ar:model-visible', { dishSlug: this.dishSlug });
+      }
+
       this.onModelLoaded?.();
     } catch (err) {
       this.onError?.(err as Error);
-    } finally {
-      dracoLoader.dispose();
+    }
+  }
+
+  /**
+   * Progressively upgrades placed model to target LOD without disturbing the established world anchor.
+   */
+  public async upgradeLod(targetModelUrl: string): Promise<boolean> {
+    if (this.disposed || !this.isPlaced || !targetModelUrl || targetModelUrl === this.modelUrl) {
+      return false;
+    }
+
+    const { gltfLoader } = this.getOrCreateLoaders();
+
+    try {
+      const gltf = await new Promise<{ scene: THREE.Group }>((resolve, reject) => {
+        gltfLoader.load(targetModelUrl, resolve, undefined, reject);
+      });
+
+      if (this.disposed || !this.isPlaced) {
+        this.disposeObjectHierarchy(gltf.scene);
+        return false;
+      }
+
+      const newRoot = gltf.scene;
+      newRoot.updateMatrixWorld(true);
+      const bbox = new THREE.Box3().setFromObject(newRoot);
+
+      this.rawModelBBox = {
+        min: [bbox.min.x, bbox.min.y, bbox.min.z],
+        max: [bbox.max.x, bbox.max.y, bbox.max.z],
+      };
+
+      // Safely dispose old model
+      this.disposeObjectHierarchy(this.modelContainer);
+      this.modelContainer.clear();
+      this.modelContainer.add(newRoot);
+
+      // Re-apply scale & offset to new root without touching dishGroup anchor
+      this.updateModelPlacementTransform();
+
+      perfMark('model:full-quality', { dishSlug: this.dishSlug, url: targetModelUrl });
+      return true;
+    } catch {
+      // LOD upgrade failure is non-fatal: retain current lightweight model
+      return false;
     }
   }
 
@@ -647,13 +756,54 @@ export class WebXRAREngine {
     }
   }
 
+  private disposeMaterialAndTextures(material: THREE.Material): void {
+    const mat = material as unknown as Record<string, unknown>;
+    const textureSlots = [
+      'map',
+      'normalMap',
+      'roughnessMap',
+      'metalnessMap',
+      'aoMap',
+      'emissiveMap',
+      'sheenColorMap',
+      'specularColorMap',
+      'clearcoatNormalMap',
+      'clearcoatRoughnessMap',
+      'transmissionMap',
+      'thicknessMap',
+    ];
+    for (const slot of textureSlots) {
+      const tex = mat[slot];
+      if (tex && typeof (tex as { dispose?: () => void }).dispose === 'function') {
+        (tex as { dispose: () => void }).dispose();
+      }
+    }
+    material.dispose();
+  }
+
+  private disposeObjectHierarchy(root: THREE.Object3D): void {
+    root.traverse((child) => {
+      if ((child as THREE.Mesh).isMesh) {
+        const mesh = child as THREE.Mesh;
+        mesh.geometry?.dispose();
+        if (Array.isArray(mesh.material)) {
+          mesh.material.forEach((m) => this.disposeMaterialAndTextures(m));
+        } else if (mesh.material) {
+          this.disposeMaterialAndTextures(mesh.material);
+        }
+      }
+    });
+  }
+
   public dispose(): void {
     if (this.disposed) return;
     this.disposed = true;
 
     this.session.removeEventListener('select', this.handleSelect);
     this.session.removeEventListener('end', this.handleSessionEnd);
-    document.removeEventListener('visibilitychange', this.handleVisibilityChange);
+    if (typeof document !== 'undefined' && typeof document.removeEventListener === 'function') {
+      document.removeEventListener('visibilitychange', this.handleVisibilityChange);
+    }
 
     this.renderer.setAnimationLoop(null);
 
@@ -673,21 +823,20 @@ export class WebXRAREngine {
 
     this.reticle.dispose();
 
-    // Dispose scene meshes, geometries, materials
-    this.scene.traverse((child) => {
-      if ((child as THREE.Mesh).isMesh) {
-        const mesh = child as THREE.Mesh;
-        mesh.geometry?.dispose();
-        if (Array.isArray(mesh.material)) {
-          mesh.material.forEach((m) => m.dispose());
-        } else if (mesh.material) {
-          mesh.material.dispose();
-        }
-      }
-    });
+    // Dispose scene meshes, geometries, materials, and textures
+    this.disposeObjectHierarchy(this.scene);
+
+    if (this.dracoLoader) {
+      this.dracoLoader.dispose();
+      this.dracoLoader = null;
+    }
+    if (this.ktx2Loader) {
+      this.ktx2Loader.dispose();
+      this.ktx2Loader = null;
+    }
 
     this.renderer.dispose();
-    if (this.renderer.domElement.parentElement) {
+    if (this.renderer?.domElement?.parentElement) {
       this.renderer.domElement.parentElement.removeChild(this.renderer.domElement);
     }
   }

@@ -10,6 +10,7 @@ import type {
   XRTrackingState,
   PlacementRecord,
 } from './spatial-contract';
+import { perfMark } from '../three/perf-telemetry.ts';
 
 export interface WebXRSupportCheckResult {
   supported: boolean;
@@ -81,19 +82,23 @@ export async function checkWebXRImmersiveArSupport(
 
   try {
     const supported = await nav.xr.isSessionSupported('immersive-ar');
-    return {
+    const result: WebXRSupportCheckResult = {
       supported: Boolean(supported),
       isSecureContext: true,
       hasXRApi: true,
       reason: supported ? 'supported' : 'immersive-ar-unsupported',
     };
+    perfMark('ar:support-checked', { supported: result.supported, reason: result.reason });
+    return result;
   } catch {
-    return {
+    const result: WebXRSupportCheckResult = {
       supported: false,
       isSecureContext: true,
       hasXRApi: true,
       reason: 'probe-error',
     };
+    perfMark('ar:support-checked', { supported: false, reason: 'probe-error' });
+    return result;
   }
 }
 
@@ -106,14 +111,21 @@ export function buildSessionInitCandidates(
   options: RequestXRSessionOptions = {}
 ): XRSessionInit[] {
   const root = options.domOverlayRoot ?? undefined;
-  const domOverlayFeature = root ? ({ root } as unknown as XRDOMOverlayInit) : undefined;
+  // Verify root is connected to the DOM to prevent TypeError from Chrome WebXR
+  const isConnected = root
+    ? typeof (root as { isConnected?: boolean }).isConnected === 'boolean'
+      ? (root as { isConnected?: boolean }).isConnected
+      : true
+    : false;
+  const validRoot = isConnected ? root : undefined;
+  const domOverlayFeature = validRoot ? ({ root: validRoot } as unknown as XRDOMOverlayInit) : undefined;
 
   const candidates: XRSessionInit[] = [];
 
   // Tier 1: Full candidate (hit-test + anchors + dom-overlay + light-estimation + local-floor + depth-sensing)
   const fullOptional = [
     'anchors',
-    ...(root ? ['dom-overlay'] : []),
+    ...(validRoot ? ['dom-overlay'] : []),
     'light-estimation',
     'local-floor',
     'depth-sensing',
@@ -130,7 +142,7 @@ export function buildSessionInitCandidates(
   // Tier 2: Core spatial candidate (hit-test + anchors + dom-overlay + light-estimation)
   const coreOptional = [
     'anchors',
-    ...(root ? ['dom-overlay'] : []),
+    ...(validRoot ? ['dom-overlay'] : []),
     'light-estimation',
   ];
   const tier2: Record<string, unknown> = {
@@ -145,7 +157,7 @@ export function buildSessionInitCandidates(
   // Tier 3: Minimal UI candidate (hit-test + dom-overlay)
   const tier3: Record<string, unknown> = {
     requiredFeatures: ['hit-test'],
-    optionalFeatures: root ? ['dom-overlay'] : [],
+    optionalFeatures: validRoot ? ['dom-overlay'] : [],
   };
   if (domOverlayFeature) {
     tier3.domOverlay = domOverlayFeature;
@@ -166,6 +178,8 @@ export function buildSessionInitCandidates(
 export async function requestWebXRImmersiveArSession(
   options: RequestXRSessionOptions = {}
 ): Promise<XRSession> {
+  perfMark('ar:requested');
+
   const nav =
     options.navigatorRef !== undefined
       ? (options.navigatorRef as { xr?: { requestSession: (mode: string, init?: XRSessionInit) => Promise<XRSession> } })
@@ -174,6 +188,7 @@ export async function requestWebXRImmersiveArSession(
       : null;
 
   if (!nav?.xr || typeof nav.xr.requestSession !== 'function') {
+    perfMark('ar:session-failed', { reason: 'xr-api-missing' });
     throw new Error('WebXR API (navigator.xr.requestSession) is not available in this environment');
   }
 
@@ -183,6 +198,16 @@ export async function requestWebXRImmersiveArSession(
   for (const candidate of candidates) {
     try {
       const session = await nav.xr.requestSession('immersive-ar', candidate);
+      perfMark('ar:session-started', { mode: 'immersive-ar' });
+      if (typeof (session as { addEventListener?: unknown }).addEventListener === 'function') {
+        session.addEventListener(
+          'end',
+          () => {
+            perfMark('ar:session-ended');
+          },
+          { once: true }
+        );
+      }
       return session;
     } catch (err) {
       lastError = err as Error;
@@ -190,6 +215,7 @@ export async function requestWebXRImmersiveArSession(
     }
   }
 
+  perfMark('ar:session-failed', { reason: lastError?.message || 'unknown' });
   throw lastError ?? new Error('WebXR immersive-ar session request failed across all feature tiers');
 }
 

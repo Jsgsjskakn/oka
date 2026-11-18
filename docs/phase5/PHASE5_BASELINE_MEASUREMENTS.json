@@ -1,0 +1,2173 @@
+{
+  "title": "The Golden Oak — Phase 5 Baseline Runtime Measurements",
+  "generatedAt": "2026-11-18T17:08:07.992Z",
+  "benchmarkStart": "2026-11-18T17:05:41.259Z",
+  "baseUrl": "http://localhost:3000",
+  "chromeExecutable": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+  "hostHardwareWebGL": {
+    "vendor": "Google Inc. (Intel)",
+    "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "glVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+    "evidenceLabel": "physically-measured (Windows host, ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11))"
+  },
+  "qualityContractSummary": {
+    "zeroConsoleErrorsEnforced": true,
+    "zeroPageErrorsEnforced": true,
+    "zeroFailedRequestsEnforced": true,
+    "menuZeroGlbIsolationEnforced": true
+  },
+  "profiles": [
+    {
+      "profileId": "windows-1366x768",
+      "label": "Windows Desktop HD (1366x768 @1x)",
+      "category": "windows-desktop",
+      "evidenceType": "physically-measured",
+      "viewport": {
+        "width": 1366,
+        "height": 768,
+        "deviceScaleFactor": 1,
+        "isMobile": false,
+        "hasTouch": false
+      },
+      "cpuThrottle": 1,
+      "routes": [
+        {
+          "routeId": "3d-tandoori-paneer-pizza",
+          "path": "/3d/tandoori-paneer-pizza",
+          "label": "3D Dish Viewer: Tandoori Paneer Pizza",
+          "httpStatus": 200,
+          "navigationMs": 3384,
+          "firstVisibleMs": 3399,
+          "canvasDetected": true,
+          "webgl": {
+            "vendor": "Google Inc. (Intel)",
+            "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "glVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+          },
+          "frameMetrics": {
+            "sampleCount": 60,
+            "avgFrameMs": 16.53,
+            "p95FrameMs": 16.9,
+            "estimatedFps": 60.5
+          },
+          "memory": {
+            "jsHeapUsedMB": 9.53,
+            "jsHeapTotalMB": 17.5
+          },
+          "network": {
+            "totalTransfers": 61,
+            "modelTransfersCount": 2,
+            "modelTransfers": [
+              {
+                "url": "http://localhost:3000/models/optimized/tandoori-paneer-pizza-balanced.glb",
+                "status": 200,
+                "sizeBytes": 0
+              },
+              {
+                "url": "http://localhost:3000/models/optimized/tandoori-paneer-pizza-high.glb",
+                "status": 200,
+                "sizeBytes": 0
+              }
+            ]
+          },
+          "hygiene": {
+            "consoleErrorsCount": 0,
+            "consoleErrors": [],
+            "uncaughtErrorsCount": 0,
+            "uncaughtErrors": [],
+            "failedRequestsCount": 0,
+            "failedRequests": []
+          },
+          "perfTelemetry": {
+            "DishViewer_Adaptive": {
+              "canvasName": "DishViewer_Adaptive",
+              "mounted": true,
+              "updatedAt": 1795021545580,
+              "profile": "high-fidelity",
+              "qualityTier": "high",
+              "logicalTier": "high-end",
+              "androidTier": null,
+              "degradationStep": 0,
+              "lodLevel": 0,
+              "effectiveDpr": 1,
+              "dprScale": 1,
+              "fps": 116.96,
+              "avgFrameTimeMs": 8.55,
+              "p90FrameTimeMs": 12.4,
+              "isIdle": true,
+              "idleGapsIgnored": 2,
+              "oscillationLocked": false,
+              "shadowsEnabled": true,
+              "postProcessingEnabled": true,
+              "secondaryMaterialEffects": true,
+              "evictSecondaryMaps": false,
+              "maxTextureDimension": 2048,
+              "drawCalls": 12,
+              "triangles": 43533,
+              "lines": 0,
+              "points": 0,
+              "geometries": 12,
+              "textures": 10,
+              "jsHeapUsedMb": 14.5,
+              "jsHeapLimitMb": 4192,
+              "thermalState": "nominal"
+            },
+            "DishViewer": {
+              "canvasName": "DishViewer",
+              "mounted": true,
+              "dishSlug": "tandoori-paneer-pizza",
+              "modelPath": "/models/optimized/tandoori-paneer-pizza-high.glb",
+              "activeTier": "high",
+              "qualityTier": "high",
+              "profile": "high-fidelity",
+              "tierProfile": "high-fidelity",
+              "qualityMode": "auto",
+              "frameloop": "demand",
+              "isDocumentVisible": true,
+              "isInViewport": true,
+              "dpr": 1,
+              "effectiveDpr": 1,
+              "drawCalls": 12,
+              "triangles": 43533,
+              "geometries": 12,
+              "textures": 10,
+              "memory": {
+                "geometries": 12,
+                "textures": 10,
+                "programs": 8,
+                "calls": 12,
+                "triangles": 43533,
+                "points": 0,
+                "lines": 0
+              },
+              "updatedAt": 1795021545763
+            }
+          }
+        },
+        {
+          "routeId": "ar-tandoori-paneer-pizza",
+          "path": "/ar/tandoori-paneer-pizza",
+          "label": "AR Dish Experience: Tandoori Paneer Pizza",
+          "httpStatus": 200,
+          "navigationMs": 710,
+          "firstVisibleMs": 710,
+          "canvasDetected": false,
+          "webgl": {
+            "vendor": "Google Inc. (Intel)",
+            "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "glVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+          },
+          "frameMetrics": {
+            "sampleCount": 59,
+            "avgFrameMs": 16.66,
+            "p95FrameMs": 16.9,
+            "estimatedFps": 60
+          },
+          "memory": {
+            "jsHeapUsedMB": 5.76,
+            "jsHeapTotalMB": 8.5
+          },
+          "network": {
+            "totalTransfers": 28,
+            "modelTransfersCount": 0,
+            "modelTransfers": []
+          },
+          "hygiene": {
+            "consoleErrorsCount": 0,
+            "consoleErrors": [],
+            "uncaughtErrorsCount": 0,
+            "uncaughtErrors": [],
+            "failedRequestsCount": 0,
+            "failedRequests": []
+          },
+          "perfTelemetry": null
+        },
+        {
+          "routeId": "booking-3d",
+          "path": "/booking",
+          "label": "3D Interactive Floorplan Booking",
+          "httpStatus": 200,
+          "navigationMs": 5076,
+          "firstVisibleMs": 5087,
+          "canvasDetected": true,
+          "webgl": {
+            "vendor": "unsupported",
+            "renderer": "unsupported",
+            "glVersion": "none"
+          },
+          "frameMetrics": {
+            "sampleCount": 60,
+            "avgFrameMs": 17.01,
+            "p95FrameMs": 17.1,
+            "estimatedFps": 58.8
+          },
+          "memory": {
+            "jsHeapUsedMB": 52.1,
+            "jsHeapTotalMB": 93.13
+          },
+          "network": {
+            "totalTransfers": 57,
+            "modelTransfersCount": 1,
+            "modelTransfers": [
+              {
+                "url": "http://localhost:3000/models/the_golden_oak_interior.optimized.glb",
+                "status": 200,
+                "sizeBytes": 0
+              }
+            ]
+          },
+          "hygiene": {
+            "consoleErrorsCount": 0,
+            "consoleErrors": [],
+            "uncaughtErrorsCount": 0,
+            "uncaughtErrors": [],
+            "failedRequestsCount": 0,
+            "failedRequests": []
+          },
+          "perfTelemetry": {
+            "Restaurant3DFloorplan": {
+              "component": "Restaurant3DFloorplan",
+              "mounted": true,
+              "frameloop": "demand",
+              "qualityTier": "high",
+              "dpr": [
+                1,
+                1.5
+              ],
+              "isViewportVisible": true,
+              "isDocumentHidden": false,
+              "hdrFile": "/textures/forest_env.optimized.hdr",
+              "fps": 0,
+              "isIdle": true,
+              "estimatedWattage": 0.1,
+              "totalFramesRendered": 13,
+              "calls": 52,
+              "triangles": 417896,
+              "lines": 0,
+              "points": 0,
+              "geometries": 56,
+              "textures": 20,
+              "programs": 25,
+              "updatedAt": 1795021561718,
+              "modelUrl": "/models/the_golden_oak_interior.optimized.glb",
+              "batchMode": "merge",
+              "batchedMeshCount": 64
+            },
+            "Floorplan_Adaptive": {
+              "canvasName": "Floorplan_Adaptive",
+              "mounted": true,
+              "updatedAt": 1795021561754,
+              "profile": "high-fidelity",
+              "qualityTier": "high",
+              "logicalTier": "high-end",
+              "androidTier": null,
+              "degradationStep": 0,
+              "lodLevel": 0,
+              "effectiveDpr": 1,
+              "dprScale": 1,
+              "fps": 17.73,
+              "avgFrameTimeMs": 56.41,
+              "p90FrameTimeMs": 111.1,
+              "isIdle": true,
+              "idleGapsIgnored": 2,
+              "oscillationLocked": false,
+              "shadowsEnabled": true,
+              "postProcessingEnabled": true,
+              "secondaryMaterialEffects": true,
+              "evictSecondaryMaps": false,
+              "maxTextureDimension": 2048,
+              "drawCalls": 52,
+              "triangles": 417896,
+              "lines": 0,
+              "points": 0,
+              "geometries": 66,
+              "textures": 22,
+              "jsHeapUsedMb": 99.8,
+              "jsHeapLimitMb": 4192,
+              "thermalState": "nominal"
+            }
+          }
+        },
+        {
+          "routeId": "menu-catalog",
+          "path": "/menu",
+          "label": "Menu Catalog (0-GLB Isolation)",
+          "httpStatus": 200,
+          "navigationMs": 1294,
+          "firstVisibleMs": 1294,
+          "canvasDetected": false,
+          "webgl": {
+            "vendor": "unsupported",
+            "renderer": "unsupported",
+            "glVersion": "none"
+          },
+          "frameMetrics": {
+            "sampleCount": 60,
+            "avgFrameMs": 16.57,
+            "p95FrameMs": 16.8,
+            "estimatedFps": 60.3
+          },
+          "memory": {
+            "jsHeapUsedMB": 6.28,
+            "jsHeapTotalMB": 15.5
+          },
+          "network": {
+            "totalTransfers": 67,
+            "modelTransfersCount": 0,
+            "modelTransfers": [],
+            "zeroGlbVerified": true
+          },
+          "hygiene": {
+            "consoleErrorsCount": 0,
+            "consoleErrors": [],
+            "uncaughtErrorsCount": 0,
+            "uncaughtErrors": [],
+            "failedRequestsCount": 0,
+            "failedRequests": []
+          },
+          "perfTelemetry": null
+        }
+      ]
+    },
+    {
+      "profileId": "windows-1440x900",
+      "label": "Windows Desktop Standard (1440x900 @1x)",
+      "category": "windows-desktop",
+      "evidenceType": "physically-measured",
+      "viewport": {
+        "width": 1440,
+        "height": 900,
+        "deviceScaleFactor": 1,
+        "isMobile": false,
+        "hasTouch": false
+      },
+      "cpuThrottle": 1,
+      "routes": [
+        {
+          "routeId": "3d-tandoori-paneer-pizza",
+          "path": "/3d/tandoori-paneer-pizza",
+          "label": "3D Dish Viewer: Tandoori Paneer Pizza",
+          "httpStatus": 200,
+          "navigationMs": 1273,
+          "firstVisibleMs": 1282,
+          "canvasDetected": true,
+          "webgl": {
+            "vendor": "Google Inc. (Intel)",
+            "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "glVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+          },
+          "frameMetrics": {
+            "sampleCount": 60,
+            "avgFrameMs": 16.48,
+            "p95FrameMs": 17.2,
+            "estimatedFps": 60.7
+          },
+          "memory": {
+            "jsHeapUsedMB": 9.79,
+            "jsHeapTotalMB": 18.75
+          },
+          "network": {
+            "totalTransfers": 61,
+            "modelTransfersCount": 2,
+            "modelTransfers": [
+              {
+                "url": "http://localhost:3000/models/optimized/tandoori-paneer-pizza-balanced.glb",
+                "status": 200,
+                "sizeBytes": 0
+              },
+              {
+                "url": "http://localhost:3000/models/optimized/tandoori-paneer-pizza-high.glb",
+                "status": 200,
+                "sizeBytes": 0
+              }
+            ]
+          },
+          "hygiene": {
+            "consoleErrorsCount": 0,
+            "consoleErrors": [],
+            "uncaughtErrorsCount": 0,
+            "uncaughtErrors": [],
+            "failedRequestsCount": 0,
+            "failedRequests": []
+          },
+          "perfTelemetry": {
+            "DishViewer_Adaptive": {
+              "canvasName": "DishViewer_Adaptive",
+              "mounted": true,
+              "updatedAt": 1795021566560,
+              "profile": "high-fidelity",
+              "qualityTier": "high",
+              "logicalTier": "high-end",
+              "androidTier": null,
+              "degradationStep": 0,
+              "lodLevel": 0,
+              "effectiveDpr": 1,
+              "dprScale": 1,
+              "fps": 0,
+              "avgFrameTimeMs": 0,
+              "p90FrameTimeMs": 0,
+              "isIdle": true,
+              "idleGapsIgnored": 0,
+              "oscillationLocked": false,
+              "shadowsEnabled": true,
+              "postProcessingEnabled": true,
+              "secondaryMaterialEffects": true,
+              "evictSecondaryMaps": false,
+              "maxTextureDimension": 2048,
+              "drawCalls": 12,
+              "triangles": 43533,
+              "lines": 0,
+              "points": 0,
+              "geometries": 12,
+              "textures": 10,
+              "jsHeapUsedMb": 15,
+              "jsHeapLimitMb": 4192,
+              "thermalState": "nominal"
+            },
+            "DishViewer": {
+              "canvasName": "DishViewer",
+              "mounted": true,
+              "dishSlug": "tandoori-paneer-pizza",
+              "modelPath": "/models/optimized/tandoori-paneer-pizza-high.glb",
+              "activeTier": "high",
+              "qualityTier": "high",
+              "profile": "high-fidelity",
+              "tierProfile": "high-fidelity",
+              "qualityMode": "auto",
+              "frameloop": "demand",
+              "isDocumentVisible": true,
+              "isInViewport": true,
+              "dpr": 1,
+              "effectiveDpr": 1,
+              "drawCalls": 12,
+              "triangles": 43533,
+              "geometries": 12,
+              "textures": 10,
+              "memory": {
+                "geometries": 12,
+                "textures": 10,
+                "programs": 8,
+                "calls": 12,
+                "triangles": 43533,
+                "points": 0,
+                "lines": 0
+              },
+              "updatedAt": 1795021566577
+            }
+          }
+        },
+        {
+          "routeId": "ar-tandoori-paneer-pizza",
+          "path": "/ar/tandoori-paneer-pizza",
+          "label": "AR Dish Experience: Tandoori Paneer Pizza",
+          "httpStatus": 200,
+          "navigationMs": 998,
+          "firstVisibleMs": 998,
+          "canvasDetected": false,
+          "webgl": {
+            "vendor": "Google Inc. (Intel)",
+            "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "glVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+          },
+          "frameMetrics": {
+            "sampleCount": 59,
+            "avgFrameMs": 16.66,
+            "p95FrameMs": 16.9,
+            "estimatedFps": 60
+          },
+          "memory": {
+            "jsHeapUsedMB": 5.76,
+            "jsHeapTotalMB": 8.75
+          },
+          "network": {
+            "totalTransfers": 28,
+            "modelTransfersCount": 0,
+            "modelTransfers": []
+          },
+          "hygiene": {
+            "consoleErrorsCount": 0,
+            "consoleErrors": [],
+            "uncaughtErrorsCount": 0,
+            "uncaughtErrors": [],
+            "failedRequestsCount": 0,
+            "failedRequests": []
+          },
+          "perfTelemetry": null
+        },
+        {
+          "routeId": "booking-3d",
+          "path": "/booking",
+          "label": "3D Interactive Floorplan Booking",
+          "httpStatus": 200,
+          "navigationMs": 2723,
+          "firstVisibleMs": 2735,
+          "canvasDetected": true,
+          "webgl": {
+            "vendor": "unsupported",
+            "renderer": "unsupported",
+            "glVersion": "none"
+          },
+          "frameMetrics": {
+            "sampleCount": 60,
+            "avgFrameMs": 16.4,
+            "p95FrameMs": 16.9,
+            "estimatedFps": 61
+          },
+          "memory": {
+            "jsHeapUsedMB": 54.72,
+            "jsHeapTotalMB": 90.88
+          },
+          "network": {
+            "totalTransfers": 57,
+            "modelTransfersCount": 1,
+            "modelTransfers": [
+              {
+                "url": "http://localhost:3000/models/the_golden_oak_interior.optimized.glb",
+                "status": 200,
+                "sizeBytes": 0
+              }
+            ]
+          },
+          "hygiene": {
+            "consoleErrorsCount": 0,
+            "consoleErrors": [],
+            "uncaughtErrorsCount": 0,
+            "uncaughtErrors": [],
+            "failedRequestsCount": 0,
+            "failedRequests": []
+          },
+          "perfTelemetry": {
+            "Restaurant3DFloorplan": {
+              "component": "Restaurant3DFloorplan",
+              "mounted": true,
+              "frameloop": "demand",
+              "qualityTier": "high",
+              "dpr": [
+                1,
+                1.5
+              ],
+              "isViewportVisible": true,
+              "isDocumentHidden": false,
+              "hdrFile": "/textures/forest_env.optimized.hdr",
+              "fps": 0,
+              "isIdle": true,
+              "estimatedWattage": 0.1,
+              "totalFramesRendered": 13,
+              "calls": 52,
+              "triangles": 417896,
+              "lines": 0,
+              "points": 0,
+              "geometries": 56,
+              "textures": 24,
+              "programs": 29,
+              "updatedAt": 1795021580315,
+              "modelUrl": "/models/the_golden_oak_interior.optimized.glb",
+              "batchMode": "merge",
+              "batchedMeshCount": 64
+            },
+            "Floorplan_Adaptive": {
+              "canvasName": "Floorplan_Adaptive",
+              "mounted": true,
+              "updatedAt": 1795021580313,
+              "profile": "high-fidelity",
+              "qualityTier": "high",
+              "logicalTier": "high-end",
+              "androidTier": null,
+              "degradationStep": 0,
+              "lodLevel": 0,
+              "effectiveDpr": 1,
+              "dprScale": 1,
+              "fps": 13.95,
+              "avgFrameTimeMs": 71.66,
+              "p90FrameTimeMs": 191.4,
+              "isIdle": true,
+              "idleGapsIgnored": 2,
+              "oscillationLocked": false,
+              "shadowsEnabled": true,
+              "postProcessingEnabled": true,
+              "secondaryMaterialEffects": true,
+              "evictSecondaryMaps": false,
+              "maxTextureDimension": 2048,
+              "drawCalls": 52,
+              "triangles": 417896,
+              "lines": 0,
+              "points": 0,
+              "geometries": 66,
+              "textures": 24,
+              "jsHeapUsedMb": 102.2,
+              "jsHeapLimitMb": 4192,
+              "thermalState": "nominal"
+            }
+          }
+        },
+        {
+          "routeId": "menu-catalog",
+          "path": "/menu",
+          "label": "Menu Catalog (0-GLB Isolation)",
+          "httpStatus": 200,
+          "navigationMs": 955,
+          "firstVisibleMs": 955,
+          "canvasDetected": false,
+          "webgl": {
+            "vendor": "unsupported",
+            "renderer": "unsupported",
+            "glVersion": "none"
+          },
+          "frameMetrics": {
+            "sampleCount": 60,
+            "avgFrameMs": 16.59,
+            "p95FrameMs": 16.9,
+            "estimatedFps": 60.3
+          },
+          "memory": {
+            "jsHeapUsedMB": 7.65,
+            "jsHeapTotalMB": 15.5
+          },
+          "network": {
+            "totalTransfers": 67,
+            "modelTransfersCount": 0,
+            "modelTransfers": [],
+            "zeroGlbVerified": true
+          },
+          "hygiene": {
+            "consoleErrorsCount": 0,
+            "consoleErrors": [],
+            "uncaughtErrorsCount": 0,
+            "uncaughtErrors": [],
+            "failedRequestsCount": 0,
+            "failedRequests": []
+          },
+          "perfTelemetry": null
+        }
+      ]
+    },
+    {
+      "profileId": "windows-1920x1080",
+      "label": "Windows Desktop FHD (1920x1080 @1x)",
+      "category": "windows-desktop",
+      "evidenceType": "physically-measured",
+      "viewport": {
+        "width": 1920,
+        "height": 1080,
+        "deviceScaleFactor": 1,
+        "isMobile": false,
+        "hasTouch": false
+      },
+      "cpuThrottle": 1,
+      "routes": [
+        {
+          "routeId": "3d-tandoori-paneer-pizza",
+          "path": "/3d/tandoori-paneer-pizza",
+          "label": "3D Dish Viewer: Tandoori Paneer Pizza",
+          "httpStatus": 200,
+          "navigationMs": 1190,
+          "firstVisibleMs": 1201,
+          "canvasDetected": true,
+          "webgl": {
+            "vendor": "Google Inc. (Intel)",
+            "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "glVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+          },
+          "frameMetrics": {
+            "sampleCount": 60,
+            "avgFrameMs": 16.45,
+            "p95FrameMs": 17,
+            "estimatedFps": 60.8
+          },
+          "memory": {
+            "jsHeapUsedMB": 10.45,
+            "jsHeapTotalMB": 18
+          },
+          "network": {
+            "totalTransfers": 61,
+            "modelTransfersCount": 2,
+            "modelTransfers": [
+              {
+                "url": "http://localhost:3000/models/optimized/tandoori-paneer-pizza-balanced.glb",
+                "status": 200,
+                "sizeBytes": 0
+              },
+              {
+                "url": "http://localhost:3000/models/optimized/tandoori-paneer-pizza-high.glb",
+                "status": 200,
+                "sizeBytes": 0
+              }
+            ]
+          },
+          "hygiene": {
+            "consoleErrorsCount": 0,
+            "consoleErrors": [],
+            "uncaughtErrorsCount": 0,
+            "uncaughtErrors": [],
+            "failedRequestsCount": 0,
+            "failedRequests": []
+          },
+          "perfTelemetry": {
+            "DishViewer_Adaptive": {
+              "canvasName": "DishViewer_Adaptive",
+              "mounted": true,
+              "updatedAt": 1795021584642,
+              "profile": "high-fidelity",
+              "qualityTier": "high",
+              "logicalTier": "high-end",
+              "androidTier": null,
+              "degradationStep": 0,
+              "lodLevel": 0,
+              "effectiveDpr": 1,
+              "dprScale": 1,
+              "fps": 0,
+              "avgFrameTimeMs": 0,
+              "p90FrameTimeMs": 0,
+              "isIdle": true,
+              "idleGapsIgnored": 0,
+              "oscillationLocked": false,
+              "shadowsEnabled": true,
+              "postProcessingEnabled": true,
+              "secondaryMaterialEffects": true,
+              "evictSecondaryMaps": false,
+              "maxTextureDimension": 2048,
+              "drawCalls": 12,
+              "triangles": 43533,
+              "lines": 0,
+              "points": 0,
+              "geometries": 12,
+              "textures": 10,
+              "jsHeapUsedMb": 16,
+              "jsHeapLimitMb": 4192,
+              "thermalState": "nominal"
+            },
+            "DishViewer": {
+              "canvasName": "DishViewer",
+              "mounted": true,
+              "dishSlug": "tandoori-paneer-pizza",
+              "modelPath": "/models/optimized/tandoori-paneer-pizza-high.glb",
+              "activeTier": "high",
+              "qualityTier": "high",
+              "profile": "high-fidelity",
+              "tierProfile": "high-fidelity",
+              "qualityMode": "auto",
+              "frameloop": "demand",
+              "isDocumentVisible": true,
+              "isInViewport": true,
+              "dpr": 1,
+              "effectiveDpr": 1,
+              "drawCalls": 12,
+              "triangles": 43533,
+              "geometries": 12,
+              "textures": 10,
+              "memory": {
+                "geometries": 12,
+                "textures": 10,
+                "programs": 8,
+                "calls": 12,
+                "triangles": 43533,
+                "points": 0,
+                "lines": 0
+              },
+              "updatedAt": 1795021584841
+            }
+          }
+        },
+        {
+          "routeId": "ar-tandoori-paneer-pizza",
+          "path": "/ar/tandoori-paneer-pizza",
+          "label": "AR Dish Experience: Tandoori Paneer Pizza",
+          "httpStatus": 200,
+          "navigationMs": 1008,
+          "firstVisibleMs": 1008,
+          "canvasDetected": false,
+          "webgl": {
+            "vendor": "Google Inc. (Intel)",
+            "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "glVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+          },
+          "frameMetrics": {
+            "sampleCount": 59,
+            "avgFrameMs": 16.66,
+            "p95FrameMs": 17.1,
+            "estimatedFps": 60
+          },
+          "memory": {
+            "jsHeapUsedMB": 5.79,
+            "jsHeapTotalMB": 8
+          },
+          "network": {
+            "totalTransfers": 28,
+            "modelTransfersCount": 0,
+            "modelTransfers": []
+          },
+          "hygiene": {
+            "consoleErrorsCount": 0,
+            "consoleErrors": [],
+            "uncaughtErrorsCount": 0,
+            "uncaughtErrors": [],
+            "failedRequestsCount": 0,
+            "failedRequests": []
+          },
+          "perfTelemetry": null
+        },
+        {
+          "routeId": "booking-3d",
+          "path": "/booking",
+          "label": "3D Interactive Floorplan Booking",
+          "httpStatus": 200,
+          "navigationMs": 2267,
+          "firstVisibleMs": 2277,
+          "canvasDetected": true,
+          "webgl": {
+            "vendor": "unsupported",
+            "renderer": "unsupported",
+            "glVersion": "none"
+          },
+          "frameMetrics": {
+            "sampleCount": 60,
+            "avgFrameMs": 16.46,
+            "p95FrameMs": 17,
+            "estimatedFps": 60.8
+          },
+          "memory": {
+            "jsHeapUsedMB": 37.53,
+            "jsHeapTotalMB": 90.13
+          },
+          "network": {
+            "totalTransfers": 57,
+            "modelTransfersCount": 1,
+            "modelTransfers": [
+              {
+                "url": "http://localhost:3000/models/the_golden_oak_interior.optimized.glb",
+                "status": 200,
+                "sizeBytes": 0
+              }
+            ]
+          },
+          "hygiene": {
+            "consoleErrorsCount": 0,
+            "consoleErrors": [],
+            "uncaughtErrorsCount": 0,
+            "uncaughtErrors": [],
+            "failedRequestsCount": 0,
+            "failedRequests": []
+          },
+          "perfTelemetry": {
+            "Restaurant3DFloorplan": {
+              "component": "Restaurant3DFloorplan",
+              "mounted": true,
+              "frameloop": "demand",
+              "qualityTier": "high",
+              "dpr": [
+                1,
+                1.5
+              ],
+              "isViewportVisible": true,
+              "isDocumentHidden": false,
+              "hdrFile": "/textures/forest_env.optimized.hdr",
+              "fps": 0,
+              "isIdle": true,
+              "estimatedWattage": 0.1,
+              "totalFramesRendered": 15,
+              "calls": 51,
+              "triangles": 417884,
+              "lines": 0,
+              "points": 0,
+              "geometries": 56,
+              "textures": 20,
+              "programs": 25,
+              "updatedAt": 1795021598046,
+              "modelUrl": "/models/the_golden_oak_interior.optimized.glb",
+              "batchMode": "merge",
+              "batchedMeshCount": 64
+            },
+            "Floorplan_Adaptive": {
+              "canvasName": "Floorplan_Adaptive",
+              "mounted": true,
+              "updatedAt": 1795021598044,
+              "profile": "high-fidelity",
+              "qualityTier": "high",
+              "logicalTier": "high-end",
+              "androidTier": null,
+              "degradationStep": 0,
+              "lodLevel": 0,
+              "effectiveDpr": 1,
+              "dprScale": 1,
+              "fps": 22.95,
+              "avgFrameTimeMs": 43.57,
+              "p90FrameTimeMs": 160.2,
+              "isIdle": true,
+              "idleGapsIgnored": 2,
+              "oscillationLocked": false,
+              "shadowsEnabled": true,
+              "postProcessingEnabled": true,
+              "secondaryMaterialEffects": true,
+              "evictSecondaryMaps": false,
+              "maxTextureDimension": 2048,
+              "drawCalls": 51,
+              "triangles": 417884,
+              "lines": 0,
+              "points": 0,
+              "geometries": 66,
+              "textures": 20,
+              "jsHeapUsedMb": 86.1,
+              "jsHeapLimitMb": 4192,
+              "thermalState": "nominal"
+            }
+          }
+        },
+        {
+          "routeId": "menu-catalog",
+          "path": "/menu",
+          "label": "Menu Catalog (0-GLB Isolation)",
+          "httpStatus": 200,
+          "navigationMs": 1094,
+          "firstVisibleMs": 1094,
+          "canvasDetected": false,
+          "webgl": {
+            "vendor": "unsupported",
+            "renderer": "unsupported",
+            "glVersion": "none"
+          },
+          "frameMetrics": {
+            "sampleCount": 60,
+            "avgFrameMs": 16.55,
+            "p95FrameMs": 17,
+            "estimatedFps": 60.4
+          },
+          "memory": {
+            "jsHeapUsedMB": 7.23,
+            "jsHeapTotalMB": 15.5
+          },
+          "network": {
+            "totalTransfers": 69,
+            "modelTransfersCount": 0,
+            "modelTransfers": [],
+            "zeroGlbVerified": true
+          },
+          "hygiene": {
+            "consoleErrorsCount": 0,
+            "consoleErrors": [],
+            "uncaughtErrorsCount": 0,
+            "uncaughtErrors": [],
+            "failedRequestsCount": 0,
+            "failedRequests": []
+          },
+          "perfTelemetry": null
+        }
+      ]
+    },
+    {
+      "profileId": "emulated-android-low",
+      "label": "Low-End Android (2GB RAM, 360x800 @2x, 4x CPU throttle)",
+      "category": "android-emulated",
+      "evidenceType": "browser-emulated",
+      "viewport": {
+        "width": 360,
+        "height": 800,
+        "deviceScaleFactor": 2,
+        "isMobile": true,
+        "hasTouch": true
+      },
+      "cpuThrottle": 4,
+      "routes": [
+        {
+          "routeId": "3d-tandoori-paneer-pizza",
+          "path": "/3d/tandoori-paneer-pizza",
+          "label": "3D Dish Viewer: Tandoori Paneer Pizza",
+          "httpStatus": 200,
+          "navigationMs": 3644,
+          "firstVisibleMs": 3692,
+          "canvasDetected": true,
+          "webgl": {
+            "vendor": "Google Inc. (Intel)",
+            "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "glVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+          },
+          "frameMetrics": {
+            "sampleCount": 60,
+            "avgFrameMs": 16.39,
+            "p95FrameMs": 16.9,
+            "estimatedFps": 61
+          },
+          "memory": {
+            "jsHeapUsedMB": 12.2,
+            "jsHeapTotalMB": 20
+          },
+          "network": {
+            "totalTransfers": 52,
+            "modelTransfersCount": 1,
+            "modelTransfers": [
+              {
+                "url": "http://localhost:3000/models/optimized/tandoori-paneer-pizza-balanced.glb",
+                "status": 200,
+                "sizeBytes": 0
+              }
+            ]
+          },
+          "hygiene": {
+            "consoleErrorsCount": 0,
+            "consoleErrors": [],
+            "uncaughtErrorsCount": 0,
+            "uncaughtErrors": [],
+            "failedRequestsCount": 0,
+            "failedRequests": []
+          },
+          "perfTelemetry": {
+            "DishViewer_Adaptive": {
+              "canvasName": "DishViewer_Adaptive",
+              "mounted": true,
+              "updatedAt": 1795021605223,
+              "profile": "balanced",
+              "qualityTier": "medium",
+              "logicalTier": "mid-range",
+              "androidTier": "mid-range",
+              "degradationStep": 0,
+              "lodLevel": 1,
+              "effectiveDpr": 1.35,
+              "dprScale": 1,
+              "fps": 37.34,
+              "avgFrameTimeMs": 26.78,
+              "p90FrameTimeMs": 56.3,
+              "isIdle": true,
+              "idleGapsIgnored": 2,
+              "oscillationLocked": false,
+              "shadowsEnabled": true,
+              "postProcessingEnabled": false,
+              "secondaryMaterialEffects": true,
+              "evictSecondaryMaps": false,
+              "maxTextureDimension": 1024,
+              "drawCalls": 12,
+              "triangles": 22550,
+              "lines": 0,
+              "points": 0,
+              "geometries": 12,
+              "textures": 14,
+              "jsHeapUsedMb": 16.1,
+              "jsHeapLimitMb": 4192,
+              "thermalState": "nominal"
+            },
+            "DishViewer": {
+              "canvasName": "DishViewer",
+              "mounted": true,
+              "dishSlug": "tandoori-paneer-pizza",
+              "modelPath": "/models/optimized/tandoori-paneer-pizza-balanced.glb",
+              "activeTier": "medium",
+              "qualityTier": "medium",
+              "profile": "balanced",
+              "tierProfile": "balanced",
+              "qualityMode": "auto",
+              "frameloop": "demand",
+              "isDocumentVisible": true,
+              "isInViewport": true,
+              "dpr": 1.35,
+              "effectiveDpr": 1.35,
+              "drawCalls": 12,
+              "triangles": 22550,
+              "geometries": 12,
+              "textures": 14,
+              "memory": {
+                "geometries": 12,
+                "textures": 14,
+                "programs": 12,
+                "calls": 12,
+                "triangles": 22550,
+                "points": 0,
+                "lines": 0
+              },
+              "updatedAt": 1795021605306
+            }
+          }
+        },
+        {
+          "routeId": "ar-tandoori-paneer-pizza",
+          "path": "/ar/tandoori-paneer-pizza",
+          "label": "AR Dish Experience: Tandoori Paneer Pizza",
+          "httpStatus": 200,
+          "navigationMs": 3011,
+          "firstVisibleMs": 3011,
+          "canvasDetected": false,
+          "webgl": {
+            "vendor": "Google Inc. (Intel)",
+            "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "glVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+          },
+          "frameMetrics": {
+            "sampleCount": 59,
+            "avgFrameMs": 16.66,
+            "p95FrameMs": 17.1,
+            "estimatedFps": 60
+          },
+          "memory": {
+            "jsHeapUsedMB": 6.32,
+            "jsHeapTotalMB": 9
+          },
+          "network": {
+            "totalTransfers": 28,
+            "modelTransfersCount": 0,
+            "modelTransfers": []
+          },
+          "hygiene": {
+            "consoleErrorsCount": 0,
+            "consoleErrors": [],
+            "uncaughtErrorsCount": 0,
+            "uncaughtErrors": [],
+            "failedRequestsCount": 0,
+            "failedRequests": []
+          },
+          "perfTelemetry": null
+        },
+        {
+          "routeId": "booking-3d",
+          "path": "/booking",
+          "label": "3D Interactive Floorplan Booking",
+          "httpStatus": 200,
+          "navigationMs": 9304,
+          "firstVisibleMs": 9387,
+          "canvasDetected": true,
+          "webgl": {
+            "vendor": "unsupported",
+            "renderer": "unsupported",
+            "glVersion": "none"
+          },
+          "frameMetrics": {
+            "sampleCount": 60,
+            "avgFrameMs": 16.46,
+            "p95FrameMs": 16.9,
+            "estimatedFps": 60.7
+          },
+          "memory": {
+            "jsHeapUsedMB": 37.27,
+            "jsHeapTotalMB": 95.63
+          },
+          "network": {
+            "totalTransfers": 56,
+            "modelTransfersCount": 1,
+            "modelTransfers": [
+              {
+                "url": "http://localhost:3000/models/optimized/the_golden_oak_interior.mobile-balanced.glb",
+                "status": 200,
+                "sizeBytes": 0
+              }
+            ]
+          },
+          "hygiene": {
+            "consoleErrorsCount": 0,
+            "consoleErrors": [],
+            "uncaughtErrorsCount": 0,
+            "uncaughtErrors": [],
+            "failedRequestsCount": 0,
+            "failedRequests": []
+          },
+          "perfTelemetry": {
+            "Restaurant3DFloorplan": {
+              "component": "Restaurant3DFloorplan",
+              "mounted": true,
+              "frameloop": "never",
+              "qualityTier": "low",
+              "dpr": 1,
+              "isViewportVisible": false,
+              "isDocumentHidden": false,
+              "hdrFile": null,
+              "fps": 0,
+              "isIdle": true,
+              "estimatedWattage": 0.1,
+              "totalFramesRendered": 0,
+              "calls": 0,
+              "triangles": 0,
+              "lines": 0,
+              "points": 0,
+              "geometries": 0,
+              "textures": 0,
+              "programs": 0,
+              "updatedAt": 1795021627758,
+              "modelUrl": "/models/optimized/the_golden_oak_interior.mobile-balanced.glb",
+              "batchMode": "merge",
+              "batchedMeshCount": 64
+            },
+            "Floorplan_Adaptive": {
+              "canvasName": "Floorplan_Adaptive",
+              "mounted": true,
+              "updatedAt": 1795021626047,
+              "profile": "balanced",
+              "qualityTier": "medium",
+              "logicalTier": "mid-range",
+              "androidTier": "mid-range",
+              "degradationStep": 0,
+              "lodLevel": 1,
+              "effectiveDpr": 1.35,
+              "dprScale": 1,
+              "fps": 0,
+              "avgFrameTimeMs": 0,
+              "p90FrameTimeMs": 0,
+              "isIdle": true,
+              "idleGapsIgnored": 0,
+              "oscillationLocked": false,
+              "shadowsEnabled": true,
+              "postProcessingEnabled": false,
+              "secondaryMaterialEffects": true,
+              "evictSecondaryMaps": false,
+              "maxTextureDimension": 1024,
+              "drawCalls": 0,
+              "triangles": 0,
+              "lines": 0,
+              "points": 0,
+              "geometries": 0,
+              "textures": 0,
+              "jsHeapUsedMb": 94.9,
+              "jsHeapLimitMb": 4192,
+              "thermalState": "nominal"
+            }
+          }
+        },
+        {
+          "routeId": "menu-catalog",
+          "path": "/menu",
+          "label": "Menu Catalog (0-GLB Isolation)",
+          "httpStatus": 200,
+          "navigationMs": 2525,
+          "firstVisibleMs": 2525,
+          "canvasDetected": false,
+          "webgl": {
+            "vendor": "unsupported",
+            "renderer": "unsupported",
+            "glVersion": "none"
+          },
+          "frameMetrics": {
+            "sampleCount": 60,
+            "avgFrameMs": 16.47,
+            "p95FrameMs": 16.8,
+            "estimatedFps": 60.7
+          },
+          "memory": {
+            "jsHeapUsedMB": 6.72,
+            "jsHeapTotalMB": 15.25
+          },
+          "network": {
+            "totalTransfers": 63,
+            "modelTransfersCount": 0,
+            "modelTransfers": [],
+            "zeroGlbVerified": true
+          },
+          "hygiene": {
+            "consoleErrorsCount": 0,
+            "consoleErrors": [],
+            "uncaughtErrorsCount": 0,
+            "uncaughtErrors": [],
+            "failedRequestsCount": 0,
+            "failedRequests": []
+          },
+          "perfTelemetry": null
+        }
+      ]
+    },
+    {
+      "profileId": "emulated-android-mid",
+      "label": "Mid-Range Android (6GB RAM, 412x915 @2.625x, 2x CPU throttle)",
+      "category": "android-emulated",
+      "evidenceType": "browser-emulated",
+      "viewport": {
+        "width": 412,
+        "height": 915,
+        "deviceScaleFactor": 2.625,
+        "isMobile": true,
+        "hasTouch": true
+      },
+      "cpuThrottle": 2,
+      "routes": [
+        {
+          "routeId": "3d-tandoori-paneer-pizza",
+          "path": "/3d/tandoori-paneer-pizza",
+          "label": "3D Dish Viewer: Tandoori Paneer Pizza",
+          "httpStatus": 200,
+          "navigationMs": 1901,
+          "firstVisibleMs": 1917,
+          "canvasDetected": true,
+          "webgl": {
+            "vendor": "Google Inc. (Intel)",
+            "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "glVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+          },
+          "frameMetrics": {
+            "sampleCount": 60,
+            "avgFrameMs": 16.4,
+            "p95FrameMs": 16.9,
+            "estimatedFps": 61
+          },
+          "memory": {
+            "jsHeapUsedMB": 11.6,
+            "jsHeapTotalMB": 19.5
+          },
+          "network": {
+            "totalTransfers": 52,
+            "modelTransfersCount": 1,
+            "modelTransfers": [
+              {
+                "url": "http://localhost:3000/models/optimized/tandoori-paneer-pizza-balanced.glb",
+                "status": 200,
+                "sizeBytes": 0
+              }
+            ]
+          },
+          "hygiene": {
+            "consoleErrorsCount": 0,
+            "consoleErrors": [],
+            "uncaughtErrorsCount": 0,
+            "uncaughtErrors": [],
+            "failedRequestsCount": 0,
+            "failedRequests": []
+          },
+          "perfTelemetry": {
+            "DishViewer_Adaptive": {
+              "canvasName": "DishViewer_Adaptive",
+              "mounted": true,
+              "updatedAt": 1795021634502,
+              "profile": "balanced",
+              "qualityTier": "medium",
+              "logicalTier": "mid-range",
+              "androidTier": "mid-range",
+              "degradationStep": 0,
+              "lodLevel": 1,
+              "effectiveDpr": 1.35,
+              "dprScale": 1,
+              "fps": 0,
+              "avgFrameTimeMs": 0,
+              "p90FrameTimeMs": 0,
+              "isIdle": true,
+              "idleGapsIgnored": 0,
+              "oscillationLocked": false,
+              "shadowsEnabled": true,
+              "postProcessingEnabled": false,
+              "secondaryMaterialEffects": true,
+              "evictSecondaryMaps": false,
+              "maxTextureDimension": 1024,
+              "drawCalls": 12,
+              "triangles": 22550,
+              "lines": 0,
+              "points": 0,
+              "geometries": 12,
+              "textures": 12,
+              "jsHeapUsedMb": 15.4,
+              "jsHeapLimitMb": 4192,
+              "thermalState": "nominal"
+            },
+            "DishViewer": {
+              "canvasName": "DishViewer",
+              "mounted": true,
+              "dishSlug": "tandoori-paneer-pizza",
+              "modelPath": "/models/optimized/tandoori-paneer-pizza-balanced.glb",
+              "activeTier": "medium",
+              "qualityTier": "medium",
+              "profile": "balanced",
+              "tierProfile": "balanced",
+              "qualityMode": "auto",
+              "frameloop": "demand",
+              "isDocumentVisible": true,
+              "isInViewport": true,
+              "dpr": 1.35,
+              "effectiveDpr": 1.35,
+              "drawCalls": 12,
+              "triangles": 22550,
+              "geometries": 12,
+              "textures": 12,
+              "memory": {
+                "geometries": 12,
+                "textures": 12,
+                "programs": 10,
+                "calls": 12,
+                "triangles": 22550,
+                "points": 0,
+                "lines": 0
+              },
+              "updatedAt": 1795021634650
+            }
+          }
+        },
+        {
+          "routeId": "ar-tandoori-paneer-pizza",
+          "path": "/ar/tandoori-paneer-pizza",
+          "label": "AR Dish Experience: Tandoori Paneer Pizza",
+          "httpStatus": 200,
+          "navigationMs": 968,
+          "firstVisibleMs": 968,
+          "canvasDetected": false,
+          "webgl": {
+            "vendor": "Google Inc. (Intel)",
+            "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "glVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+          },
+          "frameMetrics": {
+            "sampleCount": 59,
+            "avgFrameMs": 16.66,
+            "p95FrameMs": 16.9,
+            "estimatedFps": 60
+          },
+          "memory": {
+            "jsHeapUsedMB": 6.27,
+            "jsHeapTotalMB": 8.5
+          },
+          "network": {
+            "totalTransfers": 28,
+            "modelTransfersCount": 0,
+            "modelTransfers": []
+          },
+          "hygiene": {
+            "consoleErrorsCount": 0,
+            "consoleErrors": [],
+            "uncaughtErrorsCount": 0,
+            "uncaughtErrors": [],
+            "failedRequestsCount": 0,
+            "failedRequests": []
+          },
+          "perfTelemetry": null
+        },
+        {
+          "routeId": "booking-3d",
+          "path": "/booking",
+          "label": "3D Interactive Floorplan Booking",
+          "httpStatus": 200,
+          "navigationMs": 4433,
+          "firstVisibleMs": 4459,
+          "canvasDetected": true,
+          "webgl": {
+            "vendor": "unsupported",
+            "renderer": "unsupported",
+            "glVersion": "none"
+          },
+          "frameMetrics": {
+            "sampleCount": 60,
+            "avgFrameMs": 16.47,
+            "p95FrameMs": 16.9,
+            "estimatedFps": 60.7
+          },
+          "memory": {
+            "jsHeapUsedMB": 53.39,
+            "jsHeapTotalMB": 95.38
+          },
+          "network": {
+            "totalTransfers": 56,
+            "modelTransfersCount": 1,
+            "modelTransfers": [
+              {
+                "url": "http://localhost:3000/models/optimized/the_golden_oak_interior.mobile-balanced.glb",
+                "status": 200,
+                "sizeBytes": 0
+              }
+            ]
+          },
+          "hygiene": {
+            "consoleErrorsCount": 0,
+            "consoleErrors": [],
+            "uncaughtErrorsCount": 0,
+            "uncaughtErrors": [],
+            "failedRequestsCount": 0,
+            "failedRequests": []
+          },
+          "perfTelemetry": {
+            "Restaurant3DFloorplan": {
+              "component": "Restaurant3DFloorplan",
+              "mounted": true,
+              "frameloop": "demand",
+              "qualityTier": "low",
+              "dpr": 1,
+              "isViewportVisible": true,
+              "isDocumentHidden": false,
+              "hdrFile": null,
+              "fps": 0,
+              "isIdle": true,
+              "estimatedWattage": 0.1,
+              "totalFramesRendered": 14,
+              "calls": 56,
+              "triangles": 418204,
+              "lines": 0,
+              "points": 0,
+              "geometries": 46,
+              "textures": 3,
+              "programs": 10,
+              "updatedAt": 1795021650046,
+              "modelUrl": "/models/optimized/the_golden_oak_interior.mobile-balanced.glb",
+              "batchMode": "merge",
+              "batchedMeshCount": 64
+            },
+            "Floorplan_Adaptive": {
+              "canvasName": "Floorplan_Adaptive",
+              "mounted": true,
+              "updatedAt": 1795021650072,
+              "profile": "balanced",
+              "qualityTier": "medium",
+              "logicalTier": "mid-range",
+              "androidTier": "mid-range",
+              "degradationStep": 0,
+              "lodLevel": 1,
+              "effectiveDpr": 1.35,
+              "dprScale": 1,
+              "fps": 22.59,
+              "avgFrameTimeMs": 44.27,
+              "p90FrameTimeMs": 175.3,
+              "isIdle": true,
+              "idleGapsIgnored": 3,
+              "oscillationLocked": false,
+              "shadowsEnabled": true,
+              "postProcessingEnabled": false,
+              "secondaryMaterialEffects": true,
+              "evictSecondaryMaps": false,
+              "maxTextureDimension": 1024,
+              "drawCalls": 56,
+              "triangles": 418204,
+              "lines": 0,
+              "points": 0,
+              "geometries": 46,
+              "textures": 3,
+              "jsHeapUsedMb": 87.4,
+              "jsHeapLimitMb": 4192,
+              "thermalState": "nominal"
+            }
+          }
+        },
+        {
+          "routeId": "menu-catalog",
+          "path": "/menu",
+          "label": "Menu Catalog (0-GLB Isolation)",
+          "httpStatus": 200,
+          "navigationMs": 1355,
+          "firstVisibleMs": 1355,
+          "canvasDetected": false,
+          "webgl": {
+            "vendor": "unsupported",
+            "renderer": "unsupported",
+            "glVersion": "none"
+          },
+          "frameMetrics": {
+            "sampleCount": 60,
+            "avgFrameMs": 16.52,
+            "p95FrameMs": 17,
+            "estimatedFps": 60.5
+          },
+          "memory": {
+            "jsHeapUsedMB": 7.38,
+            "jsHeapTotalMB": 15
+          },
+          "network": {
+            "totalTransfers": 63,
+            "modelTransfersCount": 0,
+            "modelTransfers": [],
+            "zeroGlbVerified": true
+          },
+          "hygiene": {
+            "consoleErrorsCount": 0,
+            "consoleErrors": [],
+            "uncaughtErrorsCount": 0,
+            "uncaughtErrors": [],
+            "failedRequestsCount": 0,
+            "failedRequests": []
+          },
+          "perfTelemetry": null
+        }
+      ]
+    },
+    {
+      "profileId": "emulated-android-flagship",
+      "label": "High-End Android Flagship (12GB RAM, 412x915 @3x, 1x CPU)",
+      "category": "android-emulated",
+      "evidenceType": "browser-emulated",
+      "viewport": {
+        "width": 412,
+        "height": 915,
+        "deviceScaleFactor": 3,
+        "isMobile": true,
+        "hasTouch": true
+      },
+      "cpuThrottle": 1,
+      "routes": [
+        {
+          "routeId": "3d-tandoori-paneer-pizza",
+          "path": "/3d/tandoori-paneer-pizza",
+          "label": "3D Dish Viewer: Tandoori Paneer Pizza",
+          "httpStatus": 200,
+          "navigationMs": 1126,
+          "firstVisibleMs": 1133,
+          "canvasDetected": true,
+          "webgl": {
+            "vendor": "Google Inc. (Intel)",
+            "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "glVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+          },
+          "frameMetrics": {
+            "sampleCount": 60,
+            "avgFrameMs": 16.49,
+            "p95FrameMs": 17.1,
+            "estimatedFps": 60.6
+          },
+          "memory": {
+            "jsHeapUsedMB": 11.99,
+            "jsHeapTotalMB": 19.5
+          },
+          "network": {
+            "totalTransfers": 52,
+            "modelTransfersCount": 1,
+            "modelTransfers": [
+              {
+                "url": "http://localhost:3000/models/optimized/tandoori-paneer-pizza-balanced.glb",
+                "status": 200,
+                "sizeBytes": 0
+              }
+            ]
+          },
+          "hygiene": {
+            "consoleErrorsCount": 0,
+            "consoleErrors": [],
+            "uncaughtErrorsCount": 0,
+            "uncaughtErrors": [],
+            "failedRequestsCount": 0,
+            "failedRequests": []
+          },
+          "perfTelemetry": {
+            "DishViewer": {
+              "canvasName": "DishViewer",
+              "mounted": true,
+              "dishSlug": "tandoori-paneer-pizza",
+              "modelPath": "/models/optimized/tandoori-paneer-pizza-balanced.glb",
+              "activeTier": "medium",
+              "qualityTier": "medium",
+              "profile": "balanced",
+              "tierProfile": "balanced",
+              "qualityMode": "auto",
+              "frameloop": "demand",
+              "isDocumentVisible": true,
+              "isInViewport": true,
+              "dpr": 1.35,
+              "effectiveDpr": 1.35,
+              "drawCalls": 12,
+              "triangles": 22550,
+              "geometries": 12,
+              "textures": 10,
+              "memory": {
+                "geometries": 12,
+                "textures": 10,
+                "programs": 8,
+                "calls": 12,
+                "triangles": 22550,
+                "points": 0,
+                "lines": 0
+              },
+              "updatedAt": 1795021654981
+            },
+            "DishViewer_Adaptive": {
+              "canvasName": "DishViewer_Adaptive",
+              "mounted": true,
+              "updatedAt": 1795021654848,
+              "profile": "balanced",
+              "qualityTier": "medium",
+              "logicalTier": "mid-range",
+              "androidTier": "mid-range",
+              "degradationStep": 0,
+              "lodLevel": 1,
+              "effectiveDpr": 1.35,
+              "dprScale": 1,
+              "fps": 69.93,
+              "avgFrameTimeMs": 14.3,
+              "p90FrameTimeMs": 14.3,
+              "isIdle": false,
+              "idleGapsIgnored": 0,
+              "oscillationLocked": false,
+              "shadowsEnabled": true,
+              "postProcessingEnabled": false,
+              "secondaryMaterialEffects": true,
+              "evictSecondaryMaps": false,
+              "maxTextureDimension": 1024,
+              "drawCalls": 12,
+              "triangles": 22550,
+              "lines": 0,
+              "points": 0,
+              "geometries": 12,
+              "textures": 10,
+              "jsHeapUsedMb": 15.7,
+              "jsHeapLimitMb": 4192,
+              "thermalState": "nominal"
+            }
+          }
+        },
+        {
+          "routeId": "ar-tandoori-paneer-pizza",
+          "path": "/ar/tandoori-paneer-pizza",
+          "label": "AR Dish Experience: Tandoori Paneer Pizza",
+          "httpStatus": 200,
+          "navigationMs": 784,
+          "firstVisibleMs": 784,
+          "canvasDetected": false,
+          "webgl": {
+            "vendor": "Google Inc. (Intel)",
+            "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "glVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+          },
+          "frameMetrics": {
+            "sampleCount": 59,
+            "avgFrameMs": 16.66,
+            "p95FrameMs": 17,
+            "estimatedFps": 60
+          },
+          "memory": {
+            "jsHeapUsedMB": 6.2,
+            "jsHeapTotalMB": 8.5
+          },
+          "network": {
+            "totalTransfers": 27,
+            "modelTransfersCount": 0,
+            "modelTransfers": []
+          },
+          "hygiene": {
+            "consoleErrorsCount": 0,
+            "consoleErrors": [],
+            "uncaughtErrorsCount": 0,
+            "uncaughtErrors": [],
+            "failedRequestsCount": 0,
+            "failedRequests": []
+          },
+          "perfTelemetry": null
+        },
+        {
+          "routeId": "booking-3d",
+          "path": "/booking",
+          "label": "3D Interactive Floorplan Booking",
+          "httpStatus": 200,
+          "navigationMs": 2126,
+          "firstVisibleMs": 2154,
+          "canvasDetected": true,
+          "webgl": {
+            "vendor": "unsupported",
+            "renderer": "unsupported",
+            "glVersion": "none"
+          },
+          "frameMetrics": {
+            "sampleCount": 60,
+            "avgFrameMs": 16.41,
+            "p95FrameMs": 16.9,
+            "estimatedFps": 61
+          },
+          "memory": {
+            "jsHeapUsedMB": 41.51,
+            "jsHeapTotalMB": 90.63
+          },
+          "network": {
+            "totalTransfers": 55,
+            "modelTransfersCount": 1,
+            "modelTransfers": [
+              {
+                "url": "http://localhost:3000/models/optimized/the_golden_oak_interior.mobile-balanced.glb",
+                "status": 200,
+                "sizeBytes": 0
+              }
+            ]
+          },
+          "hygiene": {
+            "consoleErrorsCount": 0,
+            "consoleErrors": [],
+            "uncaughtErrorsCount": 0,
+            "uncaughtErrors": [],
+            "failedRequestsCount": 0,
+            "failedRequests": []
+          },
+          "perfTelemetry": {
+            "Restaurant3DFloorplan": {
+              "component": "Restaurant3DFloorplan",
+              "mounted": true,
+              "frameloop": "demand",
+              "qualityTier": "low",
+              "dpr": 1,
+              "isViewportVisible": true,
+              "isDocumentHidden": false,
+              "hdrFile": null,
+              "fps": 0,
+              "isIdle": true,
+              "estimatedWattage": 0.1,
+              "totalFramesRendered": 15,
+              "calls": 56,
+              "triangles": 418204,
+              "lines": 0,
+              "points": 0,
+              "geometries": 46,
+              "textures": 3,
+              "programs": 10,
+              "updatedAt": 1795021668050,
+              "modelUrl": "/models/optimized/the_golden_oak_interior.mobile-balanced.glb",
+              "batchMode": "merge",
+              "batchedMeshCount": 64
+            },
+            "Floorplan_Adaptive": {
+              "canvasName": "Floorplan_Adaptive",
+              "mounted": true,
+              "updatedAt": 1795021668069,
+              "profile": "balanced",
+              "qualityTier": "medium",
+              "logicalTier": "mid-range",
+              "androidTier": "mid-range",
+              "degradationStep": 0,
+              "lodLevel": 1,
+              "effectiveDpr": 1.35,
+              "dprScale": 1,
+              "fps": 22.82,
+              "avgFrameTimeMs": 43.82,
+              "p90FrameTimeMs": 167,
+              "isIdle": true,
+              "idleGapsIgnored": 2,
+              "oscillationLocked": false,
+              "shadowsEnabled": true,
+              "postProcessingEnabled": false,
+              "secondaryMaterialEffects": true,
+              "evictSecondaryMaps": false,
+              "maxTextureDimension": 1024,
+              "drawCalls": 56,
+              "triangles": 418204,
+              "lines": 0,
+              "points": 0,
+              "geometries": 46,
+              "textures": 3,
+              "jsHeapUsedMb": 82.8,
+              "jsHeapLimitMb": 4192,
+              "thermalState": "nominal"
+            }
+          }
+        },
+        {
+          "routeId": "menu-catalog",
+          "path": "/menu",
+          "label": "Menu Catalog (0-GLB Isolation)",
+          "httpStatus": 200,
+          "navigationMs": 1210,
+          "firstVisibleMs": 1210,
+          "canvasDetected": false,
+          "webgl": {
+            "vendor": "unsupported",
+            "renderer": "unsupported",
+            "glVersion": "none"
+          },
+          "frameMetrics": {
+            "sampleCount": 60,
+            "avgFrameMs": 16.59,
+            "p95FrameMs": 17.2,
+            "estimatedFps": 60.3
+          },
+          "memory": {
+            "jsHeapUsedMB": 7.59,
+            "jsHeapTotalMB": 15
+          },
+          "network": {
+            "totalTransfers": 63,
+            "modelTransfersCount": 0,
+            "modelTransfers": [],
+            "zeroGlbVerified": true
+          },
+          "hygiene": {
+            "consoleErrorsCount": 0,
+            "consoleErrors": [],
+            "uncaughtErrorsCount": 0,
+            "uncaughtErrors": [],
+            "failedRequestsCount": 0,
+            "failedRequests": []
+          },
+          "perfTelemetry": null
+        }
+      ]
+    },
+    {
+      "profileId": "emulated-ios-iphone",
+      "label": "iOS iPhone Safari (390x844 @3x, Apple UA)",
+      "category": "ios-emulated",
+      "evidenceType": "browser-emulated",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "deviceScaleFactor": 3,
+        "isMobile": true,
+        "hasTouch": true
+      },
+      "cpuThrottle": 1,
+      "routes": [
+        {
+          "routeId": "3d-tandoori-paneer-pizza",
+          "path": "/3d/tandoori-paneer-pizza",
+          "label": "3D Dish Viewer: Tandoori Paneer Pizza",
+          "httpStatus": 200,
+          "navigationMs": 1136,
+          "firstVisibleMs": 1146,
+          "canvasDetected": true,
+          "webgl": {
+            "vendor": "Google Inc. (Intel)",
+            "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "glVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+          },
+          "frameMetrics": {
+            "sampleCount": 60,
+            "avgFrameMs": 16.46,
+            "p95FrameMs": 17.1,
+            "estimatedFps": 60.7
+          },
+          "memory": {
+            "jsHeapUsedMB": 12.34,
+            "jsHeapTotalMB": 19.25
+          },
+          "network": {
+            "totalTransfers": 52,
+            "modelTransfersCount": 1,
+            "modelTransfers": [
+              {
+                "url": "http://localhost:3000/models/optimized/tandoori-paneer-pizza-balanced.glb",
+                "status": 200,
+                "sizeBytes": 0
+              }
+            ]
+          },
+          "hygiene": {
+            "consoleErrorsCount": 0,
+            "consoleErrors": [],
+            "uncaughtErrorsCount": 0,
+            "uncaughtErrors": [],
+            "failedRequestsCount": 0,
+            "failedRequests": []
+          },
+          "perfTelemetry": {
+            "DishViewer_Adaptive": {
+              "canvasName": "DishViewer_Adaptive",
+              "mounted": true,
+              "updatedAt": 1795021672579,
+              "profile": "balanced",
+              "qualityTier": "medium",
+              "logicalTier": "mid-range",
+              "androidTier": null,
+              "degradationStep": 0,
+              "lodLevel": 1,
+              "effectiveDpr": 1.35,
+              "dprScale": 1,
+              "fps": 0,
+              "avgFrameTimeMs": 0,
+              "p90FrameTimeMs": 0,
+              "isIdle": true,
+              "idleGapsIgnored": 0,
+              "oscillationLocked": false,
+              "shadowsEnabled": true,
+              "postProcessingEnabled": false,
+              "secondaryMaterialEffects": true,
+              "evictSecondaryMaps": false,
+              "maxTextureDimension": 1024,
+              "drawCalls": 12,
+              "triangles": 22550,
+              "lines": 0,
+              "points": 0,
+              "geometries": 12,
+              "textures": 10,
+              "jsHeapUsedMb": 16.2,
+              "jsHeapLimitMb": 4192,
+              "thermalState": "nominal"
+            },
+            "DishViewer": {
+              "canvasName": "DishViewer",
+              "mounted": true,
+              "dishSlug": "tandoori-paneer-pizza",
+              "modelPath": "/models/optimized/tandoori-paneer-pizza-balanced.glb",
+              "activeTier": "medium",
+              "qualityTier": "medium",
+              "profile": "balanced",
+              "tierProfile": "balanced",
+              "qualityMode": "auto",
+              "frameloop": "demand",
+              "isDocumentVisible": true,
+              "isInViewport": true,
+              "dpr": 1.35,
+              "effectiveDpr": 1.35,
+              "drawCalls": 12,
+              "triangles": 22550,
+              "geometries": 12,
+              "textures": 10,
+              "memory": {
+                "geometries": 12,
+                "textures": 10,
+                "programs": 8,
+                "calls": 12,
+                "triangles": 22550,
+                "points": 0,
+                "lines": 0
+              },
+              "updatedAt": 1795021672695
+            }
+          }
+        },
+        {
+          "routeId": "ar-tandoori-paneer-pizza",
+          "path": "/ar/tandoori-paneer-pizza",
+          "label": "AR Dish Experience: Tandoori Paneer Pizza",
+          "httpStatus": 200,
+          "navigationMs": 787,
+          "firstVisibleMs": 787,
+          "canvasDetected": false,
+          "webgl": {
+            "vendor": "Google Inc. (Intel)",
+            "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "glVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+          },
+          "frameMetrics": {
+            "sampleCount": 59,
+            "avgFrameMs": 16.65,
+            "p95FrameMs": 16.9,
+            "estimatedFps": 60.1
+          },
+          "memory": {
+            "jsHeapUsedMB": 6.25,
+            "jsHeapTotalMB": 9
+          },
+          "network": {
+            "totalTransfers": 28,
+            "modelTransfersCount": 0,
+            "modelTransfers": []
+          },
+          "hygiene": {
+            "consoleErrorsCount": 0,
+            "consoleErrors": [],
+            "uncaughtErrorsCount": 0,
+            "uncaughtErrors": [],
+            "failedRequestsCount": 0,
+            "failedRequests": []
+          },
+          "perfTelemetry": null
+        },
+        {
+          "routeId": "booking-3d",
+          "path": "/booking",
+          "label": "3D Interactive Floorplan Booking",
+          "httpStatus": 200,
+          "navigationMs": 1960,
+          "firstVisibleMs": 1969,
+          "canvasDetected": true,
+          "webgl": {
+            "vendor": "unsupported",
+            "renderer": "unsupported",
+            "glVersion": "none"
+          },
+          "frameMetrics": {
+            "sampleCount": 60,
+            "avgFrameMs": 16.49,
+            "p95FrameMs": 16.9,
+            "estimatedFps": 60.6
+          },
+          "memory": {
+            "jsHeapUsedMB": 37.94,
+            "jsHeapTotalMB": 74.38
+          },
+          "network": {
+            "totalTransfers": 55,
+            "modelTransfersCount": 1,
+            "modelTransfers": [
+              {
+                "url": "http://localhost:3000/models/optimized/the_golden_oak_interior.mobile-balanced.glb",
+                "status": 200,
+                "sizeBytes": 0
+              }
+            ]
+          },
+          "hygiene": {
+            "consoleErrorsCount": 0,
+            "consoleErrors": [],
+            "uncaughtErrorsCount": 0,
+            "uncaughtErrors": [],
+            "failedRequestsCount": 0,
+            "failedRequests": []
+          },
+          "perfTelemetry": {
+            "Restaurant3DFloorplan": {
+              "component": "Restaurant3DFloorplan",
+              "mounted": true,
+              "frameloop": "never",
+              "qualityTier": "low",
+              "dpr": 1,
+              "isViewportVisible": false,
+              "isDocumentHidden": false,
+              "hdrFile": null,
+              "fps": 0,
+              "isIdle": true,
+              "estimatedWattage": 0.1,
+              "totalFramesRendered": 0,
+              "calls": 0,
+              "triangles": 0,
+              "lines": 0,
+              "points": 0,
+              "geometries": 0,
+              "textures": 0,
+              "programs": 0,
+              "updatedAt": 1795021685421,
+              "modelUrl": "/models/optimized/the_golden_oak_interior.mobile-balanced.glb",
+              "batchMode": "merge",
+              "batchedMeshCount": 64
+            },
+            "Floorplan_Adaptive": {
+              "canvasName": "Floorplan_Adaptive",
+              "mounted": true,
+              "updatedAt": 1795021684024,
+              "profile": "balanced",
+              "qualityTier": "medium",
+              "logicalTier": "mid-range",
+              "androidTier": null,
+              "degradationStep": 0,
+              "lodLevel": 1,
+              "effectiveDpr": 1.35,
+              "dprScale": 1,
+              "fps": 0,
+              "avgFrameTimeMs": 0,
+              "p90FrameTimeMs": 0,
+              "isIdle": true,
+              "idleGapsIgnored": 0,
+              "oscillationLocked": false,
+              "shadowsEnabled": true,
+              "postProcessingEnabled": false,
+              "secondaryMaterialEffects": true,
+              "evictSecondaryMaps": false,
+              "maxTextureDimension": 1024,
+              "drawCalls": 0,
+              "triangles": 0,
+              "lines": 0,
+              "points": 0,
+              "geometries": 0,
+              "textures": 0,
+              "jsHeapUsedMb": 91,
+              "jsHeapLimitMb": 4192,
+              "thermalState": "nominal"
+            }
+          }
+        },
+        {
+          "routeId": "menu-catalog",
+          "path": "/menu",
+          "label": "Menu Catalog (0-GLB Isolation)",
+          "httpStatus": 200,
+          "navigationMs": 943,
+          "firstVisibleMs": 943,
+          "canvasDetected": false,
+          "webgl": {
+            "vendor": "unsupported",
+            "renderer": "unsupported",
+            "glVersion": "none"
+          },
+          "frameMetrics": {
+            "sampleCount": 60,
+            "avgFrameMs": 16.59,
+            "p95FrameMs": 17.1,
+            "estimatedFps": 60.3
+          },
+          "memory": {
+            "jsHeapUsedMB": 6.18,
+            "jsHeapTotalMB": 15
+          },
+          "network": {
+            "totalTransfers": 63,
+            "modelTransfersCount": 0,
+            "modelTransfers": [],
+            "zeroGlbVerified": true
+          },
+          "hygiene": {
+            "consoleErrorsCount": 0,
+            "consoleErrors": [],
+            "uncaughtErrorsCount": 0,
+            "uncaughtErrors": [],
+            "failedRequestsCount": 0,
+            "failedRequests": []
+          },
+          "perfTelemetry": null
+        }
+      ]
+    }
+  ]
+}

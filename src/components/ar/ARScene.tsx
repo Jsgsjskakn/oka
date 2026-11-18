@@ -19,6 +19,11 @@ import {
 import { getDishPhysicalSpec } from '@/data/dish-dimensions';
 import { computeDishPlacementTransform } from '@/lib/xr/placement-math';
 import { cmToMetres } from '@/lib/xr/spatial-contract';
+import {
+  CANONICAL_R3F_GL_PROPS,
+  applyCanonicalColorPipeline,
+  type ColorPipelineTarget,
+} from '@/lib/three/color-pipeline';
 
 export interface ARTelemetrySnapshot {
   calls: number;
@@ -467,6 +472,11 @@ function ARDemandAndTelemetryBridge({
 }) {
   const { gl, invalidate } = useThree();
 
+  // Phase 5 Canonical Colour Pipeline: NeutralToneMapping, sRGB output, exposure 1.0
+  useEffect(() => {
+    applyCanonicalColorPipeline(gl as unknown as ColorPipelineTarget);
+  }, [gl]);
+
   const publishTelemetry = useCallback(() => {
     if (typeof window === 'undefined') return;
     if (!window.__GOLDEN_OAK_3D_TELEMETRY__) {
@@ -644,6 +654,7 @@ export function ARScene({
         frameloop={isPageHidden ? 'never' : isAnimatingPlacement ? 'always' : 'demand'}
         camera={{ position: [0, 2, 3], fov: 50, near: 0.1, far: 50 }}
         gl={{
+          ...CANONICAL_R3F_GL_PROPS,
           antialias: qualityTier.antialias,
           alpha: true,
           powerPreference: qualityTier.powerPreference,

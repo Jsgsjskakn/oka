@@ -14,9 +14,10 @@ interface ViewerHeaderProps {
   dishSlug?: string;
   dishCategory?: string;
   children?: React.ReactNode;
+  vrButton?: React.ReactNode;
 }
 
-export function ViewerHeader({ children }: ViewerHeaderProps) {
+export function ViewerHeader({ children, vrButton }: ViewerHeaderProps) {
   const totalCartItems = useCartStore((s) => s.getTotalItems());
   const mounted = useSyncExternalStore(emptySubscribe, getClientSnapshot, getServerSnapshot);
 
@@ -39,20 +40,23 @@ export function ViewerHeader({ children }: ViewerHeaderProps) {
           </span>
         </Link>
 
-        {/* Top-Right: Live Cart Drawer / Checkout Pill */}
-        <Link
-          href="/cart"
-          className="pointer-events-auto group inline-flex items-center gap-2.5 px-4 py-2 sm:px-4.5 sm:py-2.5 rounded-full bg-[rgba(16,12,9,0.35)] backdrop-blur-xl border border-[rgba(240,195,107,0.35)] hover:border-[#F0C36B] hover:shadow-[0_0_18px_rgba(240,195,107,0.35)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] transition-all active:scale-95"
-          title="View Cart"
-        >
-          <ShoppingCart className="w-4 h-4 text-[#F0C36B] group-hover:scale-110 transition-transform" />
-          <span className="text-xs sm:text-sm font-medium text-[#F8F2E8]">Cart</span>
-          {mounted && totalCartItems > 0 && (
-            <span className="min-w-[20px] h-5 px-1.5 rounded-full bg-[#F0C36B] text-[#100C09] text-[11px] font-bold flex items-center justify-center leading-none">
-              {totalCartItems > 99 ? '99+' : totalCartItems}
-            </span>
-          )}
-        </Link>
+        {/* Top-Right: VR Mode + Live Cart Drawer */}
+        <div className="pointer-events-auto flex items-center gap-3">
+          {vrButton}
+          <Link
+            href="/cart"
+            className="group inline-flex items-center gap-2.5 px-4 py-2 sm:px-4.5 sm:py-2.5 rounded-full bg-[rgba(16,12,9,0.35)] backdrop-blur-xl border border-[rgba(240,195,107,0.35)] hover:border-[#F0C36B] hover:shadow-[0_0_18px_rgba(240,195,107,0.35)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] transition-all active:scale-95"
+            title="View Cart"
+          >
+            <ShoppingCart className="w-4 h-4 text-[#F0C36B] group-hover:scale-110 transition-transform" />
+            <span className="text-xs sm:text-sm font-medium text-[#F8F2E8]">Cart</span>
+            {mounted && totalCartItems > 0 && (
+              <span className="min-w-[20px] h-5 px-1.5 rounded-full bg-[#F0C36B] text-[#100C09] text-[11px] font-bold flex items-center justify-center leading-none">
+                {totalCartItems > 99 ? '99+' : totalCartItems}
+              </span>
+            )}
+          </Link>
+        </div>
       </header>
 
       {/* ========================================================================= */}

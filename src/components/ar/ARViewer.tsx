@@ -661,12 +661,17 @@ export function ARViewer({
 
   if (activeWebXR) {
     const glbUrl =
+      selectedConfig.culinaryAssetLodPaths?.ultraLight ||
+      selectedConfig.culinaryAssetLodPaths?.balanced ||
+      selectedConfig.modelPath;
+    const upgradeUrl =
       selectedConfig.culinaryAssetLodPaths?.balanced ||
       selectedConfig.modelPath;
     return (
       <WebXRARExperience
         dishSlug={selectedDish.slug}
         modelUrl={glbUrl}
+        upgradeModelUrl={upgradeUrl !== glbUrl ? upgradeUrl : undefined}
         dishTitle={selectedDish.name}
         onExit={() => setActiveWebXR(false)}
         onFallback={() => setActiveWebXR(false)}

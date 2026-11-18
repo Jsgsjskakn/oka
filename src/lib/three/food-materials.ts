@@ -85,7 +85,7 @@ export const FOOD_MATERIAL_PRESETS: Record<FoodMaterialCategory, FoodMaterialPre
     category: 'fried-food',
     label: 'Crispy Fried Coating & Golden Tempura',
     color: '#D8923B',
-    texturedTint: '#FFF9F0',
+    texturedTint: '#FFFFFF',
     roughness: 0.62,
     roughnessRange: [0.58, 0.68],
     metalness: 0.0,
@@ -99,7 +99,7 @@ export const FOOD_MATERIAL_PRESETS: Record<FoodMaterialCategory, FoodMaterialPre
     category: 'bread-crust',
     label: 'Artisan Baked Crust & Brioche',
     color: '#C68642',
-    texturedTint: '#FFFBF4',
+    texturedTint: '#FFFFFF',
     roughness: 0.78,
     roughnessRange: [0.72, 0.84],
     metalness: 0.0,
@@ -113,7 +113,7 @@ export const FOOD_MATERIAL_PRESETS: Record<FoodMaterialCategory, FoodMaterialPre
     category: 'melted-cheese',
     label: 'Velvety Melted Cheddar & Mozzarella Emulsion',
     color: '#F2C14E',
-    texturedTint: '#FFFDF6',
+    texturedTint: '#FFFFFF',
     roughness: 0.32,
     roughnessRange: [0.28, 0.36],
     metalness: 0.0,
@@ -133,7 +133,7 @@ export const FOOD_MATERIAL_PRESETS: Record<FoodMaterialCategory, FoodMaterialPre
     category: 'grilled-meat',
     label: 'Seared Maillard Char & Juicy Glaze',
     color: '#6E3219',
-    texturedTint: '#FFF8F2',
+    texturedTint: '#FFFFFF',
     roughness: 0.40,
     roughnessRange: [0.34, 0.46],
     metalness: 0.0,
@@ -152,7 +152,7 @@ export const FOOD_MATERIAL_PRESETS: Record<FoodMaterialCategory, FoodMaterialPre
     category: 'fresh-vegetables',
     label: 'Hydrated Leafy Greens & Crisp Produce',
     color: '#4F8A38',
-    texturedTint: '#FAFFF8',
+    texturedTint: '#FFFFFF',
     roughness: 0.44,
     roughnessRange: [0.38, 0.52],
     metalness: 0.0,
@@ -171,7 +171,7 @@ export const FOOD_MATERIAL_PRESETS: Record<FoodMaterialCategory, FoodMaterialPre
     category: 'glossy-sauce',
     label: 'Reduction Glaze, Chutney & Rich Jus',
     color: '#8F2412',
-    texturedTint: '#FFF7F4',
+    texturedTint: '#FFFFFF',
     roughness: 0.14,
     roughnessRange: [0.10, 0.18],
     metalness: 0.0,
@@ -190,7 +190,7 @@ export const FOOD_MATERIAL_PRESETS: Record<FoodMaterialCategory, FoodMaterialPre
     category: 'dessert',
     label: 'Dark Chocolate Ganache, Pastry & Sugar Dust',
     color: '#3D1E12',
-    texturedTint: '#FFF9F4',
+    texturedTint: '#FFFFFF',
     roughness: 0.36,
     roughnessRange: [0.26, 0.65],
     metalness: 0.0,
@@ -718,10 +718,10 @@ export function applyFoodMaterialProfile(
         stdMat.roughness = Number(clamp(calibratedR, minR, maxR).toFixed(4));
         stdMat.metalness = preset.metalness;
 
-        // Preserve painted BaseColor maps while applying gentle appetite warmth;
+        // Preserve painted BaseColor maps at pure authentic authored colors (no artificial tint);
         // if untextured and carrying default white/placeholder albedo, apply culinary preset color
         if (stdMat.map) {
-          stdMat.color.set(preset.texturedTint);
+          stdMat.color.set('#FFFFFF');
         } else if (options.category && (!mat.name || mat.name === 'unnamed' || mat.name.startsWith('GoldenOak_'))) {
           stdMat.color.set(preset.color);
         }
@@ -759,6 +759,11 @@ export function applyFoodMaterialProfile(
           // Zero static baked environment color tinting or self-illumination in real-world AR
           stdMat.envMap = null;
           stdMat.emissiveIntensity = 0;
+          stdMat.emissive.set(0x000000);
+        } else if (stdMat.map) {
+          // Authentic food rendering under Khronos PBR Neutral: textured food must not self-illuminate
+          stdMat.emissiveIntensity = 0;
+          stdMat.emissive.set(0x000000);
         } else if (!stdMat.emissiveMap && preset.warmScatterHex && preset.warmScatterIntensity) {
           stdMat.emissive.set(preset.warmScatterHex);
           stdMat.emissiveIntensity = preset.warmScatterIntensity;
@@ -775,7 +780,13 @@ export function applyFoodMaterialProfile(
           physMat.anisotropy = 0;
         } else if (preset.highFidelityPhysical) {
           const hp = preset.highFidelityPhysical;
-          physMat.clearcoat = hp.clearcoat ?? 0;
+          // Clearcoat only applied to naturally glossy surfaces (sauces, glassware, ceramics);
+          // prevent plastic sheen on bread crusts, patties, and fried coatings
+          const isNaturallyGlossy =
+            preset.category === 'glossy-sauce' ||
+            preset.category === 'glass-container' ||
+            preset.category === 'ceramic-plate';
+          physMat.clearcoat = isNaturallyGlossy ? (hp.clearcoat ?? 0) : 0;
           physMat.clearcoatRoughness = hp.clearcoatRoughness ?? 0;
           physMat.sheen = hp.sheen ?? 0;
           physMat.sheenRoughness = hp.sheenRoughness ?? 0;

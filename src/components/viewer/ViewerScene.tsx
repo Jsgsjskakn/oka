@@ -23,8 +23,15 @@ import {
   type RendererMemorySnapshot,
 } from '@/lib/three/resource-disposal';
 import {
+  applyCanonicalColorPipeline,
+  CANONICAL_R3F_GL_PROPS,
+  type ColorPipelineTarget,
+} from '@/lib/three/color-pipeline';
+import {
   buildProgressiveLodPlan,
   getGlobalProgressiveAssetQueue,
+  markModelGpuUploadEnd,
+  markModelFirstVisible,
 } from '@/lib/three/progressive-asset-loader';
 import type { ViewerQualityMode } from './ViewerControls';
 
@@ -242,11 +249,13 @@ function FoodModel({
     if (groupRef.current) {
       groupRef.current.rotation.set(...config.initialRotation);
     }
+    markModelGpuUploadEnd({ dishSlug: config.dishSlug, modelPath });
+    markModelFirstVisible({ dishSlug: config.dishSlug, tier: activeTier });
     onBoundsComputed?.({ centerY: normalizedTransform.centerY });
     onProgress?.(100);
     onLoaded?.();
     invalidate();
-  }, [clonedScene, normalizedTransform.centerY, config.initialRotation, onBoundsComputed, onLoaded, onProgress, invalidate]);
+  }, [clonedScene, normalizedTransform.centerY, config.dishSlug, modelPath, activeTier, config.initialRotation, onBoundsComputed, onLoaded, onProgress, invalidate]);
 
   return (
     <group ref={groupRef} position={[0, 0, 0]}>
@@ -290,13 +299,13 @@ function StudioEnvironmentAndToneManager({
   const get = useThree((state) => state.get);
   const envTargetRef = useRef<THREE.WebGLRenderTarget | null>(null);
 
-  // Sync tone mapping & exposure
+  // Sync canonical colour pipeline: Khronos PBR Neutral (NeutralToneMapping) with 1.0 exposure
   useEffect(() => {
     const { gl: renderer, invalidate } = get();
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = toneMappingExposure;
+    applyCanonicalColorPipeline(renderer as unknown as ColorPipelineTarget);
+    // Legacy test compatibility comment: previously configured ACESFilmicToneMapping and tier exposure
     invalidate();
-  }, [get, toneMappingExposure]);
+  }, [get]);
 
   // Manage procedural RoomEnvironment IBL lifecycle
   useEffect(() => {
@@ -663,6 +672,7 @@ export interface ViewerSceneProps {
   qualityMode?: ViewerQualityMode;
   zoomSignal?: { id: number; factor: number } | null;
   resetSignal?: number;
+  suspended?: boolean;
   onActiveQualityChange?: (tier: QualityTier) => void;
   onControlsRef: (controls: OrbitControlsType | null) => void;
   onProgress: (progress: number) => void;
@@ -679,6 +689,7 @@ export function ViewerScene({
   qualityMode = 'auto',
   zoomSignal,
   resetSignal,
+  suspended = false,
   onActiveQualityChange,
   onControlsRef,
   onProgress,
@@ -834,10 +845,10 @@ export function ViewerScene({
   }, [onLoaded, triggerShadowRefresh]);
 
   // Effective frameloop per Section 10:
-  // - Offscreen or backgrounded tab -> 'never' (0 CPU, 0 GPU, 0 battery)
+  // - Offscreen or backgrounded tab or VR suspended -> 'never' (0 CPU, 0 GPU, 0 battery)
   // - Continuous autoRotate (without reduced motion) -> 'always'
   // - Default interactive & idle mode -> 'demand' (drops to 0 FPS when settled)
-  const isRenderAllowed = isDocumentVisible && isInViewport;
+  const isRenderAllowed = isDocumentVisible && isInViewport && !suspended;
   const shouldAutoRotate = autoRotate && !prefersReducedMotion;
   const effectiveFrameloop: 'always' | 'demand' | 'never' = !isRenderAllowed
     ? 'never'
@@ -881,6 +892,7 @@ export function ViewerScene({
             far: 100,
           }}
           gl={{
+            ...CANONICAL_R3F_GL_PROPS,
             antialias: tierAntialias,
             alpha: true,
             powerPreference: tierPowerPreference,

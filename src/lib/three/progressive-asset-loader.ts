@@ -15,6 +15,7 @@
 import * as THREE from 'three';
 import type { RenderingProfileName, ThermalPressureState, EffectiveNetworkType } from './device-capabilities';
 import type { ModelConfig } from '../../data/model-config';
+import { perfMark } from './perf-telemetry.ts';
 
 export type ProgressiveLodStage =
   | 'idle'
@@ -261,6 +262,7 @@ export class SharedModelBufferCache {
     const entry = this.entries.get(url);
     if (!entry) return null;
     entry.lastAccessedAt = Date.now();
+    perfMark('model:cache-hit', { url, byteLength: entry.byteLength });
     return entry.buffer;
   }
 
@@ -392,6 +394,7 @@ export class PriorityAssetDownloadQueue {
   }): Promise<ArrayBuffer> {
     const cached = this.cache.get(params.url);
     if (cached) {
+      perfMark('model:cache-hit', { dishSlug: params.dishSlug, url: params.url });
       return Promise.resolve(cached);
     }
 
@@ -489,6 +492,12 @@ export class PriorityAssetDownloadQueue {
 
   private async executeTask(task: QueuedAssetDownloadTask): Promise<void> {
     try {
+      perfMark('model:fetch-start', {
+        dishSlug: task.dishSlug,
+        url: task.url,
+        priorityBand: task.priorityBand,
+      });
+
       const fetcher =
         task.customFetcher ??
         (async (url: string, signal: AbortSignal) => {
@@ -504,6 +513,11 @@ export class PriorityAssetDownloadQueue {
         return;
       }
       this.cache.set(task.url, buffer);
+      perfMark('model:fetch-end', {
+        dishSlug: task.dishSlug,
+        url: task.url,
+        byteLength: buffer.byteLength,
+      });
       this.completedCount++;
       task.resolve(buffer);
     } catch (err) {
@@ -594,6 +608,17 @@ export function replaceLodSceneSafely(
     }
   }
 
+  // Phase 5 Telemetry: track first-visible vs full-quality progressive LOD swap
+  if (previousClone === null) {
+    perfMark('model:first-visible', {
+      meshName: nextClone.name || 'dish-initial-lod',
+    });
+  } else if (previousClone !== nextClone) {
+    perfMark('model:full-quality', {
+      meshName: nextClone.name || 'dish-upgraded-lod',
+    });
+  }
+
   let disposedPrevious = false;
   if (previousClone && previousClone !== nextClone) {
     previousClone.traverse((node) => {
@@ -626,3 +651,36 @@ export function getGlobalProgressiveAssetQueue(): PriorityAssetDownloadQueue {
   }
   return globalProgressiveQueue;
 }
+
+// ---------------------------------------------------------------------------
+// Phase 5 Shared Telemetry Pipeline Helpers
+// ---------------------------------------------------------------------------
+
+export function markModelFetchStart(detail?: Record<string, string | number | boolean | null>): void {
+  perfMark('model:fetch-start', detail);
+}
+
+export function markModelFetchEnd(detail?: Record<string, string | number | boolean | null>): void {
+  perfMark('model:fetch-end', detail);
+}
+
+export function markModelDecodeEnd(detail?: Record<string, string | number | boolean | null>): void {
+  perfMark('model:decode-end', detail);
+}
+
+export function markModelGpuUploadEnd(detail?: Record<string, string | number | boolean | null>): void {
+  perfMark('model:gpu-upload-end', detail);
+}
+
+export function markModelFirstVisible(detail?: Record<string, string | number | boolean | null>): void {
+  perfMark('model:first-visible', detail);
+}
+
+export function markModelFullQuality(detail?: Record<string, string | number | boolean | null>): void {
+  perfMark('model:full-quality', detail);
+}
+
+export function markModelCacheHit(detail?: Record<string, string | number | boolean | null>): void {
+  perfMark('model:cache-hit', detail);
+}
+

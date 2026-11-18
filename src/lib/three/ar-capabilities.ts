@@ -12,6 +12,8 @@
  * 5. Passive motion stability scoring for table surface guidance without intrusive permission prompts.
  */
 
+import { perfMark } from './perf-telemetry.ts';
+
 export const WEBXR_RECOMMENDED_FEATURES = [
   'hit-test',
   'dom-overlay',
@@ -693,7 +695,7 @@ export async function detectARCapabilityMatrix(
     worldTrackedExperience = SPATIAL_EXPERIENCE_TAXONOMY['ios-ar-quick-look'];
   }
 
-  return {
+  const result: ARCapabilityMatrix = {
     platform,
     webxr,
     sceneViewer,
@@ -707,6 +709,15 @@ export async function detectARCapabilityMatrix(
     worldTrackedExperience,
     isWorldTrackedARAvailable: worldTrackedExperience !== null,
   };
+
+  perfMark('ar:support-checked', {
+    webxrSupported: webxr.supported,
+    sceneViewerReady: sceneViewer.ready,
+    quickLookReady: quickLook.quickLookReady,
+    platform: platform.platformFamily,
+  });
+
+  return result;
 }
 
 /**

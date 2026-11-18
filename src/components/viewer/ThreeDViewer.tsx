@@ -15,6 +15,7 @@ import { FloatingIngredientAnnotations } from './FloatingIngredientAnnotations';
 import { DishInfoBar } from './DishInfoBar';
 import { DishSwitcher } from './DishSwitcher';
 import { IngredientPanel } from './IngredientPanel';
+import { VRDishButton } from './VRDishButton';
 
 // Lazy load the entire R3F scene so no 3D code loads on non-3D routes
 const ViewerScene = dynamic(
@@ -73,6 +74,7 @@ export function ThreeDViewer({
   const [showInfo, setShowInfo] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [supportsFullscreen, setSupportsFullscreen] = useState(true);
+  const [isVRSessionActive, setIsVRSessionActive] = useState(false);
 
   const error = errorState?.key === activeDishKey ? errorState.message : null;
   const isSwitchingDish = Boolean(isLoaded && settledDishKey && settledDishKey !== activeDishKey && !error);
@@ -290,6 +292,15 @@ export function ThreeDViewer({
         dishName={dish.name}
         dishSlug={dish.slug}
         dishCategory={dish.category}
+        vrButton={
+          <VRDishButton
+            dishSlug={dish.slug}
+            dishName={dish.name}
+            modelUrl={config.modelPath}
+            onVRStart={() => setIsVRSessionActive(true)}
+            onVREnd={() => setIsVRSessionActive(false)}
+          />
+        }
       >
         {isLoaded && (
           <ViewerControls
@@ -341,6 +352,7 @@ export function ThreeDViewer({
           qualityMode={qualityMode}
           zoomSignal={zoomSignal}
           resetSignal={resetSignal}
+          suspended={isVRSessionActive}
           onActiveQualityChange={setActiveQualityTier}
           onControlsRef={handleControlsRef}
           onProgress={handleProgress}

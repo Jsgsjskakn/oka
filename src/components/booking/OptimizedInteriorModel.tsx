@@ -17,6 +17,7 @@ import {
   buildInstancedScene,
   getTableProxyGeometry,
 } from '@/lib/three/interiorOptimization';
+import { perfMark } from '@/lib/three/perf-telemetry';
 
 // Re-export core optimization utilities for tests and external consumers
 export {
@@ -198,6 +199,12 @@ export function OptimizedInteriorModel({
       cachedMaterials: origMaterials,
     };
   }, [scene, batchMode, simplifyTransmission, shadowsEnabled]);
+
+  useEffect(() => {
+    if (scene) {
+      perfMark('booking3d:decor-loaded', { modelUrl });
+    }
+  }, [scene, modelUrl]);
 
   // Dispose derived merged/instanced GPU buffers & non-cached materials on unmount without touching cached glTF buffers
   useEffect(() => {

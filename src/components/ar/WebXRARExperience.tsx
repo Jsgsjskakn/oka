@@ -8,10 +8,12 @@ import { WebXRAREngine } from '@/lib/xr/webxr-ar-engine';
 import type { XRTrackingState, PlacementRecord } from '@/lib/xr/spatial-contract';
 import { ROUTE_LABELS } from '@/lib/xr/spatial-contract';
 import { resolveXRSessionQualityProfile } from '@/lib/xr/ar-quality-profile';
+import { Sparkles } from 'lucide-react';
 
 export interface WebXRARExperienceProps {
   dishSlug: string;
   modelUrl: string;
+  upgradeModelUrl?: string;
   dishTitle?: string;
   onExit: () => void;
   onFallback?: (reason: string) => void;
@@ -21,6 +23,7 @@ export interface WebXRARExperienceProps {
 export function WebXRARExperience({
   dishSlug,
   modelUrl,
+  upgradeModelUrl,
   dishTitle,
   onExit,
   onFallback,
@@ -35,6 +38,7 @@ export function WebXRARExperience({
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
   const [userScale, setUserScale] = useState<number>(1.0);
   const [isPlaced, setIsPlaced] = useState<boolean>(false);
+  const [needsUserGesture, setNeedsUserGesture] = useState<boolean>(false);
 
   // Touch gesture tracking state for 2-finger pinch & twist
   const touchStateRef = useRef<{
@@ -122,87 +126,91 @@ export function WebXRARExperience({
     engineRef.current.setUserYaw(initialYaw - angleDelta);
   }, [isPlaced]);
 
-  useEffect(() => {
-    let isCancelled = false;
+  const startSession = useCallback(async () => {
+    if (!overlayRef.current) return;
+    setNeedsUserGesture(false);
+    setTrackingState('requesting-session');
+    setErrorMessage(undefined);
 
-    async function initWebXR() {
-      if (!overlayRef.current) return;
+    try {
+      // Request session with domOverlay pointing to our overlay root
+      const session = await requestWebXRImmersiveArSession({
+        domOverlayRoot: overlayRef.current,
+      });
 
-      try {
-        setTrackingState('requesting-session');
+      sessionRef.current = session;
 
-        // Request session with domOverlay pointing to our overlay root
-        const session = await requestWebXRImmersiveArSession({
-          domOverlayRoot: overlayRef.current,
-        });
+      // Session ended listener
+      session.addEventListener('end', () => {
+        setTrackingState('session-ended');
+        onExit();
+      });
 
-        if (isCancelled) {
-          await session.end().catch(() => {});
-          return;
-        }
+      // Initialize quality profile
+      const qualityProfile = resolveXRSessionQualityProfile({
+        grantedXRFeatures: ['hit-test', 'dom-overlay'],
+        saveData: false,
+      });
 
-        sessionRef.current = session;
-
-        // Session ended listener
-        session.addEventListener('end', () => {
-          if (!isCancelled) {
-            setTrackingState('session-ended');
-            onExit();
-          }
-        });
-
-        // Initialize quality profile
-        const qualityProfile = resolveXRSessionQualityProfile({
-          grantedXRFeatures: ['hit-test', 'dom-overlay'],
-          saveData: false,
-        });
-
-        // Initialize WebXR AR Engine
-        const engine = new WebXRAREngine({
-          session,
-          dishSlug,
-          modelUrl,
-          container: canvasContainerRef.current,
-          qualityProfile,
-          onTrackingStateChange: (state, details) => {
-            if (isCancelled) return;
-            setTrackingState(state);
-            if (state === 'placed') {
-              setIsPlaced(true);
-            } else if (state === 'scanning' || state === 'surface-detected') {
-              setIsPlaced(false);
-            }
-            if (typeof details === 'string') {
-              setErrorMessage(details);
-            }
-          },
-          onPlacementComplete: (record: PlacementRecord) => {
-            if (isCancelled) return;
+      // Initialize WebXR AR Engine
+      const engine = new WebXRAREngine({
+        session,
+        dishSlug,
+        modelUrl,
+        upgradeModelUrl,
+        container: canvasContainerRef.current,
+        qualityProfile,
+        onTrackingStateChange: (state, details) => {
+          setTrackingState(state);
+          if (state === 'placed') {
             setIsPlaced(true);
-            setUserScale(record.userScale);
-          },
-          onError: (err) => {
-            if (isCancelled) return;
-            setErrorMessage(err.message);
-            setTrackingState('error');
-          },
-        });
+          } else if (state === 'scanning' || state === 'surface-detected') {
+            setIsPlaced(false);
+          }
+          if (typeof details === 'string') {
+            setErrorMessage(details);
+          }
+        },
+        onPlacementComplete: (record: PlacementRecord) => {
+          setIsPlaced(true);
+          setUserScale(record.userScale);
+        },
+        onError: (err) => {
+          setErrorMessage(err.message);
+          setTrackingState('error');
+        },
+      });
 
-        engineRef.current = engine;
-        await engine.init();
-      } catch (err) {
-        if (isCancelled) return;
-        const msg = (err as Error).message || 'Failed to initialize WebXR';
+      engineRef.current = engine;
+      await engine.init();
+    } catch (err) {
+      const error = err as Error;
+      const msg = error.message || 'Failed to initialize WebXR';
+      // If error is security or user activation related, present explicit user gesture button
+      if (
+        error.name === 'SecurityError' ||
+        error.name === 'NotAllowedError' ||
+        /gesture|activation|user/i.test(msg)
+      ) {
+        setNeedsUserGesture(true);
+        setTrackingState('idle');
+      } else {
         setErrorMessage(msg);
         setTrackingState('error');
         onFallback?.(msg);
       }
     }
+  }, [dishSlug, modelUrl, upgradeModelUrl, onExit, onFallback]);
 
-    void initWebXR();
+  useEffect(() => {
+    // Parallelize: prefetch initial ultra-light model buffer over HTTP
+    if (typeof fetch === 'function' && modelUrl) {
+      void fetch(modelUrl, { mode: 'cors' }).catch(() => {});
+    }
+
+    void startSession();
 
     return () => {
-      isCancelled = true;
       if (engineRef.current) {
         engineRef.current.dispose();
         engineRef.current = null;
@@ -212,7 +220,7 @@ export function WebXRARExperience({
         sessionRef.current = null;
       }
     };
-  }, [dishSlug, modelUrl, onExit, onFallback]);
+  }, [startSession, modelUrl]);
 
   return (
     <div
@@ -244,6 +252,35 @@ export function WebXRARExperience({
           className="h-full"
         />
       </div>
+
+      {/* User Gesture Activation Gate for browsers requiring synchronous user tap */}
+      {needsUserGesture && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/85 px-6 backdrop-blur-md pointer-events-auto">
+          <div className="max-w-sm w-full p-6 rounded-2xl bg-[#140F0C] border border-[#F0C36B]/40 shadow-2xl flex flex-col items-center text-center">
+            <div className="w-14 h-14 rounded-full bg-[#F0C36B]/15 border border-[#F0C36B]/50 flex items-center justify-center text-[#F0C36B] mb-4">
+              <Sparkles className="w-7 h-7 text-[#F0C36B]" />
+            </div>
+            <h3 className="font-serif text-xl font-bold text-[#F8F2E8] mb-2">
+              Start Tabletop AR
+            </h3>
+            <p className="text-xs text-[#D4C7B6] mb-6 font-light leading-relaxed">
+              Experience {dishTitle || 'dish'} in authentic 1:1 real-world size on your dining table.
+            </p>
+            <button
+              type="button"
+              data-testid="webxr-start-gesture-btn"
+              onClick={startSession}
+              className="w-full min-h-[48px] py-3.5 px-4 rounded-xl font-bold text-sm tracking-wide text-[#17100C] shadow-lg hover:brightness-105 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer touch-manipulation"
+              style={{
+                background: 'linear-gradient(135deg, #F0C36B 0%, #DDA33E 50%, #A8792A 100%)',
+              }}
+            >
+              <Sparkles className="w-4 h-4 shrink-0" />
+              <span>Tap to Enter AR</span>
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
