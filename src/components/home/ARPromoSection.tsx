@@ -390,7 +390,7 @@ export function ARPromoSection() {
                 <button
                   type="button"
                   onClick={() => handleSelectDish(activeDishIndex - 1)}
-                  className="w-7 h-7 rounded-full flex items-center justify-center bg-white/[0.04] hover:bg-[#F0C36B]/20 text-[#D8CFBE] hover:text-[#F0C36B] border border-white/10 hover:border-[#F0C36B]/40 active:scale-90 transition-all cursor-pointer"
+                  className="relative w-8 h-8 sm:w-7 sm:h-7 rounded-full flex items-center justify-center bg-white/[0.04] hover:bg-[#F0C36B]/20 text-[#D8CFBE] hover:text-[#F0C36B] border border-white/10 hover:border-[#F0C36B]/40 active:scale-90 transition-all cursor-pointer touch-manipulation before:content-[''] before:absolute before:-inset-2"
                   aria-label="Previous preview dish"
                 >
                   <ChevronLeft className="w-3.5 h-3.5" />
@@ -398,7 +398,7 @@ export function ARPromoSection() {
                 <button
                   type="button"
                   onClick={() => handleSelectDish(activeDishIndex + 1)}
-                  className="w-7 h-7 rounded-full flex items-center justify-center bg-white/[0.04] hover:bg-[#F0C36B]/20 text-[#D8CFBE] hover:text-[#F0C36B] border border-white/10 hover:border-[#F0C36B]/40 active:scale-90 transition-all cursor-pointer"
+                  className="relative w-8 h-8 sm:w-7 sm:h-7 rounded-full flex items-center justify-center bg-white/[0.04] hover:bg-[#F0C36B]/20 text-[#D8CFBE] hover:text-[#F0C36B] border border-white/10 hover:border-[#F0C36B]/40 active:scale-90 transition-all cursor-pointer touch-manipulation before:content-[''] before:absolute before:-inset-2"
                   aria-label="Next preview dish"
                 >
                   <ChevronRight className="w-3.5 h-3.5" />
@@ -446,7 +446,7 @@ export function ARPromoSection() {
               <button
                 type="button"
                 onClick={handleToggleRotate}
-                className={`w-9 h-9 rounded-full backdrop-blur-md border flex items-center justify-center transition-all cursor-pointer shadow-lg active:scale-95 ${
+                className={`relative w-9 h-9 rounded-full backdrop-blur-md border flex items-center justify-center transition-all cursor-pointer shadow-lg active:scale-95 touch-manipulation before:content-[''] before:absolute before:-inset-1 ${
                   effectiveAutoRotate
                     ? 'bg-[#F0C36B]/20 border-[#F0C36B] text-[#FFE3A5] ring-2 ring-[#F0C36B]/40'
                     : 'bg-black/75 border-white/15 text-[#D8CFBE] hover:text-[#FAF5EC] hover:border-[#F0C36B]/50'
@@ -465,7 +465,7 @@ export function ARPromoSection() {
               <button
                 type="button"
                 onClick={handleZoomIn}
-                className="w-9 h-9 rounded-full bg-black/75 backdrop-blur-md border border-white/15 hover:border-[#F0C36B]/50 text-[#D8CFBE] hover:text-[#FAF5EC] flex items-center justify-center transition-all cursor-pointer shadow-lg active:scale-95"
+                className="relative w-9 h-9 rounded-full bg-black/75 backdrop-blur-md border border-white/15 hover:border-[#F0C36B]/50 text-[#D8CFBE] hover:text-[#FAF5EC] flex items-center justify-center transition-all cursor-pointer shadow-lg active:scale-95 touch-manipulation before:content-[''] before:absolute before:-inset-1"
                 title="Zoom in 3D model"
                 aria-label="Zoom in"
               >
@@ -476,7 +476,7 @@ export function ARPromoSection() {
               <button
                 type="button"
                 onClick={handleZoomOut}
-                className="w-9 h-9 rounded-full bg-black/75 backdrop-blur-md border border-white/15 hover:border-[#F0C36B]/50 text-[#D8CFBE] hover:text-[#FAF5EC] flex items-center justify-center transition-all cursor-pointer shadow-lg active:scale-95"
+                className="relative w-9 h-9 rounded-full bg-black/75 backdrop-blur-md border border-white/15 hover:border-[#F0C36B]/50 text-[#D8CFBE] hover:text-[#FAF5EC] flex items-center justify-center transition-all cursor-pointer shadow-lg active:scale-95 touch-manipulation before:content-[''] before:absolute before:-inset-1"
                 title="Zoom out 3D model"
                 aria-label="Zoom out"
               >
@@ -486,7 +486,7 @@ export function ARPromoSection() {
               {/* 4. Fullscreen / Expand */}
               <Link
                 href={`/3d/${currentDish.slug}`}
-                className="w-9 h-9 rounded-full bg-black/75 backdrop-blur-md border border-white/15 hover:border-[#F0C36B]/50 text-[#D8CFBE] hover:text-[#FAF5EC] flex items-center justify-center transition-all cursor-pointer shadow-lg active:scale-95"
+                className="relative w-9 h-9 rounded-full bg-black/75 backdrop-blur-md border border-white/15 hover:border-[#F0C36B]/50 text-[#D8CFBE] hover:text-[#FAF5EC] flex items-center justify-center transition-all cursor-pointer shadow-lg active:scale-95 touch-manipulation before:content-[''] before:absolute before:-inset-1"
                 title="Open full interactive 3D lounge"
                 aria-label="Expand to full 3D lounge"
               >

@@ -169,17 +169,29 @@ export async function GET() {
     httpStatusCode = 200;
   }
 
+  const mem = process.memoryUsage();
+  const rssMB = Math.round(mem.rss / (1024 * 1024));
+  const heapUsedMB = Math.round(mem.heapUsed / (1024 * 1024));
+  const heapTotalMB = Math.round(mem.heapTotal / (1024 * 1024));
+  const uptimeSeconds = Math.floor(process.uptime());
+
   return NextResponse.json(
     {
       status: overallStatus,
       timestamp: new Date().toISOString(),
       durationMs: Date.now() - startTime,
-      uptimeSeconds: Math.floor(process.uptime()),
+      uptimeSeconds,
+      rssMB,
+      heapUsedMB,
       system: {
         nodeVersion: process.version,
+        uptimeSeconds,
+        rssMB,
+        heapUsedMB,
         memoryUsageMb: {
-          rss: Math.round(process.memoryUsage().rss / (1024 * 1024)),
-          heapUsed: Math.round(process.memoryUsage().heapUsed / (1024 * 1024)),
+          rss: rssMB,
+          heapUsed: heapUsedMB,
+          heapTotal: heapTotalMB,
         },
       },
       checks,

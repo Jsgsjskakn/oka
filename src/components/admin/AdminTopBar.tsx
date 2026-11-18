@@ -70,9 +70,9 @@ export function AdminTopBar({
             type="button"
             onClick={onOpenMobileNav}
             aria-label="Open navigation menu"
-            className="lg:hidden w-9 h-9 rounded-xl bg-black/40 border border-white/10 flex items-center justify-center text-zinc-200 hover:text-white hover:bg-white/10 transition-colors cursor-pointer shrink-0"
+            className="lg:hidden w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-black/40 border border-white/10 flex items-center justify-center text-zinc-200 hover:text-white hover:bg-white/10 transition-colors cursor-pointer shrink-0 touch-manipulation"
           >
-            <Menu className="w-4 h-4" />
+            <Menu className="w-5 h-5" />
           </button>
         )}
 
@@ -110,13 +110,13 @@ export function AdminTopBar({
         <Link
           href="/admin/orders"
           onClick={() => setHasNotification(false)}
-          className="relative w-8 h-8 rounded-full bg-black/30 border border-white/10 flex items-center justify-center text-zinc-300 hover:text-white hover:bg-white/10 transition-colors shadow-md"
+          className="relative w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-black/30 border border-white/10 flex items-center justify-center text-zinc-300 hover:text-white hover:bg-white/10 transition-colors shadow-md touch-manipulation"
           title="View Live Orders"
           aria-label="View Live Orders"
         >
-          <Bell className="w-3.5 h-3.5" />
+          <Bell className="w-4 h-4" />
           {hasNotification && (
-            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-rose-500 shadow-[0_0_6px_#f43f5e]" />
+            <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-rose-500 shadow-[0_0_6px_#f43f5e]" />
           )}
         </Link>
 

@@ -19,7 +19,7 @@ export function ARHeader({
       <div className="p-4 flex items-center justify-between h-16">
         <button
           onClick={onExit}
-          className="w-10 h-10 flex items-center justify-center rounded-full bg-obsidian/50 border border-border-subtle text-text-primary transition-transform active:scale-95"
+          className="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-obsidian/50 border border-border-subtle text-text-primary transition-transform active:scale-95 touch-manipulation cursor-pointer"
           aria-label="Exit spatial view"
         >
           <X className="w-5 h-5" />

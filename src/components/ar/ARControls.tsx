@@ -139,7 +139,7 @@ export function ARControls({
           data-testid="ar-scene-viewer-launcher"
           title="Open Native Android ARCore Plane Tracking"
           aria-label="Open in Android ARCore Scene Viewer"
-          className="min-h-[40px] px-2.5 shrink-0 flex items-center gap-1.5 rounded-full backdrop-blur-md bg-[#E2A84B]/20 border border-[#E2A84B]/55 text-[#F6D386] text-[10px] font-semibold tracking-wide shadow-lg active:scale-95 transition-all touch-manipulation"
+          className="min-h-[44px] px-3 shrink-0 flex items-center gap-1.5 rounded-full backdrop-blur-md bg-[#E2A84B]/20 border border-[#E2A84B]/55 text-[#F6D386] text-[10px] font-semibold tracking-wide shadow-lg active:scale-95 transition-all touch-manipulation"
         >
           <Sparkles className="w-3.5 h-3.5 shrink-0" />
           <span>ARCore</span>
@@ -154,7 +154,7 @@ export function ARControls({
           data-testid="ar-quick-look-launcher"
           title="Open Apple AR Quick Look"
           aria-label="Open in Apple AR Quick Look"
-          className="min-h-[40px] px-2.5 shrink-0 flex items-center gap-1.5 rounded-full backdrop-blur-md bg-[#E2A84B]/20 border border-[#E2A84B]/55 text-[#F6D386] text-[10px] font-semibold tracking-wide shadow-lg active:scale-95 transition-all touch-manipulation"
+          className="min-h-[44px] px-3 shrink-0 flex items-center gap-1.5 rounded-full backdrop-blur-md bg-[#E2A84B]/20 border border-[#E2A84B]/55 text-[#F6D386] text-[10px] font-semibold tracking-wide shadow-lg active:scale-95 transition-all touch-manipulation"
         >
           {/* Apple Safari requires an <img> as the direct first child of <a rel="ar"> */}
           <img

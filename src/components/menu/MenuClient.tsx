@@ -420,7 +420,7 @@ export function MenuClient({
                         window.history.replaceState(null, '', cat.id === 'all' ? '/menu' : `/menu/${cat.id}`);
                       }
                     }}
-                    className={`min-h-[38px] px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer touch-manipulation border ${
+                    className={`min-h-[44px] px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer touch-manipulation border ${
                       isSelected
                         ? 'bg-[#E2A84B] border-[#E2A84B] text-[#0D0A08] font-bold shadow-[0_0_12px_rgba(226,168,75,0.35)]'
                         : 'bg-[#16120E] border-white/10 text-[#9A9286] hover:text-[#FAF5EC] hover:border-[#E2A84B]/40'

@@ -350,7 +350,7 @@ export function HeroSection() {
                   <button
                     type="button"
                     onClick={() => handleQuickAdd(dish)}
-                    className="w-6 h-6 rounded-lg bg-white/[0.04] hover:bg-[#F0C36B] hover:text-[#17100C] text-[#F0C36B] border border-[#F0C36B]/35 hover:border-[#F0C36B] flex items-center justify-center transition-all active:scale-90 cursor-pointer shrink-0 shadow-sm"
+                    className="relative w-7 h-7 sm:w-6 sm:h-6 rounded-lg bg-white/[0.04] hover:bg-[#F0C36B] hover:text-[#17100C] text-[#F0C36B] border border-[#F0C36B]/35 hover:border-[#F0C36B] flex items-center justify-center transition-all active:scale-90 cursor-pointer shrink-0 shadow-sm touch-manipulation before:content-[''] before:absolute before:-inset-2.5"
                     title={`Add ${dish.name} to Cart`}
                     aria-label={`Add ${dish.name} to Cart`}
                   >

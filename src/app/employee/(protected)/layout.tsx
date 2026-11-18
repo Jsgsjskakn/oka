@@ -47,7 +47,7 @@ export default async function EmployeeLayout({
             }
             redirect('/employee/login');
           }}>
-            <button type="submit" className="text-text-secondary hover:text-red-400 flex items-center gap-2 transition-colors px-3 py-1.5 rounded-lg border border-transparent hover:border-red-900/50 hover:bg-red-950/20">
+            <button type="submit" className="min-h-[44px] text-text-secondary hover:text-red-400 flex items-center gap-2 transition-colors px-3 py-1.5 rounded-lg border border-transparent hover:border-red-900/50 hover:bg-red-950/20 touch-manipulation cursor-pointer">
               <LogOut size={16} /> <span className="hidden sm:inline font-medium">Logout</span>
             </button>
           </form>
@@ -55,9 +55,9 @@ export default async function EmployeeLayout({
       </header>
       
       {/* Mobile Nav */}
-      <nav className="md:hidden bg-zinc-950/50 border-b border-border-subtle px-4 py-3 flex gap-6 text-xs font-bold uppercase tracking-wider overflow-x-auto shadow-sm">
-        <Link href="/employee/orders" className="whitespace-nowrap text-text-secondary hover:text-champagne transition-colors">Current Orders</Link>
-        <Link href="/employee/orders/history" className="whitespace-nowrap text-text-secondary hover:text-champagne transition-colors">History</Link>
+      <nav className="md:hidden bg-zinc-950/50 border-b border-border-subtle px-4 py-1 flex gap-6 text-xs font-bold uppercase tracking-wider overflow-x-auto shadow-sm">
+        <Link href="/employee/orders" className="min-h-[44px] flex items-center whitespace-nowrap text-text-secondary hover:text-champagne transition-colors touch-manipulation">Current Orders</Link>
+        <Link href="/employee/orders/history" className="min-h-[44px] flex items-center whitespace-nowrap text-text-secondary hover:text-champagne transition-colors touch-manipulation">History</Link>
       </nav>
 
       <main className="flex-1 p-4 md:p-8 overflow-auto relative z-0">

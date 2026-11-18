@@ -182,85 +182,91 @@ export async function getCategories(): Promise<Category[]> {
 }
 
 export async function getDishesByCategory(categorySlug: string): Promise<DishWithCategory[]> {
-  // 1. Primary: Try Convex
-  try {
-    const [data, cats] = await Promise.all([
-      withTimeout(fetchQuery(api.menu.getDishesByCategory, { categorySlug }), 3500),
-      getCategories().catch(() => [] as Category[]),
-    ]);
-    if (data && data.length > 0) {
-      const catBySlug = new Map(cats.map((c) => [c.slug, c]));
-      return data.map((d: any) => mapConvexDish(d, catBySlug.get(d.categorySlug || d.category)));
-    }
-  } catch (convexError) {
-    console.warn('[menu.service] Convex getDishesByCategory failed, trying Supabase:', convexError);
-  }
-
-  // 2. Secondary Fallback: Supabase
-  if (isSupabaseConfigured()) {
+  const cacheKey = `menu:category_dishes:${categorySlug}:${RESTAURANT_ID}`;
+  return getCachedOrFetch(cacheKey, async () => {
+    // 1. Primary: Try Convex
     try {
-      const supabase = await createClient();
-      const { data, error } = await supabase
-        .from('dishes')
-        .select('*, categories(*)')
-        .eq('categories.slug', categorySlug)
-        .eq('is_available', true);
-      if (!error && data && data.length > 0) {
-        return (data as any[]).map((d) => ({
-          ...d,
-          image_url: resolveDishImageUrl(d.slug, d.image_url),
-          thumbnail_url: resolveDishImageUrl(d.slug, d.thumbnail_url || d.image_url),
-        })) as DishWithCategory[];
+      const [data, cats] = await Promise.all([
+        withTimeout(fetchQuery(api.menu.getDishesByCategory, { categorySlug }), 3500),
+        getCategories().catch(() => [] as Category[]),
+      ]);
+      if (data && data.length > 0) {
+        const catBySlug = new Map(cats.map((c) => [c.slug, c]));
+        return data.map((d: any) => mapConvexDish(d, catBySlug.get(d.categorySlug || d.category)));
       }
-    } catch (supabaseError) {
-      console.warn('[menu.service] Supabase dishes query failed:', supabaseError);
+    } catch (convexError) {
+      console.warn('[menu.service] Convex getDishesByCategory failed, trying Supabase:', convexError);
     }
-  }
 
-  // 3. Final Fallback: Local Data
-  return getFallbackDishes().filter((d) => d.categories?.slug === categorySlug);
+    // 2. Secondary Fallback: Supabase
+    if (isSupabaseConfigured()) {
+      try {
+        const supabase = await createClient();
+        const { data, error } = await supabase
+          .from('dishes')
+          .select('*, categories(*)')
+          .eq('categories.slug', categorySlug)
+          .eq('is_available', true);
+        if (!error && data && data.length > 0) {
+          return (data as any[]).map((d) => ({
+            ...d,
+            image_url: resolveDishImageUrl(d.slug, d.image_url),
+            thumbnail_url: resolveDishImageUrl(d.slug, d.thumbnail_url || d.image_url),
+          })) as DishWithCategory[];
+        }
+      } catch (supabaseError) {
+        console.warn('[menu.service] Supabase dishes query failed:', supabaseError);
+      }
+    }
+
+    // 3. Final Fallback: Local Data
+    return getFallbackDishes().filter((d) => d.categories?.slug === categorySlug);
+  });
 }
 
 export async function getDishBySlug(categorySlug: string, dishSlug: string): Promise<DishWithCategory | null> {
-  // 1. Primary: Try Convex
-  try {
-    const [dish, cats] = await Promise.all([
-      fetchQuery(api.menu.getDishBySlug, { slug: dishSlug }),
-      getCategories().catch(() => [] as Category[]),
-    ]);
-    if (dish) {
-      const matchedCat = cats.find((c) => c.slug === ((dish as any).categorySlug || dish.category));
-      return mapConvexDish(dish, matchedCat);
-    }
-  } catch (convexError) {
-    console.warn('[menu.service] Convex getDishBySlug failed, trying Supabase:', convexError);
-  }
-
-  // 2. Secondary Fallback: Supabase
-  if (isSupabaseConfigured()) {
+  const cacheKey = `menu:dish:${categorySlug}:${dishSlug}:${RESTAURANT_ID}`;
+  return getCachedOrFetch(cacheKey, async () => {
+    // 1. Primary: Try Convex
     try {
-      const supabase = await createClient();
-      const { data, error } = await supabase
-        .from('dishes')
-        .select('*, categories(*)')
-        .eq('categories.slug', categorySlug)
-        .eq('slug', dishSlug)
-        .eq('is_available', true)
-        .single();
-      if (!error && data) {
-        const d = data as any;
-        return {
-          ...d,
-          image_url: resolveDishImageUrl(d.slug, d.image_url),
-          thumbnail_url: resolveDishImageUrl(d.slug, d.thumbnail_url || d.image_url),
-        } as DishWithCategory;
+      const [dish, cats] = await Promise.all([
+        fetchQuery(api.menu.getDishBySlug, { slug: dishSlug }),
+        getCategories().catch(() => [] as Category[]),
+      ]);
+      if (dish) {
+        const matchedCat = cats.find((c) => c.slug === ((dish as any).categorySlug || dish.category));
+        return mapConvexDish(dish, matchedCat);
       }
-    } catch {
-      // continue to fallback
+    } catch (convexError) {
+      console.warn('[menu.service] Convex getDishBySlug failed, trying Supabase:', convexError);
     }
-  }
 
-  return getFallbackDishes().find((d) => d.slug === dishSlug && (categorySlug === 'all' || d.categories?.slug === categorySlug)) || null;
+    // 2. Secondary Fallback: Supabase
+    if (isSupabaseConfigured()) {
+      try {
+        const supabase = await createClient();
+        const { data, error } = await supabase
+          .from('dishes')
+          .select('*, categories(*)')
+          .eq('categories.slug', categorySlug)
+          .eq('slug', dishSlug)
+          .eq('is_available', true)
+          .single();
+        if (!error && data) {
+          const d = data as any;
+          return {
+            ...d,
+            image_url: resolveDishImageUrl(d.slug, d.image_url),
+            thumbnail_url: resolveDishImageUrl(d.slug, d.thumbnail_url || d.image_url),
+          } as DishWithCategory;
+        }
+      } catch {
+        // continue to fallback
+      }
+    }
+
+    return getFallbackDishes().find((d) => d.slug === dishSlug && (categorySlug === 'all' || d.categories?.slug === categorySlug)) || null;
+  });
 }
 
 export async function getDishById(dishId: string): Promise<DishWithCategory | null> {

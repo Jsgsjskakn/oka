@@ -6,6 +6,13 @@ import { requireAdmin } from '@/lib/auth/admin-auth';
 
 const RESTAURANT_ID = 'a1b2c3d4-0000-0000-0000-000000000001';
 
+function phonesMatchStrict10(a?: string | null, b?: string | null): boolean {
+  if (!a || !b) return false;
+  const digitsA = a.replace(/\D/g, '').slice(-10);
+  const digitsB = b.replace(/\D/g, '').slice(-10);
+  return digitsA.length === 10 && digitsA === digitsB;
+}
+
 export async function createBookingAction(formData: {
   customerName: string;
   customerPhone: string;
@@ -140,12 +147,11 @@ export async function customerConfirmBookingPayment(bookingId: string, paymentMe
 
     if (!booking) return { error: 'Booking not found' };
 
-    // Authorize if logged-in user matches or customerPhone matches booking phone, or guest booking
-    const isOwner = user && booking.user_id === user.id;
-    const isMatchingPhone = Boolean(customerPhone && booking.customer_phone && booking.customer_phone.replace(/\D/g, '').endsWith(customerPhone.replace(/\D/g, '').slice(-10)));
-    const isGuestBooking = !booking.user_id;
+    // Authorize if logged-in user matches or customerPhone matches booking phone strictly
+    const isOwner = Boolean(user && booking.user_id && booking.user_id === user.id);
+    const isMatchingPhone = phonesMatchStrict10(customerPhone, booking.customer_phone);
 
-    if (!isOwner && !isMatchingPhone && !isGuestBooking) {
+    if (!isOwner && !isMatchingPhone) {
       return { error: 'Unauthorized: Not your booking' };
     }
     if (booking.status !== 'pending') return { error: 'Not in pending state' };

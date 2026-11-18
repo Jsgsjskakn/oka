@@ -153,6 +153,11 @@ export function evaluateProgressiveResidencyGuard(
 }
 
 /**
+ * Alias for evaluateProgressiveResidencyGuard matching Objective 4 specification.
+ */
+export const shouldAllowLodUpgrade = evaluateProgressiveResidencyGuard;
+
+/**
  * Resolves the concrete GLB path for a given dish config and rendering profile,
  * prioritizing `culinaryAssetLodPaths` over `lodPaths` and `modelPath`.
  */

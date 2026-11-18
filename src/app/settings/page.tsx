@@ -92,7 +92,7 @@ export default function SettingsPage() {
         <Link
           href="/profile"
           aria-label="Back to Profile"
-          className="w-10 h-10 flex items-center justify-center -ml-2 text-text-primary/70 hover:text-text-primary active:scale-95 transition-transform rounded-full hover:bg-white/5"
+          className="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center -ml-2 text-text-primary/70 hover:text-text-primary active:scale-95 transition-transform rounded-full hover:bg-white/5 touch-manipulation"
         >
           <ChevronLeft className="w-6 h-6" />
         </Link>

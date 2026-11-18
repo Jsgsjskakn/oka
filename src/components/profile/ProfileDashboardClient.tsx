@@ -422,7 +422,7 @@ export function ProfileDashboardClient({
                 <Link
                   href="/profile/edit"
                   aria-label="Edit Profile"
-                  className="w-10 h-10 rounded-full bg-white/5 border border-white/10 hover:border-[#F0C36B]/50 flex items-center justify-center text-[#A99A88] hover:text-[#FAF5EC] active:scale-95 transition-all shrink-0"
+                  className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-white/5 border border-white/10 hover:border-[#F0C36B]/50 flex items-center justify-center text-[#A99A88] hover:text-[#FAF5EC] active:scale-95 transition-all shrink-0 touch-manipulation"
                 >
                   <Edit2 className="w-4 h-4 text-[#F0C36B]" />
                 </Link>

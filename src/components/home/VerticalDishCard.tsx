@@ -271,7 +271,7 @@ export function VerticalDishCard({ dish, onAdd, onQuickView, rank }: VerticalDis
         </div>
 
         {/* Card Footer: Price + View in AR + Tactile ADD Button */}
-        <div className="pt-4 mt-3 flex items-center justify-between border-t border-white/[0.08] gap-2">
+        <div className="pt-4 mt-3 flex items-center justify-between border-t border-white/[0.08] gap-2 flex-wrap">
           <div className="flex flex-col shrink-0">
             <span className="text-[10px] uppercase tracking-wider text-[#A59685] font-medium">
               PRICE
@@ -281,13 +281,13 @@ export function VerticalDishCard({ dish, onAdd, onQuickView, rank }: VerticalDis
             </span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             {/* View in AR Button */}
             <Link
               href={`/ar/${dish.slug}`}
               onClick={(e) => e.stopPropagation()}
               title={`View ${dish.name} in AR`}
-              className="px-3 py-2 text-xs font-semibold text-[#F0C36B] hover:text-[#17100C] hover:bg-[#F0C36B] rounded-[8px] border border-[#F0C36B]/40 hover:border-[#F0C36B] transition-all active:scale-95 shadow-sm flex items-center gap-1.5 bg-black/40 group/arbtn cursor-pointer"
+              className="min-h-[44px] px-3 py-2 text-xs font-semibold text-[#F0C36B] hover:text-[#17100C] hover:bg-[#F0C36B] rounded-[8px] border border-[#F0C36B]/40 hover:border-[#F0C36B] transition-all active:scale-95 shadow-sm flex items-center gap-1.5 bg-black/40 group/arbtn cursor-pointer touch-manipulation"
             >
               <Box className="w-3.5 h-3.5 text-[#F0C36B] group-hover/arbtn:text-[#17100C] transition-colors" />
               <span className="whitespace-nowrap">View in AR</span>
@@ -298,7 +298,7 @@ export function VerticalDishCard({ dish, onAdd, onQuickView, rank }: VerticalDis
                 type="button"
                 onClick={handleAddToCart}
                 aria-label={`Add ${dish.name} to order`}
-                className="px-4 sm:px-5 py-2.5 text-xs font-extrabold transition-all duration-300 active:scale-95 shadow-md flex items-center gap-1.5 rounded-[8px] cursor-pointer text-[#F0C36B] hover:text-[#17100C]"
+                className="min-h-[44px] px-4 sm:px-5 py-2 text-xs font-extrabold transition-all duration-300 active:scale-95 shadow-md flex items-center gap-1.5 rounded-[8px] cursor-pointer text-[#F0C36B] hover:text-[#17100C] touch-manipulation"
                 style={{
                   background:
                     'linear-gradient(135deg, rgba(240, 195, 107, 0.16) 0%, rgba(240, 195, 107, 0.06) 100%)',

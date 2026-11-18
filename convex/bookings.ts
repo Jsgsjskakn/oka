@@ -134,6 +134,10 @@ export const checkAvailability = query({
     guests: v.number(),
   },
   handler: async (ctx, args) => {
+    const trimmedDate = args.bookingDate.trim();
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmedDate)) {
+      return { available: false, tablesCount: 0, availableTables: [] };
+    }
     if (!Number.isInteger(args.guests) || args.guests < 1 || args.guests > 50) {
       return { available: false, tablesCount: 0, availableTables: [] };
     }
@@ -161,7 +165,7 @@ export const checkAvailability = query({
     // Get active bookings on that date
     const dateBookings = await ctx.db
       .query("bookings")
-      .withIndex("by_date", (q) => q.eq("bookingDate", args.bookingDate))
+      .withIndex("by_date", (q) => q.eq("bookingDate", trimmedDate))
       .collect();
 
     const activeBookings = filterActiveBookings(dateBookings, Date.now());
@@ -200,8 +204,12 @@ export const createBooking = mutation({
     // 1. Basic validation
     const trimmedName = args.customerName.trim();
     const trimmedPhone = args.customerPhone.trim();
+    const trimmedDate = args.bookingDate.trim();
     if (!trimmedName || !trimmedPhone) {
       return { error: "Customer name and phone are required" };
+    }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmedDate)) {
+      return { error: "Invalid booking date format. Expected YYYY-MM-DD" };
     }
     if (!Number.isInteger(args.guests) || args.guests < 1 || args.guests > 50) {
       return { error: "Guests must be between 1 and 50" };
@@ -234,11 +242,34 @@ export const createBooking = mutation({
     // 3. Check active bookings on the same date
     const dateBookings = await ctx.db
       .query("bookings")
-      .withIndex("by_date", (q) => q.eq("bookingDate", args.bookingDate))
+      .withIndex("by_date", (q) => q.eq("bookingDate", trimmedDate))
       .collect();
 
     const now = Date.now();
     const activeBookings = filterActiveBookings(dateBookings, now);
+
+    // Duplicate submission idempotency: if the same customer phone submits an identical
+    // (bookingDate, bookingTime, guests) while they already have an active (pending with
+    // unexpired hold, or confirmed) booking for that exact date and time slot, return the
+    // existing reservation idempotently instead of allocating a second table.
+    const existingDuplicate = activeBookings.find((b) => {
+      const isSamePhone = phonesMatchStrict10(b.customerPhone, trimmedPhone);
+      const isSameTime = b.bookingTime === args.bookingTime;
+      const isSameGuests = b.guests === args.guests;
+      const isStillActive =
+        b.status === "confirmed" ||
+        (b.status === "pending" && (!b.holdExpiresAt || b.holdExpiresAt > now));
+      return isSamePhone && isSameTime && isSameGuests && isStillActive;
+    });
+
+    if (existingDuplicate && existingDuplicate.tableNumber !== undefined) {
+      return {
+        bookingId: existingDuplicate._id,
+        tableNumber: existingDuplicate.tableNumber,
+        holdExpiresAt: existingDuplicate.holdExpiresAt,
+        success: true,
+      };
+    }
 
     // 4. Match requested table or allocate best-fit available table
     let assignedTable: Doc<"tables"> | null = null;
@@ -296,7 +327,7 @@ export const createBooking = mutation({
       customerName: trimmedName,
       customerPhone: trimmedPhone,
       customerEmail: normalizedEmail,
-      bookingDate: args.bookingDate,
+      bookingDate: trimmedDate,
       bookingTime: args.bookingTime,
       bookingEndTime: args.bookingEndTime,
       guests: args.guests,
