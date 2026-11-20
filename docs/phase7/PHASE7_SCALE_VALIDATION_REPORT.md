@@ -37,12 +37,12 @@ Per Phase 7 Section 4 & Section 10:
 | 14 | `truffle-mushroom-cheese-burger` | 12 × 12 × 10 cm | 18 cm | 1.976 × 2.000 × 1.211 m | `0.06` | **11.9 × 12.0 × 7.3 cm** | `0.0000 m` | `true` | `estimated-typical-portion` | `false` |
 | 15 | `hakka-street-chow-mein` | 18 × 18 × 8 cm | 18 cm | 2.199 × 2.198 × 1.478 m | `0.0818` | **18.0 × 18.0 × 12.1 cm** | `0.0000 m` | `true` | `estimated-typical-portion` | `false` |
 | 16 | `golden-chilli-potato` | 20 × 20 × 5.5 cm | 20 cm | 2.196 × 2.196 × 1.314 m | `0.0911` | **20.0 × 20.0 × 12.0 cm** | `0.0008 m` | `true` | `estimated-typical-portion` | `false` |
-| 17 | `truffle-mushroom-risotto` | 19 × 19 × 7 cm | 19 cm | 0.244 × 0.244 × 0.086 m | `0.7787` | **19.0 × 19.0 × 6.7 cm** | `0.0000 m` | `true` | `estimated-typical-portion` | `false` |
-| 18 | `butter-chicken-bao` | 18 × 18 × 7 cm | 18 cm | 0.244 × 0.244 × 0.086 m | `0.7377` | **18.0 × 18.0 × 6.3 cm** | `0.0000 m` | `true` | `estimated-typical-portion` | `false` |
-| 19 | `dahi-ke-kebab` | 22 × 16 × 4.5 cm | 22 cm | 0.244 × 0.244 × 0.086 m | `0.9016` | **22.0 × 22.0 × 7.7 cm** | `0.0000 m` | `true` | `estimated-typical-portion` | `false` |
-| 20 | `crispy-chilli-babycorn` | 20 × 20 × 5.5 cm | 20 cm | 0.244 × 0.244 × 0.086 m | `0.8197` | **20.0 × 20.0 × 7.0 cm** | `0.0000 m` | `true` | `estimated-typical-portion` | `false` |
-| 21 | `dim-sum-platter` | 21 × 21 × 6 cm | 22 cm | 0.244 × 0.244 × 0.086 m | `0.8607` | **21.0 × 21.0 × 7.4 cm** | `0.0000 m` | `true` | `estimated-typical-portion` | `false` |
-| 22 | `kaffir-lime-mocktail` | 8 × 8 × 16 cm | 8.5 cm | 0.136 × 0.136 × 0.166 m | `0.5882` | **8.0 × 8.0 × 9.8 cm** | `0.0000 m` | `true` | `estimated-typical-portion` | `false` |
+| 17 | `truffle-mushroom-risotto` | 19 × 19 × 7 cm | 19 cm | 2.000 × 2.000 × 0.737 m | `0.095` | **19.0 × 19.0 × 7.0 cm** | `0.0000 m` | `true` | `estimated-typical-portion` | `false` |
+| 18 | `butter-chicken-bao` | 18 × 18 × 7 cm | 18 cm | 2.000 × 2.000 × 0.778 m | `0.09` | **18.0 × 18.0 × 7.0 cm** | `0.0000 m` | `true` | `estimated-typical-portion` | `false` |
+| 19 | `dahi-ke-kebab` | 22 × 16 × 4.5 cm | 22 cm | 2.200 × 1.599 × 0.450 m | `0.1` | **22.0 × 16.0 × 4.5 cm** | `0.0000 m` | `true` | `estimated-typical-portion` | `false` |
+| 20 | `crispy-chilli-babycorn` | 20 × 20 × 5.5 cm | 20 cm | 2.000 × 2.000 × 0.550 m | `0.1` | **20.0 × 20.0 × 5.5 cm** | `0.0000 m` | `true` | `estimated-typical-portion` | `false` |
+| 21 | `dim-sum-platter` | 21 × 21 × 6 cm | 22 cm | 2.200 × 2.200 × 0.650 m | `0.0955` | **21.0 × 21.0 × 6.2 cm** | `0.0000 m` | `true` | `estimated-typical-portion` | `false` |
+| 22 | `kaffir-lime-mocktail` | 8 × 8 × 16 cm | 8.5 cm | 0.850 × 0.768 × 1.650 m | `0.0941` | **8.0 × 7.2 × 15.5 cm** | `0.0000 m` | `true` | `estimated-typical-portion` | `false` |
 | 23 | `golden-oak-burger` | 12.5 × 12.5 × 10.5 cm | 18 cm | 1.976 × 2.000 × 1.211 m | `0.0625` | **12.4 × 12.5 × 7.6 cm** | `0.0000 m` | `true` | `estimated-typical-portion` | `false` |
 
 ---

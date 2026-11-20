@@ -215,8 +215,15 @@ test('Phase 6 Sign-Off — 2. Defect P6-01 Verification (Scale & Color Validatio
     }
   });
 
-  await t.test('Untextured gourmet-wok-bowl placeholder dishes have colorValidated: false & isSharedPlaceholder: true', () => {
-    const untexturedWokDishes = [
+  await t.test('Untextured placeholder guard & Phase 7.1 reconstructed 6 dishes verification', () => {
+    for (const entry of Object.values(DISH_ASSET_MANIFEST)) {
+      if (entry.profiles.high.texturesCount === 0) {
+        assert.equal(entry.colorValidated, false, `Untextured dish ${entry.dishId} must have colorValidated: false`);
+        assert.equal(entry.isSharedPlaceholder, true, `Untextured dish ${entry.dishId} must have isSharedPlaceholder: true`);
+      }
+    }
+
+    const phase71ReconstructedDishes = [
       'truffle-mushroom-risotto',
       'butter-chicken-bao',
       'dahi-ke-kebab',
@@ -225,12 +232,12 @@ test('Phase 6 Sign-Off — 2. Defect P6-01 Verification (Scale & Color Validatio
       'kaffir-lime-mocktail',
     ];
 
-    for (const slug of untexturedWokDishes) {
+    for (const slug of phase71ReconstructedDishes) {
       const entry = DISH_ASSET_MANIFEST[slug];
       assert.ok(entry, `Entry must exist for ${slug}`);
-      assert.equal(entry.colorValidated, false, `Untextured placeholder dish ${slug} must have colorValidated: false`);
-      assert.equal(entry.isSharedPlaceholder, true, `Placeholder dish ${slug} must have isSharedPlaceholder: true`);
-      assert.equal(entry.profiles.high.texturesCount, 0, `Placeholder dish ${slug} has 0 embedded textures`);
+      assert.equal(entry.colorValidated, true, `Phase 7.1 dedicated Blender dish ${slug} must have colorValidated: true`);
+      assert.equal(entry.isSharedPlaceholder, false, `Phase 7.1 dedicated Blender dish ${slug} must have isSharedPlaceholder: false`);
+      assert.ok(entry.profiles.high.texturesCount >= 3, `Phase 7.1 dish ${slug} must have >= 3 embedded textures`);
     }
   });
 
@@ -260,6 +267,12 @@ test('Phase 6 Sign-Off — 2. Defect P6-01 Verification (Scale & Color Validatio
       'crispy-paneer-burger',
       'wok-tossed-chow-mein',
       'dynamite-chilli-potatoes',
+      'truffle-mushroom-risotto',
+      'butter-chicken-bao',
+      'dahi-ke-kebab',
+      'crispy-chilli-babycorn',
+      'dim-sum-platter',
+      'kaffir-lime-mocktail',
     ];
 
     for (const slug of authenticDishes) {

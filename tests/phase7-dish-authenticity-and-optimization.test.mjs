@@ -56,7 +56,7 @@ test('Phase 7 — 1. 23-Dish Individual Authenticity Audit & Classification Hone
     }
   });
 
-  await t.test('Classification counts match ground truth (8 authentic-dedicated, 2 duplicate-primary, 4 same-family, 3 cross-recipe, 6 untextured)', () => {
+  await t.test('Classification counts match Phase 7.1 ground truth (14 authentic-dedicated, 2 duplicate-primary, 4 same-family, 3 cross-recipe, 0 untextured)', () => {
     const counts = {
       'authentic-dedicated': 0,
       'duplicate-primary-mesh': 0,
@@ -77,11 +77,11 @@ test('Phase 7 — 1. 23-Dish Individual Authenticity Audit & Classification Hone
       }
     }
 
-    assert.equal(counts['authentic-dedicated'], 8);
+    assert.equal(counts['authentic-dedicated'], 14);
     assert.equal(counts['duplicate-primary-mesh'], 2);
     assert.equal(counts['same-family-variant'], 4);
     assert.equal(counts['cross-recipe-stand-in'], 3);
-    assert.equal(counts['untextured-generic-placeholder'], 6);
+    assert.equal(counts['untextured-generic-placeholder'], 0);
   });
 });
 

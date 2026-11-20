@@ -74,6 +74,11 @@ export interface CulinaryDishProfile {
     | 'crispy-paneer-burger'
     | 'wok-tossed-chow-mein'
     | 'dynamite-chilli-potatoes'
+    | 'truffle-mushroom-risotto'
+    | 'butter-chicken-bao'
+    | 'dahi-ke-kebab'
+    | 'crispy-chilli-babycorn'
+    | 'dim-sum-platter'
     | 'gourmet-wok-bowl'
     | 'kaffir-lime-mocktail';
   arScale: number;
@@ -275,35 +280,35 @@ export const DISH_CULINARY_PROFILES: Record<string, CulinaryDishProfile> = {
   'truffle-mushroom-risotto': {
     culinaryCategory: 'melted-cheese',
     secondaryCategories: ['glossy-sauce', 'fresh-vegetables'],
-    culinaryArchetype: 'gourmet-wok-bowl',
+    culinaryArchetype: 'truffle-mushroom-risotto',
     arScale: 0.16,
     preserveDynamicARLighting: true,
   },
   'butter-chicken-bao': {
     culinaryCategory: 'bread-crust',
     secondaryCategories: ['grilled-meat', 'glossy-sauce'],
-    culinaryArchetype: 'gourmet-wok-bowl',
+    culinaryArchetype: 'butter-chicken-bao',
     arScale: 0.15,
     preserveDynamicARLighting: true,
   },
   'dahi-ke-kebab': {
     culinaryCategory: 'fried-food',
     secondaryCategories: ['melted-cheese', 'fresh-vegetables'],
-    culinaryArchetype: 'gourmet-wok-bowl',
+    culinaryArchetype: 'dahi-ke-kebab',
     arScale: 0.15,
     preserveDynamicARLighting: true,
   },
   'crispy-chilli-babycorn': {
     culinaryCategory: 'fried-food',
     secondaryCategories: ['glossy-sauce', 'fresh-vegetables'],
-    culinaryArchetype: 'gourmet-wok-bowl',
+    culinaryArchetype: 'crispy-chilli-babycorn',
     arScale: 0.16,
     preserveDynamicARLighting: true,
   },
   'dim-sum-platter': {
     culinaryCategory: 'bread-crust',
     secondaryCategories: ['glossy-sauce', 'fresh-vegetables'],
-    culinaryArchetype: 'gourmet-wok-bowl',
+    culinaryArchetype: 'dim-sum-platter',
     arScale: 0.16,
     preserveDynamicARLighting: true,
   },

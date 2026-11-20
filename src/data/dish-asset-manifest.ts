@@ -160,7 +160,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.1184,
           "depth": 2.4
         },
-        "dracoDecodeTimeMs": 19.86,
+        "dracoDecodeTimeMs": 18.79,
         "estimatedGpuMemoryBytes": 34672604,
         "estimatedGpuMemoryMb": 33.07
       },
@@ -189,7 +189,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.1175,
           "depth": 2.4
         },
-        "dracoDecodeTimeMs": 5.98,
+        "dracoDecodeTimeMs": 6.05,
         "estimatedGpuMemoryBytes": 9034818,
         "estimatedGpuMemoryMb": 8.62
       },
@@ -296,7 +296,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.0557,
           "depth": 2.3904
         },
-        "dracoDecodeTimeMs": 13.73,
+        "dracoDecodeTimeMs": 14,
         "estimatedGpuMemoryBytes": 6511033,
         "estimatedGpuMemoryMb": 6.21
       },
@@ -325,7 +325,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.0557,
           "depth": 2.3904
         },
-        "dracoDecodeTimeMs": 7.09,
+        "dracoDecodeTimeMs": 7.85,
         "estimatedGpuMemoryBytes": 1864535,
         "estimatedGpuMemoryMb": 1.78
       },
@@ -354,7 +354,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.0557,
           "depth": 2.3904
         },
-        "dracoDecodeTimeMs": 2.98,
+        "dracoDecodeTimeMs": 3.13,
         "estimatedGpuMemoryBytes": 542385,
         "estimatedGpuMemoryMb": 0.52
       },
@@ -432,7 +432,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.0555,
           "depth": 2.3904
         },
-        "dracoDecodeTimeMs": 6.6,
+        "dracoDecodeTimeMs": 6.83,
         "estimatedGpuMemoryBytes": 11888934,
         "estimatedGpuMemoryMb": 11.34
       },
@@ -461,7 +461,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.0552,
           "depth": 2.3903
         },
-        "dracoDecodeTimeMs": 3.85,
+        "dracoDecodeTimeMs": 3.68,
         "estimatedGpuMemoryBytes": 3177570,
         "estimatedGpuMemoryMb": 3.03
       },
@@ -490,7 +490,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.055,
           "depth": 2.3903
         },
-        "dracoDecodeTimeMs": 1.69,
+        "dracoDecodeTimeMs": 1.66,
         "estimatedGpuMemoryBytes": 891130,
         "estimatedGpuMemoryMb": 0.85
       },
@@ -568,7 +568,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.1184,
           "depth": 2.4
         },
-        "dracoDecodeTimeMs": 9.37,
+        "dracoDecodeTimeMs": 9.27,
         "estimatedGpuMemoryBytes": 34672604,
         "estimatedGpuMemoryMb": 33.07
       },
@@ -597,7 +597,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.1175,
           "depth": 2.4
         },
-        "dracoDecodeTimeMs": 5.82,
+        "dracoDecodeTimeMs": 5.73,
         "estimatedGpuMemoryBytes": 9034818,
         "estimatedGpuMemoryMb": 8.62
       },
@@ -626,7 +626,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.1175,
           "depth": 2.3988
         },
-        "dracoDecodeTimeMs": 3.21,
+        "dracoDecodeTimeMs": 2.83,
         "estimatedGpuMemoryBytes": 2446300,
         "estimatedGpuMemoryMb": 2.33
       },
@@ -704,7 +704,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.2114,
           "depth": 2.366
         },
-        "dracoDecodeTimeMs": 17.69,
+        "dracoDecodeTimeMs": 17.52,
         "estimatedGpuMemoryBytes": 47054846,
         "estimatedGpuMemoryMb": 44.87
       },
@@ -733,7 +733,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.2055,
           "depth": 2.3631
         },
-        "dracoDecodeTimeMs": 11.07,
+        "dracoDecodeTimeMs": 10.13,
         "estimatedGpuMemoryBytes": 12021066,
         "estimatedGpuMemoryMb": 11.46
       },
@@ -762,7 +762,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.1921,
           "depth": 2.1627
         },
-        "dracoDecodeTimeMs": 4.44,
+        "dracoDecodeTimeMs": 4.24,
         "estimatedGpuMemoryBytes": 3169634,
         "estimatedGpuMemoryMb": 3.02
       },
@@ -840,7 +840,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.211,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 3.52,
+        "dracoDecodeTimeMs": 3.44,
         "estimatedGpuMemoryBytes": 33857786,
         "estimatedGpuMemoryMb": 32.29
       },
@@ -869,7 +869,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.211,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 2.9,
+        "dracoDecodeTimeMs": 2.87,
         "estimatedGpuMemoryBytes": 8698250,
         "estimatedGpuMemoryMb": 8.3
       },
@@ -977,7 +977,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.211,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 2.91,
+        "dracoDecodeTimeMs": 2.79,
         "estimatedGpuMemoryBytes": 33857786,
         "estimatedGpuMemoryMb": 32.29
       },
@@ -1006,7 +1006,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.211,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 3.05,
+        "dracoDecodeTimeMs": 3.22,
         "estimatedGpuMemoryBytes": 8698250,
         "estimatedGpuMemoryMb": 8.3
       },
@@ -1035,7 +1035,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.211,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 4.15,
+        "dracoDecodeTimeMs": 3.31,
         "estimatedGpuMemoryBytes": 2408366,
         "estimatedGpuMemoryMb": 2.3
       },
@@ -1114,7 +1114,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.4613,
           "depth": 1.9752
         },
-        "dracoDecodeTimeMs": 14.1,
+        "dracoDecodeTimeMs": 14.29,
         "estimatedGpuMemoryBytes": 21933396,
         "estimatedGpuMemoryMb": 20.92
       },
@@ -1143,7 +1143,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.4013,
           "depth": 1.9511
         },
-        "dracoDecodeTimeMs": 8.34,
+        "dracoDecodeTimeMs": 8.27,
         "estimatedGpuMemoryBytes": 5652080,
         "estimatedGpuMemoryMb": 5.39
       },
@@ -1172,7 +1172,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.4013,
           "depth": 1.9464
         },
-        "dracoDecodeTimeMs": 4.54,
+        "dracoDecodeTimeMs": 4.66,
         "estimatedGpuMemoryBytes": 1598281,
         "estimatedGpuMemoryMb": 1.52
       },
@@ -1248,7 +1248,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.4784,
           "depth": 2.1984
         },
-        "dracoDecodeTimeMs": 14.59,
+        "dracoDecodeTimeMs": 15.42,
         "estimatedGpuMemoryBytes": 3169483,
         "estimatedGpuMemoryMb": 3.02
       },
@@ -1277,7 +1277,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.4784,
           "depth": 2.1968
         },
-        "dracoDecodeTimeMs": 7.12,
+        "dracoDecodeTimeMs": 7.51,
         "estimatedGpuMemoryBytes": 2311941,
         "estimatedGpuMemoryMb": 2.2
       },
@@ -1306,7 +1306,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.4735,
           "depth": 2.1898
         },
-        "dracoDecodeTimeMs": 4.09,
+        "dracoDecodeTimeMs": 4.64,
         "estimatedGpuMemoryBytes": 857881,
         "estimatedGpuMemoryMb": 0.82
       },
@@ -1383,7 +1383,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.3136,
           "depth": 2.1961
         },
-        "dracoDecodeTimeMs": 12.44,
+        "dracoDecodeTimeMs": 13.57,
         "estimatedGpuMemoryBytes": 17710977,
         "estimatedGpuMemoryMb": 16.89
       },
@@ -1412,7 +1412,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.3103,
           "depth": 2.1961
         },
-        "dracoDecodeTimeMs": 6.06,
+        "dracoDecodeTimeMs": 6.32,
         "estimatedGpuMemoryBytes": 4696797,
         "estimatedGpuMemoryMb": 4.48
       },
@@ -1441,7 +1441,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.2847,
           "depth": 2.1949
         },
-        "dracoDecodeTimeMs": 2.76,
+        "dracoDecodeTimeMs": 2.89,
         "estimatedGpuMemoryBytes": 1312279,
         "estimatedGpuMemoryMb": 1.25
       },
@@ -1519,7 +1519,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.0557,
           "depth": 2.3904
         },
-        "dracoDecodeTimeMs": 12.15,
+        "dracoDecodeTimeMs": 13.19,
         "estimatedGpuMemoryBytes": 6511033,
         "estimatedGpuMemoryMb": 6.21
       },
@@ -1548,7 +1548,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.0557,
           "depth": 2.3904
         },
-        "dracoDecodeTimeMs": 7.16,
+        "dracoDecodeTimeMs": 8.75,
         "estimatedGpuMemoryBytes": 1864535,
         "estimatedGpuMemoryMb": 1.78
       },
@@ -1577,7 +1577,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.0557,
           "depth": 2.3904
         },
-        "dracoDecodeTimeMs": 3.31,
+        "dracoDecodeTimeMs": 3.02,
         "estimatedGpuMemoryBytes": 542385,
         "estimatedGpuMemoryMb": 0.52
       },
@@ -1655,7 +1655,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.1184,
           "depth": 2.4
         },
-        "dracoDecodeTimeMs": 9.55,
+        "dracoDecodeTimeMs": 10.08,
         "estimatedGpuMemoryBytes": 34672604,
         "estimatedGpuMemoryMb": 33.07
       },
@@ -1684,7 +1684,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.1175,
           "depth": 2.4
         },
-        "dracoDecodeTimeMs": 5.56,
+        "dracoDecodeTimeMs": 5.75,
         "estimatedGpuMemoryBytes": 9034818,
         "estimatedGpuMemoryMb": 8.62
       },
@@ -1713,7 +1713,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.1175,
           "depth": 2.3988
         },
-        "dracoDecodeTimeMs": 2.85,
+        "dracoDecodeTimeMs": 3.49,
         "estimatedGpuMemoryBytes": 2446300,
         "estimatedGpuMemoryMb": 2.33
       },
@@ -1791,7 +1791,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.4613,
           "depth": 1.9752
         },
-        "dracoDecodeTimeMs": 14.53,
+        "dracoDecodeTimeMs": 16.9,
         "estimatedGpuMemoryBytes": 21933396,
         "estimatedGpuMemoryMb": 20.92
       },
@@ -1820,7 +1820,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.4013,
           "depth": 1.9511
         },
-        "dracoDecodeTimeMs": 8.23,
+        "dracoDecodeTimeMs": 8.58,
         "estimatedGpuMemoryBytes": 5652080,
         "estimatedGpuMemoryMb": 5.39
       },
@@ -1849,7 +1849,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.4013,
           "depth": 1.9464
         },
-        "dracoDecodeTimeMs": 4.2,
+        "dracoDecodeTimeMs": 3.87,
         "estimatedGpuMemoryBytes": 1598281,
         "estimatedGpuMemoryMb": 1.52
       },
@@ -1927,7 +1927,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.211,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 2.9,
+        "dracoDecodeTimeMs": 3.29,
         "estimatedGpuMemoryBytes": 33857786,
         "estimatedGpuMemoryMb": 32.29
       },
@@ -1956,7 +1956,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.211,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 2.93,
+        "dracoDecodeTimeMs": 2.87,
         "estimatedGpuMemoryBytes": 8698250,
         "estimatedGpuMemoryMb": 8.3
       },
@@ -1985,7 +1985,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.211,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 2.99,
+        "dracoDecodeTimeMs": 2.74,
         "estimatedGpuMemoryBytes": 2408366,
         "estimatedGpuMemoryMb": 2.3
       },
@@ -2061,7 +2061,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.4784,
           "depth": 2.1984
         },
-        "dracoDecodeTimeMs": 14.36,
+        "dracoDecodeTimeMs": 14.87,
         "estimatedGpuMemoryBytes": 3169483,
         "estimatedGpuMemoryMb": 3.02
       },
@@ -2090,7 +2090,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.4784,
           "depth": 2.1968
         },
-        "dracoDecodeTimeMs": 7.23,
+        "dracoDecodeTimeMs": 7.68,
         "estimatedGpuMemoryBytes": 2311941,
         "estimatedGpuMemoryMb": 2.2
       },
@@ -2119,7 +2119,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.4735,
           "depth": 2.1898
         },
-        "dracoDecodeTimeMs": 3.94,
+        "dracoDecodeTimeMs": 4.03,
         "estimatedGpuMemoryBytes": 857881,
         "estimatedGpuMemoryMb": 0.82
       },
@@ -2196,7 +2196,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.3136,
           "depth": 2.1961
         },
-        "dracoDecodeTimeMs": 12,
+        "dracoDecodeTimeMs": 11.94,
         "estimatedGpuMemoryBytes": 17710977,
         "estimatedGpuMemoryMb": 16.89
       },
@@ -2225,7 +2225,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.3103,
           "depth": 2.1961
         },
-        "dracoDecodeTimeMs": 5.83,
+        "dracoDecodeTimeMs": 6.02,
         "estimatedGpuMemoryBytes": 4696797,
         "estimatedGpuMemoryMb": 4.48
       },
@@ -2254,7 +2254,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.2847,
           "depth": 2.1949
         },
-        "dracoDecodeTimeMs": 3.31,
+        "dracoDecodeTimeMs": 2.81,
         "estimatedGpuMemoryBytes": 1312279,
         "estimatedGpuMemoryMb": 1.25
       },
@@ -2277,22 +2277,22 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "glossy-sauce",
       "fresh-vegetables"
     ],
-    "isSharedPlaceholder": true,
-    "authenticityClassification": "untextured-generic-placeholder",
-    "authenticityVerified": false,
-    "sourceBlendAsset": null,
+    "isSharedPlaceholder": false,
+    "authenticityClassification": "authentic-dedicated",
+    "authenticityVerified": true,
+    "sourceBlendAsset": "truffle_mushroom_risotto.blend",
     "plateDiameterCm": 19,
     "pbrMaterialAudit": {
       "zeroMetallicVerified": true,
       "roughnessRange": [
-        0.14,
-        0.58
+        0.22,
+        0.42
       ],
       "zeroEmissiveVerified": true,
-      "textureSlotsCount": 0
+      "textureSlotsCount": 4
     },
     "missingIngredientsOrLimitations": [
-      "Untextured procedural gourmet-wok-bowl placeholder (0 textures); dedicated Arborio risotto grain, shaved black truffle & parmesan crisp 3D model required"
+      "Physical caliper measurement on plated porcelain risotto bowl pending (scaleValidated: false)"
     ],
     "dimensionSource": "estimated-typical-portion",
     "dimensions": {
@@ -2300,103 +2300,103 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "depthCm": 19,
       "heightCm": 7
     },
-    "modelScaleFactor": 0.7787,
+    "modelScaleFactor": 0.095,
     "groundContactValidated": true,
-    "colorValidated": false,
+    "colorValidated": true,
     "scaleValidated": false,
     "canonicalOrigin": "footprint-centre-ground-contact",
     "profiles": {
       "high": {
-        "path": "/models/optimized/gourmet-wok-bowl-high.glb",
-        "sizeBytes": 18344,
-        "sizeKb": 17.91,
-        "triangleCount": 4896,
-        "vertexCount": 2839,
+        "path": "/models/optimized/truffle-mushroom-risotto-high.glb",
+        "sizeBytes": 153020,
+        "sizeKb": 149.43,
+        "triangleCount": 22840,
+        "vertexCount": 11472,
         "drawCalls": 4,
         "materialsCount": 4,
-        "texturesCount": 0,
+        "texturesCount": 4,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -0.122,
+            -1,
             0,
-            -0.122
+            -1
           ],
           "max": [
-            0.122,
-            0.0859,
-            0.122
+            1,
+            0.7368,
+            1
           ],
-          "width": 0.244,
-          "height": 0.0859,
-          "depth": 0.244
+          "width": 2,
+          "height": 0.7368,
+          "depth": 2
         },
-        "dracoDecodeTimeMs": 1.71,
-        "estimatedGpuMemoryBytes": 120224,
-        "estimatedGpuMemoryMb": 0.11
+        "dracoDecodeTimeMs": 4.65,
+        "estimatedGpuMemoryBytes": 5046834,
+        "estimatedGpuMemoryMb": 4.81
       },
       "balanced": {
-        "path": "/models/optimized/gourmet-wok-bowl-balanced.glb",
-        "sizeBytes": 11012,
-        "sizeKb": 10.75,
-        "triangleCount": 2100,
-        "vertexCount": 1308,
+        "path": "/models/optimized/truffle-mushroom-risotto-balanced.glb",
+        "sizeBytes": 124272,
+        "sizeKb": 121.36,
+        "triangleCount": 12560,
+        "vertexCount": 6332,
         "drawCalls": 4,
         "materialsCount": 4,
-        "texturesCount": 0,
+        "texturesCount": 4,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -0.122,
+            -1.0019,
             0,
-            -0.122
+            -1.0019
           ],
           "max": [
-            0.122,
-            0.0859,
-            0.122
+            1.0019,
+            0.737,
+            1.0019
           ],
-          "width": 0.244,
-          "height": 0.0859,
-          "depth": 0.244
+          "width": 2.0038,
+          "height": 0.737,
+          "depth": 2.0038
         },
-        "dracoDecodeTimeMs": 0.54,
-        "estimatedGpuMemoryBytes": 54456,
-        "estimatedGpuMemoryMb": 0.05
+        "dracoDecodeTimeMs": 2.86,
+        "estimatedGpuMemoryBytes": 4820674,
+        "estimatedGpuMemoryMb": 4.6
       },
       "ultraLight": {
-        "path": "/models/optimized/gourmet-wok-bowl-ultralight.glb",
-        "sizeBytes": 8328,
-        "sizeKb": 8.13,
-        "triangleCount": 1264,
-        "vertexCount": 829,
+        "path": "/models/optimized/truffle-mushroom-risotto-ultralight.glb",
+        "sizeBytes": 101744,
+        "sizeKb": 99.36,
+        "triangleCount": 6392,
+        "vertexCount": 3248,
         "drawCalls": 4,
         "materialsCount": 4,
-        "texturesCount": 0,
+        "texturesCount": 4,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -0.122,
+            -0.9971,
             0,
-            -0.122
+            -0.9971
           ],
           "max": [
-            0.122,
-            0.0859,
-            0.122
+            0.9959,
+            0.7373,
+            0.9971
           ],
-          "width": 0.244,
-          "height": 0.0859,
-          "depth": 0.244
+          "width": 1.9929,
+          "height": 0.7373,
+          "depth": 1.9941
         },
-        "dracoDecodeTimeMs": 0.39,
-        "estimatedGpuMemoryBytes": 34112,
-        "estimatedGpuMemoryMb": 0.03
+        "dracoDecodeTimeMs": 1.56,
+        "estimatedGpuMemoryBytes": 4684978,
+        "estimatedGpuMemoryMb": 4.47
       },
       "usdz": {
-        "path": "/models/optimized/gourmet-wok-bowl.usdz",
-        "sizeBytes": 175885,
-        "sizeKb": 171.76,
+        "path": "/models/optimized/truffle-mushroom-risotto.usdz",
+        "sizeBytes": 536053,
+        "sizeKb": 523.49,
         "format": "usdz",
         "validZip": true
       }
@@ -2412,22 +2412,22 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "grilled-meat",
       "glossy-sauce"
     ],
-    "isSharedPlaceholder": true,
-    "authenticityClassification": "untextured-generic-placeholder",
-    "authenticityVerified": false,
-    "sourceBlendAsset": null,
+    "isSharedPlaceholder": false,
+    "authenticityClassification": "authentic-dedicated",
+    "authenticityVerified": true,
+    "sourceBlendAsset": "butter_chicken_bao.blend",
     "plateDiameterCm": 18,
     "pbrMaterialAudit": {
       "zeroMetallicVerified": true,
       "roughnessRange": [
-        0.14,
-        0.58
+        0.2,
+        0.68
       ],
       "zeroEmissiveVerified": true,
-      "textureSlotsCount": 0
+      "textureSlotsCount": 4
     },
     "missingIngredientsOrLimitations": [
-      "Untextured procedural gourmet-wok-bowl placeholder (0 textures); dedicated folded lotus-leaf gua bao buns, pulled makhani chicken & pickled radish 3D model required"
+      "Physical caliper measurement on plated slate bao platter pending (scaleValidated: false)"
     ],
     "dimensionSource": "estimated-typical-portion",
     "dimensions": {
@@ -2435,103 +2435,103 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "depthCm": 18,
       "heightCm": 7
     },
-    "modelScaleFactor": 0.7377,
+    "modelScaleFactor": 0.09,
     "groundContactValidated": true,
-    "colorValidated": false,
+    "colorValidated": true,
     "scaleValidated": false,
     "canonicalOrigin": "footprint-centre-ground-contact",
     "profiles": {
       "high": {
-        "path": "/models/optimized/gourmet-wok-bowl-high.glb",
-        "sizeBytes": 18344,
-        "sizeKb": 17.91,
-        "triangleCount": 4896,
-        "vertexCount": 2839,
+        "path": "/models/optimized/butter-chicken-bao-high.glb",
+        "sizeBytes": 161756,
+        "sizeKb": 157.96,
+        "triangleCount": 32992,
+        "vertexCount": 16542,
         "drawCalls": 4,
         "materialsCount": 4,
-        "texturesCount": 0,
+        "texturesCount": 4,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -0.122,
+            -1,
             0,
-            -0.122
+            -1
           ],
           "max": [
-            0.122,
-            0.0859,
-            0.122
+            1,
+            0.7778,
+            1
           ],
-          "width": 0.244,
-          "height": 0.0859,
-          "depth": 0.244
+          "width": 2,
+          "height": 0.7778,
+          "depth": 2
         },
-        "dracoDecodeTimeMs": 1.21,
-        "estimatedGpuMemoryBytes": 120224,
-        "estimatedGpuMemoryMb": 0.11
+        "dracoDecodeTimeMs": 5.99,
+        "estimatedGpuMemoryBytes": 4221672,
+        "estimatedGpuMemoryMb": 4.03
       },
       "balanced": {
-        "path": "/models/optimized/gourmet-wok-bowl-balanced.glb",
-        "sizeBytes": 11012,
-        "sizeKb": 10.75,
-        "triangleCount": 2100,
-        "vertexCount": 1308,
+        "path": "/models/optimized/butter-chicken-bao-balanced.glb",
+        "sizeBytes": 118984,
+        "sizeKb": 116.2,
+        "triangleCount": 18144,
+        "vertexCount": 9118,
         "drawCalls": 4,
         "materialsCount": 4,
-        "texturesCount": 0,
+        "texturesCount": 4,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -0.122,
-            0,
-            -0.122
+            -1.0019,
+            -0.0002,
+            -1.0019
           ],
           "max": [
-            0.122,
-            0.0859,
-            0.122
+            1.0019,
+            0.7782,
+            1.0019
           ],
-          "width": 0.244,
-          "height": 0.0859,
-          "depth": 0.244
+          "width": 2.0037,
+          "height": 0.7784,
+          "depth": 2.0037
         },
-        "dracoDecodeTimeMs": 0.57,
-        "estimatedGpuMemoryBytes": 54456,
-        "estimatedGpuMemoryMb": 0.05
+        "dracoDecodeTimeMs": 3.84,
+        "estimatedGpuMemoryBytes": 3895016,
+        "estimatedGpuMemoryMb": 3.71
       },
       "ultraLight": {
-        "path": "/models/optimized/gourmet-wok-bowl-ultralight.glb",
-        "sizeBytes": 8328,
-        "sizeKb": 8.13,
-        "triangleCount": 1264,
-        "vertexCount": 829,
+        "path": "/models/optimized/butter-chicken-bao-ultralight.glb",
+        "sizeBytes": 84876,
+        "sizeKb": 82.89,
+        "triangleCount": 9236,
+        "vertexCount": 4664,
         "drawCalls": 4,
         "materialsCount": 4,
-        "texturesCount": 0,
+        "texturesCount": 4,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -0.122,
-            0,
-            -0.122
+            -1.0019,
+            -0.0005,
+            -1.0019
           ],
           "max": [
-            0.122,
-            0.0859,
-            0.122
+            1.0019,
+            0.7784,
+            1.0019
           ],
-          "width": 0.244,
-          "height": 0.0859,
-          "depth": 0.244
+          "width": 2.0037,
+          "height": 0.7788,
+          "depth": 2.0037
         },
-        "dracoDecodeTimeMs": 0.39,
-        "estimatedGpuMemoryBytes": 34112,
-        "estimatedGpuMemoryMb": 0.03
+        "dracoDecodeTimeMs": 2.07,
+        "estimatedGpuMemoryBytes": 3699040,
+        "estimatedGpuMemoryMb": 3.53
       },
       "usdz": {
-        "path": "/models/optimized/gourmet-wok-bowl.usdz",
-        "sizeBytes": 175885,
-        "sizeKb": 171.76,
+        "path": "/models/optimized/butter-chicken-bao.usdz",
+        "sizeBytes": 713005,
+        "sizeKb": 696.29,
         "format": "usdz",
         "validZip": true
       }
@@ -2547,22 +2547,22 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "melted-cheese",
       "fresh-vegetables"
     ],
-    "isSharedPlaceholder": true,
-    "authenticityClassification": "untextured-generic-placeholder",
-    "authenticityVerified": false,
-    "sourceBlendAsset": null,
+    "isSharedPlaceholder": false,
+    "authenticityClassification": "authentic-dedicated",
+    "authenticityVerified": true,
+    "sourceBlendAsset": "dahi_ke_kebab.blend",
     "plateDiameterCm": 22,
     "pbrMaterialAudit": {
       "zeroMetallicVerified": true,
       "roughnessRange": [
-        0.14,
-        0.58
+        0.2,
+        0.54
       ],
       "zeroEmissiveVerified": true,
-      "textureSlotsCount": 0
+      "textureSlotsCount": 3
     },
     "missingIngredientsOrLimitations": [
-      "Untextured procedural gourmet-wok-bowl placeholder (0 textures); dedicated pan-seared hung-curd medallions, mint chutney ramekin & laccha onion 3D model required"
+      "Physical caliper measurement on plated oval kebab tasting platter pending (scaleValidated: false)"
     ],
     "dimensionSource": "estimated-typical-portion",
     "dimensions": {
@@ -2570,103 +2570,103 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "depthCm": 16,
       "heightCm": 4.5
     },
-    "modelScaleFactor": 0.9016,
+    "modelScaleFactor": 0.1,
     "groundContactValidated": true,
-    "colorValidated": false,
+    "colorValidated": true,
     "scaleValidated": false,
     "canonicalOrigin": "footprint-centre-ground-contact",
     "profiles": {
       "high": {
-        "path": "/models/optimized/gourmet-wok-bowl-high.glb",
-        "sizeBytes": 18344,
-        "sizeKb": 17.91,
-        "triangleCount": 4896,
-        "vertexCount": 2839,
-        "drawCalls": 4,
-        "materialsCount": 4,
-        "texturesCount": 0,
+        "path": "/models/optimized/dahi-ke-kebab-high.glb",
+        "sizeBytes": 61180,
+        "sizeKb": 59.75,
+        "triangleCount": 6092,
+        "vertexCount": 3062,
+        "drawCalls": 3,
+        "materialsCount": 3,
+        "texturesCount": 3,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -0.122,
+            -1.1,
             0,
-            -0.122
+            -0.7997
           ],
           "max": [
-            0.122,
-            0.0859,
-            0.122
+            1.1,
+            0.45,
+            0.7997
           ],
-          "width": 0.244,
-          "height": 0.0859,
-          "depth": 0.244
+          "width": 2.2,
+          "height": 0.45,
+          "depth": 1.5994
         },
-        "dracoDecodeTimeMs": 1.15,
-        "estimatedGpuMemoryBytes": 120224,
-        "estimatedGpuMemoryMb": 0.11
+        "dracoDecodeTimeMs": 1.31,
+        "estimatedGpuMemoryBytes": 2231161,
+        "estimatedGpuMemoryMb": 2.13
       },
       "balanced": {
-        "path": "/models/optimized/gourmet-wok-bowl-balanced.glb",
-        "sizeBytes": 11012,
-        "sizeKb": 10.75,
-        "triangleCount": 2100,
-        "vertexCount": 1308,
-        "drawCalls": 4,
-        "materialsCount": 4,
-        "texturesCount": 0,
+        "path": "/models/optimized/dahi-ke-kebab-balanced.glb",
+        "sizeBytes": 47512,
+        "sizeKb": 46.4,
+        "triangleCount": 3348,
+        "vertexCount": 1690,
+        "drawCalls": 3,
+        "materialsCount": 3,
+        "texturesCount": 3,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -0.122,
+            -1.102,
             0,
-            -0.122
+            -0.8012
           ],
           "max": [
-            0.122,
-            0.0859,
-            0.122
+            1.102,
+            0.4507,
+            0.8012
           ],
-          "width": 0.244,
-          "height": 0.0859,
-          "depth": 0.244
+          "width": 2.2041,
+          "height": 0.4507,
+          "depth": 1.6024
         },
-        "dracoDecodeTimeMs": 0.71,
-        "estimatedGpuMemoryBytes": 54456,
-        "estimatedGpuMemoryMb": 0.05
+        "dracoDecodeTimeMs": 0.72,
+        "estimatedGpuMemoryBytes": 2170793,
+        "estimatedGpuMemoryMb": 2.07
       },
       "ultraLight": {
-        "path": "/models/optimized/gourmet-wok-bowl-ultralight.glb",
-        "sizeBytes": 8328,
-        "sizeKb": 8.13,
-        "triangleCount": 1264,
-        "vertexCount": 829,
-        "drawCalls": 4,
-        "materialsCount": 4,
-        "texturesCount": 0,
+        "path": "/models/optimized/dahi-ke-kebab-ultralight.glb",
+        "sizeBytes": 40316,
+        "sizeKb": 39.37,
+        "triangleCount": 1704,
+        "vertexCount": 868,
+        "drawCalls": 3,
+        "materialsCount": 3,
+        "texturesCount": 3,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -0.122,
+            -1.102,
             0,
-            -0.122
+            -0.8012
           ],
           "max": [
-            0.122,
-            0.0859,
-            0.122
+            1.102,
+            0.4512,
+            0.8012
           ],
-          "width": 0.244,
-          "height": 0.0859,
-          "depth": 0.244
+          "width": 2.2041,
+          "height": 0.4512,
+          "depth": 1.6024
         },
-        "dracoDecodeTimeMs": 0.56,
-        "estimatedGpuMemoryBytes": 34112,
-        "estimatedGpuMemoryMb": 0.03
+        "dracoDecodeTimeMs": 0.43,
+        "estimatedGpuMemoryBytes": 2134625,
+        "estimatedGpuMemoryMb": 2.04
       },
       "usdz": {
-        "path": "/models/optimized/gourmet-wok-bowl.usdz",
-        "sizeBytes": 175885,
-        "sizeKb": 171.76,
+        "path": "/models/optimized/dahi-ke-kebab.usdz",
+        "sizeBytes": 161715,
+        "sizeKb": 157.92,
         "format": "usdz",
         "validZip": true
       }
@@ -2682,22 +2682,22 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "glossy-sauce",
       "fresh-vegetables"
     ],
-    "isSharedPlaceholder": true,
-    "authenticityClassification": "untextured-generic-placeholder",
-    "authenticityVerified": false,
-    "sourceBlendAsset": null,
+    "isSharedPlaceholder": false,
+    "authenticityClassification": "authentic-dedicated",
+    "authenticityVerified": true,
+    "sourceBlendAsset": "crispy_chilli_babycorn.blend",
     "plateDiameterCm": 20,
     "pbrMaterialAudit": {
       "zeroMetallicVerified": true,
       "roughnessRange": [
-        0.14,
-        0.58
+        0.24,
+        0.35
       ],
       "zeroEmissiveVerified": true,
-      "textureSlotsCount": 0
+      "textureSlotsCount": 3
     },
     "missingIngredientsOrLimitations": [
-      "Untextured procedural gourmet-wok-bowl placeholder (0 textures); dedicated tempura-battered baby corn ridges, bell pepper toss & spring onion 3D model required"
+      "Physical caliper measurement on plated shallow ceramic wok dish pending (scaleValidated: false)"
     ],
     "dimensionSource": "estimated-typical-portion",
     "dimensions": {
@@ -2705,103 +2705,103 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "depthCm": 20,
       "heightCm": 5.5
     },
-    "modelScaleFactor": 0.8197,
+    "modelScaleFactor": 0.1,
     "groundContactValidated": true,
-    "colorValidated": false,
+    "colorValidated": true,
     "scaleValidated": false,
     "canonicalOrigin": "footprint-centre-ground-contact",
     "profiles": {
       "high": {
-        "path": "/models/optimized/gourmet-wok-bowl-high.glb",
-        "sizeBytes": 18344,
-        "sizeKb": 17.91,
-        "triangleCount": 4896,
-        "vertexCount": 2839,
-        "drawCalls": 4,
-        "materialsCount": 4,
-        "texturesCount": 0,
+        "path": "/models/optimized/crispy-chilli-babycorn-high.glb",
+        "sizeBytes": 88880,
+        "sizeKb": 86.8,
+        "triangleCount": 13800,
+        "vertexCount": 6966,
+        "drawCalls": 3,
+        "materialsCount": 3,
+        "texturesCount": 3,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -0.122,
+            -1,
             0,
-            -0.122
+            -1
           ],
           "max": [
-            0.122,
-            0.0859,
-            0.122
+            1,
+            0.55,
+            1
           ],
-          "width": 0.244,
-          "height": 0.0859,
-          "depth": 0.244
+          "width": 2,
+          "height": 0.55,
+          "depth": 2
         },
-        "dracoDecodeTimeMs": 1.15,
-        "estimatedGpuMemoryBytes": 120224,
-        "estimatedGpuMemoryMb": 0.11
+        "dracoDecodeTimeMs": 2.99,
+        "estimatedGpuMemoryBytes": 2402337,
+        "estimatedGpuMemoryMb": 2.29
       },
       "balanced": {
-        "path": "/models/optimized/gourmet-wok-bowl-balanced.glb",
-        "sizeBytes": 11012,
-        "sizeKb": 10.75,
-        "triangleCount": 2100,
-        "vertexCount": 1308,
-        "drawCalls": 4,
-        "materialsCount": 4,
-        "texturesCount": 0,
+        "path": "/models/optimized/crispy-chilli-babycorn-balanced.glb",
+        "sizeBytes": 64828,
+        "sizeKb": 63.31,
+        "triangleCount": 7586,
+        "vertexCount": 3859,
+        "drawCalls": 3,
+        "materialsCount": 3,
+        "texturesCount": 3,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -0.122,
+            -1.0019,
             0,
-            -0.122
+            -1.0019
           ],
           "max": [
-            0.122,
-            0.0859,
-            0.122
+            1.0019,
+            0.548,
+            1.0019
           ],
-          "width": 0.244,
-          "height": 0.0859,
-          "depth": 0.244
+          "width": 2.0037,
+          "height": 0.548,
+          "depth": 2.0037
         },
-        "dracoDecodeTimeMs": 0.61,
-        "estimatedGpuMemoryBytes": 54456,
-        "estimatedGpuMemoryMb": 0.05
+        "dracoDecodeTimeMs": 1.82,
+        "estimatedGpuMemoryBytes": 2265629,
+        "estimatedGpuMemoryMb": 2.16
       },
       "ultraLight": {
-        "path": "/models/optimized/gourmet-wok-bowl-ultralight.glb",
-        "sizeBytes": 8328,
-        "sizeKb": 8.13,
-        "triangleCount": 1264,
-        "vertexCount": 829,
-        "drawCalls": 4,
-        "materialsCount": 4,
-        "texturesCount": 0,
+        "path": "/models/optimized/crispy-chilli-babycorn-ultralight.glb",
+        "sizeBytes": 48424,
+        "sizeKb": 47.29,
+        "triangleCount": 3862,
+        "vertexCount": 1997,
+        "drawCalls": 3,
+        "materialsCount": 3,
+        "texturesCount": 3,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -0.122,
+            -1.0019,
             0,
-            -0.122
+            -1.0019
           ],
           "max": [
-            0.122,
-            0.0859,
-            0.122
+            1.0019,
+            0.5484,
+            1.0019
           ],
-          "width": 0.244,
-          "height": 0.0859,
-          "depth": 0.244
+          "width": 2.0037,
+          "height": 0.5484,
+          "depth": 2.0037
         },
-        "dracoDecodeTimeMs": 0.38,
-        "estimatedGpuMemoryBytes": 34112,
-        "estimatedGpuMemoryMb": 0.03
+        "dracoDecodeTimeMs": 1.02,
+        "estimatedGpuMemoryBytes": 2183701,
+        "estimatedGpuMemoryMb": 2.08
       },
       "usdz": {
-        "path": "/models/optimized/gourmet-wok-bowl.usdz",
-        "sizeBytes": 175885,
-        "sizeKb": 171.76,
+        "path": "/models/optimized/crispy-chilli-babycorn.usdz",
+        "sizeBytes": 314387,
+        "sizeKb": 307.02,
         "format": "usdz",
         "validZip": true
       }
@@ -2817,22 +2817,22 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "glossy-sauce",
       "fresh-vegetables"
     ],
-    "isSharedPlaceholder": true,
-    "authenticityClassification": "untextured-generic-placeholder",
-    "authenticityVerified": false,
-    "sourceBlendAsset": null,
+    "isSharedPlaceholder": false,
+    "authenticityClassification": "authentic-dedicated",
+    "authenticityVerified": true,
+    "sourceBlendAsset": "dim_sum_platter.blend",
     "plateDiameterCm": 22,
     "pbrMaterialAudit": {
       "zeroMetallicVerified": true,
       "roughnessRange": [
         0.14,
-        0.58
+        0.68
       ],
       "zeroEmissiveVerified": true,
-      "textureSlotsCount": 0
+      "textureSlotsCount": 4
     },
     "missingIngredientsOrLimitations": [
-      "Untextured procedural gourmet-wok-bowl placeholder (0 textures); dedicated bamboo steamer basket, translucent pleated crystal dumplings & chili oil dipping saucer required"
+      "Physical caliper measurement on bamboo dim sum steamer basket pending (scaleValidated: false)"
     ],
     "dimensionSource": "estimated-typical-portion",
     "dimensions": {
@@ -2840,103 +2840,103 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "depthCm": 21,
       "heightCm": 6
     },
-    "modelScaleFactor": 0.8607,
+    "modelScaleFactor": 0.0955,
     "groundContactValidated": true,
-    "colorValidated": false,
+    "colorValidated": true,
     "scaleValidated": false,
     "canonicalOrigin": "footprint-centre-ground-contact",
     "profiles": {
       "high": {
-        "path": "/models/optimized/gourmet-wok-bowl-high.glb",
-        "sizeBytes": 18344,
-        "sizeKb": 17.91,
-        "triangleCount": 4896,
-        "vertexCount": 2839,
+        "path": "/models/optimized/dim-sum-platter-high.glb",
+        "sizeBytes": 97892,
+        "sizeKb": 95.6,
+        "triangleCount": 10240,
+        "vertexCount": 5138,
         "drawCalls": 4,
         "materialsCount": 4,
-        "texturesCount": 0,
+        "texturesCount": 4,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -0.122,
+            -1.1,
             0,
-            -0.122
+            -1.1
           ],
           "max": [
-            0.122,
-            0.0859,
-            0.122
+            1.1,
+            0.65,
+            1.1
           ],
-          "width": 0.244,
-          "height": 0.0859,
-          "depth": 0.244
+          "width": 2.2,
+          "height": 0.65,
+          "depth": 2.2
         },
-        "dracoDecodeTimeMs": 1.15,
-        "estimatedGpuMemoryBytes": 120224,
-        "estimatedGpuMemoryMb": 0.11
+        "dracoDecodeTimeMs": 2.02,
+        "estimatedGpuMemoryBytes": 4768546,
+        "estimatedGpuMemoryMb": 4.55
       },
       "balanced": {
-        "path": "/models/optimized/gourmet-wok-bowl-balanced.glb",
-        "sizeBytes": 11012,
-        "sizeKb": 10.75,
-        "triangleCount": 2100,
-        "vertexCount": 1308,
+        "path": "/models/optimized/dim-sum-platter-balanced.glb",
+        "sizeBytes": 83492,
+        "sizeKb": 81.54,
+        "triangleCount": 5628,
+        "vertexCount": 2832,
         "drawCalls": 4,
         "materialsCount": 4,
-        "texturesCount": 0,
+        "texturesCount": 4,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -0.122,
+            -1.1021,
             0,
-            -0.122
+            -1.1021
           ],
           "max": [
-            0.122,
-            0.0859,
-            0.122
+            1.1021,
+            0.65,
+            1.1021
           ],
-          "width": 0.244,
-          "height": 0.0859,
-          "depth": 0.244
+          "width": 2.2041,
+          "height": 0.65,
+          "depth": 2.2041
         },
-        "dracoDecodeTimeMs": 0.57,
-        "estimatedGpuMemoryBytes": 54456,
-        "estimatedGpuMemoryMb": 0.05
+        "dracoDecodeTimeMs": 1.27,
+        "estimatedGpuMemoryBytes": 4667082,
+        "estimatedGpuMemoryMb": 4.45
       },
       "ultraLight": {
-        "path": "/models/optimized/gourmet-wok-bowl-ultralight.glb",
-        "sizeBytes": 8328,
-        "sizeKb": 8.13,
-        "triangleCount": 1264,
-        "vertexCount": 829,
+        "path": "/models/optimized/dim-sum-platter-ultralight.glb",
+        "sizeBytes": 73200,
+        "sizeKb": 71.48,
+        "triangleCount": 2864,
+        "vertexCount": 1450,
         "drawCalls": 4,
         "materialsCount": 4,
-        "texturesCount": 0,
+        "texturesCount": 4,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -0.122,
+            -1.1021,
             0,
-            -0.122
+            -1.0954
           ],
           "max": [
-            0.122,
-            0.0859,
-            0.122
+            1.0954,
+            0.65,
+            1.1021
           ],
-          "width": 0.244,
-          "height": 0.0859,
-          "depth": 0.244
+          "width": 2.1975,
+          "height": 0.65,
+          "depth": 2.1975
         },
-        "dracoDecodeTimeMs": 0.42,
-        "estimatedGpuMemoryBytes": 34112,
-        "estimatedGpuMemoryMb": 0.03
+        "dracoDecodeTimeMs": 0.77,
+        "estimatedGpuMemoryBytes": 4606274,
+        "estimatedGpuMemoryMb": 4.39
       },
       "usdz": {
-        "path": "/models/optimized/gourmet-wok-bowl.usdz",
-        "sizeBytes": 175885,
-        "sizeKb": 171.76,
+        "path": "/models/optimized/dim-sum-platter.usdz",
+        "sizeBytes": 269775,
+        "sizeKb": 263.45,
         "format": "usdz",
         "validZip": true
       }
@@ -2952,10 +2952,10 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "glass-container",
       "fresh-vegetables"
     ],
-    "isSharedPlaceholder": true,
-    "authenticityClassification": "untextured-generic-placeholder",
-    "authenticityVerified": false,
-    "sourceBlendAsset": null,
+    "isSharedPlaceholder": false,
+    "authenticityClassification": "authentic-dedicated",
+    "authenticityVerified": true,
+    "sourceBlendAsset": "kaffir_lime_mocktail.blend",
     "plateDiameterCm": 8.5,
     "pbrMaterialAudit": {
       "zeroMetallicVerified": true,
@@ -2964,10 +2964,10 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
         0.36
       ],
       "zeroEmissiveVerified": true,
-      "textureSlotsCount": 0
+      "textureSlotsCount": 3
     },
     "missingIngredientsOrLimitations": [
-      "Untextured procedural kaffir-lime-mocktail glass placeholder (0 textures); dedicated highball refractive glass, crushed ice cubes, kaffir lime wheels & mint sprig required"
+      "Physical caliper measurement on crystal Collins highball tumbler pending (scaleValidated: false)"
     ],
     "dimensionSource": "estimated-typical-portion",
     "dimensions": {
@@ -2975,103 +2975,103 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "depthCm": 8,
       "heightCm": 16
     },
-    "modelScaleFactor": 0.5882,
+    "modelScaleFactor": 0.0941,
     "groundContactValidated": true,
-    "colorValidated": false,
+    "colorValidated": true,
     "scaleValidated": false,
     "canonicalOrigin": "footprint-centre-ground-contact",
     "profiles": {
       "high": {
         "path": "/models/optimized/kaffir-lime-mocktail-high.glb",
-        "sizeBytes": 9164,
-        "sizeKb": 8.95,
-        "triangleCount": 960,
-        "vertexCount": 884,
-        "drawCalls": 4,
-        "materialsCount": 4,
-        "texturesCount": 0,
+        "sizeBytes": 53984,
+        "sizeKb": 52.72,
+        "triangleCount": 3620,
+        "vertexCount": 1830,
+        "drawCalls": 3,
+        "materialsCount": 3,
+        "texturesCount": 3,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -0.068,
+            -0.425,
             0,
-            -0.068
+            -0.3839
           ],
           "max": [
-            0.068,
-            0.166,
-            0.068
+            0.425,
+            1.65,
+            0.3839
           ],
-          "width": 0.136,
-          "height": 0.166,
-          "depth": 0.136
+          "width": 0.85,
+          "height": 1.65,
+          "depth": 0.7678
         },
-        "dracoDecodeTimeMs": 0.37,
-        "estimatedGpuMemoryBytes": 34048,
-        "estimatedGpuMemoryMb": 0.03
+        "dracoDecodeTimeMs": 1.12,
+        "estimatedGpuMemoryBytes": 3225219,
+        "estimatedGpuMemoryMb": 3.08
       },
       "balanced": {
         "path": "/models/optimized/kaffir-lime-mocktail-balanced.glb",
-        "sizeBytes": 7084,
-        "sizeKb": 6.92,
-        "triangleCount": 560,
-        "vertexCount": 524,
-        "drawCalls": 4,
-        "materialsCount": 4,
-        "texturesCount": 0,
+        "sizeBytes": 47316,
+        "sizeKb": 46.21,
+        "triangleCount": 1988,
+        "vertexCount": 1014,
+        "drawCalls": 3,
+        "materialsCount": 3,
+        "texturesCount": 3,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -0.068,
+            -0.425,
             0,
-            -0.068
+            -0.3841
           ],
           "max": [
-            0.068,
-            0.166,
-            0.068
+            0.425,
+            1.65,
+            0.3841
           ],
-          "width": 0.136,
-          "height": 0.166,
-          "depth": 0.136
+          "width": 0.85,
+          "height": 1.65,
+          "depth": 0.7681
         },
-        "dracoDecodeTimeMs": 0.24,
-        "estimatedGpuMemoryBytes": 20128,
-        "estimatedGpuMemoryMb": 0.02
+        "dracoDecodeTimeMs": 0.56,
+        "estimatedGpuMemoryBytes": 3189315,
+        "estimatedGpuMemoryMb": 3.04
       },
       "ultraLight": {
         "path": "/models/optimized/kaffir-lime-mocktail-ultralight.glb",
-        "sizeBytes": 5864,
-        "sizeKb": 5.73,
-        "triangleCount": 320,
-        "vertexCount": 308,
-        "drawCalls": 4,
-        "materialsCount": 4,
-        "texturesCount": 0,
+        "sizeBytes": 43284,
+        "sizeKb": 42.27,
+        "triangleCount": 1010,
+        "vertexCount": 525,
+        "drawCalls": 3,
+        "materialsCount": 3,
+        "texturesCount": 3,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -0.068,
+            -0.4246,
             0,
-            -0.068
+            -0.3832
           ],
           "max": [
-            0.068,
-            0.166,
-            0.068
+            0.4253,
+            1.65,
+            0.3818
           ],
-          "width": 0.136,
-          "height": 0.166,
-          "depth": 0.136
+          "width": 0.8499,
+          "height": 1.65,
+          "depth": 0.765
         },
-        "dracoDecodeTimeMs": 0.21,
-        "estimatedGpuMemoryBytes": 11776,
-        "estimatedGpuMemoryMb": 0.01
+        "dracoDecodeTimeMs": 0.33,
+        "estimatedGpuMemoryBytes": 3167799,
+        "estimatedGpuMemoryMb": 3.02
       },
       "usdz": {
         "path": "/models/optimized/kaffir-lime-mocktail.usdz",
-        "sizeBytes": 80187,
-        "sizeKb": 78.31,
+        "sizeBytes": 110371,
+        "sizeKb": 107.78,
         "format": "usdz",
         "validZip": true
       }
@@ -3142,7 +3142,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.211,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 2.87,
+        "dracoDecodeTimeMs": 2.84,
         "estimatedGpuMemoryBytes": 33857786,
         "estimatedGpuMemoryMb": 32.29
       },
@@ -3171,7 +3171,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.211,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 2.78,
+        "dracoDecodeTimeMs": 3.03,
         "estimatedGpuMemoryBytes": 8698250,
         "estimatedGpuMemoryMb": 8.3
       },
@@ -3200,7 +3200,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.211,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 2.76,
+        "dracoDecodeTimeMs": 2.75,
         "estimatedGpuMemoryBytes": 2408366,
         "estimatedGpuMemoryMb": 2.3
       },
