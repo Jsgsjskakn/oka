@@ -71,7 +71,7 @@ test('Phase 7.1 — Task 1: Six Dedicated Blender 5.2 Models & Multi-LOD GLB/USD
 });
 
 test('Phase 7.1 — Task 2 & Task 3: 23-Dish Catalog Audit & Physical Scale Honesty', async (t) => {
-  await t.test('Zero untextured placeholders remain (14 authentic-dedicated, 2 duplicate-primary, 4 same-family, 3 cross-recipe, 0 untextured)', () => {
+  await t.test('All 23/23 dishes are authentic-dedicated with zero placeholders or stand-ins', () => {
     const counts = {
       'authentic-dedicated': 0,
       'duplicate-primary-mesh': 0,
@@ -84,10 +84,10 @@ test('Phase 7.1 — Task 2 & Task 3: 23-Dish Catalog Audit & Physical Scale Hone
       assert.equal(entry.scaleValidated, false, `${entry.dishId} must keep scaleValidated: false`);
       assert.ok(entry.profiles.high.texturesCount > 0, `${entry.dishId} must have embedded textures`);
     }
-    assert.equal(counts['authentic-dedicated'], 14);
-    assert.equal(counts['duplicate-primary-mesh'], 2);
-    assert.equal(counts['same-family-variant'], 4);
-    assert.equal(counts['cross-recipe-stand-in'], 3);
+    assert.equal(counts['authentic-dedicated'], 23);
+    assert.equal(counts['duplicate-primary-mesh'], 0);
+    assert.equal(counts['same-family-variant'], 0);
+    assert.equal(counts['cross-recipe-stand-in'], 0);
     assert.equal(counts['untextured-generic-placeholder'], 0);
   });
 

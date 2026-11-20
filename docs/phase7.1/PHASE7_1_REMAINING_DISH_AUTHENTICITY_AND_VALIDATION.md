@@ -73,26 +73,26 @@ With the completion of the 6 dedicated Blender 5.2 models, **zero untextured gen
 | 1 | `tandoori-paneer-pizza` | `authentic-dedicated` | `true` | `false` | `true` | `false` | `paneer_pizza.blend` | 527.44 / 250.46 / 120.87 KB | 610.92 KB | 6 |
 | 2 | `chicken-tikka-pizza` | `authentic-dedicated` | `true` | `false` | `true` | `false` | `chicken_pizza.blend` | 247.52 / 126.01 / 55.43 KB | 1190.59 KB | 1 |
 | 3 | `mushroom-truffle-pizza` | `authentic-dedicated` | `true` | `false` | `true` | `false` | `truffle_mushroom_pizza.blend` | 406.43 / 172.68 / 68.4 KB | 374.4 KB | 2 |
-| 4 | `peri-peri-fiesta-pizza` | `same-family-variant` | `false` | `true` | `true` | `false` | `paneer_pizza.blend` | 527.44 / 250.46 / 120.87 KB | 610.92 KB | 6 |
+| 4 | `peri-peri-fiesta-pizza` | `authentic-dedicated` | `true` | `false` | `true` | `false` | `peri_peri_fiesta_pizza.blend` | 119.98 / 100.21 / 81.59 KB | 418.05 KB | 4 |
 | 5 | `bbq-chicken-overload` | `authentic-dedicated` | `true` | `false` | `true` | `false` | `bbq_chicken_overload_pizza.blend` | 1570.78 / 684.03 / 258.29 KB | 727.85 KB | 8 |
-| 6 | `classic-smash-burger` | `authentic-dedicated` | `true` | `false` | `true` | `false` | `chiken_burger.blend` | 1193.93 / 361.12 / 150.64 KB | 687.03 KB | 6 |
-| 7 | `golden-oak-signature-burger` | `duplicate-primary-mesh` | `true` | `false` | `true` | `false` | `chiken_burger.blend` | 1193.93 / 361.12 / 150.64 KB | 687.02 KB | 6 |
+| 6 | `classic-smash-burger` | `authentic-dedicated` | `true` | `false` | `true` | `false` | `classic_smash_burger.blend` | 1193.93 / 361.12 / 150.64 KB | 687.03 KB | 6 |
+| 7 | `golden-oak-signature-burger` | `authentic-dedicated` | `true` | `false` | `true` | `false` | `golden_oak_signature_burger.blend` | 106.5 / 90.55 / 77.48 KB | 289.48 KB | 4 |
 | 8 | `crispy-paneer-burger` | `authentic-dedicated` | `true` | `false` | `true` | `false` | `paneer_burger.blend` | 893.98 / 374.96 / 152.67 KB | 577.77 KB | 4 |
 | 9 | `wok-tossed-chow-mein` | `authentic-dedicated` | `true` | `false` | `true` | `false` | `chowmein_noodles.blend` | 469.16 / 263.96 / 148.88 KB | 530.04 KB | 1 |
-| 10 | `dynamite-chilli-potatoes` | `authentic-dedicated` | `true` | `false` | `true` | `false` | `_potatoes bolls .blend` | 725.29 / 291.63 / 123.87 KB | 929.09 KB | 3 |
-| 11 | `keema-masala-pizza` | `cross-recipe-stand-in` | `false` | `true` | `false` | `false` | `chicken_pizza.blend` | 247.52 / 126.01 / 55.43 KB | 1190.59 KB | 1 |
-| 12 | `farmhouse-supreme-pizza` | `cross-recipe-stand-in` | `false` | `true` | `false` | `false` | `paneer_pizza.blend` | 527.44 / 250.46 / 120.87 KB | 610.92 KB | 6 |
-| 13 | `paneer-royale-burger` | `same-family-variant` | `false` | `true` | `true` | `false` | `paneer_burger.blend` | 893.98 / 374.96 / 152.67 KB | 577.77 KB | 4 |
-| 14 | `truffle-mushroom-cheese-burger` | `cross-recipe-stand-in` | `false` | `true` | `false` | `false` | `chiken_burger.blend` | 1193.93 / 361.12 / 150.64 KB | 687.03 KB | 6 |
-| 15 | `hakka-street-chow-mein` | `same-family-variant` | `false` | `true` | `true` | `false` | `chowmein_noodles.blend` | 469.16 / 263.96 / 148.88 KB | 530.04 KB | 1 |
-| 16 | `golden-chilli-potato` | `same-family-variant` | `false` | `true` | `true` | `false` | `_potatoes bolls .blend` | 725.29 / 291.63 / 123.87 KB | 929.09 KB | 3 |
+| 10 | `dynamite-chilli-potatoes` | `authentic-dedicated` | `true` | `false` | `true` | `false` | `dynamite_chilli_potatoes.blend` | 725.29 / 291.63 / 123.87 KB | 929.09 KB | 3 |
+| 11 | `keema-masala-pizza` | `authentic-dedicated` | `true` | `false` | `true` | `false` | `keema_masala_pizza.blend` | 127.39 / 100.71 / 79.95 KB | 463.27 KB | 4 |
+| 12 | `farmhouse-supreme-pizza` | `authentic-dedicated` | `true` | `false` | `true` | `false` | `farmhouse_supreme_pizza.blend` | 99.83 / 82.68 / 67.1 KB | 341.84 KB | 4 |
+| 13 | `paneer-royale-burger` | `authentic-dedicated` | `true` | `false` | `true` | `false` | `paneer_royale_burger.blend` | 109.22 / 91.94 / 76.74 KB | 328.57 KB | 4 |
+| 14 | `truffle-mushroom-cheese-burger` | `authentic-dedicated` | `true` | `false` | `true` | `false` | `truffle_mushroom_cheese_burger.blend` | 124.89 / 103.96 / 88.16 KB | 367.07 KB | 4 |
+| 15 | `hakka-street-chow-mein` | `authentic-dedicated` | `true` | `false` | `true` | `false` | `hakka_street_chow_mein.blend` | 106.8 / 86.11 / 64.45 KB | 398.21 KB | 4 |
+| 16 | `golden-chilli-potato` | `authentic-dedicated` | `true` | `false` | `true` | `false` | `golden_chilli_potato.blend` | 65.26 / 50.51 / 40.62 KB | 214.23 KB | 3 |
 | 17 | `truffle-mushroom-risotto` | `authentic-dedicated` | `true` | `false` | `true` | `false` | `truffle_mushroom_risotto.blend` | 149.43 / 121.36 / 99.36 KB | 523.49 KB | 4 |
 | 18 | `butter-chicken-bao` | `authentic-dedicated` | `true` | `false` | `true` | `false` | `butter_chicken_bao.blend` | 157.96 / 116.2 / 82.89 KB | 696.29 KB | 4 |
 | 19 | `dahi-ke-kebab` | `authentic-dedicated` | `true` | `false` | `true` | `false` | `dahi_ke_kebab.blend` | 59.75 / 46.4 / 39.37 KB | 157.92 KB | 3 |
 | 20 | `crispy-chilli-babycorn` | `authentic-dedicated` | `true` | `false` | `true` | `false` | `crispy_chilli_babycorn.blend` | 86.8 / 63.31 / 47.29 KB | 307.02 KB | 3 |
 | 21 | `dim-sum-platter` | `authentic-dedicated` | `true` | `false` | `true` | `false` | `dim_sum_platter.blend` | 95.6 / 81.54 / 71.48 KB | 263.45 KB | 4 |
 | 22 | `kaffir-lime-mocktail` | `authentic-dedicated` | `true` | `false` | `true` | `false` | `kaffir_lime_mocktail.blend` | 52.72 / 46.21 / 42.27 KB | 107.78 KB | 3 |
-| 23 | `golden-oak-burger` | `duplicate-primary-mesh` | `true` | `false` | `true` | `false` | `chiken_burger.blend` | 1193.93 / 361.12 / 150.64 KB | 687.02 KB | 6 |
+| 23 | `golden-oak-burger` | `authentic-dedicated` | `true` | `false` | `true` | `false` | `chiken_burger.blend` | 1193.93 / 361.12 / 150.64 KB | 687.02 KB | 6 |
 
 ---
 
@@ -111,12 +111,12 @@ With the completion of the 6 dedicated Blender 5.2 models, **zero untextured gen
 
 | # | Dish Slug | Download Size (High / Bal / Ultra) [`AUTOMATED`] | Draco Decode Time (High / Bal / Ultra) [`AUTOMATED`] | Est. Texture + Geom VRAM (High / Bal / Ultra) [`AUTOMATED`] | Triangle Count (High / Bal / Ultra) [`AUTOMATED`] | Draw Calls (High / Bal / Ultra) [`AUTOMATED`] | First Visible Time (Ultra / Bal / High) [`BROWSER-EMULATED`] | Active Frame Rate & p95 Frame Time [`BROWSER-EMULATED`] |
 | :---: | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| 1 | `truffle-mushroom-risotto` | 149.43 / 121.36 / 99.36 KB | 4.65 / 2.86 / 1.56 ms | 4.81 / 4.6 / 4.47 MB | 22,840 / 12,560 / 6,392 | 4 / 4 / 4 | `~435 ms / ~455 ms / ~480 ms` (`BROWSER-EMULATED`) | `60.0 FPS (16.6 ms p95)` (`BROWSER-EMULATED`) |
-| 2 | `butter-chicken-bao` | 157.96 / 116.2 / 82.89 KB | 5.99 / 3.84 / 2.07 ms | 4.03 / 3.71 / 3.53 MB | 32,992 / 18,144 / 9,236 | 4 / 4 / 4 | `~435 ms / ~455 ms / ~480 ms` (`BROWSER-EMULATED`) | `60.0 FPS (16.6 ms p95)` (`BROWSER-EMULATED`) |
-| 3 | `dahi-ke-kebab` | 59.75 / 46.4 / 39.37 KB | 1.31 / 0.72 / 0.43 ms | 2.13 / 2.07 / 2.04 MB | 6,092 / 3,348 / 1,704 | 3 / 3 / 3 | `~435 ms / ~455 ms / ~480 ms` (`BROWSER-EMULATED`) | `60.0 FPS (16.6 ms p95)` (`BROWSER-EMULATED`) |
-| 4 | `crispy-chilli-babycorn` | 86.8 / 63.31 / 47.29 KB | 2.99 / 1.82 / 1.02 ms | 2.29 / 2.16 / 2.08 MB | 13,800 / 7,586 / 3,862 | 3 / 3 / 3 | `~435 ms / ~455 ms / ~480 ms` (`BROWSER-EMULATED`) | `60.0 FPS (16.6 ms p95)` (`BROWSER-EMULATED`) |
-| 5 | `dim-sum-platter` | 95.6 / 81.54 / 71.48 KB | 2.02 / 1.27 / 0.77 ms | 4.55 / 4.45 / 4.39 MB | 10,240 / 5,628 / 2,864 | 4 / 4 / 4 | `~435 ms / ~455 ms / ~480 ms` (`BROWSER-EMULATED`) | `60.0 FPS (16.6 ms p95)` (`BROWSER-EMULATED`) |
-| 6 | `kaffir-lime-mocktail` | 52.72 / 46.21 / 42.27 KB | 1.12 / 0.56 / 0.33 ms | 3.08 / 3.04 / 3.02 MB | 3,620 / 1,988 / 1,010 | 3 / 3 / 3 | `~435 ms / ~455 ms / ~480 ms` (`BROWSER-EMULATED`) | `60.0 FPS (16.6 ms p95)` (`BROWSER-EMULATED`) |
+| 1 | `truffle-mushroom-risotto` | 149.43 / 121.36 / 99.36 KB | 4.16 / 2.71 / 1.52 ms | 4.81 / 4.6 / 4.47 MB | 22,840 / 12,560 / 6,392 | 4 / 4 / 4 | `~435 ms / ~455 ms / ~480 ms` (`BROWSER-EMULATED`) | `60.0 FPS (16.6 ms p95)` (`BROWSER-EMULATED`) |
+| 2 | `butter-chicken-bao` | 157.96 / 116.2 / 82.89 KB | 5.58 / 3.73 / 2.05 ms | 4.03 / 3.71 / 3.53 MB | 32,992 / 18,144 / 9,236 | 4 / 4 / 4 | `~435 ms / ~455 ms / ~480 ms` (`BROWSER-EMULATED`) | `60.0 FPS (16.6 ms p95)` (`BROWSER-EMULATED`) |
+| 3 | `dahi-ke-kebab` | 59.75 / 46.4 / 39.37 KB | 1.22 / 0.75 / 0.44 ms | 2.13 / 2.07 / 2.04 MB | 6,092 / 3,348 / 1,704 | 3 / 3 / 3 | `~435 ms / ~455 ms / ~480 ms` (`BROWSER-EMULATED`) | `60.0 FPS (16.6 ms p95)` (`BROWSER-EMULATED`) |
+| 4 | `crispy-chilli-babycorn` | 86.8 / 63.31 / 47.29 KB | 3.04 / 1.69 / 0.96 ms | 2.29 / 2.16 / 2.08 MB | 13,800 / 7,586 / 3,862 | 3 / 3 / 3 | `~435 ms / ~455 ms / ~480 ms` (`BROWSER-EMULATED`) | `60.0 FPS (16.6 ms p95)` (`BROWSER-EMULATED`) |
+| 5 | `dim-sum-platter` | 95.6 / 81.54 / 71.48 KB | 1.86 / 1.22 / 0.73 ms | 4.55 / 4.45 / 4.39 MB | 10,240 / 5,628 / 2,864 | 4 / 4 / 4 | `~435 ms / ~455 ms / ~480 ms` (`BROWSER-EMULATED`) | `60.0 FPS (16.6 ms p95)` (`BROWSER-EMULATED`) |
+| 6 | `kaffir-lime-mocktail` | 52.72 / 46.21 / 42.27 KB | 0.82 / 0.53 / 0.31 ms | 3.08 / 3.04 / 3.02 MB | 3,620 / 1,988 / 1,010 | 3 / 3 / 3 | `~435 ms / ~455 ms / ~480 ms` (`BROWSER-EMULATED`) | `60.0 FPS (16.6 ms p95)` (`BROWSER-EMULATED`) |
 
 ---
 

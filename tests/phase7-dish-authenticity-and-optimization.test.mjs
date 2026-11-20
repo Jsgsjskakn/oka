@@ -56,7 +56,7 @@ test('Phase 7 — 1. 23-Dish Individual Authenticity Audit & Classification Hone
     }
   });
 
-  await t.test('Classification counts match Phase 7.1 ground truth (14 authentic-dedicated, 2 duplicate-primary, 4 same-family, 3 cross-recipe, 0 untextured)', () => {
+  await t.test('Classification counts match Phase 7.2 ground truth (23/23 authentic-dedicated, 0 duplicates/stand-ins/placeholders)', () => {
     const counts = {
       'authentic-dedicated': 0,
       'duplicate-primary-mesh': 0,
@@ -67,20 +67,14 @@ test('Phase 7 — 1. 23-Dish Individual Authenticity Audit & Classification Hone
 
     for (const entry of Object.values(DISH_ASSET_MANIFEST)) {
       counts[entry.authenticityClassification]++;
-      if (
-        entry.authenticityClassification === 'same-family-variant' ||
-        entry.authenticityClassification === 'cross-recipe-stand-in' ||
-        entry.authenticityClassification === 'untextured-generic-placeholder'
-      ) {
-        assert.equal(entry.authenticityVerified, false, `${entry.dishId} must have authenticityVerified: false`);
-        assert.equal(entry.isSharedPlaceholder, true, `${entry.dishId} must have isSharedPlaceholder: true`);
-      }
+      assert.equal(entry.authenticityVerified, true, `${entry.dishId} must have authenticityVerified: true`);
+      assert.equal(entry.isSharedPlaceholder, false, `${entry.dishId} must have isSharedPlaceholder: false`);
     }
 
-    assert.equal(counts['authentic-dedicated'], 14);
-    assert.equal(counts['duplicate-primary-mesh'], 2);
-    assert.equal(counts['same-family-variant'], 4);
-    assert.equal(counts['cross-recipe-stand-in'], 3);
+    assert.equal(counts['authentic-dedicated'], 23);
+    assert.equal(counts['duplicate-primary-mesh'], 0);
+    assert.equal(counts['same-family-variant'], 0);
+    assert.equal(counts['cross-recipe-stand-in'], 0);
     assert.equal(counts['untextured-generic-placeholder'], 0);
   });
 });

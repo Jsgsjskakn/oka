@@ -241,18 +241,30 @@ test('Phase 6 Sign-Off — 2. Defect P6-01 Verification (Scale & Color Validatio
     }
   });
 
-  await t.test('Cross-recipe stand-in dishes have colorValidated: false', () => {
-    const crossRecipeStandIns = [
+  await t.test('Cross-recipe stand-in guard & Phase 7.2 reconstructed dishes verification', () => {
+    for (const entry of Object.values(DISH_ASSET_MANIFEST)) {
+      if (entry.authenticityClassification === 'cross-recipe-stand-in') {
+        assert.equal(entry.colorValidated, false, `Cross-recipe stand-in dish ${entry.dishId} must have colorValidated: false`);
+        assert.equal(entry.isSharedPlaceholder, true, `Stand-in dish ${entry.dishId} must have isSharedPlaceholder: true`);
+      }
+    }
+
+    const phase72ReconstructedDishes = [
+      'peri-peri-fiesta-pizza',
+      'paneer-royale-burger',
+      'hakka-street-chow-mein',
+      'golden-chilli-potato',
       'keema-masala-pizza',
       'farmhouse-supreme-pizza',
       'truffle-mushroom-cheese-burger',
     ];
 
-    for (const slug of crossRecipeStandIns) {
+    for (const slug of phase72ReconstructedDishes) {
       const entry = DISH_ASSET_MANIFEST[slug];
       assert.ok(entry, `Entry must exist for ${slug}`);
-      assert.equal(entry.colorValidated, false, `Cross-recipe stand-in dish ${slug} must have colorValidated: false`);
-      assert.equal(entry.isSharedPlaceholder, true, `Stand-in dish ${slug} must have isSharedPlaceholder: true`);
+      assert.equal(entry.colorValidated, true, `Phase 7.2 dedicated Blender dish ${slug} must have colorValidated: true`);
+      assert.equal(entry.isSharedPlaceholder, false, `Phase 7.2 dedicated Blender dish ${slug} must have isSharedPlaceholder: false`);
+      assert.ok(entry.profiles.high.texturesCount >= 3, `Phase 7.2 dedicated dish ${slug} must have >= 3 embedded textures`);
     }
   });
 

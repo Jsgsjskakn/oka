@@ -98,7 +98,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
   "tandoori-paneer-pizza": {
     "dishId": "tandoori-paneer-pizza",
     "modelName": "3D Interactive Model Showcase [Prototype Asset]",
-    "assetVersion": "2.1.0",
+    "assetVersion": "2.2.0",
     "units": "meters",
     "culinaryCategory": "melted-cheese",
     "secondaryCategories": [
@@ -160,7 +160,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.1184,
           "depth": 2.4
         },
-        "dracoDecodeTimeMs": 18.79,
+        "dracoDecodeTimeMs": 18.06,
         "estimatedGpuMemoryBytes": 34672604,
         "estimatedGpuMemoryMb": 33.07
       },
@@ -218,7 +218,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.1175,
           "depth": 2.3988
         },
-        "dracoDecodeTimeMs": 3.01,
+        "dracoDecodeTimeMs": 2.96,
         "estimatedGpuMemoryBytes": 2446300,
         "estimatedGpuMemoryMb": 2.33
       },
@@ -234,7 +234,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
   "chicken-tikka-pizza": {
     "dishId": "chicken-tikka-pizza",
     "modelName": "3D Interactive Model Showcase [Prototype Asset]",
-    "assetVersion": "2.1.0",
+    "assetVersion": "2.2.0",
     "units": "meters",
     "culinaryCategory": "grilled-meat",
     "secondaryCategories": [
@@ -296,7 +296,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.0557,
           "depth": 2.3904
         },
-        "dracoDecodeTimeMs": 14,
+        "dracoDecodeTimeMs": 13.81,
         "estimatedGpuMemoryBytes": 6511033,
         "estimatedGpuMemoryMb": 6.21
       },
@@ -325,7 +325,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.0557,
           "depth": 2.3904
         },
-        "dracoDecodeTimeMs": 7.85,
+        "dracoDecodeTimeMs": 7.09,
         "estimatedGpuMemoryBytes": 1864535,
         "estimatedGpuMemoryMb": 1.78
       },
@@ -354,7 +354,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.0557,
           "depth": 2.3904
         },
-        "dracoDecodeTimeMs": 3.13,
+        "dracoDecodeTimeMs": 3,
         "estimatedGpuMemoryBytes": 542385,
         "estimatedGpuMemoryMb": 0.52
       },
@@ -370,7 +370,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
   "mushroom-truffle-pizza": {
     "dishId": "mushroom-truffle-pizza",
     "modelName": "3D Interactive Model Showcase [Prototype Asset]",
-    "assetVersion": "2.1.0",
+    "assetVersion": "2.2.0",
     "units": "meters",
     "culinaryCategory": "melted-cheese",
     "secondaryCategories": [
@@ -432,7 +432,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.0555,
           "depth": 2.3904
         },
-        "dracoDecodeTimeMs": 6.83,
+        "dracoDecodeTimeMs": 6.78,
         "estimatedGpuMemoryBytes": 11888934,
         "estimatedGpuMemoryMb": 11.34
       },
@@ -461,7 +461,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.0552,
           "depth": 2.3903
         },
-        "dracoDecodeTimeMs": 3.68,
+        "dracoDecodeTimeMs": 3.61,
         "estimatedGpuMemoryBytes": 3177570,
         "estimatedGpuMemoryMb": 3.03
       },
@@ -490,7 +490,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.055,
           "depth": 2.3903
         },
-        "dracoDecodeTimeMs": 1.66,
+        "dracoDecodeTimeMs": 1.67,
         "estimatedGpuMemoryBytes": 891130,
         "estimatedGpuMemoryMb": 0.85
       },
@@ -506,7 +506,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
   "peri-peri-fiesta-pizza": {
     "dishId": "peri-peri-fiesta-pizza",
     "modelName": "3D Interactive Model Showcase [Prototype Asset]",
-    "assetVersion": "2.1.0",
+    "assetVersion": "2.2.0",
     "units": "meters",
     "culinaryCategory": "melted-cheese",
     "secondaryCategories": [
@@ -514,22 +514,22 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "glossy-sauce",
       "fresh-vegetables"
     ],
-    "isSharedPlaceholder": true,
-    "authenticityClassification": "same-family-variant",
-    "authenticityVerified": false,
-    "sourceBlendAsset": "paneer_pizza.blend",
+    "isSharedPlaceholder": false,
+    "authenticityClassification": "authentic-dedicated",
+    "authenticityVerified": true,
+    "sourceBlendAsset": "peri_peri_fiesta_pizza.blend",
     "plateDiameterCm": 30,
     "pbrMaterialAudit": {
       "zeroMetallicVerified": true,
       "roughnessRange": [
-        0.22,
+        0.24,
         0.72
       ],
       "zeroEmissiveVerified": true,
-      "textureSlotsCount": 6
+      "textureSlotsCount": 4
     },
     "missingIngredientsOrLimitations": [
-      "Reuses tandoori-paneer-pizza geometry/textures; dedicated peri-peri chicken/chili ring & sweet corn topping scan required"
+      "Physical caliper measurement on plated 12-inch peri-peri fiesta pizza sample pending (scaleValidated: false)"
     ],
     "dimensionSource": "estimated-typical-portion",
     "dimensions": {
@@ -544,96 +544,96 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
     "canonicalOrigin": "footprint-centre-ground-contact",
     "profiles": {
       "high": {
-        "path": "/models/optimized/tandoori-paneer-pizza-high.glb",
-        "sizeBytes": 540100,
-        "sizeKb": 527.44,
-        "triangleCount": 43531,
-        "vertexCount": 27043,
-        "drawCalls": 11,
-        "materialsCount": 11,
-        "texturesCount": 6,
+        "path": "/models/optimized/peri-peri-fiesta-pizza-high.glb",
+        "sizeBytes": 122860,
+        "sizeKb": 119.98,
+        "triangleCount": 17088,
+        "vertexCount": 8628,
+        "drawCalls": 4,
+        "materialsCount": 4,
+        "texturesCount": 4,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -1.1992,
+            -1.2,
             0,
             -1.2
           ],
           "max": [
-            1.1992,
-            0.1184,
+            1.2,
+            0.28,
             1.2
           ],
-          "width": 2.3984,
-          "height": 0.1184,
+          "width": 2.4,
+          "height": 0.28,
           "depth": 2.4
         },
-        "dracoDecodeTimeMs": 9.27,
-        "estimatedGpuMemoryBytes": 34672604,
-        "estimatedGpuMemoryMb": 33.07
+        "dracoDecodeTimeMs": 3.19,
+        "estimatedGpuMemoryBytes": 4921314,
+        "estimatedGpuMemoryMb": 4.69
       },
       "balanced": {
-        "path": "/models/optimized/tandoori-paneer-pizza-balanced.glb",
-        "sizeBytes": 256468,
-        "sizeKb": 250.46,
-        "triangleCount": 22548,
-        "vertexCount": 16032,
-        "drawCalls": 11,
-        "materialsCount": 11,
-        "texturesCount": 6,
+        "path": "/models/optimized/peri-peri-fiesta-pizza-balanced.glb",
+        "sizeBytes": 102620,
+        "sizeKb": 100.21,
+        "triangleCount": 9394,
+        "vertexCount": 4781,
+        "drawCalls": 4,
+        "materialsCount": 4,
+        "texturesCount": 4,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -1.1992,
-            0.0001,
-            -1.2
+            -1.2022,
+            0,
+            -1.2022
           ],
           "max": [
-            1.1992,
-            0.1177,
-            1.2
+            1.2022,
+            0.28,
+            1.2022
           ],
-          "width": 2.3984,
-          "height": 0.1175,
-          "depth": 2.4
+          "width": 2.4044,
+          "height": 0.28,
+          "depth": 2.4044
         },
-        "dracoDecodeTimeMs": 5.73,
-        "estimatedGpuMemoryBytes": 9034818,
-        "estimatedGpuMemoryMb": 8.62
+        "dracoDecodeTimeMs": 2.13,
+        "estimatedGpuMemoryBytes": 4752046,
+        "estimatedGpuMemoryMb": 4.53
       },
       "ultraLight": {
-        "path": "/models/optimized/tandoori-paneer-pizza-ultralight.glb",
-        "sizeBytes": 123768,
-        "sizeKb": 120.87,
-        "triangleCount": 9981,
-        "vertexCount": 9056,
-        "drawCalls": 11,
-        "materialsCount": 11,
-        "texturesCount": 6,
+        "path": "/models/optimized/peri-peri-fiesta-pizza-ultralight.glb",
+        "sizeBytes": 83548,
+        "sizeKb": 81.59,
+        "triangleCount": 4780,
+        "vertexCount": 2474,
+        "drawCalls": 4,
+        "materialsCount": 4,
+        "texturesCount": 4,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -1.1992,
-            0.0001,
-            -1.2
+            -1.2022,
+            0,
+            -1.2022
           ],
           "max": [
-            1.1992,
-            0.1177,
-            1.1988
+            1.2022,
+            0.2803,
+            1.2022
           ],
-          "width": 2.3984,
-          "height": 0.1175,
-          "depth": 2.3988
+          "width": 2.4044,
+          "height": 0.2803,
+          "depth": 2.4044
         },
-        "dracoDecodeTimeMs": 2.83,
-        "estimatedGpuMemoryBytes": 2446300,
-        "estimatedGpuMemoryMb": 2.33
+        "dracoDecodeTimeMs": 1.21,
+        "estimatedGpuMemoryBytes": 4650538,
+        "estimatedGpuMemoryMb": 4.44
       },
       "usdz": {
-        "path": "/models/optimized/tandoori-paneer-pizza.usdz",
-        "sizeBytes": 625578,
-        "sizeKb": 610.92,
+        "path": "/models/optimized/peri-peri-fiesta-pizza.usdz",
+        "sizeBytes": 428079,
+        "sizeKb": 418.05,
         "format": "usdz",
         "validZip": true
       }
@@ -642,7 +642,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
   "bbq-chicken-overload": {
     "dishId": "bbq-chicken-overload",
     "modelName": "3D Interactive Model Showcase [Prototype Asset]",
-    "assetVersion": "2.1.0",
+    "assetVersion": "2.2.0",
     "units": "meters",
     "culinaryCategory": "grilled-meat",
     "secondaryCategories": [
@@ -704,7 +704,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.2114,
           "depth": 2.366
         },
-        "dracoDecodeTimeMs": 17.52,
+        "dracoDecodeTimeMs": 16.72,
         "estimatedGpuMemoryBytes": 47054846,
         "estimatedGpuMemoryMb": 44.87
       },
@@ -733,7 +733,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.2055,
           "depth": 2.3631
         },
-        "dracoDecodeTimeMs": 10.13,
+        "dracoDecodeTimeMs": 9.95,
         "estimatedGpuMemoryBytes": 12021066,
         "estimatedGpuMemoryMb": 11.46
       },
@@ -762,7 +762,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.1921,
           "depth": 2.1627
         },
-        "dracoDecodeTimeMs": 4.24,
+        "dracoDecodeTimeMs": 4.25,
         "estimatedGpuMemoryBytes": 3169634,
         "estimatedGpuMemoryMb": 3.02
       },
@@ -778,7 +778,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
   "classic-smash-burger": {
     "dishId": "classic-smash-burger",
     "modelName": "3D Interactive Model Showcase [Prototype Asset]",
-    "assetVersion": "2.1.0",
+    "assetVersion": "2.2.0",
     "units": "meters",
     "culinaryCategory": "grilled-meat",
     "secondaryCategories": [
@@ -789,7 +789,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
     "isSharedPlaceholder": false,
     "authenticityClassification": "authentic-dedicated",
     "authenticityVerified": true,
-    "sourceBlendAsset": "chiken_burger.blend",
+    "sourceBlendAsset": "classic_smash_burger.blend",
     "plateDiameterCm": 18,
     "pbrMaterialAudit": {
       "zeroMetallicVerified": true,
@@ -801,7 +801,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "textureSlotsCount": 6
     },
     "missingIngredientsOrLimitations": [
-      "Shares base burger mesh topology with golden-oak-signature-burger; physical caliper measurement pending (scaleValidated: false)"
+      "Physical caliper measurement on plated smash burger sample pending (scaleValidated: false)"
     ],
     "dimensionSource": "estimated-typical-portion",
     "dimensions": {
@@ -840,7 +840,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.211,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 3.44,
+        "dracoDecodeTimeMs": 2.84,
         "estimatedGpuMemoryBytes": 33857786,
         "estimatedGpuMemoryMb": 32.29
       },
@@ -869,7 +869,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.211,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 2.87,
+        "dracoDecodeTimeMs": 2.86,
         "estimatedGpuMemoryBytes": 8698250,
         "estimatedGpuMemoryMb": 8.3
       },
@@ -898,7 +898,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.211,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 2.82,
+        "dracoDecodeTimeMs": 2.96,
         "estimatedGpuMemoryBytes": 2408366,
         "estimatedGpuMemoryMb": 2.3
       },
@@ -914,7 +914,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
   "golden-oak-signature-burger": {
     "dishId": "golden-oak-signature-burger",
     "modelName": "Golden Oak Signature Burger",
-    "assetVersion": "2.1.0",
+    "assetVersion": "2.2.0",
     "units": "meters",
     "culinaryCategory": "grilled-meat",
     "secondaryCategories": [
@@ -924,21 +924,21 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "fresh-vegetables"
     ],
     "isSharedPlaceholder": false,
-    "authenticityClassification": "duplicate-primary-mesh",
+    "authenticityClassification": "authentic-dedicated",
     "authenticityVerified": true,
-    "sourceBlendAsset": "chiken_burger.blend",
+    "sourceBlendAsset": "golden_oak_signature_burger.blend",
     "plateDiameterCm": 18,
     "pbrMaterialAudit": {
       "zeroMetallicVerified": true,
       "roughnessRange": [
-        0.38,
-        0.44
+        0.26,
+        0.46
       ],
       "zeroEmissiveVerified": true,
-      "textureSlotsCount": 6
+      "textureSlotsCount": 4
     },
     "missingIngredientsOrLimitations": [
-      "Uses identical geometry/textures as classic-smash-burger (scaled to 12.5cm vs 12.0cm); dedicated double-patty / gold-leaf garnish sculpture pending"
+      "Physical caliper measurement on plated double-patty signature burger sample pending (scaleValidated: false)"
     ],
     "dimensionSource": "estimated-typical-portion",
     "dimensions": {
@@ -953,96 +953,96 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
     "canonicalOrigin": "footprint-centre-ground-contact",
     "profiles": {
       "high": {
-        "path": "/models/optimized/golden-oak-burger-high.glb",
-        "sizeBytes": 1222580,
-        "sizeKb": 1193.93,
-        "triangleCount": 12080,
-        "vertexCount": 7477,
-        "drawCalls": 13,
-        "materialsCount": 3,
-        "texturesCount": 6,
+        "path": "/models/optimized/golden-oak-signature-burger-high.glb",
+        "sizeBytes": 109060,
+        "sizeKb": 106.5,
+        "triangleCount": 11632,
+        "vertexCount": 5828,
+        "drawCalls": 4,
+        "materialsCount": 4,
+        "texturesCount": 4,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -0.9881,
+            -1,
             0,
             -1
           ],
           "max": [
-            0.9881,
-            1.211,
+            1,
+            1.68,
             1
           ],
-          "width": 1.9763,
-          "height": 1.211,
+          "width": 2,
+          "height": 1.68,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 2.79,
-        "estimatedGpuMemoryBytes": 33857786,
-        "estimatedGpuMemoryMb": 32.29
+        "dracoDecodeTimeMs": 2.25,
+        "estimatedGpuMemoryBytes": 4798978,
+        "estimatedGpuMemoryMb": 4.58
       },
       "balanced": {
-        "path": "/models/optimized/golden-oak-burger-balanced.glb",
-        "sizeBytes": 369784,
-        "sizeKb": 361.12,
-        "triangleCount": 12080,
-        "vertexCount": 7477,
-        "drawCalls": 13,
-        "materialsCount": 3,
-        "texturesCount": 6,
+        "path": "/models/optimized/golden-oak-signature-burger-balanced.glb",
+        "sizeBytes": 92720,
+        "sizeKb": 90.55,
+        "triangleCount": 6394,
+        "vertexCount": 3209,
+        "drawCalls": 4,
+        "materialsCount": 4,
+        "texturesCount": 4,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -0.9881,
+            -0.9989,
             0,
-            -1
+            -0.9984
           ],
           "max": [
-            0.9881,
-            1.211,
-            1
+            0.9989,
+            1.68,
+            0.9989
           ],
-          "width": 1.9763,
-          "height": 1.211,
-          "depth": 2
+          "width": 1.9978,
+          "height": 1.68,
+          "depth": 1.9973
         },
-        "dracoDecodeTimeMs": 3.22,
-        "estimatedGpuMemoryBytes": 8698250,
-        "estimatedGpuMemoryMb": 8.3
+        "dracoDecodeTimeMs": 1.53,
+        "estimatedGpuMemoryBytes": 4683742,
+        "estimatedGpuMemoryMb": 4.47
       },
       "ultraLight": {
-        "path": "/models/optimized/golden-oak-burger-ultralight.glb",
-        "sizeBytes": 154260,
-        "sizeKb": 150.64,
-        "triangleCount": 12080,
-        "vertexCount": 7477,
-        "drawCalls": 13,
-        "materialsCount": 3,
-        "texturesCount": 6,
+        "path": "/models/optimized/golden-oak-signature-burger-ultralight.glb",
+        "sizeBytes": 79336,
+        "sizeKb": 77.48,
+        "triangleCount": 3254,
+        "vertexCount": 1639,
+        "drawCalls": 4,
+        "materialsCount": 4,
+        "texturesCount": 4,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -0.9881,
+            -0.9988,
             0,
-            -1
+            -0.9982
           ],
           "max": [
-            0.9881,
-            1.211,
-            1
+            0.999,
+            1.68,
+            0.9979
           ],
-          "width": 1.9763,
-          "height": 1.211,
-          "depth": 2
+          "width": 1.9977,
+          "height": 1.68,
+          "depth": 1.996
         },
-        "dracoDecodeTimeMs": 3.31,
-        "estimatedGpuMemoryBytes": 2408366,
-        "estimatedGpuMemoryMb": 2.3
+        "dracoDecodeTimeMs": 0.89,
+        "estimatedGpuMemoryBytes": 4614662,
+        "estimatedGpuMemoryMb": 4.4
       },
       "usdz": {
-        "path": "/models/optimized/golden-oak-burger.usdz",
-        "sizeBytes": 703512,
-        "sizeKb": 687.02,
+        "path": "/models/optimized/golden-oak-signature-burger.usdz",
+        "sizeBytes": 296428,
+        "sizeKb": 289.48,
         "format": "usdz",
         "validZip": true
       }
@@ -1051,7 +1051,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
   "crispy-paneer-burger": {
     "dishId": "crispy-paneer-burger",
     "modelName": "3D Interactive Model Showcase [Prototype Asset]",
-    "assetVersion": "2.1.0",
+    "assetVersion": "2.2.0",
     "units": "meters",
     "culinaryCategory": "fried-food",
     "secondaryCategories": [
@@ -1114,7 +1114,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.4613,
           "depth": 1.9752
         },
-        "dracoDecodeTimeMs": 14.29,
+        "dracoDecodeTimeMs": 14.05,
         "estimatedGpuMemoryBytes": 21933396,
         "estimatedGpuMemoryMb": 20.92
       },
@@ -1143,7 +1143,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.4013,
           "depth": 1.9511
         },
-        "dracoDecodeTimeMs": 8.27,
+        "dracoDecodeTimeMs": 8.89,
         "estimatedGpuMemoryBytes": 5652080,
         "estimatedGpuMemoryMb": 5.39
       },
@@ -1172,7 +1172,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.4013,
           "depth": 1.9464
         },
-        "dracoDecodeTimeMs": 4.66,
+        "dracoDecodeTimeMs": 4.27,
         "estimatedGpuMemoryBytes": 1598281,
         "estimatedGpuMemoryMb": 1.52
       },
@@ -1188,7 +1188,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
   "wok-tossed-chow-mein": {
     "dishId": "wok-tossed-chow-mein",
     "modelName": "3D Interactive Model Showcase [Prototype Asset]",
-    "assetVersion": "2.1.0",
+    "assetVersion": "2.2.0",
     "units": "meters",
     "culinaryCategory": "glossy-sauce",
     "secondaryCategories": [
@@ -1248,7 +1248,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.4784,
           "depth": 2.1984
         },
-        "dracoDecodeTimeMs": 15.42,
+        "dracoDecodeTimeMs": 15.03,
         "estimatedGpuMemoryBytes": 3169483,
         "estimatedGpuMemoryMb": 3.02
       },
@@ -1277,7 +1277,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.4784,
           "depth": 2.1968
         },
-        "dracoDecodeTimeMs": 7.51,
+        "dracoDecodeTimeMs": 7.4,
         "estimatedGpuMemoryBytes": 2311941,
         "estimatedGpuMemoryMb": 2.2
       },
@@ -1306,7 +1306,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.4735,
           "depth": 2.1898
         },
-        "dracoDecodeTimeMs": 4.64,
+        "dracoDecodeTimeMs": 3.98,
         "estimatedGpuMemoryBytes": 857881,
         "estimatedGpuMemoryMb": 0.82
       },
@@ -1322,7 +1322,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
   "dynamite-chilli-potatoes": {
     "dishId": "dynamite-chilli-potatoes",
     "modelName": "3D Interactive Model Showcase [Prototype Asset]",
-    "assetVersion": "2.1.0",
+    "assetVersion": "2.2.0",
     "units": "meters",
     "culinaryCategory": "fried-food",
     "secondaryCategories": [
@@ -1332,7 +1332,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
     "isSharedPlaceholder": false,
     "authenticityClassification": "authentic-dedicated",
     "authenticityVerified": true,
-    "sourceBlendAsset": "_potatoes bolls .blend",
+    "sourceBlendAsset": "dynamite_chilli_potatoes.blend",
     "plateDiameterCm": 20,
     "pbrMaterialAudit": {
       "zeroMetallicVerified": true,
@@ -1383,7 +1383,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.3136,
           "depth": 2.1961
         },
-        "dracoDecodeTimeMs": 13.57,
+        "dracoDecodeTimeMs": 12.05,
         "estimatedGpuMemoryBytes": 17710977,
         "estimatedGpuMemoryMb": 16.89
       },
@@ -1412,7 +1412,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.3103,
           "depth": 2.1961
         },
-        "dracoDecodeTimeMs": 6.32,
+        "dracoDecodeTimeMs": 6.1,
         "estimatedGpuMemoryBytes": 4696797,
         "estimatedGpuMemoryMb": 4.48
       },
@@ -1441,7 +1441,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.2847,
           "depth": 2.1949
         },
-        "dracoDecodeTimeMs": 2.89,
+        "dracoDecodeTimeMs": 2.95,
         "estimatedGpuMemoryBytes": 1312279,
         "estimatedGpuMemoryMb": 1.25
       },
@@ -1457,7 +1457,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
   "keema-masala-pizza": {
     "dishId": "keema-masala-pizza",
     "modelName": "3D Interactive Model Showcase [Prototype Asset]",
-    "assetVersion": "2.1.0",
+    "assetVersion": "2.2.0",
     "units": "meters",
     "culinaryCategory": "grilled-meat",
     "secondaryCategories": [
@@ -1465,158 +1465,22 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "bread-crust",
       "fresh-vegetables"
     ],
-    "isSharedPlaceholder": true,
-    "authenticityClassification": "cross-recipe-stand-in",
-    "authenticityVerified": false,
-    "sourceBlendAsset": "chicken_pizza.blend",
+    "isSharedPlaceholder": false,
+    "authenticityClassification": "authentic-dedicated",
+    "authenticityVerified": true,
+    "sourceBlendAsset": "keema_masala_pizza.blend",
     "plateDiameterCm": 30,
     "pbrMaterialAudit": {
       "zeroMetallicVerified": true,
       "roughnessRange": [
-        0.36,
-        0.75
+        0.28,
+        0.74
       ],
       "zeroEmissiveVerified": true,
-      "textureSlotsCount": 1
+      "textureSlotsCount": 4
     },
     "missingIngredientsOrLimitations": [
-      "Cross-recipe stand-in borrowing chicken-tikka-pizza asset; dedicated minced spiced lamb keema & green chili topping model required"
-    ],
-    "dimensionSource": "estimated-typical-portion",
-    "dimensions": {
-      "widthCm": 30,
-      "depthCm": 30,
-      "heightCm": 3.5
-    },
-    "modelScaleFactor": 0.1253,
-    "groundContactValidated": true,
-    "colorValidated": false,
-    "scaleValidated": false,
-    "canonicalOrigin": "footprint-centre-ground-contact",
-    "profiles": {
-      "high": {
-        "path": "/models/optimized/chicken-tikka-pizza-high.glb",
-        "sizeBytes": 253464,
-        "sizeKb": 247.52,
-        "triangleCount": 40959,
-        "vertexCount": 21071,
-        "drawCalls": 2,
-        "materialsCount": 2,
-        "texturesCount": 1,
-        "hasUVs": true,
-        "bboxM": {
-          "min": [
-            -1.1977,
-            -0.0016,
-            -1.195
-          ],
-          "max": [
-            1.1965,
-            0.0541,
-            1.1953
-          ],
-          "width": 2.3942,
-          "height": 0.0557,
-          "depth": 2.3904
-        },
-        "dracoDecodeTimeMs": 13.19,
-        "estimatedGpuMemoryBytes": 6511033,
-        "estimatedGpuMemoryMb": 6.21
-      },
-      "balanced": {
-        "path": "/models/optimized/chicken-tikka-pizza-balanced.glb",
-        "sizeBytes": 129032,
-        "sizeKb": 126.01,
-        "triangleCount": 20480,
-        "vertexCount": 10747,
-        "drawCalls": 2,
-        "materialsCount": 2,
-        "texturesCount": 1,
-        "hasUVs": true,
-        "bboxM": {
-          "min": [
-            -1.1977,
-            -0.0016,
-            -1.195
-          ],
-          "max": [
-            1.1965,
-            0.0541,
-            1.1953
-          ],
-          "width": 2.3942,
-          "height": 0.0557,
-          "depth": 2.3904
-        },
-        "dracoDecodeTimeMs": 8.75,
-        "estimatedGpuMemoryBytes": 1864535,
-        "estimatedGpuMemoryMb": 1.78
-      },
-      "ultraLight": {
-        "path": "/models/optimized/chicken-tikka-pizza-ultralight.glb",
-        "sizeBytes": 56760,
-        "sizeKb": 55.43,
-        "triangleCount": 8190,
-        "vertexCount": 4494,
-        "drawCalls": 2,
-        "materialsCount": 2,
-        "texturesCount": 1,
-        "hasUVs": true,
-        "bboxM": {
-          "min": [
-            -1.1977,
-            -0.0016,
-            -1.195
-          ],
-          "max": [
-            1.1965,
-            0.0541,
-            1.1953
-          ],
-          "width": 2.3942,
-          "height": 0.0557,
-          "depth": 2.3904
-        },
-        "dracoDecodeTimeMs": 3.02,
-        "estimatedGpuMemoryBytes": 542385,
-        "estimatedGpuMemoryMb": 0.52
-      },
-      "usdz": {
-        "path": "/models/optimized/chicken-tikka-pizza.usdz",
-        "sizeBytes": 1219165,
-        "sizeKb": 1190.59,
-        "format": "usdz",
-        "validZip": true
-      }
-    }
-  },
-  "farmhouse-supreme-pizza": {
-    "dishId": "farmhouse-supreme-pizza",
-    "modelName": "3D Interactive Model Showcase [Prototype Asset]",
-    "assetVersion": "2.1.0",
-    "units": "meters",
-    "culinaryCategory": "fresh-vegetables",
-    "secondaryCategories": [
-      "melted-cheese",
-      "bread-crust",
-      "glossy-sauce"
-    ],
-    "isSharedPlaceholder": true,
-    "authenticityClassification": "cross-recipe-stand-in",
-    "authenticityVerified": false,
-    "sourceBlendAsset": "paneer_pizza.blend",
-    "plateDiameterCm": 30,
-    "pbrMaterialAudit": {
-      "zeroMetallicVerified": true,
-      "roughnessRange": [
-        0.22,
-        0.72
-      ],
-      "zeroEmissiveVerified": true,
-      "textureSlotsCount": 6
-    },
-    "missingIngredientsOrLimitations": [
-      "Cross-recipe stand-in borrowing tandoori-paneer-pizza asset; dedicated black olive, baby corn & mushroom farmhouse topping model required"
+      "Physical caliper measurement on plated 12-inch keema masala pizza sample pending (scaleValidated: false)"
     ],
     "dimensionSource": "estimated-typical-portion",
     "dimensions": {
@@ -1626,101 +1490,237 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
     },
     "modelScaleFactor": 0.125,
     "groundContactValidated": true,
-    "colorValidated": false,
+    "colorValidated": true,
     "scaleValidated": false,
     "canonicalOrigin": "footprint-centre-ground-contact",
     "profiles": {
       "high": {
-        "path": "/models/optimized/tandoori-paneer-pizza-high.glb",
-        "sizeBytes": 540100,
-        "sizeKb": 527.44,
-        "triangleCount": 43531,
-        "vertexCount": 27043,
-        "drawCalls": 11,
-        "materialsCount": 11,
-        "texturesCount": 6,
+        "path": "/models/optimized/keema-masala-pizza-high.glb",
+        "sizeBytes": 130444,
+        "sizeKb": 127.39,
+        "triangleCount": 20224,
+        "vertexCount": 10196,
+        "drawCalls": 4,
+        "materialsCount": 4,
+        "texturesCount": 4,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -1.1992,
+            -1.2,
             0,
             -1.2
           ],
           "max": [
-            1.1992,
-            0.1184,
+            1.2,
+            0.28,
             1.2
           ],
-          "width": 2.3984,
-          "height": 0.1184,
+          "width": 2.4,
+          "height": 0.28,
           "depth": 2.4
         },
-        "dracoDecodeTimeMs": 10.08,
-        "estimatedGpuMemoryBytes": 34672604,
-        "estimatedGpuMemoryMb": 33.07
+        "dracoDecodeTimeMs": 3.78,
+        "estimatedGpuMemoryBytes": 4990306,
+        "estimatedGpuMemoryMb": 4.76
       },
       "balanced": {
-        "path": "/models/optimized/tandoori-paneer-pizza-balanced.glb",
-        "sizeBytes": 256468,
-        "sizeKb": 250.46,
-        "triangleCount": 22548,
-        "vertexCount": 16032,
-        "drawCalls": 11,
-        "materialsCount": 11,
-        "texturesCount": 6,
+        "path": "/models/optimized/keema-masala-pizza-balanced.glb",
+        "sizeBytes": 103124,
+        "sizeKb": 100.71,
+        "triangleCount": 11120,
+        "vertexCount": 5644,
+        "drawCalls": 4,
+        "materialsCount": 4,
+        "texturesCount": 4,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -1.1992,
-            0.0001,
-            -1.2
+            -1.2022,
+            0,
+            -1.2022
           ],
           "max": [
-            1.1992,
-            0.1177,
-            1.2
+            1.2022,
+            0.2802,
+            1.2022
           ],
-          "width": 2.3984,
-          "height": 0.1175,
-          "depth": 2.4
+          "width": 2.4044,
+          "height": 0.2802,
+          "depth": 2.4044
         },
-        "dracoDecodeTimeMs": 5.75,
-        "estimatedGpuMemoryBytes": 9034818,
-        "estimatedGpuMemoryMb": 8.62
+        "dracoDecodeTimeMs": 2.35,
+        "estimatedGpuMemoryBytes": 4790018,
+        "estimatedGpuMemoryMb": 4.57
       },
       "ultraLight": {
-        "path": "/models/optimized/tandoori-paneer-pizza-ultralight.glb",
-        "sizeBytes": 123768,
-        "sizeKb": 120.87,
-        "triangleCount": 9981,
-        "vertexCount": 9056,
-        "drawCalls": 11,
-        "materialsCount": 11,
-        "texturesCount": 6,
+        "path": "/models/optimized/keema-masala-pizza-ultralight.glb",
+        "sizeBytes": 81872,
+        "sizeKb": 79.95,
+        "triangleCount": 5660,
+        "vertexCount": 2914,
+        "drawCalls": 4,
+        "materialsCount": 4,
+        "texturesCount": 4,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -1.1992,
-            0.0001,
+            -1.2022,
+            0,
+            -1.2022
+          ],
+          "max": [
+            1.2022,
+            0.2809,
+            1.2022
+          ],
+          "width": 2.4044,
+          "height": 0.2809,
+          "depth": 2.4044
+        },
+        "dracoDecodeTimeMs": 1.73,
+        "estimatedGpuMemoryBytes": 4669898,
+        "estimatedGpuMemoryMb": 4.45
+      },
+      "usdz": {
+        "path": "/models/optimized/keema-masala-pizza.usdz",
+        "sizeBytes": 474390,
+        "sizeKb": 463.27,
+        "format": "usdz",
+        "validZip": true
+      }
+    }
+  },
+  "farmhouse-supreme-pizza": {
+    "dishId": "farmhouse-supreme-pizza",
+    "modelName": "3D Interactive Model Showcase [Prototype Asset]",
+    "assetVersion": "2.2.0",
+    "units": "meters",
+    "culinaryCategory": "fresh-vegetables",
+    "secondaryCategories": [
+      "melted-cheese",
+      "bread-crust",
+      "glossy-sauce"
+    ],
+    "isSharedPlaceholder": false,
+    "authenticityClassification": "authentic-dedicated",
+    "authenticityVerified": true,
+    "sourceBlendAsset": "farmhouse_supreme_pizza.blend",
+    "plateDiameterCm": 30,
+    "pbrMaterialAudit": {
+      "zeroMetallicVerified": true,
+      "roughnessRange": [
+        0.28,
+        0.72
+      ],
+      "zeroEmissiveVerified": true,
+      "textureSlotsCount": 4
+    },
+    "missingIngredientsOrLimitations": [
+      "Physical caliper measurement on plated 12-inch farmhouse supreme pizza sample pending (scaleValidated: false)"
+    ],
+    "dimensionSource": "estimated-typical-portion",
+    "dimensions": {
+      "widthCm": 30,
+      "depthCm": 30,
+      "heightCm": 3.5
+    },
+    "modelScaleFactor": 0.125,
+    "groundContactValidated": true,
+    "colorValidated": true,
+    "scaleValidated": false,
+    "canonicalOrigin": "footprint-centre-ground-contact",
+    "profiles": {
+      "high": {
+        "path": "/models/optimized/farmhouse-supreme-pizza-high.glb",
+        "sizeBytes": 102224,
+        "sizeKb": 99.83,
+        "triangleCount": 14056,
+        "vertexCount": 7092,
+        "drawCalls": 4,
+        "materialsCount": 4,
+        "texturesCount": 4,
+        "hasUVs": true,
+        "bboxM": {
+          "min": [
+            -1.2,
+            0,
             -1.2
           ],
           "max": [
-            1.1992,
-            0.1177,
-            1.1988
+            1.2,
+            0.28,
+            1.2
           ],
-          "width": 2.3984,
-          "height": 0.1175,
-          "depth": 2.3988
+          "width": 2.4,
+          "height": 0.28,
+          "depth": 2.4
         },
-        "dracoDecodeTimeMs": 3.49,
-        "estimatedGpuMemoryBytes": 2446300,
-        "estimatedGpuMemoryMb": 2.33
+        "dracoDecodeTimeMs": 2.65,
+        "estimatedGpuMemoryBytes": 4853970,
+        "estimatedGpuMemoryMb": 4.63
+      },
+      "balanced": {
+        "path": "/models/optimized/farmhouse-supreme-pizza-balanced.glb",
+        "sizeBytes": 84668,
+        "sizeKb": 82.68,
+        "triangleCount": 7712,
+        "vertexCount": 3927,
+        "drawCalls": 4,
+        "materialsCount": 4,
+        "texturesCount": 4,
+        "hasUVs": true,
+        "bboxM": {
+          "min": [
+            -1.2022,
+            0,
+            -1.2022
+          ],
+          "max": [
+            1.2022,
+            0.28,
+            1.2022
+          ],
+          "width": 2.4044,
+          "height": 0.28,
+          "depth": 2.4044
+        },
+        "dracoDecodeTimeMs": 1.77,
+        "estimatedGpuMemoryBytes": 4714626,
+        "estimatedGpuMemoryMb": 4.5
+      },
+      "ultraLight": {
+        "path": "/models/optimized/farmhouse-supreme-pizza-ultralight.glb",
+        "sizeBytes": 68712,
+        "sizeKb": 67.1,
+        "triangleCount": 3908,
+        "vertexCount": 2048,
+        "drawCalls": 4,
+        "materialsCount": 4,
+        "texturesCount": 4,
+        "hasUVs": true,
+        "bboxM": {
+          "min": [
+            -1.2022,
+            0,
+            -1.2022
+          ],
+          "max": [
+            1.2022,
+            0.2822,
+            1.2022
+          ],
+          "width": 2.4044,
+          "height": 0.2822,
+          "depth": 2.4044
+        },
+        "dracoDecodeTimeMs": 1,
+        "estimatedGpuMemoryBytes": 4631674,
+        "estimatedGpuMemoryMb": 4.42
       },
       "usdz": {
-        "path": "/models/optimized/tandoori-paneer-pizza.usdz",
-        "sizeBytes": 625578,
-        "sizeKb": 610.92,
+        "path": "/models/optimized/farmhouse-supreme-pizza.usdz",
+        "sizeBytes": 350046,
+        "sizeKb": 341.84,
         "format": "usdz",
         "validZip": true
       }
@@ -1729,7 +1729,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
   "paneer-royale-burger": {
     "dishId": "paneer-royale-burger",
     "modelName": "3D Interactive Model Showcase [Prototype Asset]",
-    "assetVersion": "2.1.0",
+    "assetVersion": "2.2.0",
     "units": "meters",
     "culinaryCategory": "fried-food",
     "secondaryCategories": [
@@ -1737,158 +1737,22 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "melted-cheese",
       "fresh-vegetables"
     ],
-    "isSharedPlaceholder": true,
-    "authenticityClassification": "same-family-variant",
-    "authenticityVerified": false,
-    "sourceBlendAsset": "paneer_burger.blend",
+    "isSharedPlaceholder": false,
+    "authenticityClassification": "authentic-dedicated",
+    "authenticityVerified": true,
+    "sourceBlendAsset": "paneer_royale_burger.blend",
     "plateDiameterCm": 18,
     "pbrMaterialAudit": {
       "zeroMetallicVerified": true,
       "roughnessRange": [
-        0.14,
-        0.58
+        0.24,
+        0.52
       ],
       "zeroEmissiveVerified": true,
       "textureSlotsCount": 4
     },
     "missingIngredientsOrLimitations": [
-      "Reuses crispy-paneer-burger asset; dedicated makhani glaze & pickled red onion crown sculpture required"
-    ],
-    "dimensionSource": "estimated-typical-portion",
-    "dimensions": {
-      "widthCm": 12,
-      "depthCm": 12,
-      "heightCm": 10
-    },
-    "modelScaleFactor": 0.0608,
-    "groundContactValidated": true,
-    "colorValidated": true,
-    "scaleValidated": false,
-    "canonicalOrigin": "footprint-centre-ground-contact",
-    "profiles": {
-      "high": {
-        "path": "/models/optimized/crispy-paneer-burger-high.glb",
-        "sizeBytes": 915436,
-        "sizeKb": 893.98,
-        "triangleCount": 41292,
-        "vertexCount": 66160,
-        "drawCalls": 7,
-        "materialsCount": 7,
-        "texturesCount": 4,
-        "hasUVs": true,
-        "bboxM": {
-          "min": [
-            -0.9826,
-            0,
-            -0.9808
-          ],
-          "max": [
-            0.9796,
-            1.4613,
-            0.9944
-          ],
-          "width": 1.9622,
-          "height": 1.4613,
-          "depth": 1.9752
-        },
-        "dracoDecodeTimeMs": 16.9,
-        "estimatedGpuMemoryBytes": 21933396,
-        "estimatedGpuMemoryMb": 20.92
-      },
-      "balanced": {
-        "path": "/models/optimized/crispy-paneer-burger-balanced.glb",
-        "sizeBytes": 383960,
-        "sizeKb": 374.96,
-        "triangleCount": 19560,
-        "vertexCount": 20081,
-        "drawCalls": 7,
-        "materialsCount": 7,
-        "texturesCount": 4,
-        "hasUVs": true,
-        "bboxM": {
-          "min": [
-            -0.9826,
-            0,
-            -0.9567
-          ],
-          "max": [
-            0.9796,
-            1.4013,
-            0.9944
-          ],
-          "width": 1.9622,
-          "height": 1.4013,
-          "depth": 1.9511
-        },
-        "dracoDecodeTimeMs": 8.58,
-        "estimatedGpuMemoryBytes": 5652080,
-        "estimatedGpuMemoryMb": 5.39
-      },
-      "ultraLight": {
-        "path": "/models/optimized/crispy-paneer-burger-ultralight.glb",
-        "sizeBytes": 156332,
-        "sizeKb": 152.67,
-        "triangleCount": 9230,
-        "vertexCount": 9996,
-        "drawCalls": 7,
-        "materialsCount": 7,
-        "texturesCount": 4,
-        "hasUVs": true,
-        "bboxM": {
-          "min": [
-            -0.9826,
-            0,
-            -0.9567
-          ],
-          "max": [
-            0.9637,
-            1.4013,
-            0.9897
-          ],
-          "width": 1.9463,
-          "height": 1.4013,
-          "depth": 1.9464
-        },
-        "dracoDecodeTimeMs": 3.87,
-        "estimatedGpuMemoryBytes": 1598281,
-        "estimatedGpuMemoryMb": 1.52
-      },
-      "usdz": {
-        "path": "/models/optimized/crispy-paneer-burger.usdz",
-        "sizeBytes": 591637,
-        "sizeKb": 577.77,
-        "format": "usdz",
-        "validZip": true
-      }
-    }
-  },
-  "truffle-mushroom-cheese-burger": {
-    "dishId": "truffle-mushroom-cheese-burger",
-    "modelName": "3D Interactive Model Showcase [Prototype Asset]",
-    "assetVersion": "2.1.0",
-    "units": "meters",
-    "culinaryCategory": "melted-cheese",
-    "secondaryCategories": [
-      "bread-crust",
-      "glossy-sauce",
-      "fried-food"
-    ],
-    "isSharedPlaceholder": true,
-    "authenticityClassification": "cross-recipe-stand-in",
-    "authenticityVerified": false,
-    "sourceBlendAsset": "chiken_burger.blend",
-    "plateDiameterCm": 18,
-    "pbrMaterialAudit": {
-      "zeroMetallicVerified": true,
-      "roughnessRange": [
-        0.38,
-        0.44
-      ],
-      "zeroEmissiveVerified": true,
-      "textureSlotsCount": 6
-    },
-    "missingIngredientsOrLimitations": [
-      "Cross-recipe stand-in borrowing classic-smash-burger asset; dedicated sautéed wild mushroom & Swiss cheese melt layer required"
+      "Physical caliper measurement on plated paneer royale burger sample pending (scaleValidated: false)"
     ],
     "dimensionSource": "estimated-typical-portion",
     "dimensions": {
@@ -1898,101 +1762,237 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
     },
     "modelScaleFactor": 0.06,
     "groundContactValidated": true,
-    "colorValidated": false,
+    "colorValidated": true,
     "scaleValidated": false,
     "canonicalOrigin": "footprint-centre-ground-contact",
     "profiles": {
       "high": {
-        "path": "/models/optimized/classic-smash-burger-high.glb",
-        "sizeBytes": 1222580,
-        "sizeKb": 1193.93,
-        "triangleCount": 12080,
-        "vertexCount": 7477,
-        "drawCalls": 13,
-        "materialsCount": 3,
-        "texturesCount": 6,
+        "path": "/models/optimized/paneer-royale-burger-high.glb",
+        "sizeBytes": 111844,
+        "sizeKb": 109.22,
+        "triangleCount": 13360,
+        "vertexCount": 6688,
+        "drawCalls": 4,
+        "materialsCount": 4,
+        "texturesCount": 4,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -0.9881,
+            -1,
             0,
             -1
           ],
           "max": [
-            0.9881,
-            1.211,
+            1,
+            1.6667,
             1
           ],
-          "width": 1.9763,
-          "height": 1.211,
+          "width": 2,
+          "height": 1.6667,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 3.29,
-        "estimatedGpuMemoryBytes": 33857786,
-        "estimatedGpuMemoryMb": 32.29
+        "dracoDecodeTimeMs": 2.45,
+        "estimatedGpuMemoryBytes": 3788552,
+        "estimatedGpuMemoryMb": 3.61
       },
       "balanced": {
-        "path": "/models/optimized/classic-smash-burger-balanced.glb",
-        "sizeBytes": 369784,
-        "sizeKb": 361.12,
-        "triangleCount": 12080,
-        "vertexCount": 7477,
-        "drawCalls": 13,
-        "materialsCount": 3,
-        "texturesCount": 6,
+        "path": "/models/optimized/paneer-royale-burger-balanced.glb",
+        "sizeBytes": 94144,
+        "sizeKb": 91.94,
+        "triangleCount": 7344,
+        "vertexCount": 3680,
+        "drawCalls": 4,
+        "materialsCount": 4,
+        "texturesCount": 4,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -0.9881,
+            -0.9989,
             0,
-            -1
+            -0.999
           ],
           "max": [
-            0.9881,
-            1.211,
-            1
+            0.9989,
+            1.6667,
+            0.9989
           ],
-          "width": 1.9763,
-          "height": 1.211,
-          "depth": 2
+          "width": 1.9978,
+          "height": 1.6667,
+          "depth": 1.9979
         },
-        "dracoDecodeTimeMs": 2.87,
-        "estimatedGpuMemoryBytes": 8698250,
-        "estimatedGpuMemoryMb": 8.3
+        "dracoDecodeTimeMs": 1.77,
+        "estimatedGpuMemoryBytes": 3656200,
+        "estimatedGpuMemoryMb": 3.49
       },
       "ultraLight": {
-        "path": "/models/optimized/classic-smash-burger-ultralight.glb",
-        "sizeBytes": 154260,
-        "sizeKb": 150.64,
-        "triangleCount": 12080,
-        "vertexCount": 7477,
-        "drawCalls": 13,
-        "materialsCount": 3,
-        "texturesCount": 6,
+        "path": "/models/optimized/paneer-royale-burger-ultralight.glb",
+        "sizeBytes": 78580,
+        "sizeKb": 76.74,
+        "triangleCount": 3736,
+        "vertexCount": 1876,
+        "drawCalls": 4,
+        "materialsCount": 4,
+        "texturesCount": 4,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -0.9881,
+            -1.0038,
+            0,
+            -0.9992
+          ],
+          "max": [
+            0.9984,
+            1.6661,
+            0.9987
+          ],
+          "width": 2.0023,
+          "height": 1.6661,
+          "depth": 1.998
+        },
+        "dracoDecodeTimeMs": 0.99,
+        "estimatedGpuMemoryBytes": 3576824,
+        "estimatedGpuMemoryMb": 3.41
+      },
+      "usdz": {
+        "path": "/models/optimized/paneer-royale-burger.usdz",
+        "sizeBytes": 336457,
+        "sizeKb": 328.57,
+        "format": "usdz",
+        "validZip": true
+      }
+    }
+  },
+  "truffle-mushroom-cheese-burger": {
+    "dishId": "truffle-mushroom-cheese-burger",
+    "modelName": "3D Interactive Model Showcase [Prototype Asset]",
+    "assetVersion": "2.2.0",
+    "units": "meters",
+    "culinaryCategory": "melted-cheese",
+    "secondaryCategories": [
+      "bread-crust",
+      "glossy-sauce",
+      "fried-food"
+    ],
+    "isSharedPlaceholder": false,
+    "authenticityClassification": "authentic-dedicated",
+    "authenticityVerified": true,
+    "sourceBlendAsset": "truffle_mushroom_cheese_burger.blend",
+    "plateDiameterCm": 18,
+    "pbrMaterialAudit": {
+      "zeroMetallicVerified": true,
+      "roughnessRange": [
+        0.24,
+        0.48
+      ],
+      "zeroEmissiveVerified": true,
+      "textureSlotsCount": 4
+    },
+    "missingIngredientsOrLimitations": [
+      "Physical caliper measurement on plated truffle mushroom cheese burger sample pending (scaleValidated: false)"
+    ],
+    "dimensionSource": "estimated-typical-portion",
+    "dimensions": {
+      "widthCm": 12,
+      "depthCm": 12,
+      "heightCm": 10
+    },
+    "modelScaleFactor": 0.06,
+    "groundContactValidated": true,
+    "colorValidated": true,
+    "scaleValidated": false,
+    "canonicalOrigin": "footprint-centre-ground-contact",
+    "profiles": {
+      "high": {
+        "path": "/models/optimized/truffle-mushroom-cheese-burger-high.glb",
+        "sizeBytes": 127884,
+        "sizeKb": 124.89,
+        "triangleCount": 15032,
+        "vertexCount": 7552,
+        "drawCalls": 4,
+        "materialsCount": 4,
+        "texturesCount": 4,
+        "hasUVs": true,
+        "bboxM": {
+          "min": [
+            -1,
             0,
             -1
           ],
           "max": [
-            0.9881,
-            1.211,
+            1,
+            1.6667,
             1
           ],
-          "width": 1.9763,
-          "height": 1.211,
+          "width": 2,
+          "height": 1.6667,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 2.74,
-        "estimatedGpuMemoryBytes": 2408366,
-        "estimatedGpuMemoryMb": 2.3
+        "dracoDecodeTimeMs": 2.73,
+        "estimatedGpuMemoryBytes": 4874546,
+        "estimatedGpuMemoryMb": 4.65
+      },
+      "balanced": {
+        "path": "/models/optimized/truffle-mushroom-cheese-burger-balanced.glb",
+        "sizeBytes": 106456,
+        "sizeKb": 103.96,
+        "triangleCount": 8264,
+        "vertexCount": 4168,
+        "drawCalls": 4,
+        "materialsCount": 4,
+        "texturesCount": 4,
+        "hasUVs": true,
+        "bboxM": {
+          "min": [
+            -1,
+            0,
+            -0.999
+          ],
+          "max": [
+            0.9989,
+            1.6667,
+            0.9989
+          ],
+          "width": 1.9989,
+          "height": 1.6667,
+          "depth": 1.9978
+        },
+        "dracoDecodeTimeMs": 1.89,
+        "estimatedGpuMemoryBytes": 4725650,
+        "estimatedGpuMemoryMb": 4.51
+      },
+      "ultraLight": {
+        "path": "/models/optimized/truffle-mushroom-cheese-burger-ultralight.glb",
+        "sizeBytes": 90280,
+        "sizeKb": 88.16,
+        "triangleCount": 4206,
+        "vertexCount": 2139,
+        "drawCalls": 4,
+        "materialsCount": 4,
+        "texturesCount": 4,
+        "hasUVs": true,
+        "bboxM": {
+          "min": [
+            -0.9989,
+            0,
+            -0.9984
+          ],
+          "max": [
+            0.9969,
+            1.6667,
+            0.9987
+          ],
+          "width": 1.9958,
+          "height": 1.6667,
+          "depth": 1.9971
+        },
+        "dracoDecodeTimeMs": 1.09,
+        "estimatedGpuMemoryBytes": 4636374,
+        "estimatedGpuMemoryMb": 4.42
       },
       "usdz": {
-        "path": "/models/optimized/classic-smash-burger.usdz",
-        "sizeBytes": 703517,
-        "sizeKb": 687.03,
+        "path": "/models/optimized/truffle-mushroom-cheese-burger.usdz",
+        "sizeBytes": 375879,
+        "sizeKb": 367.07,
         "format": "usdz",
         "validZip": true
       }
@@ -2001,28 +2001,28 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
   "hakka-street-chow-mein": {
     "dishId": "hakka-street-chow-mein",
     "modelName": "3D Interactive Model Showcase [Prototype Asset]",
-    "assetVersion": "2.1.0",
+    "assetVersion": "2.2.0",
     "units": "meters",
     "culinaryCategory": "glossy-sauce",
     "secondaryCategories": [
       "fresh-vegetables"
     ],
-    "isSharedPlaceholder": true,
-    "authenticityClassification": "same-family-variant",
-    "authenticityVerified": false,
-    "sourceBlendAsset": "chowmein_noodles.blend",
+    "isSharedPlaceholder": false,
+    "authenticityClassification": "authentic-dedicated",
+    "authenticityVerified": true,
+    "sourceBlendAsset": "hakka_street_chow_mein.blend",
     "plateDiameterCm": 18,
     "pbrMaterialAudit": {
       "zeroMetallicVerified": true,
       "roughnessRange": [
-        0.22,
-        0.55
+        0.2,
+        0.5
       ],
       "zeroEmissiveVerified": true,
-      "textureSlotsCount": 1
+      "textureSlotsCount": 4
     },
     "missingIngredientsOrLimitations": [
-      "Reuses wok-tossed-chow-mein asset; dedicated street-style chili garlic oil & bean sprout garnish model required"
+      "Physical caliper measurement on plated street chow mein wok bowl pending (scaleValidated: false)"
     ],
     "dimensionSource": "estimated-typical-portion",
     "dimensions": {
@@ -2037,96 +2037,96 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
     "canonicalOrigin": "footprint-centre-ground-contact",
     "profiles": {
       "high": {
-        "path": "/models/optimized/wok-tossed-chow-mein-high.glb",
-        "sizeBytes": 480420,
-        "sizeKb": 469.16,
-        "triangleCount": 30158,
-        "vertexCount": 49712,
-        "drawCalls": 8,
-        "materialsCount": 8,
-        "texturesCount": 1,
+        "path": "/models/optimized/hakka-street-chow-mein-high.glb",
+        "sizeBytes": 109368,
+        "sizeKb": 106.8,
+        "triangleCount": 18832,
+        "vertexCount": 9474,
+        "drawCalls": 4,
+        "materialsCount": 4,
+        "texturesCount": 4,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -1.0995,
+            -1.1,
             0,
-            -1.0992
+            -1.0682
           ],
           "max": [
-            1.0997,
-            1.4784,
-            1.0992
+            1.1,
+            0.9778,
+            1.0682
           ],
-          "width": 2.1992,
-          "height": 1.4784,
-          "depth": 2.1984
+          "width": 2.2,
+          "height": 0.9778,
+          "depth": 2.1364
         },
-        "dracoDecodeTimeMs": 14.87,
-        "estimatedGpuMemoryBytes": 3169483,
-        "estimatedGpuMemoryMb": 3.02
+        "dracoDecodeTimeMs": 3.48,
+        "estimatedGpuMemoryBytes": 2862222,
+        "estimatedGpuMemoryMb": 2.73
       },
       "balanced": {
-        "path": "/models/optimized/wok-tossed-chow-mein-balanced.glb",
-        "sizeBytes": 270292,
-        "sizeKb": 263.96,
-        "triangleCount": 12909,
-        "vertexCount": 26148,
-        "drawCalls": 8,
-        "materialsCount": 8,
-        "texturesCount": 1,
+        "path": "/models/optimized/hakka-street-chow-mein-balanced.glb",
+        "sizeBytes": 88176,
+        "sizeKb": 86.11,
+        "triangleCount": 10356,
+        "vertexCount": 5236,
+        "drawCalls": 4,
+        "materialsCount": 4,
+        "texturesCount": 4,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -1.0993,
+            -1.1,
             0,
-            -1.0976
+            -1.0682
           ],
           "max": [
-            1.0997,
-            1.4784,
-            1.0992
+            1.0949,
+            0.9778,
+            1.063
           ],
-          "width": 2.1991,
-          "height": 1.4784,
-          "depth": 2.1968
+          "width": 2.1949,
+          "height": 0.9778,
+          "depth": 2.1312
         },
-        "dracoDecodeTimeMs": 7.68,
-        "estimatedGpuMemoryBytes": 2311941,
-        "estimatedGpuMemoryMb": 2.2
+        "dracoDecodeTimeMs": 2.56,
+        "estimatedGpuMemoryBytes": 2675750,
+        "estimatedGpuMemoryMb": 2.55
       },
       "ultraLight": {
-        "path": "/models/optimized/wok-tossed-chow-mein-ultralight.glb",
-        "sizeBytes": 152452,
-        "sizeKb": 148.88,
-        "triangleCount": 6538,
-        "vertexCount": 14663,
-        "drawCalls": 8,
-        "materialsCount": 8,
-        "texturesCount": 1,
+        "path": "/models/optimized/hakka-street-chow-mein-ultralight.glb",
+        "sizeBytes": 66000,
+        "sizeKb": 64.45,
+        "triangleCount": 5270,
+        "vertexCount": 2693,
+        "drawCalls": 4,
+        "materialsCount": 4,
+        "texturesCount": 4,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -1.0864,
+            -1.0994,
             0,
-            -1.0918
+            -1.065
           ],
           "max": [
-            1.0997,
-            1.4735,
-            1.098
+            1.0899,
+            0.9772,
+            1.065
           ],
-          "width": 2.1862,
-          "height": 1.4735,
-          "depth": 2.1898
+          "width": 2.1892,
+          "height": 0.9772,
+          "depth": 2.13
         },
-        "dracoDecodeTimeMs": 4.03,
-        "estimatedGpuMemoryBytes": 857881,
-        "estimatedGpuMemoryMb": 0.82
+        "dracoDecodeTimeMs": 1.37,
+        "estimatedGpuMemoryBytes": 2563858,
+        "estimatedGpuMemoryMb": 2.45
       },
       "usdz": {
-        "path": "/models/optimized/wok-tossed-chow-mein.usdz",
-        "sizeBytes": 542766,
-        "sizeKb": 530.04,
+        "path": "/models/optimized/hakka-street-chow-mein.usdz",
+        "sizeBytes": 407763,
+        "sizeKb": 398.21,
         "format": "usdz",
         "validZip": true
       }
@@ -2135,29 +2135,29 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
   "golden-chilli-potato": {
     "dishId": "golden-chilli-potato",
     "modelName": "3D Interactive Model Showcase [Prototype Asset]",
-    "assetVersion": "2.1.0",
+    "assetVersion": "2.2.0",
     "units": "meters",
     "culinaryCategory": "fried-food",
     "secondaryCategories": [
       "glossy-sauce",
       "fresh-vegetables"
     ],
-    "isSharedPlaceholder": true,
-    "authenticityClassification": "same-family-variant",
-    "authenticityVerified": false,
-    "sourceBlendAsset": "_potatoes bolls .blend",
+    "isSharedPlaceholder": false,
+    "authenticityClassification": "authentic-dedicated",
+    "authenticityVerified": true,
+    "sourceBlendAsset": "golden_chilli_potato.blend",
     "plateDiameterCm": 20,
     "pbrMaterialAudit": {
       "zeroMetallicVerified": true,
       "roughnessRange": [
-        0.24,
-        0.65
+        0.22,
+        0.3
       ],
       "zeroEmissiveVerified": true,
       "textureSlotsCount": 3
     },
     "missingIngredientsOrLimitations": [
-      "Reuses dynamite-chilli-potatoes asset; dedicated finger-cut honey-chilli potato fries geometry required"
+      "Physical caliper measurement on plated honey chilli potato platter pending (scaleValidated: false)"
     ],
     "dimensionSource": "estimated-typical-portion",
     "dimensions": {
@@ -2165,103 +2165,103 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "depthCm": 20,
       "heightCm": 5.5
     },
-    "modelScaleFactor": 0.0911,
+    "modelScaleFactor": 0.0909,
     "groundContactValidated": true,
     "colorValidated": true,
     "scaleValidated": false,
     "canonicalOrigin": "footprint-centre-ground-contact",
     "profiles": {
       "high": {
-        "path": "/models/optimized/dynamite-chilli-potatoes-high.glb",
-        "sizeBytes": 742700,
-        "sizeKb": 725.29,
-        "triangleCount": 32742,
-        "vertexCount": 23172,
-        "drawCalls": 7,
-        "materialsCount": 7,
+        "path": "/models/optimized/golden-chilli-potato-high.glb",
+        "sizeBytes": 66828,
+        "sizeKb": 65.26,
+        "triangleCount": 9056,
+        "vertexCount": 4602,
+        "drawCalls": 3,
+        "materialsCount": 3,
         "texturesCount": 3,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -1.0974,
-            0.0008,
-            -1.0974
+            -1.1,
+            0,
+            -1.1
           ],
           "max": [
-            1.0988,
-            1.3144,
-            1.0987
+            1.1,
+            0.605,
+            1.1
           ],
-          "width": 2.1962,
-          "height": 1.3136,
-          "depth": 2.1961
+          "width": 2.2,
+          "height": 0.605,
+          "depth": 2.2
         },
-        "dracoDecodeTimeMs": 11.94,
-        "estimatedGpuMemoryBytes": 17710977,
-        "estimatedGpuMemoryMb": 16.89
+        "dracoDecodeTimeMs": 1.79,
+        "estimatedGpuMemoryBytes": 2298225,
+        "estimatedGpuMemoryMb": 2.19
       },
       "balanced": {
-        "path": "/models/optimized/dynamite-chilli-potatoes-balanced.glb",
-        "sizeBytes": 298628,
-        "sizeKb": 291.63,
-        "triangleCount": 16548,
-        "vertexCount": 12633,
-        "drawCalls": 7,
-        "materialsCount": 7,
+        "path": "/models/optimized/golden-chilli-potato-balanced.glb",
+        "sizeBytes": 51720,
+        "sizeKb": 50.51,
+        "triangleCount": 4978,
+        "vertexCount": 2563,
+        "drawCalls": 3,
+        "materialsCount": 3,
         "texturesCount": 3,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -1.0887,
-            0.004,
-            -1.0974
+            -1.102,
+            0,
+            -1.102
           ],
           "max": [
-            1.0987,
-            1.3144,
-            1.0987
+            1.102,
+            0.605,
+            1.102
           ],
-          "width": 2.1874,
-          "height": 1.3103,
-          "depth": 2.1961
+          "width": 2.2041,
+          "height": 0.605,
+          "depth": 2.2041
         },
-        "dracoDecodeTimeMs": 6.02,
-        "estimatedGpuMemoryBytes": 4696797,
-        "estimatedGpuMemoryMb": 4.48
+        "dracoDecodeTimeMs": 1.06,
+        "estimatedGpuMemoryBytes": 2208509,
+        "estimatedGpuMemoryMb": 2.11
       },
       "ultraLight": {
-        "path": "/models/optimized/dynamite-chilli-potatoes-ultralight.glb",
-        "sizeBytes": 126840,
-        "sizeKb": 123.87,
-        "triangleCount": 6704,
-        "vertexCount": 6992,
-        "drawCalls": 7,
-        "materialsCount": 7,
+        "path": "/models/optimized/golden-chilli-potato-ultralight.glb",
+        "sizeBytes": 41592,
+        "sizeKb": 40.62,
+        "triangleCount": 2532,
+        "vertexCount": 1340,
+        "drawCalls": 3,
+        "materialsCount": 3,
         "texturesCount": 3,
         "hasUVs": true,
         "bboxM": {
           "min": [
-            -1.0553,
-            0.0281,
-            -1.0974
+            -1.102,
+            0,
+            -1.102
           ],
           "max": [
-            1.0987,
-            1.3127,
-            1.0974
+            1.102,
+            0.6092,
+            1.102
           ],
-          "width": 2.1539,
-          "height": 1.2847,
-          "depth": 2.1949
+          "width": 2.2041,
+          "height": 0.6092,
+          "depth": 2.2041
         },
-        "dracoDecodeTimeMs": 2.81,
-        "estimatedGpuMemoryBytes": 1312279,
-        "estimatedGpuMemoryMb": 1.25
+        "dracoDecodeTimeMs": 0.63,
+        "estimatedGpuMemoryBytes": 2154697,
+        "estimatedGpuMemoryMb": 2.05
       },
       "usdz": {
-        "path": "/models/optimized/dynamite-chilli-potatoes.usdz",
-        "sizeBytes": 951389,
-        "sizeKb": 929.09,
+        "path": "/models/optimized/golden-chilli-potato.usdz",
+        "sizeBytes": 219369,
+        "sizeKb": 214.23,
         "format": "usdz",
         "validZip": true
       }
@@ -2270,7 +2270,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
   "truffle-mushroom-risotto": {
     "dishId": "truffle-mushroom-risotto",
     "modelName": "3D Interactive Model Showcase [Prototype Asset]",
-    "assetVersion": "2.1.0",
+    "assetVersion": "2.2.0",
     "units": "meters",
     "culinaryCategory": "melted-cheese",
     "secondaryCategories": [
@@ -2331,7 +2331,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.7368,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 4.65,
+        "dracoDecodeTimeMs": 4.16,
         "estimatedGpuMemoryBytes": 5046834,
         "estimatedGpuMemoryMb": 4.81
       },
@@ -2360,7 +2360,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.737,
           "depth": 2.0038
         },
-        "dracoDecodeTimeMs": 2.86,
+        "dracoDecodeTimeMs": 2.71,
         "estimatedGpuMemoryBytes": 4820674,
         "estimatedGpuMemoryMb": 4.6
       },
@@ -2389,7 +2389,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.7373,
           "depth": 1.9941
         },
-        "dracoDecodeTimeMs": 1.56,
+        "dracoDecodeTimeMs": 1.52,
         "estimatedGpuMemoryBytes": 4684978,
         "estimatedGpuMemoryMb": 4.47
       },
@@ -2405,7 +2405,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
   "butter-chicken-bao": {
     "dishId": "butter-chicken-bao",
     "modelName": "3D Interactive Model Showcase [Prototype Asset]",
-    "assetVersion": "2.1.0",
+    "assetVersion": "2.2.0",
     "units": "meters",
     "culinaryCategory": "bread-crust",
     "secondaryCategories": [
@@ -2466,7 +2466,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.7778,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 5.99,
+        "dracoDecodeTimeMs": 5.58,
         "estimatedGpuMemoryBytes": 4221672,
         "estimatedGpuMemoryMb": 4.03
       },
@@ -2495,7 +2495,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.7784,
           "depth": 2.0037
         },
-        "dracoDecodeTimeMs": 3.84,
+        "dracoDecodeTimeMs": 3.73,
         "estimatedGpuMemoryBytes": 3895016,
         "estimatedGpuMemoryMb": 3.71
       },
@@ -2524,7 +2524,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.7788,
           "depth": 2.0037
         },
-        "dracoDecodeTimeMs": 2.07,
+        "dracoDecodeTimeMs": 2.05,
         "estimatedGpuMemoryBytes": 3699040,
         "estimatedGpuMemoryMb": 3.53
       },
@@ -2540,7 +2540,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
   "dahi-ke-kebab": {
     "dishId": "dahi-ke-kebab",
     "modelName": "3D Interactive Model Showcase [Prototype Asset]",
-    "assetVersion": "2.1.0",
+    "assetVersion": "2.2.0",
     "units": "meters",
     "culinaryCategory": "fried-food",
     "secondaryCategories": [
@@ -2601,7 +2601,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.45,
           "depth": 1.5994
         },
-        "dracoDecodeTimeMs": 1.31,
+        "dracoDecodeTimeMs": 1.22,
         "estimatedGpuMemoryBytes": 2231161,
         "estimatedGpuMemoryMb": 2.13
       },
@@ -2630,7 +2630,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.4507,
           "depth": 1.6024
         },
-        "dracoDecodeTimeMs": 0.72,
+        "dracoDecodeTimeMs": 0.75,
         "estimatedGpuMemoryBytes": 2170793,
         "estimatedGpuMemoryMb": 2.07
       },
@@ -2659,7 +2659,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.4512,
           "depth": 1.6024
         },
-        "dracoDecodeTimeMs": 0.43,
+        "dracoDecodeTimeMs": 0.44,
         "estimatedGpuMemoryBytes": 2134625,
         "estimatedGpuMemoryMb": 2.04
       },
@@ -2675,7 +2675,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
   "crispy-chilli-babycorn": {
     "dishId": "crispy-chilli-babycorn",
     "modelName": "3D Interactive Model Showcase [Prototype Asset]",
-    "assetVersion": "2.1.0",
+    "assetVersion": "2.2.0",
     "units": "meters",
     "culinaryCategory": "fried-food",
     "secondaryCategories": [
@@ -2736,7 +2736,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.55,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 2.99,
+        "dracoDecodeTimeMs": 3.04,
         "estimatedGpuMemoryBytes": 2402337,
         "estimatedGpuMemoryMb": 2.29
       },
@@ -2765,7 +2765,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.548,
           "depth": 2.0037
         },
-        "dracoDecodeTimeMs": 1.82,
+        "dracoDecodeTimeMs": 1.69,
         "estimatedGpuMemoryBytes": 2265629,
         "estimatedGpuMemoryMb": 2.16
       },
@@ -2794,7 +2794,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.5484,
           "depth": 2.0037
         },
-        "dracoDecodeTimeMs": 1.02,
+        "dracoDecodeTimeMs": 0.96,
         "estimatedGpuMemoryBytes": 2183701,
         "estimatedGpuMemoryMb": 2.08
       },
@@ -2810,7 +2810,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
   "dim-sum-platter": {
     "dishId": "dim-sum-platter",
     "modelName": "3D Interactive Model Showcase [Prototype Asset]",
-    "assetVersion": "2.1.0",
+    "assetVersion": "2.2.0",
     "units": "meters",
     "culinaryCategory": "bread-crust",
     "secondaryCategories": [
@@ -2871,7 +2871,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.65,
           "depth": 2.2
         },
-        "dracoDecodeTimeMs": 2.02,
+        "dracoDecodeTimeMs": 1.86,
         "estimatedGpuMemoryBytes": 4768546,
         "estimatedGpuMemoryMb": 4.55
       },
@@ -2900,7 +2900,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.65,
           "depth": 2.2041
         },
-        "dracoDecodeTimeMs": 1.27,
+        "dracoDecodeTimeMs": 1.22,
         "estimatedGpuMemoryBytes": 4667082,
         "estimatedGpuMemoryMb": 4.45
       },
@@ -2929,7 +2929,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 0.65,
           "depth": 2.1975
         },
-        "dracoDecodeTimeMs": 0.77,
+        "dracoDecodeTimeMs": 0.73,
         "estimatedGpuMemoryBytes": 4606274,
         "estimatedGpuMemoryMb": 4.39
       },
@@ -2945,7 +2945,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
   "kaffir-lime-mocktail": {
     "dishId": "kaffir-lime-mocktail",
     "modelName": "3D Interactive Model Showcase [Prototype Asset]",
-    "assetVersion": "2.1.0",
+    "assetVersion": "2.2.0",
     "units": "meters",
     "culinaryCategory": "beverage",
     "secondaryCategories": [
@@ -3006,7 +3006,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.65,
           "depth": 0.7678
         },
-        "dracoDecodeTimeMs": 1.12,
+        "dracoDecodeTimeMs": 0.82,
         "estimatedGpuMemoryBytes": 3225219,
         "estimatedGpuMemoryMb": 3.08
       },
@@ -3035,7 +3035,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.65,
           "depth": 0.7681
         },
-        "dracoDecodeTimeMs": 0.56,
+        "dracoDecodeTimeMs": 0.53,
         "estimatedGpuMemoryBytes": 3189315,
         "estimatedGpuMemoryMb": 3.04
       },
@@ -3064,7 +3064,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.65,
           "depth": 0.765
         },
-        "dracoDecodeTimeMs": 0.33,
+        "dracoDecodeTimeMs": 0.31,
         "estimatedGpuMemoryBytes": 3167799,
         "estimatedGpuMemoryMb": 3.02
       },
@@ -3080,7 +3080,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
   "golden-oak-burger": {
     "dishId": "golden-oak-burger",
     "modelName": "3D Interactive Model Showcase [Prototype Asset]",
-    "assetVersion": "2.1.0",
+    "assetVersion": "2.2.0",
     "units": "meters",
     "culinaryCategory": "grilled-meat",
     "secondaryCategories": [
@@ -3089,7 +3089,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "fresh-vegetables"
     ],
     "isSharedPlaceholder": false,
-    "authenticityClassification": "duplicate-primary-mesh",
+    "authenticityClassification": "authentic-dedicated",
     "authenticityVerified": true,
     "sourceBlendAsset": "chiken_burger.blend",
     "plateDiameterCm": 18,
@@ -3103,7 +3103,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
       "textureSlotsCount": 6
     },
     "missingIngredientsOrLimitations": [
-      "Canonical archetype alias for golden-oak-signature-burger; shares chiken_burger.blend geometry"
+      "Physical caliper measurement on plated burger sample pending (scaleValidated: false)"
     ],
     "dimensionSource": "estimated-typical-portion",
     "dimensions": {
@@ -3142,7 +3142,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.211,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 2.84,
+        "dracoDecodeTimeMs": 2.86,
         "estimatedGpuMemoryBytes": 33857786,
         "estimatedGpuMemoryMb": 32.29
       },
@@ -3171,7 +3171,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.211,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 3.03,
+        "dracoDecodeTimeMs": 2.76,
         "estimatedGpuMemoryBytes": 8698250,
         "estimatedGpuMemoryMb": 8.3
       },
@@ -3200,7 +3200,7 @@ export const DISH_ASSET_MANIFEST: Record<string, DishAssetManifestEntry> = {
           "height": 1.211,
           "depth": 2
         },
-        "dracoDecodeTimeMs": 2.75,
+        "dracoDecodeTimeMs": 3.02,
         "estimatedGpuMemoryBytes": 2408366,
         "estimatedGpuMemoryMb": 2.3
       },

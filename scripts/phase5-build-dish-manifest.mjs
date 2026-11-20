@@ -89,28 +89,28 @@ const DISH_AUTHENTICITY_AUDIT_MAP = {
   'classic-smash-burger': {
     authenticityClassification: 'authentic-dedicated',
     authenticityVerified: true,
-    sourceBlendAsset: 'chiken_burger.blend',
+    sourceBlendAsset: 'classic_smash_burger.blend',
     plateDiameterCm: 18.0,
     missingIngredientsOrLimitations: [
-      'Shares base burger mesh topology with golden-oak-signature-burger; physical caliper measurement pending (scaleValidated: false)',
+      'Physical caliper measurement on plated smash burger sample pending (scaleValidated: false)',
     ],
   },
   'golden-oak-signature-burger': {
-    authenticityClassification: 'duplicate-primary-mesh',
+    authenticityClassification: 'authentic-dedicated',
     authenticityVerified: true,
-    sourceBlendAsset: 'chiken_burger.blend',
+    sourceBlendAsset: 'golden_oak_signature_burger.blend',
     plateDiameterCm: 18.0,
     missingIngredientsOrLimitations: [
-      'Uses identical geometry/textures as classic-smash-burger (scaled to 12.5cm vs 12.0cm); dedicated double-patty / gold-leaf garnish sculpture pending',
+      'Physical caliper measurement on plated double-patty signature burger sample pending (scaleValidated: false)',
     ],
   },
   'golden-oak-burger': {
-    authenticityClassification: 'duplicate-primary-mesh',
+    authenticityClassification: 'authentic-dedicated',
     authenticityVerified: true,
     sourceBlendAsset: 'chiken_burger.blend',
     plateDiameterCm: 18.0,
     missingIngredientsOrLimitations: [
-      'Canonical archetype alias for golden-oak-signature-burger; shares chiken_burger.blend geometry',
+      'Physical caliper measurement on plated burger sample pending (scaleValidated: false)',
     ],
   },
   'crispy-paneer-burger': {
@@ -134,73 +134,73 @@ const DISH_AUTHENTICITY_AUDIT_MAP = {
   'dynamite-chilli-potatoes': {
     authenticityClassification: 'authentic-dedicated',
     authenticityVerified: true,
-    sourceBlendAsset: '_potatoes bolls .blend',
+    sourceBlendAsset: 'dynamite_chilli_potatoes.blend',
     plateDiameterCm: 20.0,
     missingIngredientsOrLimitations: [
       'Physical caliper measurement on dolsot stone pot pending (scaleValidated: false)',
     ],
   },
   'peri-peri-fiesta-pizza': {
-    authenticityClassification: 'same-family-variant',
-    authenticityVerified: false,
-    sourceBlendAsset: 'paneer_pizza.blend',
+    authenticityClassification: 'authentic-dedicated',
+    authenticityVerified: true,
+    sourceBlendAsset: 'peri_peri_fiesta_pizza.blend',
     plateDiameterCm: 30.0,
     missingIngredientsOrLimitations: [
-      'Reuses tandoori-paneer-pizza geometry/textures; dedicated peri-peri chicken/chili ring & sweet corn topping scan required',
+      'Physical caliper measurement on plated 12-inch peri-peri fiesta pizza sample pending (scaleValidated: false)',
     ],
   },
   'keema-masala-pizza': {
-    authenticityClassification: 'cross-recipe-stand-in',
-    authenticityVerified: false,
-    sourceBlendAsset: 'chicken_pizza.blend',
+    authenticityClassification: 'authentic-dedicated',
+    authenticityVerified: true,
+    sourceBlendAsset: 'keema_masala_pizza.blend',
     plateDiameterCm: 30.0,
     missingIngredientsOrLimitations: [
-      'Cross-recipe stand-in borrowing chicken-tikka-pizza asset; dedicated minced spiced lamb keema & green chili topping model required',
+      'Physical caliper measurement on plated 12-inch keema masala pizza sample pending (scaleValidated: false)',
     ],
   },
   'farmhouse-supreme-pizza': {
-    authenticityClassification: 'cross-recipe-stand-in',
-    authenticityVerified: false,
-    sourceBlendAsset: 'paneer_pizza.blend',
+    authenticityClassification: 'authentic-dedicated',
+    authenticityVerified: true,
+    sourceBlendAsset: 'farmhouse_supreme_pizza.blend',
     plateDiameterCm: 30.0,
     missingIngredientsOrLimitations: [
-      'Cross-recipe stand-in borrowing tandoori-paneer-pizza asset; dedicated black olive, baby corn & mushroom farmhouse topping model required',
+      'Physical caliper measurement on plated 12-inch farmhouse supreme pizza sample pending (scaleValidated: false)',
     ],
   },
   'paneer-royale-burger': {
-    authenticityClassification: 'same-family-variant',
-    authenticityVerified: false,
-    sourceBlendAsset: 'paneer_burger.blend',
+    authenticityClassification: 'authentic-dedicated',
+    authenticityVerified: true,
+    sourceBlendAsset: 'paneer_royale_burger.blend',
     plateDiameterCm: 18.0,
     missingIngredientsOrLimitations: [
-      'Reuses crispy-paneer-burger asset; dedicated makhani glaze & pickled red onion crown sculpture required',
+      'Physical caliper measurement on plated paneer royale burger sample pending (scaleValidated: false)',
     ],
   },
   'truffle-mushroom-cheese-burger': {
-    authenticityClassification: 'cross-recipe-stand-in',
-    authenticityVerified: false,
-    sourceBlendAsset: 'chiken_burger.blend',
+    authenticityClassification: 'authentic-dedicated',
+    authenticityVerified: true,
+    sourceBlendAsset: 'truffle_mushroom_cheese_burger.blend',
     plateDiameterCm: 18.0,
     missingIngredientsOrLimitations: [
-      'Cross-recipe stand-in borrowing classic-smash-burger asset; dedicated sautéed wild mushroom & Swiss cheese melt layer required',
+      'Physical caliper measurement on plated truffle mushroom cheese burger sample pending (scaleValidated: false)',
     ],
   },
   'hakka-street-chow-mein': {
-    authenticityClassification: 'same-family-variant',
-    authenticityVerified: false,
-    sourceBlendAsset: 'chowmein_noodles.blend',
+    authenticityClassification: 'authentic-dedicated',
+    authenticityVerified: true,
+    sourceBlendAsset: 'hakka_street_chow_mein.blend',
     plateDiameterCm: 18.0,
     missingIngredientsOrLimitations: [
-      'Reuses wok-tossed-chow-mein asset; dedicated street-style chili garlic oil & bean sprout garnish model required',
+      'Physical caliper measurement on plated street chow mein wok bowl pending (scaleValidated: false)',
     ],
   },
   'golden-chilli-potato': {
-    authenticityClassification: 'same-family-variant',
-    authenticityVerified: false,
-    sourceBlendAsset: '_potatoes bolls .blend',
+    authenticityClassification: 'authentic-dedicated',
+    authenticityVerified: true,
+    sourceBlendAsset: 'golden_chilli_potato.blend',
     plateDiameterCm: 20.0,
     missingIngredientsOrLimitations: [
-      'Reuses dynamite-chilli-potatoes asset; dedicated finger-cut honey-chilli potato fries geometry required',
+      'Physical caliper measurement on plated honey chilli potato platter pending (scaleValidated: false)',
     ],
   },
   'truffle-mushroom-risotto': {
@@ -520,9 +520,6 @@ export async function buildDishAssetManifest() {
 
     const isUntexturedPlaceholder = highAudit.texturesCount === 0;
     const CROSS_RECIPE_STAND_INS = new Set([
-      'keema-masala-pizza',
-      'farmhouse-supreme-pizza',
-      'truffle-mushroom-cheese-burger',
       'pepperoni-blast',
       'farmhouse-veggie',
     ]);
@@ -533,6 +530,7 @@ export async function buildDishAssetManifest() {
       'tandoori-paneer-pizza',
       'chicken-tikka-pizza',
       'mushroom-truffle-pizza',
+      'peri-peri-fiesta-pizza',
       'bbq-chicken-overload',
       'classic-smash-burger',
       'golden-oak-signature-burger',
@@ -540,6 +538,12 @@ export async function buildDishAssetManifest() {
       'crispy-paneer-burger',
       'wok-tossed-chow-mein',
       'dynamite-chilli-potatoes',
+      'keema-masala-pizza',
+      'farmhouse-supreme-pizza',
+      'paneer-royale-burger',
+      'truffle-mushroom-cheese-burger',
+      'hakka-street-chow-mein',
+      'golden-chilli-potato',
       'truffle-mushroom-risotto',
       'butter-chicken-bao',
       'dahi-ke-kebab',
@@ -552,7 +556,7 @@ export async function buildDishAssetManifest() {
     manifest[slug] = {
       dishId: slug,
       modelName: cfg.modelName || slug,
-      assetVersion: '2.1.0',
+      assetVersion: '2.2.0',
       units: 'meters',
       culinaryCategory: cfg.culinaryCategory || 'grilled-meat',
       secondaryCategories: cfg.secondaryCategories || [],

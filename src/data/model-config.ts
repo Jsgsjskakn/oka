@@ -66,14 +66,22 @@ export interface CulinaryDishProfile {
   secondaryCategories: CulinaryMaterialCategory[];
   culinaryArchetype:
     | 'golden-oak-burger'
+    | 'golden-oak-signature-burger'
     | 'classic-smash-burger'
     | 'tandoori-paneer-pizza'
     | 'chicken-tikka-pizza'
     | 'mushroom-truffle-pizza'
+    | 'peri-peri-fiesta-pizza'
     | 'bbq-chicken-overload'
     | 'crispy-paneer-burger'
     | 'wok-tossed-chow-mein'
     | 'dynamite-chilli-potatoes'
+    | 'keema-masala-pizza'
+    | 'farmhouse-supreme-pizza'
+    | 'paneer-royale-burger'
+    | 'truffle-mushroom-cheese-burger'
+    | 'hakka-street-chow-mein'
+    | 'golden-chilli-potato'
     | 'truffle-mushroom-risotto'
     | 'butter-chicken-bao'
     | 'dahi-ke-kebab'
@@ -187,7 +195,7 @@ export const DISH_CULINARY_PROFILES: Record<string, CulinaryDishProfile> = {
   'peri-peri-fiesta-pizza': {
     culinaryCategory: 'melted-cheese',
     secondaryCategories: ['bread-crust', 'glossy-sauce', 'fresh-vegetables'],
-    culinaryArchetype: 'tandoori-paneer-pizza',
+    culinaryArchetype: 'peri-peri-fiesta-pizza',
     arScale: 0.18,
     preserveDynamicARLighting: true,
   },
@@ -208,7 +216,7 @@ export const DISH_CULINARY_PROFILES: Record<string, CulinaryDishProfile> = {
   'golden-oak-signature-burger': {
     culinaryCategory: 'grilled-meat',
     secondaryCategories: ['bread-crust', 'melted-cheese', 'glossy-sauce', 'fresh-vegetables'],
-    culinaryArchetype: 'golden-oak-burger',
+    culinaryArchetype: 'golden-oak-signature-burger',
     arScale: 0.16,
     preserveDynamicARLighting: true,
   },
@@ -238,42 +246,42 @@ export const DISH_CULINARY_PROFILES: Record<string, CulinaryDishProfile> = {
   'keema-masala-pizza': {
     culinaryCategory: 'grilled-meat',
     secondaryCategories: ['melted-cheese', 'bread-crust', 'fresh-vegetables'],
-    culinaryArchetype: 'chicken-tikka-pizza',
+    culinaryArchetype: 'keema-masala-pizza',
     arScale: 0.18,
     preserveDynamicARLighting: true,
   },
   'farmhouse-supreme-pizza': {
     culinaryCategory: 'fresh-vegetables',
     secondaryCategories: ['melted-cheese', 'bread-crust', 'glossy-sauce'],
-    culinaryArchetype: 'tandoori-paneer-pizza',
+    culinaryArchetype: 'farmhouse-supreme-pizza',
     arScale: 0.18,
     preserveDynamicARLighting: true,
   },
   'paneer-royale-burger': {
     culinaryCategory: 'fried-food',
     secondaryCategories: ['bread-crust', 'melted-cheese', 'fresh-vegetables'],
-    culinaryArchetype: 'crispy-paneer-burger',
+    culinaryArchetype: 'paneer-royale-burger',
     arScale: 0.16,
     preserveDynamicARLighting: true,
   },
   'truffle-mushroom-cheese-burger': {
     culinaryCategory: 'melted-cheese',
     secondaryCategories: ['bread-crust', 'glossy-sauce', 'fried-food'],
-    culinaryArchetype: 'classic-smash-burger',
+    culinaryArchetype: 'truffle-mushroom-cheese-burger',
     arScale: 0.16,
     preserveDynamicARLighting: true,
   },
   'hakka-street-chow-mein': {
     culinaryCategory: 'glossy-sauce',
     secondaryCategories: ['fresh-vegetables'],
-    culinaryArchetype: 'wok-tossed-chow-mein',
+    culinaryArchetype: 'hakka-street-chow-mein',
     arScale: 0.16,
     preserveDynamicARLighting: true,
   },
   'golden-chilli-potato': {
     culinaryCategory: 'fried-food',
     secondaryCategories: ['glossy-sauce', 'fresh-vegetables'],
-    culinaryArchetype: 'dynamite-chilli-potatoes',
+    culinaryArchetype: 'golden-chilli-potato',
     arScale: 0.16,
     preserveDynamicARLighting: true,
   },
@@ -424,14 +432,14 @@ export const dishModelOverrides: Record<string, Partial<DishModelConfig>> = {
       low: '/models/optimized/golden-oak-burger-ultralight.glb',
     },
     culinaryAssetLodPaths: {
-      high: '/models/optimized/golden-oak-burger-high.glb',
-      balanced: '/models/optimized/golden-oak-burger-balanced.glb',
-      ultraLight: '/models/optimized/golden-oak-burger-ultralight.glb',
-      medium: '/models/optimized/golden-oak-burger-balanced.glb',
-      low: '/models/optimized/golden-oak-burger-ultralight.glb',
+      high: '/models/optimized/golden-oak-signature-burger-high.glb',
+      balanced: '/models/optimized/golden-oak-signature-burger-balanced.glb',
+      ultraLight: '/models/optimized/golden-oak-signature-burger-ultralight.glb',
+      medium: '/models/optimized/golden-oak-signature-burger-balanced.glb',
+      low: '/models/optimized/golden-oak-signature-burger-ultralight.glb',
     },
     usdzPath: '/models/optimized/golden-oak-burger.usdz',
-    culinaryUsdzPath: '/models/optimized/golden-oak-burger.usdz',
+    culinaryUsdzPath: '/models/optimized/golden-oak-signature-burger.usdz',
     usdzAvailable: true,
     arScale: 0.16,
     preserveDynamicARLighting: true,
