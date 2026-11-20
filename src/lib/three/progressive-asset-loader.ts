@@ -62,6 +62,10 @@ export interface ResidencyGuardInput {
   thermalState?: ThermalPressureState;
   saveData?: boolean;
   effectiveNetworkType?: EffectiveNetworkType;
+  /** Phase 7 device-adaptive signals (never choose quality using RAM alone) */
+  deviceMemoryGb?: number;
+  gpuTier?: 'low-end' | 'mid-range' | 'high-end' | 'software' | 'unknown';
+  measuredFps?: number;
 }
 
 export interface ResidencyGuardDecision {
@@ -73,7 +77,8 @@ export interface ResidencyGuardDecision {
 
 /**
  * Evaluates whether upgrading to a heavier LOD / texture tier is safe under current
- * JS heap residency, W3C Compute Pressure thermal state, and network Data Saver constraints.
+ * JS heap residency, W3C Compute Pressure thermal state, network Data Saver, and
+ * Phase 7 multi-signal device capability (2GB / 4GB / 6GB / 8GB+ Android) constraints.
  */
 export function evaluateProgressiveResidencyGuard(
   input: ResidencyGuardInput
@@ -87,6 +92,26 @@ export function evaluateProgressiveResidencyGuard(
     input.jsHeapLimitBytes > 0
   ) {
     heapUtilization = input.jsHeapUsedBytes / input.jsHeapLimitBytes;
+  }
+
+  // Phase 7 Section 6: Software or low-end GPU always stays on ultra-light regardless of RAM (neutralizes 8GB budget phone trap)
+  if (input.gpuTier === 'software' || input.gpuTier === 'low-end') {
+    return {
+      allowedProfile: 'ultra-light',
+      downgraded: input.targetProfile !== 'ultra-light',
+      reason: `gpu-tier-${input.gpuTier}-ultra-light-lock`,
+      heapUtilization,
+    };
+  }
+
+  // Phase 7 Section 6: 2GB Android -> Ultra-Light assets strictly locked
+  if (typeof input.deviceMemoryGb === 'number' && input.deviceMemoryGb > 0 && input.deviceMemoryGb <= 2) {
+    return {
+      allowedProfile: 'ultra-light',
+      downgraded: input.targetProfile !== 'ultra-light',
+      reason: `2gb-device-memory-ultra-light-lock (${input.deviceMemoryGb}GB)`,
+      heapUtilization,
+    };
   }
 
   // Critical memory or thermal pressure -> stay on ultra-light
@@ -117,6 +142,58 @@ export function evaluateProgressiveResidencyGuard(
       allowedProfile: 'ultra-light',
       downgraded: input.targetProfile !== 'ultra-light',
       reason: 'data-saver-or-2g-network',
+      heapUtilization,
+    };
+  }
+
+  // Phase 7 Section 6: 4GB Android -> Ultra-Light first; Balanced upgrade only when safe (mid-range+ GPU, <65% heap, >=48 FPS, nominal thermal)
+  if (typeof input.deviceMemoryGb === 'number' && input.deviceMemoryGb > 2 && input.deviceMemoryGb <= 4) {
+    const unsafeHeap = heapUtilization !== null && heapUtilization >= 0.65;
+    const unsafeFps = typeof input.measuredFps === 'number' && input.measuredFps < 48;
+    const unsafeThermal = input.thermalState === 'fair' || input.thermalState === 'serious';
+    if (unsafeHeap || unsafeFps || unsafeThermal) {
+      return {
+        allowedProfile: 'ultra-light',
+        downgraded: input.targetProfile !== 'ultra-light',
+        reason: '4gb-android-unsafe-for-balanced-upgrade',
+        heapUtilization,
+      };
+    }
+    const capped4Gb: RenderingProfileName =
+      input.targetProfile === 'high-fidelity' ? 'balanced' : input.targetProfile;
+    return {
+      allowedProfile: capped4Gb,
+      downgraded: capped4Gb !== input.targetProfile,
+      reason: capped4Gb !== input.targetProfile ? '4gb-android-balanced-ceiling' : null,
+      heapUtilization,
+    };
+  }
+
+  // Phase 7 Section 6: 6GB Android -> Balanced by default (cap high-fidelity unless flagship GPU explicitly overrides)
+  if (
+    typeof input.deviceMemoryGb === 'number' &&
+    input.deviceMemoryGb > 4 &&
+    input.deviceMemoryGb <= 6 &&
+    input.gpuTier !== 'high-end'
+  ) {
+    const capped6Gb: RenderingProfileName =
+      input.targetProfile === 'high-fidelity' ? 'balanced' : input.targetProfile;
+    if (capped6Gb !== input.targetProfile) {
+      return {
+        allowedProfile: capped6Gb,
+        downgraded: true,
+        reason: '6gb-android-balanced-default-cap',
+        heapUtilization,
+      };
+    }
+  }
+
+  // Phase 7 Section 6: 8GB+ devices -> High fidelity ONLY when GPU capability supports it (mid-range GPU capped at balanced)
+  if (input.gpuTier === 'mid-range' && input.targetProfile === 'high-fidelity') {
+    return {
+      allowedProfile: 'balanced',
+      downgraded: true,
+      reason: 'mid-range-gpu-balanced-cap',
       heapUtilization,
     };
   }
